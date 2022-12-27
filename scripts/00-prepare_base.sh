@@ -320,13 +320,6 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     pushd feeds/packages
         curl -s https://$mirror/openwrt/patch/docker/dockerd-fix-bridge-network.patch | patch -p1
     popd
-    sed -i 's,# CONFIG_BLK_CGROUP_IOCOST is not set,CONFIG_BLK_CGROUP_IOCOST=y,g' target/linux/generic/config-5.10
-    sed -i 's,# CONFIG_BLK_CGROUP_IOLATENCY is not set,CONFIG_BLK_CGROUP_IOLATENCY=y,g' target/linux/generic/config-5.10
-    sed -i 's,# CONFIG_BLK_CGROUP_IOPRIO is not set,CONFIG_BLK_CGROUP_IOPRIO=y,g' target/linux/generic/config-5.10
-else
-    sed -i 's,# CONFIG_BLK_CGROUP_IOCOST is not set,CONFIG_BLK_CGROUP_IOCOST=y,g' target/linux/generic/config-5.4
-    sed -i 's,# CONFIG_BLK_CGROUP_IOLATENCY is not set,CONFIG_BLK_CGROUP_IOLATENCY=y,g' target/linux/generic/config-5.4
-    sed -i 's,# CONFIG_BLK_CGROUP_IOPRIO is not set,CONFIG_BLK_CGROUP_IOPRIO=y,g' target/linux/generic/config-5.4
 fi
 pushd feeds/packages
     curl -s https://$mirror/openwrt/patch/docker/0001-dockerd-defer-starting-docker-service.patch | patch -p1
