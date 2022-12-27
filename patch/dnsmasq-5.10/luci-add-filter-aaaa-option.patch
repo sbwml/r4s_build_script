@@ -1,0 +1,22 @@
+diff --git a/feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/dhcp.js b/feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/dhcp.js
+index 5059b38..483e590 100644
+--- a/feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/dhcp.js
++++ b/feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/dhcp.js
+@@ -368,6 +368,17 @@ return view.extend({
+ 		o.optional = true;
+ 		o.placeholder = '/etc/dnsmasq.hosts';
+ 
++		o = s.taboption('advanced', form.Flag, 'filter_aaaa',
++			_('Filter IPv6 AAAA records'),
++			_('Remove IPv6 addresses from the results and only return IPv4 addresses.') + '<br />' +
++			_('Can be useful if ISP has IPv6 nameservers but does not provide IPv6 routing.'));
++		o.optional = true;
++
++		o = s.taboption('advanced', form.Flag, 'filter_a',
++			_('Filter IPv4 A records'),
++			_('Remove IPv4 addresses from the results and only return IPv6 addresses.'));
++		o.optional = true;
++
+ 		o = s.taboption('advanced', form.Flag, 'quietdhcp',
+ 			_('Suppress logging'),
+ 			_('Suppress logging of the routine operation for the DHCP protocol.'));

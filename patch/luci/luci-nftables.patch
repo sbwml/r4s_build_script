@@ -1,0 +1,82 @@
+From 74af4635bdfea5e70160b5f3d93d6a4fe2655de1 Mon Sep 17 00:00:00 2001
+From: sbwml <984419930@qq.com>
+Date: Sun, 11 Dec 2022 18:57:59 +0800
+Subject: [PATCH] hide warning message
+
+---
+ .../resources/view/status/nftables.js         | 14 --------------
+ .../share/luci/menu.d/luci-mod-status.json    | 19 ++++++++++++++++---
+ 2 files changed, 16 insertions(+), 17 deletions(-)
+
+diff --git a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
+index 82660c15951..607f6ce7b6e 100644
+--- a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
++++ b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
+@@ -666,26 +666,12 @@ return view.extend({
+ 		return node;
+ 	},
+ 
+-	checkLegacyRules: function(ipt4save, ipt6save) {
+-		if (ipt4save.match(/\n-A /) || ipt6save.match(/\n-A /)) {
+-			ui.addNotification(_('Legacy rules detected'), [
+-				E('p', _('There are legacy iptables rules present on the system. Mixing iptables and nftables rules is discouraged and may lead to incomplete traffic filtering.')),
+-				E('button', {
+-					'class': 'btn cbi-button',
+-					'click': function() { location.href = 'nftables/iptables' }
+-				}, _('Open iptables rules overview…'))
+-			], 'warning');
+-		}
+-	},
+-
+ 	render: function(data) {
+ 		var view = E('div'),
+ 		    nft = data[0],
+ 		    ipt = data[1],
+ 		    ipt6 = data[2];
+ 
+-		this.checkLegacyRules(ipt, ipt6);
+-
+ 		if (!Array.isArray(nft.nftables))
+ 			return E('em', _('No nftables ruleset loaded.'));
+ 
+diff --git a/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json b/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json
+index 190eef0ad31..51d64b50b1e 100644
+--- a/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json
++++ b/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json
+@@ -39,20 +39,33 @@
+ 		}
+ 	},
+ 
+-	"admin/status/nftables": {
++	"admin/status/firewall": {
+ 		"title": "Firewall",
+ 		"order": 3,
++		"action": {
++			"type": "alias",
++			"path": "admin/status/firewall/nftables"
++		},
++		"depends": {
++			"acl": [ "luci-mod-status-firewall" ]
++		}
++	},
++
++	"admin/status/firewall/nftables": {
++		"title": "NFtables Firewall",
++		"order": 1,
+ 		"action": {
+ 			"type": "view",
+ 			"path": "status/nftables"
+ 		},
+ 		"depends": {
+-			"acl": [ "luci-mod-status-firewall" ],
+ 			"fs": { "/usr/sbin/nft": "executable" }
+ 		}
+ 	},
+ 
+-	"admin/status/nftables/iptables": {
++	"admin/status/firewall/iptables": {
++		"title": "IPtables Firewall",
++		"order": 2,
+ 		"action": {
+ 			"type": "view",
+ 			"path": "status/iptables"

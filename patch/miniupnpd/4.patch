@@ -1,0 +1,22 @@
+From 71dc0903456bfea840243cce7b7e4eeb75fca61f Mon Sep 17 00:00:00 2001
+From: QiuSimons <45143996+QiuSimons@users.noreply.github.com>
+Date: Thu, 1 Sep 2022 14:22:06 +0800
+Subject: [PATCH] Update upnpd.config
+
+---
+ net/miniupnpd/files/upnpd.config | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/miniupnpd/files/upnpd.config b/net/miniupnpd/files/upnpd.config
+index b03d60a99fa8..9070c273978d 100644
+--- a/net/miniupnpd/files/upnpd.config
++++ b/net/miniupnpd/files/upnpd.config
+@@ -2,7 +2,7 @@ config upnpd config
+ 	option enabled		0
+ 	option enable_natpmp	1
+ 	option enable_upnp	1
+-	option force_forwarding 0
++	option force_forwarding 1
+ 	option secure_mode	1
+ 	option log_output	0
+ 	option download		1024

@@ -1,0 +1,32 @@
+From f3c2c666cde29e178c025eb89a83bbcaf1dc1b86 Mon Sep 17 00:00:00 2001
+From: sbwml <984419930@qq.com>
+Date: Tue, 13 Dec 2022 03:00:05 +0800
+Subject: [PATCH] dockerd: defer starting docker service
+
+---
+ utils/dockerd/files/dockerd.init | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/utils/dockerd/files/dockerd.init b/utils/dockerd/files/dockerd.init
+index 0ae6fd9af..72bcf9fef 100755
+--- a/utils/dockerd/files/dockerd.init
++++ b/utils/dockerd/files/dockerd.init
+@@ -286,3 +286,15 @@ stop_service() {
+ 		service_stop "/usr/bin/dockerd"
+ 	fi
+ }
++
++disable() {
++	rm -f "$IPKG_INSTROOT/etc/rc.d/S${START}zzzz_dockerd"
++}
++
++enable() {
++	ln -sf "../init.d/dockerd" "$IPKG_INSTROOT/etc/rc.d/S${START}zzzz_dockerd"
++}
++
++enabled() {
++	[ -x "$IPKG_INSTROOT/etc/rc.d/S${START}zzzz_dockerd" ]
++}
+-- 
+2.31.1.windows.1
+

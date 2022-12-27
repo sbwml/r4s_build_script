@@ -1,0 +1,15 @@
+diff --git a/include/target.mk b/include/target.mk
+index 7526224..0281ed1 100644
+--- a/include/target.mk
++++ b/include/target.mk
+@@ -241,6 +241,10 @@ ifeq ($(DUMP),1)
+     CPU_CFLAGS_arc700 = -mcpu=arc700
+     CPU_CFLAGS_archs = -mcpu=archs
+   endif
++  ifeq ($(BOARD),rockchip)
++    CPU_CFLAGS = -Ofast -funsafe-math-optimizations -ffinite-math-only -fno-rounding-math -fno-signaling-nans -fcx-limited-range -fexcess-precision=fast -funroll-loops -ffunction-sections -fdata-sections -Wl,--gc-sections -pipe
++    CPU_CFLAGS_generic = -march=armv8-a+crypto+crc -mcpu=cortex-a53+crypto+crc -mtune=cortex-a53
++  endif
+   ifneq ($(CPU_TYPE),)
+     ifndef CPU_CFLAGS_$(CPU_TYPE)
+       $(warning CPU_TYPE "$(CPU_TYPE)" doesn't correspond to a known type)

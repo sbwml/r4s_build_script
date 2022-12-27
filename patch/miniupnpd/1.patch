@@ -1,0 +1,23 @@
+From 785bbcb1cb2fd152ad20eeb212adc52d0d2bbf51 Mon Sep 17 00:00:00 2001
+From: QiuSimons <45143996+QiuSimons@users.noreply.github.com>
+Date: Tue, 31 May 2022 21:34:21 +0800
+Subject: [PATCH] Update miniupnpd.init
+
+---
+ net/miniupnpd/files/miniupnpd.init | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/net/miniupnpd/files/miniupnpd.init b/net/miniupnpd/files/miniupnpd.init
+index cc13e0440741..eaf27834b444 100644
+--- a/net/miniupnpd/files/miniupnpd.init
++++ b/net/miniupnpd/files/miniupnpd.init
+@@ -197,6 +197,9 @@ stop_service() {
+ }
+ 
+ start_service() {
++	sed -i '/presentation_url/d' /etc/config/upnpd
++	sed -i "\/uuid/a\\\toption presentation_url 'http://$(uci -q get network.lan.ipaddr)/'" /etc/config/upnpd
++	uci commit upnpd
+ 	config_load "upnpd"
+ 	config_foreach upnpd "upnpd"
+ }

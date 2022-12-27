@@ -1,0 +1,13 @@
+diff --git a/package/libs/openssl/Makefile b/package/libs/openssl/Makefile
+index c4bc4ae..433c250 100644
+--- a/package/libs/openssl/Makefile
++++ b/package/libs/openssl/Makefile
+@@ -321,6 +321,8 @@ ifdef CONFIG_i386
+   endif
+ endif
+ 
++OPENSSL_OPTIONS += -DHAVE_CRYPTODEV -DUSE_CRYPTODEV_DIGESTS
++
+ OPENSSL_TARGET:=linux-$(call qstrip,$(CONFIG_ARCH))-openwrt
+ 
+ STAMP_CONFIGURED := $(STAMP_CONFIGURED)_$(shell echo $(OPENSSL_OPTIONS) | $(MKHASH) md5)

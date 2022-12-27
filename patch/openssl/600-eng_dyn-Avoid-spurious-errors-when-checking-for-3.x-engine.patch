@@ -1,0 +1,64 @@
+From d6bf4a2218aeb246ba7d34f02e895c37569c8265 Mon Sep 17 00:00:00 2001
+From: Tomas Mraz <tomas@openssl.org>
+Date: Wed, 16 Mar 2022 12:09:52 +0100
+Subject: [PATCH] eng_dyn: Avoid spurious errors when checking for 3.x engine
+
+Reviewed-by: Paul Dale <pauli@openssl.org>
+Reviewed-by: Richard Levitte <levitte@openssl.org>
+(Merged from https://github.com/openssl/openssl/pull/17902)
+---
+ crypto/engine/eng_dyn.c | 33 ++++++++++++++++++++++-----------
+ 1 file changed, 22 insertions(+), 11 deletions(-)
+
+diff --git a/crypto/engine/eng_dyn.c b/crypto/engine/eng_dyn.c
+index 6a0ddc162d0..27d7b893cda 100644
+--- a/crypto/engine/eng_dyn.c
++++ b/crypto/engine/eng_dyn.c
+@@ -393,6 +393,26 @@ static int int_load(dynamic_data_ctx *ctx)
+     return 0;
+ }
+ 
++/*
++ * Unfortunately the version checker does not distinguish between
++ * engines built for openssl 1.1.x and openssl 3.x, but loading
++ * an engine that is built for openssl 3.x will cause a fatal
++ * error.  Detect such engines, since EVP_PKEY_get_base_id is exported
++ * as a function in openssl 3.x, while it is named EVP_PKEY_base_id
++ * in openssl 1.1.x.  Therefore we take the presence of that symbol
++ * as an indication that the engine will be incompatible.
++ */
++static int using_libcrypto_3(dynamic_data_ctx *ctx)
++{
++    int ret;
++
++    ERR_set_mark();
++    ret = DSO_bind_func(ctx->dynamic_dso, "EVP_PKEY_get_base_id") != NULL;
++    ERR_pop_to_mark();
++
++    return ret;
++}
++
+ static int dynamic_load(ENGINE *e, dynamic_data_ctx *ctx)
+ {
+     ENGINE cpy;
+@@ -442,18 +462,9 @@ static int dynamic_load(ENGINE *e, dynamic_data_ctx *ctx)
+         /*
+          * We fail if the version checker veto'd the load *or* if it is
+          * deferring to us (by returning its version) and we think it is too
+-         * old.
+-         * Unfortunately the version checker does not distinguish between
+-         * engines built for openssl 1.1.x and openssl 3.x, but loading
+-         * an engine that is built for openssl 3.x will cause a fatal
+-         * error.  Detect such engines, since EVP_PKEY_get_base_id is exported
+-         * as a function in openssl 3.x, while it is named EVP_PKEY_base_id
+-         * in openssl 1.1.x.  Therefore we take the presence of that symbol
+-         * as an indication that the engine will be incompatible.
++         * old. Also fail if this is engine for openssl 3.x.
+          */
+-        if (vcheck_res < OSSL_DYNAMIC_OLDEST
+-                || DSO_bind_func(ctx->dynamic_dso,
+-                                 "EVP_PKEY_get_base_id") != NULL) {
++        if (vcheck_res < OSSL_DYNAMIC_OLDEST || using_libcrypto_3(ctx)) {
+             /* Fail */
+             ctx->bind_engine = NULL;
+             ctx->v_check = NULL;

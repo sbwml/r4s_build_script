@@ -1,0 +1,23 @@
+diff --git a/utils/qemu/Makefile b/utils/qemu/Makefile
+index 3866844..f482f41 100644
+--- a/utils/qemu/Makefile
++++ b/utils/qemu/Makefile
+@@ -28,8 +28,8 @@ PKG_BUILD_DEPENDS+=spice-protocol
+ include $(INCLUDE_DIR)/nls.mk
+ include $(INCLUDE_DIR)/package.mk
+ 
+-QEMU_DEPS_IN_GUEST := @(TARGET_x86_64||TARGET_armvirt||TARGET_malta)
+-QEMU_DEPS_IN_HOST := @(TARGET_x86_64||TARGET_sunxi)
++QEMU_DEPS_IN_GUEST := @(TARGET_x86_64||TARGET_armvirt||TARGET_malta||aarch64)
++QEMU_DEPS_IN_HOST := @(TARGET_x86_64||TARGET_sunxi||aarch64)
+ QEMU_DEPS_IN_HOST += +libstdcpp
+ QEMU_DEPS_IN_HOST += $(ICONV_DEPENDS)
+ 
+@@ -219,6 +219,7 @@ endef
+ qemu-target-list :=	\
+ 	x86_64-softmmu	\
+ 	arm-softmmu	\
++	aarch64-softmmu	\
+ 
+ qemu-target-x86_64-softmmu-deps:= \
+ 	+qemu-firmware-pxe \
