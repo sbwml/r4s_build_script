@@ -17,11 +17,11 @@ export isCN=`echo $ip_info | grep -Po 'country_code\":"\K[^"]+'`;
 
 # init url
 if [ "$isCN" = "CN" ]; then
-    export mirror=
+    export mirror=init.cooluc.com
 else
-    export mirror=
+    export mirror=init2.cooluc.com
 fi
-export gitea=
+export gitea=git.cooluc.com
 
 # Check root
 if [ "$(id -u)" = "0" ]; then
