@@ -14,9 +14,18 @@ cat include/kernel-6.1 | grep HASH | awk -F- '{print $2}' | awk '{print $1}' | m
 git checkout package/kernel/linux
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/include_netfilter.patch | patch -p1
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/linux-firmware-20221214.patch | patch -p1
-rm -rf package/kernel/linux/*
-curl -Os https://$mirror/openwrt/patch/openwrt-6.1/linux-6.x.tar.gz
-tar zxvf linux-6.x.tar.gz -C package/kernel/linux/ && rm -f linux-6.x.tar.gz
+pushd package/kernel/linux/modules
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/block.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/crypto.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/fs.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/i2c.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/input.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/lib.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/netdevices.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/netfilter.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/netsupport.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/video.mk
+popd
 
 # kernel generic patches
 pushd target/linux/generic
@@ -68,6 +77,11 @@ curl -s https://raw.githubusercontent.com/openwrt/packages/9c5d4fb5a4d2f3157b9b9
 pushd feeds/packages
     curl -s https://github.com/openwrt/packages/commit/ea3ad6b0909b2f5d8a8dcbc4e866c9ed22f3fb10.patch  | patch -p1
 popd
+
+# mac80211 - fix linux 6.1
+rm -rf package/kernel/mac80211
+svn export https://github.com/openwrt/openwrt/branches/master/package/kernel/mac80211 package/kernel/mac80211
+sed -i 's/ +kmod-qrtr-mhi//g' package/kernel/mac80211/ath.mk
 
 #################################################################
 

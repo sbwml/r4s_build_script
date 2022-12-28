@@ -97,7 +97,6 @@ CONFIG_PACKAGE_luci-app-firewall=y
 CONFIG_PACKAGE_luci-app-frpc=y
 # CONFIG_PACKAGE_luci-app-frps is not set
 CONFIG_PACKAGE_luci-app-gowebdav=y
-CONFIG_PACKAGE_luci-app-linkease=y
 CONFIG_PACKAGE_luci-app-mosdns=y
 CONFIG_PACKAGE_luci-app-netdata=y
 CONFIG_PACKAGE_luci-app-nlbwmon=y
@@ -212,6 +211,9 @@ CONFIG_PACKAGE_kmod-tun=y
 CONFIG_PACKAGE_kmod-usb2-pci=y
 CONFIG_PACKAGE_kmod-usb2=y
 CONFIG_PACKAGE_kmod-usb3=y
+
+# fix kmodloader for opkg install
+CONFIG_PACKAGE_kmod-mac80211=y
 
 ### Kernel driver
 CONFIG_PACKAGE_kmod-usb-net-rtl8152-vendor=y
