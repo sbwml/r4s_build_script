@@ -59,8 +59,7 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.1/toolchain/binutils-2.38.patch 
 sed -i "/Build\/InstallDev/iTARGET_CFLAGS += -Wno-strict-overflow\n" feeds/packages/libs/libxcrypt/Makefile
 
 # package/libs/libnl-tiny - fix build for gcc-12
-rm -rf package/libs/libnl-tiny
-svn export https://github.com/openwrt/openwrt/branches/master/package/libs/libnl-tiny package/libs/libnl-tiny
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/package_libs_libnl-tiny-2022-11-01.patch | patch -p1
 
 # feeds/packages/libs/libwebsockets - fix build for gcc-12
 curl -s https://raw.githubusercontent.com/openwrt/packages/9c5d4fb5a4d2f3157b9b9e4fc2a7a0457adccdf5/libs/libwebsockets/patches/020-gcc12.patch > feeds/packages/libs/libwebsockets/patches/020-gcc12.patch
