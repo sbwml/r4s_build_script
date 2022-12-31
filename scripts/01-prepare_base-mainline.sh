@@ -13,7 +13,7 @@ cat include/kernel-6.1 | grep HASH | awk -F- '{print $2}' | awk '{print $1}' | m
 # kernel modules
 git checkout package/kernel/linux
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/include_netfilter.patch | patch -p1
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/linux-firmware-20221214.patch | patch -p1
+curl -s https://raw.githubusercontent.com/openwrt/openwrt/b4d3694f81f423089ac5cc8d8e7b6af62428da3a/package/firmware/linux-firmware/Makefile > package/firmware/linux-firmware/Makefile
 pushd package/kernel/linux/modules
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/block.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/crypto.mk
@@ -80,8 +80,8 @@ popd
 
 # mac80211 - fix linux 6.1
 rm -rf package/kernel/mac80211
-svn export https://github.com/openwrt/openwrt/branches/master/package/kernel/mac80211 package/kernel/mac80211
-sed -i 's/ +kmod-qrtr-mhi//g' package/kernel/mac80211/ath.mk
+svn export -r 101107 https://github.com/openwrt/openwrt/branches/master/package/kernel/mac80211 package/kernel/mac80211
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/0003-Revert-mac80211-add-ath11k-PCI-support.patch | patch -p1
 
 #################################################################
 

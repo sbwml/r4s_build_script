@@ -1,0 +1,1955 @@
+From ef98f0f3dd0c7963414d7630481ca2220fbffae7 Mon Sep 17 00:00:00 2001
+From: sbwml <984419930@qq.com>
+Date: Thu, 29 Dec 2022 12:19:07 +0800
+Subject: [PATCH 3/3] Revert "mac80211: add ath11k PCI support"
+
+This reverts commit 93ae4353cdf651ef0b5d8a4d40a6c29d8d3f655b.
+---
+ package/kernel/mac80211/Makefile              |   3 +-
+ package/kernel/mac80211/ath.mk                |  49 +--
+ ...-tx-queues-immediately-upon-firmware.patch |  78 ----
+ ...-ath11k-Don-t-exit-on-wakeup-failure.patch |  45 ---
+ ...warning-in-dma_free_coherent-of-memo.patch | 139 -------
+ ...-Fix-spelling-mistake-chnange-change.patch |  25 --
+ ...firmware-assert-during-bandwidth-cha.patch | 225 ------------
+ ...-ath11k-suppress-add-interface-error.patch |  52 ---
+ ...support-to-configure-channel-dwell-t.patch | 102 ------
+ ...-PME-message-during-wakeup-from-D3co.patch |  39 --
+ ...firmware-crash-on-vdev-delete-race-c.patch | 116 ------
+ ...monitor-vdev-creation-with-firmware-.patch |  40 --
+ ...qmi_msg_handler-data-structure-initi.patch |  33 --
+ ...hronize-ath11k_mac_he_gi_to_nl80211_.patch |  42 ---
+ ...-ath11k-Make-QMI-message-rules-const.patch | 341 ------------------
+ ...ger-sta-disconnect-on-hardware-resta.patch | 119 ------
+ ...race-condition-with-struct-htt_ppdu_.patch | 103 ------
+ ...k-control-thermal-support-via-symbol.patch |  66 ----
+ ...ci-fix-compilation-in-5.16-and-older.patch |  29 --
+ .../100-backports-drop-QRTR-and-MHI.patch     |  76 ----
+ 20 files changed, 4 insertions(+), 1718 deletions(-)
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/0001-wifi-ath11k-stop-tx-queues-immediately-upon-firmware.patch
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/0002-wifi-ath11k-Don-t-exit-on-wakeup-failure.patch
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/0003-wifi-ath11k-fix-warning-in-dma_free_coherent-of-memo.patch
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/0005-wifi-ath11k-Fix-spelling-mistake-chnange-change.patch
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/0006-wifi-ath11k-fix-firmware-assert-during-bandwidth-cha.patch
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/0007-wifi-ath11k-suppress-add-interface-error.patch
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/0008-wifi-ath11k-add-support-to-configure-channel-dwell-t.patch
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/0009-wifi-ath11k-Send-PME-message-during-wakeup-from-D3co.patch
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/0010-wifi-ath11k-Fix-firmware-crash-on-vdev-delete-race-c.patch
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/0011-wifi-ath11k-fix-monitor-vdev-creation-with-firmware-.patch
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/0012-wifi-ath11k-Fix-qmi_msg_handler-data-structure-initi.patch
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/0013-wifi-ath11k-synchronize-ath11k_mac_he_gi_to_nl80211_.patch
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/0016-wifi-ath11k-Make-QMI-message-rules-const.patch
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/0017-wifi-ath11k-Trigger-sta-disconnect-on-hardware-resta.patch
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/0018-wifi-ath11k-Fix-race-condition-with-struct-htt_ppdu_.patch
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/900-ath11k-control-thermal-support-via-symbol.patch
+ delete mode 100644 package/kernel/mac80211/patches/ath11k/901-wifi-ath11k-pci-fix-compilation-in-5.16-and-older.patch
+ delete mode 100644 package/kernel/mac80211/patches/build/100-backports-drop-QRTR-and-MHI.patch
+
+diff --git a/package/kernel/mac80211/Makefile b/package/kernel/mac80211/Makefile
+index 1344b9f8e2..58f07e1eeb 100644
+--- a/package/kernel/mac80211/Makefile
++++ b/package/kernel/mac80211/Makefile
+@@ -11,7 +11,7 @@ include $(INCLUDE_DIR)/kernel.mk
+ PKG_NAME:=mac80211
+ 
+ PKG_VERSION:=6.1-rc8
+-PKG_RELEASE:=2
++PKG_RELEASE:=1
+ # PKG_SOURCE_URL:=@KERNEL/linux/kernel/projects/backports/stable/v5.15.58/
+ PKG_SOURCE_URL:=http://mirror2.openwrt.org/sources/
+ PKG_HASH:=7f3d96c2573183cd79d6a3ebe5e1b7b73c19d1326d443c85b69c4181f14e6e2b
+@@ -307,7 +307,6 @@ define Build/Prepare
+ 		$(PKG_BUILD_DIR)/include/linux/crc8.h \
+ 		$(PKG_BUILD_DIR)/include/linux/eeprom_93cx6.h \
+ 		$(PKG_BUILD_DIR)/include/linux/wl12xx.h \
+-		$(PKG_BUILD_DIR)/include/linux/mhi.h \
+ 		$(PKG_BUILD_DIR)/include/net/ieee80211.h \
+ 		$(PKG_BUILD_DIR)/backport-include/linux/bcm47xx_nvram.h
+ 
+diff --git a/package/kernel/mac80211/ath.mk b/package/kernel/mac80211/ath.mk
+index 83228311cc..af8c3b93d3 100644
+--- a/package/kernel/mac80211/ath.mk
++++ b/package/kernel/mac80211/ath.mk
+@@ -1,6 +1,6 @@
+ PKG_DRIVERS += \
+ 	ath ath5k ath6kl ath6kl-sdio ath6kl-usb ath9k ath9k-common ath9k-htc ath10k ath10k-smallbuffers \
+-	ath11k ath11k-pci carl9170 owl-loader ar5523 wil6210
++	carl9170 owl-loader ar5523 wil6210
+ 
+ PKG_CONFIG_DEPENDS += \
+ 	CONFIG_PACKAGE_ATH_DEBUG \
+@@ -12,7 +12,6 @@ PKG_CONFIG_DEPENDS += \
+ 	CONFIG_ATH9K_TX99 \
+ 	CONFIG_ATH10K_LEDS \
+ 	CONFIG_ATH10K_THERMAL \
+-	CONFIG_ATH11K_THERMAL \
+ 	CONFIG_ATH_USER_REGD
+ 
+ ifdef CONFIG_PACKAGE_MAC80211_DEBUGFS
+@@ -20,7 +19,6 @@ ifdef CONFIG_PACKAGE_MAC80211_DEBUGFS
+ 	ATH9K_DEBUGFS \
+ 	ATH9K_HTC_DEBUGFS \
+ 	ATH10K_DEBUGFS \
+-	ATH11K_DEBUGFS \
+ 	CARL9170_DEBUGFS \
+ 	ATH5K_DEBUG \
+ 	ATH6KL_DEBUG \
+@@ -30,7 +28,6 @@ endif
+ ifdef CONFIG_PACKAGE_MAC80211_TRACING
+   config-y += \
+ 	ATH10K_TRACING \
+-	ATH11K_TRACING \
+ 	ATH6KL_TRACING \
+ 	ATH_TRACEPOINTS \
+ 	ATH5K_TRACER \
+@@ -38,9 +35,9 @@ ifdef CONFIG_PACKAGE_MAC80211_TRACING
+ endif
+ 
+ config-$(call config_package,ath) += ATH_CARDS ATH_COMMON
+-config-$(CONFIG_PACKAGE_ATH_DEBUG) += ATH_DEBUG ATH10K_DEBUG ATH11K_DEBUG ATH9K_STATION_STATISTICS
++config-$(CONFIG_PACKAGE_ATH_DEBUG) += ATH_DEBUG ATH10K_DEBUG ATH9K_STATION_STATISTICS
+ config-$(CONFIG_PACKAGE_ATH_DFS) += ATH9K_DFS_CERTIFIED ATH10K_DFS_CERTIFIED
+-config-$(CONFIG_PACKAGE_ATH_SPECTRAL) += ATH9K_COMMON_SPECTRAL ATH10K_SPECTRAL ATH11K_SPECTRAL
++config-$(CONFIG_PACKAGE_ATH_SPECTRAL) += ATH9K_COMMON_SPECTRAL ATH10K_SPECTRAL
+ config-$(CONFIG_PACKAGE_ATH_DYNACK) += ATH9K_DYNACK
+ config-$(call config_package,ath9k) += ATH9K
+ config-$(call config_package,ath9k-common) += ATH9K_COMMON
+@@ -55,13 +52,10 @@ config-$(CONFIG_ATH9K_TX99) += ATH9K_TX99
+ config-$(CONFIG_ATH9K_UBNTHSR) += ATH9K_UBNTHSR
+ config-$(CONFIG_ATH10K_LEDS) += ATH10K_LEDS
+ config-$(CONFIG_ATH10K_THERMAL) += ATH10K_THERMAL
+-config-$(CONFIG_ATH11K_THERMAL) += ATH11K_THERMAL
+ 
+ config-$(call config_package,ath9k-htc) += ATH9K_HTC
+ config-$(call config_package,ath10k) += ATH10K ATH10K_PCI
+ config-$(call config_package,ath10k-smallbuffers) += ATH10K ATH10K_PCI ATH10K_SMALLBUFFERS
+-config-$(call config_package,ath11k) += ATH11K
+-config-$(call config_package,ath11k-pci) += ATH11K_PCI
+ 
+ config-$(call config_package,ath5k) += ATH5K
+ ifdef CONFIG_TARGET_ath25
+@@ -296,43 +290,6 @@ define KernelPackage/ath10k-smallbuffers
+   VARIANT:=smallbuffers
+ endef
+ 
+-define KernelPackage/ath11k
+-  $(call KernelPackage/mac80211/Default)
+-  TITLE:=Qualcomm 802.11ax wireless chipset support (common code)
+-  URL:=https://wireless.wiki.kernel.org/en/users/drivers/ath11k
+-  DEPENDS+= +kmod-ath +@DRIVER_11AC_SUPPORT +@DRIVER_11AX_SUPPORT \
+-  +kmod-crypto-michael-mic +ATH11K_THERMAL:kmod-hwmon-core +ATH11K_THERMAL:kmod-thermal
+-  FILES:=$(PKG_BUILD_DIR)/drivers/soc/qcom/qmi_helpers.ko \
+-  $(PKG_BUILD_DIR)/drivers/net/wireless/ath/ath11k/ath11k.ko
+-endef
+-
+-define KernelPackage/ath11k/description
+-This module adds support for Qualcomm Technologies 802.11ax family of
+-chipsets.
+-endef
+-
+-define KernelPackage/ath11k/config
+-
+-       config ATH11K_THERMAL
+-               bool "Enable thermal sensors and throttling support"
+-               depends on PACKAGE_kmod-ath11k
+-
+-endef
+-
+-define KernelPackage/ath11k-pci
+-  $(call KernelPackage/mac80211/Default)
+-  TITLE:=Qualcomm 802.11ax PCI wireless chipset support
+-  URL:=https://wireless.wiki.kernel.org/en/users/drivers/ath11k
+-  DEPENDS+= @PCI_SUPPORT +kmod-qrtr-mhi +kmod-ath11k
+-  FILES:=$(PKG_BUILD_DIR)/drivers/net/wireless/ath/ath11k/ath11k_pci.ko
+-  AUTOLOAD:=$(call AutoProbe,ath11k_pci)
+-endef
+-
+-define KernelPackage/ath11k-pci/description
+-This module adds support for Qualcomm Technologies 802.11ax family of
+-chipsets with PCI bus.
+-endef
+-
+ define KernelPackage/carl9170
+   $(call KernelPackage/mac80211/Default)
+   TITLE:=Driver for Atheros AR9170 USB sticks
+diff --git a/package/kernel/mac80211/patches/ath11k/0001-wifi-ath11k-stop-tx-queues-immediately-upon-firmware.patch b/package/kernel/mac80211/patches/ath11k/0001-wifi-ath11k-stop-tx-queues-immediately-upon-firmware.patch
+deleted file mode 100644
+index ae8920c62f..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/0001-wifi-ath11k-stop-tx-queues-immediately-upon-firmware.patch
++++ /dev/null
+@@ -1,78 +0,0 @@
+-From 81e60b2dfb2744ab6642c4aa62534b4f711fdc5d Mon Sep 17 00:00:00 2001
+-From: Aditya Kumar Singh <quic_adisi@quicinc.com>
+-Date: Tue, 27 Sep 2022 09:18:54 +0300
+-Subject: [PATCH] wifi: ath11k: stop tx queues immediately upon firmware exit
+-
+-Currently, recovery flag is set immediately upon firmware
+-exit but tx queues are stopped once firmware arrives back
+-and is ready which is during ath11k_core_restart. Once
+-ieee80211 hw restart is completed, tx queues are resumed.
+-If during the time delta between firmware exit and firmware
+-ready, mac80211 send packets, currently ath11k will drop it
+-since recovery flag will be set. But warning prints will
+-come -
+-  "ath11k c000000.wifi: failed to transmit frame -108"
+-
+-If more tx packets are there, this could lead to flooding
+-of above print.
+-
+-However, actually tx queues should be stopped immediately
+-when firmware leaves. This will prevent packets to get
+-dropped when firmware is recovering.
+-
+-Add fix to stop tx queues immediately after firmware exit.
+-
+-Tested-on: IPQ8074 hw2.0 AHB WLAN.HK.2.5.0.1-01100-QCAHKSWPL_SILICONZ-1
+-
+-Signed-off-by: Aditya Kumar Singh <quic_adisi@quicinc.com>
+-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+-Link: https://lore.kernel.org/r/20220923170235.18873-1-quic_adisi@quicinc.com
+----
+- drivers/net/wireless/ath/ath11k/core.c | 5 +----
+- drivers/net/wireless/ath/ath11k/core.h | 1 +
+- drivers/net/wireless/ath/ath11k/qmi.c  | 3 +++
+- 3 files changed, 5 insertions(+), 4 deletions(-)
+-
+---- a/drivers/net/wireless/ath/ath11k/core.c
+-+++ b/drivers/net/wireless/ath/ath11k/core.c
+-@@ -1641,7 +1641,7 @@ static void ath11k_update_11d(struct wor
+- 	}
+- }
+- 
+--static void ath11k_core_pre_reconfigure_recovery(struct ath11k_base *ab)
+-+void ath11k_core_pre_reconfigure_recovery(struct ath11k_base *ab)
+- {
+- 	struct ath11k *ar;
+- 	struct ath11k_pdev *pdev;
+-@@ -1730,9 +1730,6 @@ static void ath11k_core_restart(struct w
+- 	struct ath11k_base *ab = container_of(work, struct ath11k_base, restart_work);
+- 	int ret;
+- 
+--	if (!ab->is_reset)
+--		ath11k_core_pre_reconfigure_recovery(ab);
+--
+- 	ret = ath11k_core_reconfigure_on_crash(ab);
+- 	if (ret) {
+- 		ath11k_err(ab, "failed to reconfigure driver on crash recovery\n");
+---- a/drivers/net/wireless/ath/ath11k/core.h
+-+++ b/drivers/net/wireless/ath/ath11k/core.h
+-@@ -1157,6 +1157,7 @@ int ath11k_core_check_smbios(struct ath1
+- void ath11k_core_halt(struct ath11k *ar);
+- int ath11k_core_resume(struct ath11k_base *ab);
+- int ath11k_core_suspend(struct ath11k_base *ab);
+-+void ath11k_core_pre_reconfigure_recovery(struct ath11k_base *ab);
+- 
+- const struct firmware *ath11k_core_firmware_request(struct ath11k_base *ab,
+- 						    const char *filename);
+---- a/drivers/net/wireless/ath/ath11k/qmi.c
+-+++ b/drivers/net/wireless/ath/ath11k/qmi.c
+-@@ -3158,6 +3158,9 @@ static void ath11k_qmi_driver_event_work
+- 		case ATH11K_QMI_EVENT_SERVER_EXIT:
+- 			set_bit(ATH11K_FLAG_CRASH_FLUSH, &ab->dev_flags);
+- 			set_bit(ATH11K_FLAG_RECOVERY, &ab->dev_flags);
+-+
+-+			if (!ab->is_reset)
+-+				ath11k_core_pre_reconfigure_recovery(ab);
+- 			break;
+- 		case ATH11K_QMI_EVENT_REQUEST_MEM:
+- 			ret = ath11k_qmi_event_mem_request(qmi);
+diff --git a/package/kernel/mac80211/patches/ath11k/0002-wifi-ath11k-Don-t-exit-on-wakeup-failure.patch b/package/kernel/mac80211/patches/ath11k/0002-wifi-ath11k-Don-t-exit-on-wakeup-failure.patch
+deleted file mode 100644
+index 47385e0458..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/0002-wifi-ath11k-Don-t-exit-on-wakeup-failure.patch
++++ /dev/null
+@@ -1,45 +0,0 @@
+-From 45d2e268369b0c768d5a644f319758bcfd370521 Mon Sep 17 00:00:00 2001
+-From: Baochen Qiang <quic_bqiang@quicinc.com>
+-Date: Wed, 28 Sep 2022 09:51:40 +0800
+-Subject: [PATCH] wifi: ath11k: Don't exit on wakeup failure
+-
+-Currently, ath11k_pcic_read() returns an error if wakeup()
+-fails, this makes firmware crash debug quite hard because we can
+-get nothing.
+-
+-Change to go ahead on wakeup failure, in that case we still may
+-get something valid to check. There should be no mislead due
+-to incorrect content because we are aware of the failure with the
+-log printed.
+-
+-Tested-on: WCN6855 hw2.0 PCI WLAN.HSP.1.1-01720.1-QCAHSPSWPL_V1_V2_SILICONZ_LITE-1
+-
+-Signed-off-by: Baochen Qiang <quic_bqiang@quicinc.com>
+-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+-Link: https://lore.kernel.org/r/20220928015140.5431-1-quic_bqiang@quicinc.com
+----
+- drivers/net/wireless/ath/ath11k/pcic.c | 13 ++++++++++---
+- 1 file changed, 10 insertions(+), 3 deletions(-)
+-
+---- a/drivers/net/wireless/ath/ath11k/pcic.c
+-+++ b/drivers/net/wireless/ath/ath11k/pcic.c
+-@@ -218,9 +218,16 @@ int ath11k_pcic_read(struct ath11k_base
+- 	if (wakeup_required && ab->pci.ops->wakeup) {
+- 		ret = ab->pci.ops->wakeup(ab);
+- 		if (ret) {
+--			ath11k_warn(ab, "failed to wakeup for read from 0x%x: %d\n",
+--				    start, ret);
+--			return ret;
+-+			ath11k_warn(ab,
+-+				    "wakeup failed, data may be invalid: %d",
+-+				    ret);
+-+			/* Even though wakeup() failed, continue processing rather
+-+			 * than returning because some parts of the data may still
+-+			 * be valid and useful in some cases, e.g. could give us
+-+			 * some clues on firmware crash.
+-+			 * Mislead due to invalid data could be avoided because we
+-+			 * are aware of the wakeup failure.
+-+			 */
+- 		}
+- 	}
+- 
+diff --git a/package/kernel/mac80211/patches/ath11k/0003-wifi-ath11k-fix-warning-in-dma_free_coherent-of-memo.patch b/package/kernel/mac80211/patches/ath11k/0003-wifi-ath11k-fix-warning-in-dma_free_coherent-of-memo.patch
+deleted file mode 100644
+index 661f4bbfbf..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/0003-wifi-ath11k-fix-warning-in-dma_free_coherent-of-memo.patch
++++ /dev/null
+@@ -1,139 +0,0 @@
+-From f74878433d5ade360447da5d92e9c2e535780d80 Mon Sep 17 00:00:00 2001
+-From: Wen Gong <quic_wgong@quicinc.com>
+-Date: Wed, 28 Sep 2022 03:38:32 -0400
+-Subject: [PATCH] wifi: ath11k: fix warning in dma_free_coherent() of memory
+- chunks while recovery
+-
+-Commit 26f3a021b37c ("ath11k: allocate smaller chunks of memory for
+-firmware") and commit f6f92968e1e5 ("ath11k: qmi: try to allocate a
+-big block of DMA memory first") change ath11k to allocate the memory
+-chunks for target twice while wlan load. It fails for the 1st time
+-because of large memory and then changed to allocate many small chunks
+-for the 2nd time sometimes as below log.
+-
+-1st time failed:
+-[10411.640620] ath11k_pci 0000:05:00.0: qmi firmware request memory request
+-[10411.640625] ath11k_pci 0000:05:00.0: qmi mem seg type 1 size 6881280
+-[10411.640630] ath11k_pci 0000:05:00.0: qmi mem seg type 4 size 3784704
+-[10411.640658] ath11k_pci 0000:05:00.0: qmi dma allocation failed (6881280 B type 1), will try later with small size
+-[10411.640671] ath11k_pci 0000:05:00.0: qmi delays mem_request 2
+-[10411.640677] ath11k_pci 0000:05:00.0: qmi respond memory request delayed 1
+-2nd time success:
+-[10411.642004] ath11k_pci 0000:05:00.0: qmi firmware request memory request
+-[10411.642008] ath11k_pci 0000:05:00.0: qmi mem seg type 1 size 524288
+-[10411.642012] ath11k_pci 0000:05:00.0: qmi mem seg type 1 size 524288
+-[10411.642014] ath11k_pci 0000:05:00.0: qmi mem seg type 1 size 524288
+-[10411.642016] ath11k_pci 0000:05:00.0: qmi mem seg type 1 size 524288
+-[10411.642018] ath11k_pci 0000:05:00.0: qmi mem seg type 1 size 524288
+-[10411.642020] ath11k_pci 0000:05:00.0: qmi mem seg type 1 size 524288
+-[10411.642022] ath11k_pci 0000:05:00.0: qmi mem seg type 1 size 524288
+-[10411.642024] ath11k_pci 0000:05:00.0: qmi mem seg type 1 size 524288
+-[10411.642027] ath11k_pci 0000:05:00.0: qmi mem seg type 1 size 524288
+-[10411.642029] ath11k_pci 0000:05:00.0: qmi mem seg type 1 size 524288
+-[10411.642031] ath11k_pci 0000:05:00.0: qmi mem seg type 1 size 458752
+-[10411.642033] ath11k_pci 0000:05:00.0: qmi mem seg type 1 size 131072
+-[10411.642035] ath11k_pci 0000:05:00.0: qmi mem seg type 4 size 524288
+-[10411.642037] ath11k_pci 0000:05:00.0: qmi mem seg type 4 size 524288
+-[10411.642039] ath11k_pci 0000:05:00.0: qmi mem seg type 4 size 524288
+-[10411.642041] ath11k_pci 0000:05:00.0: qmi mem seg type 4 size 524288
+-[10411.642043] ath11k_pci 0000:05:00.0: qmi mem seg type 4 size 524288
+-[10411.642045] ath11k_pci 0000:05:00.0: qmi mem seg type 4 size 524288
+-[10411.642047] ath11k_pci 0000:05:00.0: qmi mem seg type 4 size 491520
+-[10411.642049] ath11k_pci 0000:05:00.0: qmi mem seg type 1 size 524288
+-
+-And then commit 5962f370ce41 ("ath11k: Reuse the available memory after
+-firmware reload") skip the ath11k_qmi_free_resource() which frees the
+-memory chunks while recovery, after that, when run recovery test on
+-WCN6855, a warning happened every time as below and finally leads fail
+-for recovery.
+-
+-[  159.570318] BUG: Bad page state in process kworker/u16:5  pfn:33300
+-[  159.570320] page:0000000096ffdbb9 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x33300
+-[  159.570324] flags: 0xfffffc0000000(node=0|zone=1|lastcpupid=0x1fffff)
+-[  159.570329] raw: 000fffffc0000000 0000000000000000 dead000000000122 0000000000000000
+-[  159.570332] raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+-[  159.570334] page dumped because: nonzero _refcount
+-[  159.570440]  firewire_ohci syscopyarea sysfillrect psmouse sdhci_pci ahci sysimgblt firewire_core fb_sys_fops libahci crc_itu_t cqhci drm sdhci e1000e wmi video
+-[  159.570460] CPU: 2 PID: 217 Comm: kworker/u16:5 Kdump: loaded Tainted: G    B             5.19.0-rc1-wt-ath+ #3
+-[  159.570465] Hardware name: LENOVO 418065C/418065C, BIOS 83ET63WW (1.33 ) 07/29/2011
+-[  159.570467] Workqueue: qmi_msg_handler qmi_data_ready_work [qmi_helpers]
+-[  159.570475] Call Trace:
+-[  159.570476]  <TASK>
+-[  159.570478]  dump_stack_lvl+0x49/0x5f
+-[  159.570486]  dump_stack+0x10/0x12
+-[  159.570493]  bad_page+0xab/0xf0
+-[  159.570502]  check_free_page_bad+0x66/0x70
+-[  159.570511]  __free_pages_ok+0x530/0x9a0
+-[  159.570517]  ? __dev_printk+0x58/0x6b
+-[  159.570525]  ? _dev_printk+0x56/0x72
+-[  159.570534]  ? qmi_decode+0x119/0x470 [qmi_helpers]
+-[  159.570543]  __free_pages+0x91/0xd0
+-[  159.570548]  dma_free_contiguous+0x50/0x60
+-[  159.570556]  dma_direct_free+0xe5/0x140
+-[  159.570564]  dma_free_attrs+0x35/0x50
+-[  159.570570]  ath11k_qmi_msg_mem_request_cb+0x2ae/0x3c0 [ath11k]
+-[  159.570620]  qmi_invoke_handler+0xac/0xe0 [qmi_helpers]
+-[  159.570630]  qmi_handle_message+0x6d/0x180 [qmi_helpers]
+-[  159.570643]  qmi_data_ready_work+0x2ca/0x440 [qmi_helpers]
+-[  159.570656]  process_one_work+0x227/0x440
+-[  159.570667]  worker_thread+0x31/0x3d0
+-[  159.570676]  ? process_one_work+0x440/0x440
+-[  159.570685]  kthread+0xfe/0x130
+-[  159.570692]  ? kthread_complete_and_exit+0x20/0x20
+-[  159.570701]  ret_from_fork+0x22/0x30
+-[  159.570712]  </TASK>
+-
+-The reason is because when wlan start to recovery, the type, size and
+-count is not same for the 1st and 2nd QMI_WLFW_REQUEST_MEM_IND message,
+-Then it leads the parameter size is not correct for the dma_free_coherent().
+-For the chunk[1], the actual dma size is 524288 which allocate in the
+-2nd time of the initial wlan load phase, and the size which pass to
+-dma_free_coherent() is 3784704 which is got in the 1st time of recovery
+-phase, then warning above happened.
+-
+-Change to use prev_size of struct target_mem_chunk for the paramter of
+-dma_free_coherent() since prev_size is the real size of last load/recovery.
+-Also change to check both type and size of struct target_mem_chunk to
+-reuse the memory to avoid mismatch buffer size for target. Then the
+-warning disappear and recovery success. When the 1st QMI_WLFW_REQUEST_MEM_IND
+-for recovery arrived, the trunk[0] is freed in ath11k_qmi_alloc_target_mem_chunk()
+-and then dma_alloc_coherent() failed caused by large size, and then
+-trunk[1] is freed in ath11k_qmi_free_target_mem_chunk(), the left 18
+-trunks will be reuse for the 2nd QMI_WLFW_REQUEST_MEM_IND message.
+-
+-Tested-on: WCN6855 hw2.0 PCI WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3
+-
+-Fixes: 5962f370ce41 ("ath11k: Reuse the available memory after firmware reload")
+-Signed-off-by: Wen Gong <quic_wgong@quicinc.com>
+-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+-Link: https://lore.kernel.org/r/20220928073832.16251-1-quic_wgong@quicinc.com
+----
+- drivers/net/wireless/ath/ath11k/qmi.c | 6 +++---
+- 1 file changed, 3 insertions(+), 3 deletions(-)
+-
+---- a/drivers/net/wireless/ath/ath11k/qmi.c
+-+++ b/drivers/net/wireless/ath/ath11k/qmi.c
+-@@ -1961,7 +1961,7 @@ static void ath11k_qmi_free_target_mem_c
+- 			continue;
+- 
+- 		dma_free_coherent(ab->dev,
+--				  ab->qmi.target_mem[i].size,
+-+				  ab->qmi.target_mem[i].prev_size,
+- 				  ab->qmi.target_mem[i].vaddr,
+- 				  ab->qmi.target_mem[i].paddr);
+- 		ab->qmi.target_mem[i].vaddr = NULL;
+-@@ -1982,12 +1982,12 @@ static int ath11k_qmi_alloc_target_mem_c
+- 		 * in such case, no need to allocate memory for FW again.
+- 		 */
+- 		if (chunk->vaddr) {
+--			if (chunk->prev_type == chunk->type ||
+-+			if (chunk->prev_type == chunk->type &&
+- 			    chunk->prev_size == chunk->size)
+- 				continue;
+- 
+- 			/* cannot reuse the existing chunk */
+--			dma_free_coherent(ab->dev, chunk->size,
+-+			dma_free_coherent(ab->dev, chunk->prev_size,
+- 					  chunk->vaddr, chunk->paddr);
+- 			chunk->vaddr = NULL;
+- 		}
+diff --git a/package/kernel/mac80211/patches/ath11k/0005-wifi-ath11k-Fix-spelling-mistake-chnange-change.patch b/package/kernel/mac80211/patches/ath11k/0005-wifi-ath11k-Fix-spelling-mistake-chnange-change.patch
+deleted file mode 100644
+index 4b52252ef3..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/0005-wifi-ath11k-Fix-spelling-mistake-chnange-change.patch
++++ /dev/null
+@@ -1,25 +0,0 @@
+-From a797f479bf3e02c6d179c2e6aeace7f9b22b0acd Mon Sep 17 00:00:00 2001
+-From: Colin Ian King <colin.i.king@gmail.com>
+-Date: Wed, 28 Sep 2022 15:38:34 +0100
+-Subject: [PATCH] wifi: ath11k: Fix spelling mistake "chnange" -> "change"
+-
+-There is a spelling mistake in an ath11k_dbg debug message. Fix it.
+-
+-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+-Link: https://lore.kernel.org/r/20220928143834.35189-1-colin.i.king@gmail.com
+----
+- drivers/net/wireless/ath/ath11k/wmi.c | 2 +-
+- 1 file changed, 1 insertion(+), 1 deletion(-)
+-
+---- a/drivers/net/wireless/ath/ath11k/wmi.c
+-+++ b/drivers/net/wireless/ath/ath11k/wmi.c
+-@@ -6829,7 +6829,7 @@ static void ath11k_wmi_event_peer_sta_ps
+- 	}
+- 
+- 	ath11k_dbg(ab, ATH11K_DBG_WMI,
+--		   "peer sta ps chnange ev addr %pM state %u sup_bitmap %x ps_valid %u ts %u\n",
+-+		   "peer sta ps change ev addr %pM state %u sup_bitmap %x ps_valid %u ts %u\n",
+- 		   ev->peer_macaddr.addr, ev->peer_ps_state,
+- 		   ev->ps_supported_bitmap, ev->peer_ps_valid,
+- 		   ev->peer_ps_timestamp);
+diff --git a/package/kernel/mac80211/patches/ath11k/0006-wifi-ath11k-fix-firmware-assert-during-bandwidth-cha.patch b/package/kernel/mac80211/patches/ath11k/0006-wifi-ath11k-fix-firmware-assert-during-bandwidth-cha.patch
+deleted file mode 100644
+index f4fedb46cc..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/0006-wifi-ath11k-fix-firmware-assert-during-bandwidth-cha.patch
++++ /dev/null
+@@ -1,225 +0,0 @@
+-From 3ff51d7416ee1ea2d771051a0ffa1ec8be054768 Mon Sep 17 00:00:00 2001
+-From: Aditya Kumar Singh <quic_adisi@quicinc.com>
+-Date: Wed, 5 Oct 2022 15:24:30 +0530
+-Subject: [PATCH 6/9] wifi: ath11k: fix firmware assert during bandwidth change
+- for peer sta
+-
+-Currently, ath11k sends peer assoc command for each peer to
+-firmware when bandwidth changes. Peer assoc command is a
+-bulky command and if many clients are connected, this could
+-lead to firmware buffer getting overflowed leading to a firmware
+-assert.
+-
+-However, during bandwidth change, only phymode and bandwidth
+-also can be updated by WMI set peer param command. This makes
+-the overall command light when compared to peer assoc and for
+-multi-client cases, firmware buffer overflow also does not
+-occur.
+-
+-Remove sending peer assoc command during sta bandwidth change
+-and instead add sending WMI set peer param command for phymode
+-and bandwidth.
+-
+-Tested-on: QCN9074 hw1.0 PCI WLAN.HK.2.5.0.1-01100-QCAHKSWPL_SILICONZ-1
+-
+-Fixes: f187fe8e3bc65 ("ath11k: fix firmware crash during channel switch")
+-Signed-off-by: Aditya Kumar Singh <quic_adisi@quicinc.com>
+-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+-Link: https://lore.kernel.org/r/20221005095430.19890-1-quic_adisi@quicinc.com
+----
+- drivers/net/wireless/ath/ath11k/core.h |   2 +
+- drivers/net/wireless/ath/ath11k/mac.c  | 122 +++++++++++++++++--------
+- 2 files changed, 87 insertions(+), 37 deletions(-)
+-
+---- a/drivers/net/wireless/ath/ath11k/core.h
+-+++ b/drivers/net/wireless/ath/ath11k/core.h
+-@@ -505,6 +505,8 @@ struct ath11k_sta {
+- 	u64 ps_start_jiffies;
+- 	u64 ps_total_duration;
+- 	bool peer_current_ps_valid;
+-+
+-+	u32 bw_prev;
+- };
+- 
+- #define ATH11K_MIN_5G_FREQ 4150
+---- a/drivers/net/wireless/ath/ath11k/mac.c
+-+++ b/drivers/net/wireless/ath/ath11k/mac.c
+-@@ -4215,10 +4215,11 @@ static void ath11k_sta_rc_update_wk(stru
+- 	const u8 *ht_mcs_mask;
+- 	const u16 *vht_mcs_mask;
+- 	const u16 *he_mcs_mask;
+--	u32 changed, bw, nss, smps;
+-+	u32 changed, bw, nss, smps, bw_prev;
+- 	int err, num_vht_rates, num_he_rates;
+- 	const struct cfg80211_bitrate_mask *mask;
+- 	struct peer_assoc_params peer_arg;
+-+	enum wmi_phy_mode peer_phymode;
+- 
+- 	arsta = container_of(wk, struct ath11k_sta, update_wk);
+- 	sta = container_of((void *)arsta, struct ieee80211_sta, drv_priv);
+-@@ -4239,6 +4240,7 @@ static void ath11k_sta_rc_update_wk(stru
+- 	arsta->changed = 0;
+- 
+- 	bw = arsta->bw;
+-+	bw_prev = arsta->bw_prev;
+- 	nss = arsta->nss;
+- 	smps = arsta->smps;
+- 
+-@@ -4252,26 +4254,57 @@ static void ath11k_sta_rc_update_wk(stru
+- 			   ath11k_mac_max_he_nss(he_mcs_mask)));
+- 
+- 	if (changed & IEEE80211_RC_BW_CHANGED) {
+--		/* Send peer assoc command before set peer bandwidth param to
+--		 * avoid the mismatch between the peer phymode and the peer
+--		 * bandwidth.
+--		 */
+--		ath11k_peer_assoc_prepare(ar, arvif->vif, sta, &peer_arg, true);
+-+		/* Get the peer phymode */
+-+		ath11k_peer_assoc_h_phymode(ar, arvif->vif, sta, &peer_arg);
+-+		peer_phymode = peer_arg.peer_phymode;
+-+
+-+		ath11k_dbg(ar->ab, ATH11K_DBG_MAC, "mac update sta %pM peer bw %d phymode %d\n",
+-+			   sta->addr, bw, peer_phymode);
+-+
+-+		if (bw > bw_prev) {
+-+			/* BW is upgraded. In this case we send WMI_PEER_PHYMODE
+-+			 * followed by WMI_PEER_CHWIDTH
+-+			 */
+-+			ath11k_dbg(ar->ab, ATH11K_DBG_MAC, "mac BW upgrade for sta %pM new BW %d, old BW %d\n",
+-+				   sta->addr, bw, bw_prev);
+-+
+-+			err = ath11k_wmi_set_peer_param(ar, sta->addr, arvif->vdev_id,
+-+							WMI_PEER_PHYMODE, peer_phymode);
+-+
+-+			if (err) {
+-+				ath11k_warn(ar->ab, "failed to update STA %pM peer phymode %d: %d\n",
+-+					    sta->addr, peer_phymode, err);
+-+				goto err_rc_bw_changed;
+-+			}
+- 
+--		peer_arg.is_assoc = false;
+--		err = ath11k_wmi_send_peer_assoc_cmd(ar, &peer_arg);
+--		if (err) {
+--			ath11k_warn(ar->ab, "failed to send peer assoc for STA %pM vdev %i: %d\n",
+--				    sta->addr, arvif->vdev_id, err);
+--		} else if (wait_for_completion_timeout(&ar->peer_assoc_done, 1 * HZ)) {
+- 			err = ath11k_wmi_set_peer_param(ar, sta->addr, arvif->vdev_id,
+- 							WMI_PEER_CHWIDTH, bw);
+-+
+- 			if (err)
+- 				ath11k_warn(ar->ab, "failed to update STA %pM peer bw %d: %d\n",
+- 					    sta->addr, bw, err);
+- 		} else {
+--			ath11k_warn(ar->ab, "failed to get peer assoc conf event for %pM vdev %i\n",
+--				    sta->addr, arvif->vdev_id);
+-+			/* BW is downgraded. In this case we send WMI_PEER_CHWIDTH
+-+			 * followed by WMI_PEER_PHYMODE
+-+			 */
+-+			ath11k_dbg(ar->ab, ATH11K_DBG_MAC, "mac BW downgrade for sta %pM new BW %d,old BW %d\n",
+-+				   sta->addr, bw, bw_prev);
+-+
+-+			err = ath11k_wmi_set_peer_param(ar, sta->addr, arvif->vdev_id,
+-+							WMI_PEER_CHWIDTH, bw);
+-+
+-+			if (err) {
+-+				ath11k_warn(ar->ab, "failed to update STA %pM peer bw %d: %d\n",
+-+					    sta->addr, bw, err);
+-+				goto err_rc_bw_changed;
+-+			}
+-+
+-+			err = ath11k_wmi_set_peer_param(ar, sta->addr, arvif->vdev_id,
+-+							WMI_PEER_PHYMODE, peer_phymode);
+-+
+-+			if (err)
+-+				ath11k_warn(ar->ab, "failed to update STA %pM peer phymode %d: %d\n",
+-+					    sta->addr, peer_phymode, err);
+- 		}
+- 	}
+- 
+-@@ -4352,6 +4385,7 @@ static void ath11k_sta_rc_update_wk(stru
+- 		}
+- 	}
+- 
+-+err_rc_bw_changed:
+- 	mutex_unlock(&ar->conf_mutex);
+- }
+- 
+-@@ -4505,6 +4539,34 @@ exit:
+- 	return ret;
+- }
+- 
+-+static u32 ath11k_mac_ieee80211_sta_bw_to_wmi(struct ath11k *ar,
+-+					      struct ieee80211_sta *sta)
+-+{
+-+	u32 bw = WMI_PEER_CHWIDTH_20MHZ;
+-+
+-+	switch (sta->deflink.bandwidth) {
+-+	case IEEE80211_STA_RX_BW_20:
+-+		bw = WMI_PEER_CHWIDTH_20MHZ;
+-+		break;
+-+	case IEEE80211_STA_RX_BW_40:
+-+		bw = WMI_PEER_CHWIDTH_40MHZ;
+-+		break;
+-+	case IEEE80211_STA_RX_BW_80:
+-+		bw = WMI_PEER_CHWIDTH_80MHZ;
+-+		break;
+-+	case IEEE80211_STA_RX_BW_160:
+-+		bw = WMI_PEER_CHWIDTH_160MHZ;
+-+		break;
+-+	default:
+-+		ath11k_warn(ar->ab, "Invalid bandwidth %d for %pM\n",
+-+			    sta->deflink.bandwidth, sta->addr);
+-+		bw = WMI_PEER_CHWIDTH_20MHZ;
+-+		break;
+-+	}
+-+
+-+	return bw;
+-+}
+-+
+- static int ath11k_mac_op_sta_state(struct ieee80211_hw *hw,
+- 				   struct ieee80211_vif *vif,
+- 				   struct ieee80211_sta *sta,
+-@@ -4590,6 +4652,12 @@ static int ath11k_mac_op_sta_state(struc
+- 		if (ret)
+- 			ath11k_warn(ar->ab, "Failed to associate station: %pM\n",
+- 				    sta->addr);
+-+
+-+		spin_lock_bh(&ar->data_lock);
+-+		/* Set arsta bw and prev bw */
+-+		arsta->bw = ath11k_mac_ieee80211_sta_bw_to_wmi(ar, sta);
+-+		arsta->bw_prev = arsta->bw;
+-+		spin_unlock_bh(&ar->data_lock);
+- 	} else if (old_state == IEEE80211_STA_ASSOC &&
+- 		   new_state == IEEE80211_STA_AUTHORIZED) {
+- 		spin_lock_bh(&ar->ab->base_lock);
+-@@ -4713,28 +4781,8 @@ static void ath11k_mac_op_sta_rc_update(
+- 	spin_lock_bh(&ar->data_lock);
+- 
+- 	if (changed & IEEE80211_RC_BW_CHANGED) {
+--		bw = WMI_PEER_CHWIDTH_20MHZ;
+--
+--		switch (sta->deflink.bandwidth) {
+--		case IEEE80211_STA_RX_BW_20:
+--			bw = WMI_PEER_CHWIDTH_20MHZ;
+--			break;
+--		case IEEE80211_STA_RX_BW_40:
+--			bw = WMI_PEER_CHWIDTH_40MHZ;
+--			break;
+--		case IEEE80211_STA_RX_BW_80:
+--			bw = WMI_PEER_CHWIDTH_80MHZ;
+--			break;
+--		case IEEE80211_STA_RX_BW_160:
+--			bw = WMI_PEER_CHWIDTH_160MHZ;
+--			break;
+--		default:
+--			ath11k_warn(ar->ab, "Invalid bandwidth %d in rc update for %pM\n",
+--				    sta->deflink.bandwidth, sta->addr);
+--			bw = WMI_PEER_CHWIDTH_20MHZ;
+--			break;
+--		}
+--
+-+		bw = ath11k_mac_ieee80211_sta_bw_to_wmi(ar, sta);
+-+		arsta->bw_prev = arsta->bw;
+- 		arsta->bw = bw;
+- 	}
+- 
+diff --git a/package/kernel/mac80211/patches/ath11k/0007-wifi-ath11k-suppress-add-interface-error.patch b/package/kernel/mac80211/patches/ath11k/0007-wifi-ath11k-suppress-add-interface-error.patch
+deleted file mode 100644
+index fbef0abb8d..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/0007-wifi-ath11k-suppress-add-interface-error.patch
++++ /dev/null
+@@ -1,52 +0,0 @@
+-From 638b26652b0438563a76ec90014c8cba34db982b Mon Sep 17 00:00:00 2001
+-From: Karthikeyan Periyasamy <quic_periyasa@quicinc.com>
+-Date: Thu, 6 Oct 2022 06:28:42 +0530
+-Subject: [PATCH 7/9] wifi: ath11k: suppress add interface error
+-
+-In the VIF (other than monitor type) creation request, we should not
+-throw the error code when the monitor VIF creation fails, since the
+-actual VIF creation succeeds. If we throw the error code from driver
+-then the actual VIF creation get fail. So suppress the monitor VIF
+-creation error by throwing warning message instead of error code.
+-
+-Tested-on: QCN9074 hw1.0 PCI WLAN.HK.2.6.0.1-00760-QCAHKSWPL_SILICONZ-1
+-
+-Signed-off-by: Karthikeyan Periyasamy <quic_periyasa@quicinc.com>
+-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+-Link: https://lore.kernel.org/r/20221006005842.8599-1-quic_periyasa@quicinc.com
+----
+- drivers/net/wireless/ath/ath11k/mac.c | 9 +++------
+- 1 file changed, 3 insertions(+), 6 deletions(-)
+-
+---- a/drivers/net/wireless/ath/ath11k/mac.c
+-+++ b/drivers/net/wireless/ath/ath11k/mac.c
+-@@ -6421,18 +6421,16 @@ static int ath11k_mac_op_add_interface(s
+- 
+- 	ath11k_dp_vdev_tx_attach(ar, arvif);
+- 
+-+	ath11k_debugfs_add_interface(arvif);
+-+
+- 	if (vif->type != NL80211_IFTYPE_MONITOR &&
+- 	    test_bit(ATH11K_FLAG_MONITOR_CONF_ENABLED, &ar->monitor_flags)) {
+- 		ret = ath11k_mac_monitor_vdev_create(ar);
+--		if (ret) {
+-+		if (ret)
+- 			ath11k_warn(ar->ab, "failed to create monitor vdev during add interface: %d",
+- 				    ret);
+--			goto err_peer_del;
+--		}
+- 	}
+- 
+--	ath11k_debugfs_add_interface(arvif);
+--
+- 	mutex_unlock(&ar->conf_mutex);
+- 
+- 	return 0;
+-@@ -6457,7 +6455,6 @@ err_vdev_del:
+- 	spin_unlock_bh(&ar->data_lock);
+- 
+- err:
+--	ath11k_debugfs_remove_interface(arvif);
+- 	mutex_unlock(&ar->conf_mutex);
+- 
+- 	return ret;
+diff --git a/package/kernel/mac80211/patches/ath11k/0008-wifi-ath11k-add-support-to-configure-channel-dwell-t.patch b/package/kernel/mac80211/patches/ath11k/0008-wifi-ath11k-add-support-to-configure-channel-dwell-t.patch
+deleted file mode 100644
+index d0b19fe59f..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/0008-wifi-ath11k-add-support-to-configure-channel-dwell-t.patch
++++ /dev/null
+@@ -1,102 +0,0 @@
+-From c362daa213cdeb0a9e7c2ed84849544c24505720 Mon Sep 17 00:00:00 2001
+-From: Manikanta Pubbisetty <quic_mpubbise@quicinc.com>
+-Date: Fri, 7 Oct 2022 10:41:30 +0530
+-Subject: [PATCH 8/9] wifi: ath11k: add support to configure channel dwell time
+-
+-Add support to configure channel dwell time during scan.
+-Dwell time help to stay on the channel for a specified duration
+-during scan and aid userspace in finding WiFi networks. Very
+-useful in passive scans where longer dwell times are needed
+-to find the WiFi networks.
+-
+-Configure channel dwell time from duration of the scan request
+-received from mac80211 when the duration is non-zero. When the
+-scan request does not have duration value, use the default ones,
+-the current implementation.
+-
+-Advertise corresponding feature flag NL80211_EXT_FEATURE_SET_SCAN_DWELL
+-to enable the feature.
+-
+-Change is applicable for all ath11k hardware.
+-
+-Tested-on: WCN6750 hw1.0 AHB WLAN.MSL.1.0.1-00887-QCAMSLSWPLZ-1
+-
+-Signed-off-by: Manikanta Pubbisetty <quic_mpubbise@quicinc.com>
+-Reviewed-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+-Link: https://lore.kernel.org/r/20221007051130.6067-1-quic_mpubbise@quicinc.com
+----
+- drivers/net/wireless/ath/ath11k/mac.c | 33 +++++++++++++++++++++++----
+- 1 file changed, 29 insertions(+), 4 deletions(-)
+-
+---- a/drivers/net/wireless/ath/ath11k/mac.c
+-+++ b/drivers/net/wireless/ath/ath11k/mac.c
+-@@ -241,7 +241,10 @@ const struct htt_rx_ring_tlv_filter ath1
+- #define ath11k_a_rates (ath11k_legacy_rates + 4)
+- #define ath11k_a_rates_size (ARRAY_SIZE(ath11k_legacy_rates) - 4)
+- 
+--#define ATH11K_MAC_SCAN_TIMEOUT_MSECS 200 /* in msecs */
+-+#define ATH11K_MAC_SCAN_CMD_EVT_OVERHEAD		200 /* in msecs */
+-+
+-+/* Overhead due to the processing of channel switch events from FW */
+-+#define ATH11K_SCAN_CHANNEL_SWITCH_WMI_EVT_OVERHEAD	10 /* in msecs */
+- 
+- static const u32 ath11k_smps_map[] = {
+- 	[WLAN_HT_CAP_SM_PS_STATIC] = WMI_PEER_SMPS_STATIC,
+-@@ -3612,6 +3615,7 @@ static int ath11k_mac_op_hw_scan(struct
+- 	struct scan_req_params arg;
+- 	int ret = 0;
+- 	int i;
+-+	u32 scan_timeout;
+- 
+- 	mutex_lock(&ar->conf_mutex);
+- 
+-@@ -3681,6 +3685,26 @@ static int ath11k_mac_op_hw_scan(struct
+- 		ether_addr_copy(arg.mac_mask.addr, req->mac_addr_mask);
+- 	}
+- 
+-+	/* if duration is set, default dwell times will be overwritten */
+-+	if (req->duration) {
+-+		arg.dwell_time_active = req->duration;
+-+		arg.dwell_time_active_2g = req->duration;
+-+		arg.dwell_time_active_6g = req->duration;
+-+		arg.dwell_time_passive = req->duration;
+-+		arg.dwell_time_passive_6g = req->duration;
+-+		arg.burst_duration = req->duration;
+-+
+-+		scan_timeout = min_t(u32, arg.max_rest_time *
+-+				(arg.num_chan - 1) + (req->duration +
+-+				ATH11K_SCAN_CHANNEL_SWITCH_WMI_EVT_OVERHEAD) *
+-+				arg.num_chan, arg.max_scan_time);
+-+	} else {
+-+		scan_timeout = arg.max_scan_time;
+-+	}
+-+
+-+	/* Add a margin to account for event/command processing */
+-+	scan_timeout += ATH11K_MAC_SCAN_CMD_EVT_OVERHEAD;
+-+
+- 	ret = ath11k_start_scan(ar, &arg);
+- 	if (ret) {
+- 		ath11k_warn(ar->ab, "failed to start hw scan: %d\n", ret);
+-@@ -3689,10 +3713,8 @@ static int ath11k_mac_op_hw_scan(struct
+- 		spin_unlock_bh(&ar->data_lock);
+- 	}
+- 
+--	/* Add a 200ms margin to account for event/command processing */
+- 	ieee80211_queue_delayed_work(ar->hw, &ar->scan.timeout,
+--				     msecs_to_jiffies(arg.max_scan_time +
+--						      ATH11K_MAC_SCAN_TIMEOUT_MSECS));
+-+				     msecs_to_jiffies(scan_timeout));
+- 
+- exit:
+- 	kfree(arg.chan_list);
+-@@ -9060,6 +9082,9 @@ static int __ath11k_mac_register(struct
+- 				      NL80211_EXT_FEATURE_UNSOL_BCAST_PROBE_RESP);
+- 	}
+- 
+-+	wiphy_ext_feature_set(ar->hw->wiphy,
+-+			      NL80211_EXT_FEATURE_SET_SCAN_DWELL);
+-+
+- 	ath11k_reg_init(ar);
+- 
+- 	if (!test_bit(ATH11K_FLAG_RAW_MODE, &ab->dev_flags)) {
+diff --git a/package/kernel/mac80211/patches/ath11k/0009-wifi-ath11k-Send-PME-message-during-wakeup-from-D3co.patch b/package/kernel/mac80211/patches/ath11k/0009-wifi-ath11k-Send-PME-message-during-wakeup-from-D3co.patch
+deleted file mode 100644
+index 1e04c974fe..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/0009-wifi-ath11k-Send-PME-message-during-wakeup-from-D3co.patch
++++ /dev/null
+@@ -1,39 +0,0 @@
+-From 3f9b09ccf7d5f23066b02881a737bee42def9d1a Mon Sep 17 00:00:00 2001
+-From: Baochen Qiang <quic_bqiang@quicinc.com>
+-Date: Mon, 10 Oct 2022 11:32:37 +0800
+-Subject: [PATCH 9/9] wifi: ath11k: Send PME message during wakeup from D3cold
+-
+-We are seeing system stuck on some specific platforms due to
+-WLAN chip fails to wakeup from D3cold state.
+-
+-With this flag, firmware will send PME message during wakeup
+-and this issue is gone.
+-
+-Tested-on: WCN6855 hw2.0 PCI WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3
+-
+-Signed-off-by: Baochen Qiang <quic_bqiang@quicinc.com>
+-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+-Link: https://lore.kernel.org/r/20221010033237.415478-1-quic_bqiang@quicinc.com
+----
+- drivers/net/wireless/ath/ath11k/qmi.c | 3 +++
+- 1 file changed, 3 insertions(+)
+-
+---- a/drivers/net/wireless/ath/ath11k/qmi.c
+-+++ b/drivers/net/wireless/ath/ath11k/qmi.c
+-@@ -19,6 +19,7 @@
+- #define SLEEP_CLOCK_SELECT_INTERNAL_BIT	0x02
+- #define HOST_CSTATE_BIT			0x04
+- #define PLATFORM_CAP_PCIE_GLOBAL_RESET	0x08
+-+#define PLATFORM_CAP_PCIE_PME_D3COLD	0x10
+- 
+- #define FW_BUILD_ID_MASK "QC_IMAGE_VERSION_STRING="
+- 
+-@@ -1752,6 +1753,8 @@ static int ath11k_qmi_host_cap_send(stru
+- 	if (ab->hw_params.global_reset)
+- 		req.nm_modem |= PLATFORM_CAP_PCIE_GLOBAL_RESET;
+- 
+-+	req.nm_modem |= PLATFORM_CAP_PCIE_PME_D3COLD;
+-+
+- 	ath11k_dbg(ab, ATH11K_DBG_QMI, "qmi host cap request\n");
+- 
+- 	ret = qmi_txn_init(&ab->qmi.handle, &txn,
+diff --git a/package/kernel/mac80211/patches/ath11k/0010-wifi-ath11k-Fix-firmware-crash-on-vdev-delete-race-c.patch b/package/kernel/mac80211/patches/ath11k/0010-wifi-ath11k-Fix-firmware-crash-on-vdev-delete-race-c.patch
+deleted file mode 100644
+index 7275af06ea..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/0010-wifi-ath11k-Fix-firmware-crash-on-vdev-delete-race-c.patch
++++ /dev/null
+@@ -1,116 +0,0 @@
+-From 3811fa1f231f1a3e29759efef4992116604aab8b Mon Sep 17 00:00:00 2001
+-From: Sowmiya Sree Elavalagan <quic_ssreeela@quicinc.com>
+-Date: Tue, 11 Oct 2022 15:23:46 +0530
+-Subject: [PATCH] wifi: ath11k: Fix firmware crash on vdev delete race
+- condition
+-
+-Current code does not wait for vdev delete completion on vdev create
+-failures and tries to send another vdev create followed by vdev set
+-param to firmware with same vdev id. This causes firmware crash.
+-Fix this crash by waiting for vdev delete completion on vdev
+-create failures.
+-
+-Tested-on: IPQ8074 hw2.0 AHB WLAN.HK.2.6.0.1-00905-QCAHKSWPL_SILICONZ-1
+-
+-Signed-off-by: Sowmiya Sree Elavalagan <quic_ssreeela@quicinc.com>
+-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+-Link: https://lore.kernel.org/r/20221011095346.3901-1-quic_ssreeela@quicinc.com
+----
+- drivers/net/wireless/ath/ath11k/mac.c | 60 +++++++++++++++++----------
+- 1 file changed, 37 insertions(+), 23 deletions(-)
+-
+---- a/drivers/net/wireless/ath/ath11k/mac.c
+-+++ b/drivers/net/wireless/ath/ath11k/mac.c
+-@@ -6233,6 +6233,40 @@ void ath11k_mac_11d_scan_stop_all(struct
+- 	}
+- }
+- 
+-+static int ath11k_mac_vdev_delete(struct ath11k *ar, struct ath11k_vif *arvif)
+-+{
+-+	unsigned long time_left;
+-+	struct ieee80211_vif *vif = arvif->vif;
+-+	int ret = 0;
+-+
+-+	lockdep_assert_held(&ar->conf_mutex);
+-+
+-+	reinit_completion(&ar->vdev_delete_done);
+-+
+-+	ret = ath11k_wmi_vdev_delete(ar, arvif->vdev_id);
+-+	if (ret) {
+-+		ath11k_warn(ar->ab, "failed to delete WMI vdev %d: %d\n",
+-+			    arvif->vdev_id, ret);
+-+		return ret;
+-+	}
+-+
+-+	time_left = wait_for_completion_timeout(&ar->vdev_delete_done,
+-+						ATH11K_VDEV_DELETE_TIMEOUT_HZ);
+-+	if (time_left == 0) {
+-+		ath11k_warn(ar->ab, "Timeout in receiving vdev delete response\n");
+-+		return -ETIMEDOUT;
+-+	}
+-+
+-+	ar->ab->free_vdev_map |= 1LL << (arvif->vdev_id);
+-+	ar->allocated_vdev_map &= ~(1LL << arvif->vdev_id);
+-+	ar->num_created_vdevs--;
+-+
+-+	ath11k_dbg(ar->ab, ATH11K_DBG_MAC, "vdev %pM deleted, vdev_id %d\n",
+-+		   vif->addr, arvif->vdev_id);
+-+
+-+	return ret;
+-+}
+-+
+- static int ath11k_mac_op_add_interface(struct ieee80211_hw *hw,
+- 				       struct ieee80211_vif *vif)
+- {
+-@@ -6468,10 +6502,7 @@ err_peer_del:
+- 	}
+- 
+- err_vdev_del:
+--	ath11k_wmi_vdev_delete(ar, arvif->vdev_id);
+--	ar->num_created_vdevs--;
+--	ar->allocated_vdev_map &= ~(1LL << arvif->vdev_id);
+--	ab->free_vdev_map |= 1LL << arvif->vdev_id;
+-+	ath11k_mac_vdev_delete(ar, arvif);
+- 	spin_lock_bh(&ar->data_lock);
+- 	list_del(&arvif->list);
+- 	spin_unlock_bh(&ar->data_lock);
+-@@ -6499,7 +6530,6 @@ static void ath11k_mac_op_remove_interfa
+- 	struct ath11k *ar = hw->priv;
+- 	struct ath11k_vif *arvif = ath11k_vif_to_arvif(vif);
+- 	struct ath11k_base *ab = ar->ab;
+--	unsigned long time_left;
+- 	int ret;
+- 	int i;
+- 
+-@@ -6520,29 +6550,13 @@ static void ath11k_mac_op_remove_interfa
+- 				    arvif->vdev_id, ret);
+- 	}
+- 
+--	reinit_completion(&ar->vdev_delete_done);
+--
+--	ret = ath11k_wmi_vdev_delete(ar, arvif->vdev_id);
+-+	ret = ath11k_mac_vdev_delete(ar, arvif);
+- 	if (ret) {
+--		ath11k_warn(ab, "failed to delete WMI vdev %d: %d\n",
+-+		ath11k_warn(ab, "failed to delete vdev %d: %d\n",
+- 			    arvif->vdev_id, ret);
+- 		goto err_vdev_del;
+- 	}
+- 
+--	time_left = wait_for_completion_timeout(&ar->vdev_delete_done,
+--						ATH11K_VDEV_DELETE_TIMEOUT_HZ);
+--	if (time_left == 0) {
+--		ath11k_warn(ab, "Timeout in receiving vdev delete response\n");
+--		goto err_vdev_del;
+--	}
+--
+--	ab->free_vdev_map |= 1LL << (arvif->vdev_id);
+--	ar->allocated_vdev_map &= ~(1LL << arvif->vdev_id);
+--	ar->num_created_vdevs--;
+--
+--	ath11k_dbg(ab, ATH11K_DBG_MAC, "vdev %pM deleted, vdev_id %d\n",
+--		   vif->addr, arvif->vdev_id);
+--
+- 	if (arvif->vdev_type == WMI_VDEV_TYPE_MONITOR) {
+- 		clear_bit(ATH11K_FLAG_MONITOR_VDEV_CREATED, &ar->monitor_flags);
+- 		ar->monitor_vdev_id = -1;
+diff --git a/package/kernel/mac80211/patches/ath11k/0011-wifi-ath11k-fix-monitor-vdev-creation-with-firmware-.patch b/package/kernel/mac80211/patches/ath11k/0011-wifi-ath11k-fix-monitor-vdev-creation-with-firmware-.patch
+deleted file mode 100644
+index 2f066d0a56..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/0011-wifi-ath11k-fix-monitor-vdev-creation-with-firmware-.patch
++++ /dev/null
+@@ -1,40 +0,0 @@
+-From f3ca72b0327101a074a871539e61775d43908ca4 Mon Sep 17 00:00:00 2001
+-From: Nagarajan Maran <quic_nmaran@quicinc.com>
+-Date: Fri, 14 Oct 2022 21:20:54 +0530
+-Subject: [PATCH] wifi: ath11k: fix monitor vdev creation with firmware
+- recovery
+-
+-During firmware recovery, the monitor interface is not
+-getting created in the driver and firmware since
+-the respective flags are not updated properly.
+-
+-So after firmware recovery is successful, when monitor
+-interface is brought down manually, firmware assertion
+-is observed, since we are trying to bring down the
+-interface which is not yet created in the firmware.
+-
+-Fix this by updating the monitor flags properly per
+-phy#, during firmware recovery.
+-
+-Tested-on: IPQ8074 hw2.0 AHB WLAN.HK.2.7.0.1-01744-QCAHKSWPL_SILICONZ-1
+-
+-Signed-off-by: Nagarajan Maran <quic_nmaran@quicinc.com>
+-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+-Link: https://lore.kernel.org/r/20221014155054.11471-1-quic_nmaran@quicinc.com
+----
+- drivers/net/wireless/ath/ath11k/core.c | 4 ++++
+- 1 file changed, 4 insertions(+)
+-
+---- a/drivers/net/wireless/ath/ath11k/core.c
+-+++ b/drivers/net/wireless/ath/ath11k/core.c
+-@@ -1677,6 +1677,10 @@ void ath11k_core_pre_reconfigure_recover
+- 			     ath11k_mac_tx_mgmt_pending_free, ar);
+- 		idr_destroy(&ar->txmgmt_idr);
+- 		wake_up(&ar->txmgmt_empty_waitq);
+-+
+-+		ar->monitor_vdev_id = -1;
+-+		clear_bit(ATH11K_FLAG_MONITOR_STARTED, &ar->monitor_flags);
+-+		clear_bit(ATH11K_FLAG_MONITOR_VDEV_CREATED, &ar->monitor_flags);
+- 	}
+- 
+- 	wake_up(&ab->wmi_ab.tx_credits_wq);
+diff --git a/package/kernel/mac80211/patches/ath11k/0012-wifi-ath11k-Fix-qmi_msg_handler-data-structure-initi.patch b/package/kernel/mac80211/patches/ath11k/0012-wifi-ath11k-Fix-qmi_msg_handler-data-structure-initi.patch
+deleted file mode 100644
+index 1f7418ff89..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/0012-wifi-ath11k-Fix-qmi_msg_handler-data-structure-initi.patch
++++ /dev/null
+@@ -1,33 +0,0 @@
+-From ed3725e15a154ebebf44e0c34806c57525483f92 Mon Sep 17 00:00:00 2001
+-From: Rahul Bhattacharjee <quic_rbhattac@quicinc.com>
+-Date: Fri, 21 Oct 2022 14:31:26 +0530
+-Subject: [PATCH] wifi: ath11k: Fix qmi_msg_handler data structure
+- initialization
+-
+-qmi_msg_handler is required to be null terminated by QMI module.
+-There might be a case where a handler for a msg id is not present in the
+-handlers array which can lead to infinite loop while searching the handler
+-and therefore out of bound access in qmi_invoke_handler().
+-Hence update the initialization in qmi_msg_handler data structure.
+-
+-Tested-on: IPQ8074 hw2.0 AHB WLAN.HK.2.5.0.1-01100-QCAHKSWPL_SILICONZ-1
+-
+-Signed-off-by: Rahul Bhattacharjee <quic_rbhattac@quicinc.com>
+-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+-Link: https://lore.kernel.org/r/20221021090126.28626-1-quic_rbhattac@quicinc.com
+----
+- drivers/net/wireless/ath/ath11k/qmi.c | 3 +++
+- 1 file changed, 3 insertions(+)
+-
+---- a/drivers/net/wireless/ath/ath11k/qmi.c
+-+++ b/drivers/net/wireless/ath/ath11k/qmi.c
+-@@ -3090,6 +3090,9 @@ static const struct qmi_msg_handler ath1
+- 			sizeof(struct qmi_wlfw_fw_init_done_ind_msg_v01),
+- 		.fn = ath11k_qmi_msg_fw_init_done_cb,
+- 	},
+-+
+-+	/* end of list */
+-+	{},
+- };
+- 
+- static int ath11k_qmi_ops_new_server(struct qmi_handle *qmi_hdl,
+diff --git a/package/kernel/mac80211/patches/ath11k/0013-wifi-ath11k-synchronize-ath11k_mac_he_gi_to_nl80211_.patch b/package/kernel/mac80211/patches/ath11k/0013-wifi-ath11k-synchronize-ath11k_mac_he_gi_to_nl80211_.patch
+deleted file mode 100644
+index 1e89b4d4f2..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/0013-wifi-ath11k-synchronize-ath11k_mac_he_gi_to_nl80211_.patch
++++ /dev/null
+@@ -1,42 +0,0 @@
+-From dd1c2322694522f674c874f5fa02ac5ae39135dd Mon Sep 17 00:00:00 2001
+-From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+-Date: Mon, 31 Oct 2022 12:43:41 +0100
+-Subject: [PATCH] wifi: ath11k: synchronize
+- ath11k_mac_he_gi_to_nl80211_he_gi()'s return type
+-
+-ath11k_mac_he_gi_to_nl80211_he_gi() generates a valid warning with gcc-13:
+-  drivers/net/wireless/ath/ath11k/mac.c:321:20: error: conflicting types for 'ath11k_mac_he_gi_to_nl80211_he_gi' due to enum/integer mismatch; have 'enum nl80211_he_gi(u8)'
+-  drivers/net/wireless/ath/ath11k/mac.h:166:5: note: previous declaration of 'ath11k_mac_he_gi_to_nl80211_he_gi' with type 'u32(u8)'
+-
+-I.e. the type of the return value ath11k_mac_he_gi_to_nl80211_he_gi() in
+-the declaration is u32, while the definition spells enum nl80211_he_gi.
+-Synchronize them to the latter.
+-
+-Cc: Martin Liska <mliska@suse.cz>
+-Cc: Kalle Valo <kvalo@kernel.org>
+-Cc: "David S. Miller" <davem@davemloft.net>
+-Cc: Eric Dumazet <edumazet@google.com>
+-Cc: Jakub Kicinski <kuba@kernel.org>
+-Cc: Paolo Abeni <pabeni@redhat.com>
+-Cc: ath11k@lists.infradead.org
+-Cc: linux-wireless@vger.kernel.org
+-Cc: netdev@vger.kernel.org
+-Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+-Reviewed-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+-Link: https://lore.kernel.org/r/20221031114341.10377-1-jirislaby@kernel.org
+----
+- drivers/net/wireless/ath/ath11k/mac.h | 2 +-
+- 1 file changed, 1 insertion(+), 1 deletion(-)
+-
+---- a/drivers/net/wireless/ath/ath11k/mac.h
+-+++ b/drivers/net/wireless/ath/ath11k/mac.h
+-@@ -163,7 +163,7 @@ void ath11k_mac_drain_tx(struct ath11k *
+- void ath11k_mac_peer_cleanup_all(struct ath11k *ar);
+- int ath11k_mac_tx_mgmt_pending_free(int buf_id, void *skb, void *ctx);
+- u8 ath11k_mac_bw_to_mac80211_bw(u8 bw);
+--u32 ath11k_mac_he_gi_to_nl80211_he_gi(u8 sgi);
+-+enum nl80211_he_gi ath11k_mac_he_gi_to_nl80211_he_gi(u8 sgi);
+- enum nl80211_he_ru_alloc ath11k_mac_phy_he_ru_to_nl80211_he_ru_alloc(u16 ru_phy);
+- enum nl80211_he_ru_alloc ath11k_mac_he_ru_tones_to_nl80211_he_ru_alloc(u16 ru_tones);
+- enum ath11k_supported_bw ath11k_mac_mac80211_bw_to_ath11k_bw(enum rate_info_bw bw);
+diff --git a/package/kernel/mac80211/patches/ath11k/0016-wifi-ath11k-Make-QMI-message-rules-const.patch b/package/kernel/mac80211/patches/ath11k/0016-wifi-ath11k-Make-QMI-message-rules-const.patch
+deleted file mode 100644
+index 1f48df73f7..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/0016-wifi-ath11k-Make-QMI-message-rules-const.patch
++++ /dev/null
+@@ -1,341 +0,0 @@
+-From 93c1592889fca46d09d833455628bab05516cdbf Mon Sep 17 00:00:00 2001
+-From: Jeff Johnson <quic_jjohnson@quicinc.com>
+-Date: Wed, 14 Sep 2022 17:23:03 -0700
+-Subject: [PATCH] wifi: ath11k: Make QMI message rules const
+-
+-Commit ff6d365898d4 ("soc: qcom: qmi: use const for struct
+-qmi_elem_info") allows QMI message encoding/decoding rules to be
+-const, so do that for ath11k.
+-
+-Compile tested only.
+-
+-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+-Link: https://lore.kernel.org/r/20220915002303.12206-1-quic_jjohnson@quicinc.com
+----
+- drivers/net/wireless/ath/ath11k/qmi.c | 72 +++++++++++++--------------
+- 1 file changed, 36 insertions(+), 36 deletions(-)
+-
+---- a/drivers/net/wireless/ath/ath11k/qmi.c
+-+++ b/drivers/net/wireless/ath/ath11k/qmi.c
+-@@ -29,7 +29,7 @@ module_param_named(cold_boot_cal, ath11k
+- MODULE_PARM_DESC(cold_boot_cal,
+- 		 "Decrease the channel switch time but increase the driver load time (Default: true)");
+- 
+--static struct qmi_elem_info qmi_wlanfw_host_cap_req_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_host_cap_req_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_OPT_FLAG,
+- 		.elem_len	= 1,
+-@@ -280,7 +280,7 @@ static struct qmi_elem_info qmi_wlanfw_h
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_host_cap_resp_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_host_cap_resp_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_STRUCT,
+- 		.elem_len	= 1,
+-@@ -297,7 +297,7 @@ static struct qmi_elem_info qmi_wlanfw_h
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_ind_register_req_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_ind_register_req_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_OPT_FLAG,
+- 		.elem_len	= 1,
+-@@ -522,7 +522,7 @@ static struct qmi_elem_info qmi_wlanfw_i
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_ind_register_resp_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_ind_register_resp_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_STRUCT,
+- 		.elem_len	= 1,
+-@@ -558,7 +558,7 @@ static struct qmi_elem_info qmi_wlanfw_i
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_mem_cfg_s_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_mem_cfg_s_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_UNSIGNED_8_BYTE,
+- 		.elem_len	= 1,
+-@@ -590,7 +590,7 @@ static struct qmi_elem_info qmi_wlanfw_m
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_mem_seg_s_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_mem_seg_s_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_UNSIGNED_4_BYTE,
+- 		.elem_len	= 1,
+-@@ -632,7 +632,7 @@ static struct qmi_elem_info qmi_wlanfw_m
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_request_mem_ind_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_request_mem_ind_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_DATA_LEN,
+- 		.elem_len	= 1,
+-@@ -659,7 +659,7 @@ static struct qmi_elem_info qmi_wlanfw_r
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_mem_seg_resp_s_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_mem_seg_resp_s_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_UNSIGNED_8_BYTE,
+- 		.elem_len	= 1,
+-@@ -699,7 +699,7 @@ static struct qmi_elem_info qmi_wlanfw_m
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_respond_mem_req_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_respond_mem_req_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_DATA_LEN,
+- 		.elem_len	= 1,
+-@@ -726,7 +726,7 @@ static struct qmi_elem_info qmi_wlanfw_r
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_respond_mem_resp_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_respond_mem_resp_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_STRUCT,
+- 		.elem_len	= 1,
+-@@ -744,7 +744,7 @@ static struct qmi_elem_info qmi_wlanfw_r
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_cap_req_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_cap_req_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_EOTI,
+- 		.array_type	= NO_ARRAY,
+-@@ -752,7 +752,7 @@ static struct qmi_elem_info qmi_wlanfw_c
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_device_info_req_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_device_info_req_msg_v01_ei[] = {
+- 	{
+- 		.data_type      = QMI_EOTI,
+- 		.array_type     = NO_ARRAY,
+-@@ -760,7 +760,7 @@ static struct qmi_elem_info qmi_wlanfw_d
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlfw_device_info_resp_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlfw_device_info_resp_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_STRUCT,
+- 		.elem_len	= 1,
+-@@ -814,7 +814,7 @@ static struct qmi_elem_info qmi_wlfw_dev
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_rf_chip_info_s_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_rf_chip_info_s_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_UNSIGNED_4_BYTE,
+- 		.elem_len	= 1,
+-@@ -840,7 +840,7 @@ static struct qmi_elem_info qmi_wlanfw_r
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_rf_board_info_s_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_rf_board_info_s_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_UNSIGNED_4_BYTE,
+- 		.elem_len	= 1,
+-@@ -857,7 +857,7 @@ static struct qmi_elem_info qmi_wlanfw_r
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_soc_info_s_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_soc_info_s_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_UNSIGNED_4_BYTE,
+- 		.elem_len	= 1,
+-@@ -873,7 +873,7 @@ static struct qmi_elem_info qmi_wlanfw_s
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_fw_version_info_s_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_fw_version_info_s_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_UNSIGNED_4_BYTE,
+- 		.elem_len	= 1,
+-@@ -899,7 +899,7 @@ static struct qmi_elem_info qmi_wlanfw_f
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_cap_resp_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_cap_resp_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_STRUCT,
+- 		.elem_len	= 1,
+-@@ -1100,7 +1100,7 @@ static struct qmi_elem_info qmi_wlanfw_c
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_bdf_download_req_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_bdf_download_req_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_UNSIGNED_1_BYTE,
+- 		.elem_len	= 1,
+-@@ -1235,7 +1235,7 @@ static struct qmi_elem_info qmi_wlanfw_b
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_bdf_download_resp_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_bdf_download_resp_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_STRUCT,
+- 		.elem_len	= 1,
+-@@ -1253,7 +1253,7 @@ static struct qmi_elem_info qmi_wlanfw_b
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_m3_info_req_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_m3_info_req_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_UNSIGNED_8_BYTE,
+- 		.elem_len	= 1,
+-@@ -1277,7 +1277,7 @@ static struct qmi_elem_info qmi_wlanfw_m
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_m3_info_resp_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_m3_info_resp_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_STRUCT,
+- 		.elem_len	= 1,
+-@@ -1294,7 +1294,7 @@ static struct qmi_elem_info qmi_wlanfw_m
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_ce_tgt_pipe_cfg_s_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_ce_tgt_pipe_cfg_s_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_UNSIGNED_4_BYTE,
+- 		.elem_len	= 1,
+-@@ -1347,7 +1347,7 @@ static struct qmi_elem_info qmi_wlanfw_c
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_ce_svc_pipe_cfg_s_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_ce_svc_pipe_cfg_s_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_UNSIGNED_4_BYTE,
+- 		.elem_len	= 1,
+-@@ -1382,7 +1382,7 @@ static struct qmi_elem_info qmi_wlanfw_c
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_shadow_reg_cfg_s_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_shadow_reg_cfg_s_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_UNSIGNED_2_BYTE,
+- 		.elem_len	= 1,
+-@@ -1406,7 +1406,7 @@ static struct qmi_elem_info qmi_wlanfw_s
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_shadow_reg_v2_cfg_s_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_shadow_reg_v2_cfg_s_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_UNSIGNED_4_BYTE,
+- 		.elem_len	= 1,
+-@@ -1423,7 +1423,7 @@ static struct qmi_elem_info qmi_wlanfw_s
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_wlan_mode_req_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_wlan_mode_req_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_UNSIGNED_4_BYTE,
+- 		.elem_len	= 1,
+-@@ -1458,7 +1458,7 @@ static struct qmi_elem_info qmi_wlanfw_w
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_wlan_mode_resp_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_wlan_mode_resp_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_STRUCT,
+- 		.elem_len	= 1,
+-@@ -1476,7 +1476,7 @@ static struct qmi_elem_info qmi_wlanfw_w
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_wlan_cfg_req_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_wlan_cfg_req_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_OPT_FLAG,
+- 		.elem_len	= 1,
+-@@ -1615,7 +1615,7 @@ static struct qmi_elem_info qmi_wlanfw_w
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_wlan_cfg_resp_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_wlan_cfg_resp_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_STRUCT,
+- 		.elem_len	= 1,
+-@@ -1632,28 +1632,28 @@ static struct qmi_elem_info qmi_wlanfw_w
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_mem_ready_ind_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_mem_ready_ind_msg_v01_ei[] = {
+- 	{
+- 		.data_type = QMI_EOTI,
+- 		.array_type = NO_ARRAY,
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_fw_ready_ind_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_fw_ready_ind_msg_v01_ei[] = {
+- 	{
+- 		.data_type = QMI_EOTI,
+- 		.array_type = NO_ARRAY,
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_cold_boot_cal_done_ind_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_cold_boot_cal_done_ind_msg_v01_ei[] = {
+- 	{
+- 		.data_type = QMI_EOTI,
+- 		.array_type = NO_ARRAY,
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_wlan_ini_req_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_wlan_ini_req_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_OPT_FLAG,
+- 		.elem_len	= 1,
+-@@ -1679,7 +1679,7 @@ static struct qmi_elem_info qmi_wlanfw_w
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlanfw_wlan_ini_resp_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlanfw_wlan_ini_resp_msg_v01_ei[] = {
+- 	{
+- 		.data_type	= QMI_STRUCT,
+- 		.elem_len	= 1,
+-@@ -1697,7 +1697,7 @@ static struct qmi_elem_info qmi_wlanfw_w
+- 	},
+- };
+- 
+--static struct qmi_elem_info qmi_wlfw_fw_init_done_ind_msg_v01_ei[] = {
+-+static const struct qmi_elem_info qmi_wlfw_fw_init_done_ind_msg_v01_ei[] = {
+- 	{
+- 		.data_type = QMI_EOTI,
+- 		.array_type = NO_ARRAY,
+diff --git a/package/kernel/mac80211/patches/ath11k/0017-wifi-ath11k-Trigger-sta-disconnect-on-hardware-resta.patch b/package/kernel/mac80211/patches/ath11k/0017-wifi-ath11k-Trigger-sta-disconnect-on-hardware-resta.patch
+deleted file mode 100644
+index f95e5027b2..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/0017-wifi-ath11k-Trigger-sta-disconnect-on-hardware-resta.patch
++++ /dev/null
+@@ -1,119 +0,0 @@
+-From a018750a2cceaf4427c4ee3d9ce3e83a171d5bd6 Mon Sep 17 00:00:00 2001
+-From: Youghandhar Chintala <quic_youghand@quicinc.com>
+-Date: Fri, 4 Nov 2022 14:24:03 +0530
+-Subject: [PATCH] wifi: ath11k: Trigger sta disconnect on hardware restart
+-
+-Currently after the hardware restart triggered from the driver, the
+-station interface connection remains intact, since a disconnect trigger
+-is not sent to userspace. This can lead to a problem in targets where
+-the wifi mac sequence is added by the firmware.
+-
+-After the target restart, its wifi mac sequence number gets reset to
+-zero. Hence AP to which our device is connected will receive frames with
+-a  wifi mac sequence number jump to the past, thereby resulting in the
+-AP dropping all these frames, until the frame arrives with a wifi mac
+-sequence number which AP was expecting.
+-
+-To avoid such frame drops, its better to trigger a station disconnect
+-upon target hardware restart which can be done with API
+-ieee80211_reconfig_disconnect exposed to mac80211.
+-
+-The other targets are not affected by this change, since the hardware
+-params flag is not set.
+-
+-Reported-by: kernel test robot <lkp@intel.com>
+-
+-Tested-on: WCN6750 hw1.0 AHB WLAN.MSL.1.0.1-00887-QCAMSLSWPLZ-1
+-
+-Signed-off-by: Youghandhar Chintala <quic_youghand@quicinc.com>
+-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+-Link: https://lore.kernel.org/r/20221104085403.11025-1-quic_youghand@quicinc.com
+----
+- drivers/net/wireless/ath/ath11k/core.c | 6 ++++++
+- drivers/net/wireless/ath/ath11k/hw.h   | 1 +
+- drivers/net/wireless/ath/ath11k/mac.c  | 7 +++++++
+- 3 files changed, 14 insertions(+)
+-
+---- a/drivers/net/wireless/ath/ath11k/core.c
+-+++ b/drivers/net/wireless/ath/ath11k/core.c
+-@@ -195,6 +195,7 @@ static const struct ath11k_hw_params ath
+- 		.tcl_ring_retry = true,
+- 		.tx_ring_size = DP_TCL_DATA_RING_SIZE,
+- 		.smp2p_wow_exit = false,
+-+		.support_fw_mac_sequence = false,
+- 	},
+- 	{
+- 		.name = "qca6390 hw2.0",
+-@@ -277,6 +278,7 @@ static const struct ath11k_hw_params ath
+- 		.tcl_ring_retry = true,
+- 		.tx_ring_size = DP_TCL_DATA_RING_SIZE,
+- 		.smp2p_wow_exit = false,
+-+		.support_fw_mac_sequence = true,
+- 	},
+- 	{
+- 		.name = "qcn9074 hw1.0",
+-@@ -356,6 +358,7 @@ static const struct ath11k_hw_params ath
+- 		.tcl_ring_retry = true,
+- 		.tx_ring_size = DP_TCL_DATA_RING_SIZE,
+- 		.smp2p_wow_exit = false,
+-+		.support_fw_mac_sequence = false,
+- 	},
+- 	{
+- 		.name = "wcn6855 hw2.0",
+-@@ -438,6 +441,7 @@ static const struct ath11k_hw_params ath
+- 		.tcl_ring_retry = true,
+- 		.tx_ring_size = DP_TCL_DATA_RING_SIZE,
+- 		.smp2p_wow_exit = false,
+-+		.support_fw_mac_sequence = true,
+- 	},
+- 	{
+- 		.name = "wcn6855 hw2.1",
+-@@ -519,6 +523,7 @@ static const struct ath11k_hw_params ath
+- 		.tcl_ring_retry = true,
+- 		.tx_ring_size = DP_TCL_DATA_RING_SIZE,
+- 		.smp2p_wow_exit = false,
+-+		.support_fw_mac_sequence = true,
+- 	},
+- 	{
+- 		.name = "wcn6750 hw1.0",
+-@@ -597,6 +602,7 @@ static const struct ath11k_hw_params ath
+- 		.tcl_ring_retry = false,
+- 		.tx_ring_size = DP_TCL_DATA_RING_SIZE_WCN6750,
+- 		.smp2p_wow_exit = true,
+-+		.support_fw_mac_sequence = true,
+- 	},
+- };
+- 
+---- a/drivers/net/wireless/ath/ath11k/hw.h
+-+++ b/drivers/net/wireless/ath/ath11k/hw.h
+-@@ -219,6 +219,7 @@ struct ath11k_hw_params {
+- 	bool tcl_ring_retry;
+- 	u32 tx_ring_size;
+- 	bool smp2p_wow_exit;
+-+	bool support_fw_mac_sequence;
+- };
+- 
+- struct ath11k_hw_ops {
+---- a/drivers/net/wireless/ath/ath11k/mac.c
+-+++ b/drivers/net/wireless/ath/ath11k/mac.c
+-@@ -8010,6 +8010,7 @@ ath11k_mac_op_reconfig_complete(struct i
+- 	struct ath11k *ar = hw->priv;
+- 	struct ath11k_base *ab = ar->ab;
+- 	int recovery_count;
+-+	struct ath11k_vif *arvif;
+- 
+- 	if (reconfig_type != IEEE80211_RECONFIG_TYPE_RESTART)
+- 		return;
+-@@ -8045,6 +8046,12 @@ ath11k_mac_op_reconfig_complete(struct i
+- 				ath11k_dbg(ab, ATH11K_DBG_BOOT, "reset success\n");
+- 			}
+- 		}
+-+		if (ar->ab->hw_params.support_fw_mac_sequence) {
+-+			list_for_each_entry(arvif, &ar->arvifs, list) {
+-+				if (arvif->is_up && arvif->vdev_type == WMI_VDEV_TYPE_STA)
+-+					ieee80211_hw_restart_disconnect(arvif->vif);
+-+			}
+-+		}
+- 	}
+- 
+- 	mutex_unlock(&ar->conf_mutex);
+diff --git a/package/kernel/mac80211/patches/ath11k/0018-wifi-ath11k-Fix-race-condition-with-struct-htt_ppdu_.patch b/package/kernel/mac80211/patches/ath11k/0018-wifi-ath11k-Fix-race-condition-with-struct-htt_ppdu_.patch
+deleted file mode 100644
+index cef61ee344..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/0018-wifi-ath11k-Fix-race-condition-with-struct-htt_ppdu_.patch
++++ /dev/null
+@@ -1,103 +0,0 @@
+-From e44de90453bb2b46a523df78c39eb896bab35dcd Mon Sep 17 00:00:00 2001
+-From: Govindaraj Saminathan <quic_gsaminat@quicinc.com>
+-Date: Tue, 29 Nov 2022 13:04:02 +0200
+-Subject: [PATCH] wifi: ath11k: Fix race condition with struct
+- htt_ppdu_stats_info
+-
+-A crash happens when running the traffic with multiple clients:
+-
+-Crash Signature : Unable to handle kernel paging request at
+-virtual address ffffffd700970918 During the crash, PC points to
+-"ieee80211_tx_rate_update+0x30/0x68 [mac80211]"
+-LR points to "ath11k_dp_htt_htc_t2h_msg_handler+0x5a8/0x8a0 [ath11k]".
+-
+-Struct ppdu_stats_info is allocated and accessed from event callback via copy
+-engine tasklet, this has a problem when freeing it from ath11k_mac_op_stop().
+-
+-Use data_lock during entire ath11k_dp_htt_get_ppdu_desc() call to protect
+-struct htt_ppdu_stats_info access and to avoid race condition when accessing it
+-from ath11k_mac_op_stop().
+-
+-Tested-on: IPQ8074 hw2.0 AHB WLAN.HK.2.7.0.1-01744-QCAHKSWPL_SILICONZ-1
+-
+-Signed-off-by: Govindaraj Saminathan <quic_gsaminat@quicinc.com>
+-Co-developed-by: Karthikeyan Kathirvel <quic_kathirve@quicinc.com>
+-Signed-off-by: Karthikeyan Kathirvel <quic_kathirve@quicinc.com>
+-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+-Link: https://lore.kernel.org/r/20221124071104.22506-1-quic_kathirve@quicinc.com
+----
+- drivers/net/wireless/ath/ath11k/dp_rx.c | 22 +++++++++++-----------
+- 1 file changed, 11 insertions(+), 11 deletions(-)
+-
+---- a/drivers/net/wireless/ath/ath11k/dp_rx.c
+-+++ b/drivers/net/wireless/ath/ath11k/dp_rx.c
+-@@ -1535,13 +1535,12 @@ struct htt_ppdu_stats_info *ath11k_dp_ht
+- {
+- 	struct htt_ppdu_stats_info *ppdu_info;
+- 
+--	spin_lock_bh(&ar->data_lock);
+-+	lockdep_assert_held(&ar->data_lock);
+-+
+- 	if (!list_empty(&ar->ppdu_stats_info)) {
+- 		list_for_each_entry(ppdu_info, &ar->ppdu_stats_info, list) {
+--			if (ppdu_info->ppdu_id == ppdu_id) {
+--				spin_unlock_bh(&ar->data_lock);
+-+			if (ppdu_info->ppdu_id == ppdu_id)
+- 				return ppdu_info;
+--			}
+- 		}
+- 
+- 		if (ar->ppdu_stat_list_depth > HTT_PPDU_DESC_MAX_DEPTH) {
+-@@ -1553,16 +1552,13 @@ struct htt_ppdu_stats_info *ath11k_dp_ht
+- 			kfree(ppdu_info);
+- 		}
+- 	}
+--	spin_unlock_bh(&ar->data_lock);
+- 
+- 	ppdu_info = kzalloc(sizeof(*ppdu_info), GFP_ATOMIC);
+- 	if (!ppdu_info)
+- 		return NULL;
+- 
+--	spin_lock_bh(&ar->data_lock);
+- 	list_add_tail(&ppdu_info->list, &ar->ppdu_stats_info);
+- 	ar->ppdu_stat_list_depth++;
+--	spin_unlock_bh(&ar->data_lock);
+- 
+- 	return ppdu_info;
+- }
+-@@ -1586,16 +1582,17 @@ static int ath11k_htt_pull_ppdu_stats(st
+- 	ar = ath11k_mac_get_ar_by_pdev_id(ab, pdev_id);
+- 	if (!ar) {
+- 		ret = -EINVAL;
+--		goto exit;
+-+		goto out;
+- 	}
+- 
+- 	if (ath11k_debugfs_is_pktlog_lite_mode_enabled(ar))
+- 		trace_ath11k_htt_ppdu_stats(ar, skb->data, len);
+- 
+-+	spin_lock_bh(&ar->data_lock);
+- 	ppdu_info = ath11k_dp_htt_get_ppdu_desc(ar, ppdu_id);
+- 	if (!ppdu_info) {
+- 		ret = -EINVAL;
+--		goto exit;
+-+		goto out_unlock_data;
+- 	}
+- 
+- 	ppdu_info->ppdu_id = ppdu_id;
+-@@ -1604,10 +1601,13 @@ static int ath11k_htt_pull_ppdu_stats(st
+- 				     (void *)ppdu_info);
+- 	if (ret) {
+- 		ath11k_warn(ab, "Failed to parse tlv %d\n", ret);
+--		goto exit;
+-+		goto out_unlock_data;
+- 	}
+- 
+--exit:
+-+out_unlock_data:
+-+	spin_unlock_bh(&ar->data_lock);
+-+
+-+out:
+- 	rcu_read_unlock();
+- 
+- 	return ret;
+diff --git a/package/kernel/mac80211/patches/ath11k/900-ath11k-control-thermal-support-via-symbol.patch b/package/kernel/mac80211/patches/ath11k/900-ath11k-control-thermal-support-via-symbol.patch
+deleted file mode 100644
+index 60720a721e..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/900-ath11k-control-thermal-support-via-symbol.patch
++++ /dev/null
+@@ -1,66 +0,0 @@
+-From 703d6551f71e7290619d6effe2a25a64e10538b7 Mon Sep 17 00:00:00 2001
+-From: Robert Marko <robimarko@gmail.com>
+-Date: Thu, 15 Dec 2022 12:20:52 +0100
+-Subject: [PATCH] ath11k: control thermal support via symbol
+-
+-Currently, thermal support will get built if CONFIG_THERMAL is reachable,
+-however this is not suitable for OpenWrt as with ALL_KMODS being set to y
+-ATH11K_THERMAL wont get selected and so hwmon and thermal kmods wont get
+-pulled in resulting in a build-failure.
+-
+-So, to avoid that, lets do what is already done for ath10k and add a
+-config symbol into backports for enabling thermal support.
+-
+-Signed-off-by: Robert Marko <robimarko@gmail.com>
+----
+- drivers/net/wireless/ath/ath11k/Kconfig   | 7 +++++++
+- drivers/net/wireless/ath/ath11k/Makefile  | 2 +-
+- drivers/net/wireless/ath/ath11k/thermal.h | 2 +-
+- local-symbols                             | 1 +
+- 4 files changed, 10 insertions(+), 2 deletions(-)
+-
+---- a/drivers/net/wireless/ath/ath11k/Kconfig
+-+++ b/drivers/net/wireless/ath/ath11k/Kconfig
+-@@ -61,3 +61,10 @@ config ATH11K_SPECTRAL
+- 	  Enable ath11k spectral scan support
+- 
+- 	  Say Y to enable access to the FFT/spectral data via debugfs.
+-+
+-+config ATH11K_THERMAL
+-+	bool "ath11k thermal sensors and throttling support"
+-+	depends on ATH11K
+-+	depends on THERMAL
+-+	help
+-+	  Enable ath11k thermal sensors and throttling support.
+---- a/drivers/net/wireless/ath/ath11k/Makefile
+-+++ b/drivers/net/wireless/ath/ath11k/Makefile
+-@@ -22,7 +22,7 @@ ath11k-y += core.o \
+- ath11k-$(CPTCFG_ATH11K_DEBUGFS) += debugfs.o debugfs_htt_stats.o debugfs_sta.o
+- ath11k-$(CPTCFG_NL80211_TESTMODE) += testmode.o
+- ath11k-$(CPTCFG_ATH11K_TRACING) += trace.o
+--ath11k-$(CONFIG_THERMAL) += thermal.o
+-+ath11k-$(CPTCFG_ATH11K_THERMAL) += thermal.o
+- ath11k-$(CPTCFG_ATH11K_SPECTRAL) += spectral.o
+- ath11k-$(CONFIG_PM) += wow.o
+- 
+---- a/drivers/net/wireless/ath/ath11k/thermal.h
+-+++ b/drivers/net/wireless/ath/ath11k/thermal.h
+-@@ -25,7 +25,7 @@ struct ath11k_thermal {
+- 	int temperature;
+- };
+- 
+--#if IS_REACHABLE(CONFIG_THERMAL)
+-+#if IS_REACHABLE(CPTCFG_ATH11K_THERMAL)
+- int ath11k_thermal_register(struct ath11k_base *sc);
+- void ath11k_thermal_unregister(struct ath11k_base *sc);
+- int ath11k_thermal_set_throttling(struct ath11k *ar, u32 throttle_state);
+---- a/local-symbols
+-+++ b/local-symbols
+-@@ -174,6 +174,7 @@ ATH11K_DEBUG=
+- ATH11K_DEBUGFS=
+- ATH11K_TRACING=
+- ATH11K_SPECTRAL=
+-+ATH11K_THERMAL=
+- WLAN_VENDOR_ATMEL=
+- ATMEL=
+- PCI_ATMEL=
+diff --git a/package/kernel/mac80211/patches/ath11k/901-wifi-ath11k-pci-fix-compilation-in-5.16-and-older.patch b/package/kernel/mac80211/patches/ath11k/901-wifi-ath11k-pci-fix-compilation-in-5.16-and-older.patch
+deleted file mode 100644
+index 2b6c18d6dd..0000000000
+--- a/package/kernel/mac80211/patches/ath11k/901-wifi-ath11k-pci-fix-compilation-in-5.16-and-older.patch
++++ /dev/null
+@@ -1,29 +0,0 @@
+-From 04178918e7f6b5f34dde81ec79ee8a1ccace3be3 Mon Sep 17 00:00:00 2001
+-From: Robert Marko <robimarko@gmail.com>
+-Date: Mon, 17 Oct 2022 11:45:03 +0200
+-Subject: [PATCH] wifi: ath11k: pci: fix compilation in 5.16 and older
+-
+-Commit ("genirq/msi, treewide: Use a named struct for PCI/MSI attributes")
+-changed the msi_desc structure a bit, however that is only available in
+-kernels 5.17 and newer, so check for kernel version to allow compilation
+-in 5.16 and older.
+-
+-Signed-off-by: Robert Marko <robimarko@gmail.com>
+----
+- drivers/net/wireless/ath/ath11k/pci.c | 4 ++++
+- 1 file changed, 4 insertions(+)
+-
+---- a/drivers/net/wireless/ath/ath11k/pci.c
+-+++ b/drivers/net/wireless/ath/ath11k/pci.c
+-@@ -451,7 +451,11 @@ static int ath11k_pci_alloc_msi(struct a
+- 	pci_read_config_dword(pci_dev, pci_dev->msi_cap + PCI_MSI_ADDRESS_LO,
+- 			      &ab->pci.msi.addr_lo);
+- 
+-+#if (LINUX_VERSION_CODE > KERNEL_VERSION(5, 17, 0))
+- 	if (msi_desc->pci.msi_attrib.is_64) {
+-+#else
+-+	if (msi_desc->msi_attrib.is_64) {
+-+#endif
+- 		pci_read_config_dword(pci_dev, pci_dev->msi_cap + PCI_MSI_ADDRESS_HI,
+- 				      &ab->pci.msi.addr_hi);
+- 	} else {
+diff --git a/package/kernel/mac80211/patches/build/100-backports-drop-QRTR-and-MHI.patch b/package/kernel/mac80211/patches/build/100-backports-drop-QRTR-and-MHI.patch
+deleted file mode 100644
+index b017a0ce14..0000000000
+--- a/package/kernel/mac80211/patches/build/100-backports-drop-QRTR-and-MHI.patch
++++ /dev/null
+@@ -1,76 +0,0 @@
+-From 54e0f9aaf340377fb76acdffee9ec7372c4b70ae Mon Sep 17 00:00:00 2001
+-From: Robert Marko <robimarko@gmail.com>
+-Date: Mon, 17 Oct 2022 11:35:36 +0200
+-Subject: [PATCH] backports: drop QRTR and MHI
+-
+-Backports currently include QRTR and MHI due to ath11k-pci requiring them,
+-however this at the same time prevents us from adding ath11k-ahb as it
+-also requires QRTR however its AHB variant from the kernel will conflict
+-with the core provided by backports.
+-
+-Since MHI also conflicts with existing OpenWrt kmods providing MHI drop
+-both from backports and use the ones provided by OpenWrt kernel.
+-
+-Signed-off-by: Robert Marko <robimarko@gmail.com>
+----
+- Kconfig.sources                         | 2 --
+- Makefile.kernel                         | 2 --
+- drivers/net/wireless/ath/ath11k/Kconfig | 6 +++---
+- local-symbols                           | 8 --------
+- 4 files changed, 3 insertions(+), 15 deletions(-)
+-
+---- a/Kconfig.sources
+-+++ b/Kconfig.sources
+-@@ -4,8 +4,6 @@ source "$BACKPORT_DIR/compat/Kconfig"
+- # these are copied from the kernel
+- source "$BACKPORT_DIR/net/wireless/Kconfig"
+- source "$BACKPORT_DIR/net/mac80211/Kconfig"
+--source "$BACKPORT_DIR/net/qrtr/Kconfig"
+--source "$BACKPORT_DIR/drivers/bus/mhi/Kconfig"
+- source "$BACKPORT_DIR/drivers/soc/qcom/Kconfig"
+- source "$BACKPORT_DIR/drivers/net/wireless/Kconfig"
+- source "$BACKPORT_DIR/drivers/net/usb/Kconfig"
+---- a/Makefile.kernel
+-+++ b/Makefile.kernel
+-@@ -39,9 +39,7 @@ obj-y += compat/
+- 
+- obj-$(CPTCFG_CFG80211) += net/wireless/
+- obj-$(CPTCFG_MAC80211) += net/mac80211/
+--obj-$(CPTCFG_QRTR) += net/qrtr/
+- obj-$(CPTCFG_QCOM_QMI_HELPERS) += drivers/soc/qcom/
+--obj-$(CPTCFG_MHI_BUS) += drivers/bus/mhi/
+- obj-$(CPTCFG_WLAN) += drivers/net/wireless/
+- obj-$(CPTCFG_USB_NET_RNDIS_WLAN) += drivers/net/usb/
+- 
+---- a/drivers/net/wireless/ath/ath11k/Kconfig
+-+++ b/drivers/net/wireless/ath/ath11k/Kconfig
+-@@ -25,9 +25,9 @@ config ATH11K_PCI
+- 	tristate "Atheros ath11k PCI support"
+- 	depends on m
+- 	depends on ATH11K && PCI
+--	select MHI_BUS
+--	select QRTR
+--	select QRTR_MHI
+-+	depends on MHI_BUS
+-+	depends on QRTR
+-+	depends on QRTR_MHI
+- 	help
+- 	  This module adds support for PCIE bus
+- 
+---- a/local-symbols
+-+++ b/local-symbols
+-@@ -65,14 +65,6 @@ MAC80211_MESH_PS_DEBUG=
+- MAC80211_TDLS_DEBUG=
+- MAC80211_DEBUG_COUNTERS=
+- MAC80211_STA_HASH_MAX_SIZE=
+--QRTR=
+--QRTR_SMD=
+--QRTR_TUN=
+--QRTR_MHI=
+--MHI_BUS=
+--MHI_BUS_DEBUG=
+--MHI_BUS_PCI_GENERIC=
+--MHI_BUS_EP=
+- QCOM_AOSS_QMP=
+- QCOM_COMMAND_DB=
+- QCOM_CPR=
+-- 
+2.34.1
+
