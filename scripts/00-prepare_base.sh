@@ -4,9 +4,7 @@
 
 # Rockchip - target
 rm -rf target/linux/rockchip
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
-	git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip -b 22.03 target/linux/rockchip
-else
+if [ "$version" = "releases" ] || [ "$version" = "snapshots-21.02" ]; then
 	git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip -b 21.02 target/linux/rockchip
 fi
 
@@ -108,19 +106,7 @@ git apply qemu-aarch64.patch && rm qemu-aarch64.patch
 popd
 
 # KVM
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
-    cat >> target/linux/rockchip/armv8/config-5.10 <<EOF
-CONFIG_VIRTUALIZATION=y
-CONFIG_KVM=y
-CONFIG_KVM_ARM_HOST=y
-CONFIG_KVM_ARM_PMU=y
-CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT=y
-CONFIG_KVM_INDIRECT_VECTORS=y
-CONFIG_KVM_MMIO=y
-CONFIG_KVM_VFIO=y
-CONFIG_VHOST_NET=y
-EOF
-else
+if [ "$version" = "releases" ] || [ "$version" = "snapshots-21.02" ]; then
     cat >> target/linux/rockchip/config-default <<EOF
 CONFIG_VIRTUALIZATION=y
 CONFIG_KVM=y
@@ -134,7 +120,7 @@ EOF
 fi
 
 # util-linux
-if [ ! "$version" = "rc" ] && [ ! "$version" = "snapshots-22.03" ]; then
+if [ "$version" = "releases" ] || [ "$version" = "snapshots-21.02" ]; then
     curl -s https://$mirror/openwrt/patch/util-linux/util-linux-2.38.patch | patch -p1
     curl -s https://$mirror/openwrt/patch/util-linux/util-linux_taskset.patch | patch -p1
 fi
