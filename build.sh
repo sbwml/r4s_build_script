@@ -81,7 +81,16 @@ echo -e "\r\n${GREEN_COLOR}Building $branch${RES}"
 if [ "$soc" = "x86" ]; then
     echo -e "${GREEN_COLOR}Model: x86_64${RES}\r\n"
 elif [ "$soc" = "r5s" ]; then
-    echo -e "${GREEN_COLOR}Model: nanopi-r5s${RES}\r\n"
+    if [ "$3" = "kmod" ]; then
+        echo -e "${GREEN_COLOR}Model: nanopi-r5s - kmod${RES}\r\n"
+        curl -s https://$mirror/tags/kernel-6.1 > kernel.txt
+        kmod_hash=$(cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
+        kmodpkg_name=$(echo $(cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
+        echo -e "${GREEN_COLOR}kernel version: $kmodpkg_name ${RES}\r\n"
+        rm -f kernel.txt
+    else
+        echo -e "${GREEN_COLOR}Model: nanopi-r5s${RES}\r\n"
+    fi
 else
     echo -e "${GREEN_COLOR}Model: nanopi-r4s${RES}\r\n"
 fi
@@ -188,8 +197,13 @@ rm -f 0*-*.sh
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     if [ "$soc" = "x86" ]; then
         curl -s https://$mirror/openwrt/22-config-musl-x86 > .config
-    elif [ "$soc" = "r5s" ]; then
+    elif [ "$soc" = "r5s" ] && [ "$3" != "kmod" ]; then
         curl -s https://$mirror/openwrt/22-config-musl-r5s > .config
+    elif [ "$soc" = "r5s" ] && [ "$3" = "kmod" ]; then
+        curl -sO https://$mirror/openwrt/scripts/04-fix_kmod.sh
+        bash 04-fix_kmod.sh && rm -f 04-fix_kmod.sh
+        ALL_KMODS=y
+        rm -rf package/kernel/r8168
     else
         curl -s https://$mirror/openwrt/22-config-musl-r4s > .config
     fi
@@ -205,7 +219,49 @@ fi
 make defconfig
 
 # Compile
-make -j$cores
+if [ "$ALL_KMODS" = y ]; then
+    echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
+    curl -s https://$mirror/openwrt/22-config-musl-r5s > .config
+    make defconfig
+    make -j$cores
+    [ $? -eq 0 ] && cp -a bin/targets/rockchip/armv8/packages kmod && rm -f kmod/Packages* && bash 99_clean_build_cache.sh || true
+    echo -e "\r\n${GREEN_COLOR}Building OpenWrt With All Kmods ...${RES}\r\n"
+    curl -s https://$mirror/openwrt/22-config-musl-r5s-kmod > .config
+    make defconfig
+    make -j$cores
+    if [ $? -eq 0 ]; then
+        # Compile time
+        endtime=`date +'%Y-%m-%d %H:%M:%S'`
+        start_seconds=$(date --date="$starttime" +%s);
+        end_seconds=$(date --date="$endtime" +%s);
+        SEC=$((end_seconds-start_seconds));
+        cp -a bin/targets/rockchip/armv8/packages $kmodpkg_name
+        \cp -a kmod/*.ipk $kmodpkg_name/ || true
+        rm -f $kmodpkg_name/Packages*
+        # driver firmware
+        cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
+        cp -a bin/packages/aarch64_generic/base/hostapd-common*.ipk $kmodpkg_name/
+        cp -a bin/packages/aarch64_generic/base/*iw*.ipk $kmodpkg_name/
+        cp -a bin/packages/aarch64_generic/base/wireless-regdb*.ipk $kmodpkg_name/
+        tar zcf kmod-packages.tar.gz $kmodpkg_name
+        echo $kmodpkg_name > hash.txt
+        echo -e "${GREEN_COLOR} Build success! ${RES}"
+        echo -e " Build time: ${GREEN_COLOR}$(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s${RES}"
+        exit 0
+    else
+        # Compile time
+        endtime=`date +'%Y-%m-%d %H:%M:%S'`
+        start_seconds=$(date --date="$starttime" +%s);
+        end_seconds=$(date --date="$endtime" +%s);
+        SEC=$((end_seconds-start_seconds));
+        echo -e "${RED_COLOR} Build error... ${RES}"
+        echo -e " Build time: ${RED_COLOR}$(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s${RES}"
+        exit 1
+    fi
+else
+    echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
+    make -j$cores
+fi
 
 # Compile time
 endtime=`date +'%Y-%m-%d %H:%M:%S'`

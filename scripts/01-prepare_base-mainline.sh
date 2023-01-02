@@ -27,6 +27,24 @@ pushd package/kernel/linux/modules
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/video.mk
 popd
 
+# Wireless Drivers
+rm -rf package/kernel/rtl8812au-ct
+git clone https://github.com/sbwml/openwrt-wireless-drivers package/kernel/wireless
+
+# ath10k-ct - fix mac80211 6.1-rc
+rm -rf package/kernel/ath10k-ct
+svn export -r 101133 https://github.com/openwrt/openwrt/branches/master/package/kernel/ath10k-ct package/kernel/ath10k-ct
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/ath10k-ct.patch | patch -p1
+
+# mt76 - fix build
+rm -rf package/kernel/mt76
+svn export -r 101133 https://github.com/openwrt/openwrt/branches/master/package/kernel/mt76 package/kernel/mt76
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/mt76.patch | patch -p1
+
+# mac80211 - fix linux 6.1
+rm -rf package/kernel/mac80211
+git clone https://$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211
+
 # kernel generic patches
 pushd target/linux/generic
     svn export https://github.com/sbwml/target_linux_generic/branches/6.1/target/linux/generic/backport-6.1 backport-6.1
@@ -77,11 +95,6 @@ curl -s https://raw.githubusercontent.com/openwrt/packages/9c5d4fb5a4d2f3157b9b9
 pushd feeds/packages
     curl -s https://github.com/openwrt/packages/commit/ea3ad6b0909b2f5d8a8dcbc4e866c9ed22f3fb10.patch  | patch -p1
 popd
-
-# mac80211 - fix linux 6.1
-rm -rf package/kernel/mac80211
-svn export -r 101107 https://github.com/openwrt/openwrt/branches/master/package/kernel/mac80211 package/kernel/mac80211
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/0003-Revert-mac80211-add-ath11k-PCI-support.patch | patch -p1
 
 #################################################################
 

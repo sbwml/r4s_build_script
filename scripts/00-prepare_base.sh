@@ -66,8 +66,10 @@ fi
 
 # Mbedtls AES & GCM Crypto Extensions
 if [ ! "$soc" = "x86" ]; then
-    if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
+    if [ "$version" = "rc" ]; then
        curl -s https://$mirror/openwrt/patch/mbedtls-5.10/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch > package/libs/mbedtls/patches/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
+    elif [ "$version" = "snapshots-22.03" ]; then
+       curl -s https://$mirror/openwrt/patch/mbedtls-5.10/100-new-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch > package/libs/mbedtls/patches/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
     else
        curl -s https://$mirror/openwrt/patch/mbedtls/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch > package/libs/mbedtls/patches/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
     fi
