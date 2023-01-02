@@ -130,18 +130,10 @@ elif [ "$1" = "dev" ]; then
         kenrel_vermagic=`curl -s https://$openwrt_release_mirror/21.02-SNAPSHOT/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
     fi
 elif [ "$1" = "dev2" ]; then
-    if [ "$soc" = "rk3399" ]; then
-        kenrel_vermagic=`curl -s https://$openwrt_release_mirror/22.03-SNAPSHOT/targets/rockchip/armv8/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
-    else
-        kenrel_vermagic=`curl -s https://$openwrt_release_mirror/22.03-SNAPSHOT/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
-    fi
+    [ "$soc" = "x86" ] && kenrel_vermagic=`curl -s https://$openwrt_release_mirror/22.03-SNAPSHOT/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
 elif [ "$1" = "rc" ]; then
     latest_version="$(curl -s https://$mirror/tags/v22)"
-    if [ "$soc" = "rk3399" ]; then
-        kenrel_vermagic=`curl -s https://$openwrt_release_mirror/"$latest_version"/targets/rockchip/armv8/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
-    else
-        kenrel_vermagic=`curl -s https://$openwrt_release_mirror/"$latest_version"/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
-    fi
+    [ "$soc" = "x86" ] && kenrel_vermagic=`curl -s https://$openwrt_release_mirror/"$latest_version"/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
 fi
 echo $kenrel_vermagic > .vermagic
 sed -ie 's/^\(.\).*vermagic$/\1cp $(TOPDIR)\/.vermagic $(LINUX_DIR)\/.vermagic/' include/kernel-defaults.mk
@@ -183,13 +175,15 @@ curl -sO https://$mirror/openwrt/scripts/00-prepare_base.sh
 curl -sO https://$mirror/openwrt/scripts/01-prepare_base-mainline.sh
 curl -sO https://$mirror/openwrt/scripts/02-prepare_package.sh
 curl -sO https://$mirror/openwrt/scripts/03-convert_translation.sh
+curl -sO https://$mirror/openwrt/scripts/04-fix_kmod.sh
 curl -sO https://$mirror/openwrt/scripts/99_clean_build_cache.sh
 chmod 0755 *sh
 bash 00-prepare_base.sh
 bash 02-prepare_package.sh
 bash 03-convert_translation.sh
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ]; then
     bash 01-prepare_base-mainline.sh
+    bash 04-fix_kmod.sh
 fi
 rm -f 0*-*.sh
 
@@ -200,10 +194,7 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     elif [ "$soc" = "r5s" ] && [ "$3" != "kmod" ]; then
         curl -s https://$mirror/openwrt/22-config-musl-r5s > .config
     elif [ "$soc" = "r5s" ] && [ "$3" = "kmod" ]; then
-        curl -sO https://$mirror/openwrt/scripts/04-fix_kmod.sh
-        bash 04-fix_kmod.sh && rm -f 04-fix_kmod.sh
         ALL_KMODS=y
-        rm -rf package/kernel/r8168
     else
         curl -s https://$mirror/openwrt/22-config-musl-r4s > .config
     fi

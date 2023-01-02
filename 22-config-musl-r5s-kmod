@@ -10,13 +10,6 @@ CONFIG_KERNEL_BUILD_DOMAIN="cooluc.com"
 CONFIG_KERNEL_BUILD_USER="admin"
 # CONFIG_KERNEL_KALLSYMS is not set
 
-### Wireless driver
-CONFIG_PACKAGE_kmod-mac80211=y
-CONFIG_PACKAGE_kmod-mac80211-hwsim=y
-CONFIG_PACKAGE_kmod-mac802154=y
-CONFIG_PACKAGE_kmod-rtl8192cu=y
-CONFIG_PACKAGE_kmod-rtl8821ae=y
-
 ### Fuck
 # CONFIG_PACKAGE_uqmi is not set
 
