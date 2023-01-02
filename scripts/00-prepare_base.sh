@@ -73,6 +73,7 @@ if [ ! "$soc" = "x86" ]; then
     else
        curl -s https://$mirror/openwrt/patch/mbedtls/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch > package/libs/mbedtls/patches/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
     fi
+    curl -s https://$mirror/openwrt/patch/mbedtls/mbedtls.patch | patch -p1
 fi
 
 # NTFS3
