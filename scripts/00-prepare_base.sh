@@ -64,10 +64,8 @@ fi
 
 # Mbedtls AES & GCM Crypto Extensions
 if [ ! "$soc" = "x86" ]; then
-    if [ "$version" = "rc" ]; then
+    if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
        curl -s https://$mirror/openwrt/patch/mbedtls-5.10/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch > package/libs/mbedtls/patches/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
-    elif [ "$version" = "snapshots-22.03" ]; then
-       curl -s https://$mirror/openwrt/patch/mbedtls-5.10/100-new-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch > package/libs/mbedtls/patches/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
     else
        curl -s https://$mirror/openwrt/patch/mbedtls/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch > package/libs/mbedtls/patches/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
     fi
@@ -380,6 +378,10 @@ curl -s https://$mirror/openwrt/patch/luci/luci-refresh-interval.patch | patch -
 curl -s https://$mirror/openwrt/patch/luci/upload-ui.js.patch | patch -p1
 
 # samba4 default permissions
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
+    rm -rf feeds/packages/net/samba4
+    svn export -r 35254 https://github.com/openwrt/packages/branches/master/net/samba4 feeds/packages/net/samba4
+fi
 sed -i 's/invalid users = root/#invalid users = root/g' feeds/packages/net/samba4/files/smb.conf.template
 sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages/net/samba4/files/smb.conf.template
 sed -i 's/#create mask/create mask/g' feeds/packages/net/samba4/files/smb.conf.template

@@ -5,3 +5,6 @@ rm -rf staging_dir/target-aarch64_generic_musl/root-rockchip staging_dir/target-
 rm -rf staging_dir/packages/rockchip staging_dir/packages/x86
 rm -rf dl/geo*
 rm -rf tmp/.config*
+CURRENT_DATE=$(date +%s)
+sed -i "/BUILD_DATE/d" package/base-files/files/usr/lib/os-release
+sed -i "/BUILD_ID/aBUILD_DATE=\"$CURRENT_DATE\"" package/base-files/files/usr/lib/os-release

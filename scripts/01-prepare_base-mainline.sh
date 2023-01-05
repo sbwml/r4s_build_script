@@ -2,7 +2,7 @@
 
 #################################################################
 
-# Rockchip - target - r5s
+# Rockchip - target - r4s/r5s
 rm -rf target/linux/rockchip
 git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip-6.x target/linux/rockchip
 
@@ -40,6 +40,14 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/ath10k-ct.patch |
 rm -rf package/kernel/mt76
 svn export -r 101133 https://github.com/openwrt/openwrt/branches/master/package/kernel/mt76 package/kernel/mt76
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/mt76.patch | patch -p1
+
+# add mt7922
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/add-mt7922.patch | patch -p1
+mkdir -p package/network/utils/iwinfo/patches
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/0001-devices-add-MediaTek-MT7922-device-id.patch > package/network/utils/iwinfo/patches/0001-devices-add-MediaTek-MT7922-device-id.patch
+
+# wireless-regdb
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/500-world-regd-5GHz.patch > package/firmware/wireless-regdb/patches/500-world-regd-5GHz.patch
 
 # mac80211 - fix linux 6.1
 rm -rf package/kernel/mac80211

@@ -31,6 +31,7 @@ fi
 
 # Start time
 starttime=`date +'%Y-%m-%d %H:%M:%S'`
+CURRENT_DATE=$(date +%s)
 # Cpus
 cores=`expr $(nproc --all) + 1`
 # $CURL_BAR
@@ -94,6 +95,8 @@ elif [ "$soc" = "r5s" ]; then
 else
     echo -e "${GREEN_COLOR}Model: nanopi-r4s${RES}\r\n"
 fi
+
+echo -e "${GREEN_COLOR}$CURRENT_DATE${RES}\r\n"
 
 # get source
 if [ -d openwrt ]; then
@@ -193,10 +196,12 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
         curl -s https://$mirror/openwrt/22-config-musl-x86 > .config
     elif [ "$soc" = "r5s" ] && [ "$3" != "kmod" ]; then
         curl -s https://$mirror/openwrt/22-config-musl-r5s > .config
+        [ "$version" = "rc" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
     elif [ "$soc" = "r5s" ] && [ "$3" = "kmod" ]; then
         ALL_KMODS=y
     else
         curl -s https://$mirror/openwrt/22-config-musl-r4s > .config
+        [ "$version" = "rc" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
     fi
 else
     if [ "$soc" = "x86" ]; then
@@ -213,11 +218,14 @@ make defconfig
 if [ "$ALL_KMODS" = y ]; then
     echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
     curl -s https://$mirror/openwrt/22-config-musl-r5s > .config
+    sed -i '/samba4/d;/qbittorrent/d;/mosdns/d;/alist/d;/netdata/d;/vim/d;/ttyd/d;/coreutils/d;/procps-ng/d;/PACKAGE_shadow/d;/coremark/d;/aria2/d' .config
     make defconfig
     make -j$cores
     [ $? -eq 0 ] && cp -a bin/targets/rockchip/armv8/packages kmod && rm -f kmod/Packages* && bash 99_clean_build_cache.sh || true
     echo -e "\r\n${GREEN_COLOR}Building OpenWrt With All Kmods ...${RES}\r\n"
     curl -s https://$mirror/openwrt/22-config-musl-r5s-kmod > .config
+    rm -f package/libs/mbedtls/patches/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
+    git checkout package/libs/mbedtls/Makefile
     make defconfig
     make -j$cores
     if [ $? -eq 0 ]; then
@@ -251,6 +259,8 @@ if [ "$ALL_KMODS" = y ]; then
     fi
 else
     echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
+    sed -i "/BUILD_DATE/d" package/base-files/files/usr/lib/os-release
+    sed -i "/BUILD_ID/aBUILD_DATE=\"$CURRENT_DATE\"" package/base-files/files/usr/lib/os-release
     make -j$cores
 fi
 
