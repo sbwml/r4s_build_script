@@ -4,27 +4,28 @@
 
 # Rockchip - target - r4s/r5s
 rm -rf target/linux/rockchip
-git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip-6.x target/linux/rockchip
+git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip-6.x -b 6.2 target/linux/rockchip
 
 # kernel - 6.x
-curl -s https://$mirror/tags/kernel-6.1 > include/kernel-6.1
-cat include/kernel-6.1 | grep HASH | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}' > .vermagic
+curl -s https://$mirror/tags/kernel-6.2 > include/kernel-6.2
+cat include/kernel-6.2 | grep HASH | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}' > .vermagic
 
 # kernel modules
 git checkout package/kernel/linux
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/include_netfilter.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/openwrt-6.2/include_netfilter.patch | patch -p1
 curl -s https://raw.githubusercontent.com/openwrt/openwrt/b4d3694f81f423089ac5cc8d8e7b6af62428da3a/package/firmware/linux-firmware/Makefile > package/firmware/linux-firmware/Makefile
 pushd package/kernel/linux/modules
-    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/block.mk
-    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/crypto.mk
-    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/fs.mk
-    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/i2c.mk
-    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/input.mk
-    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/lib.mk
-    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/netdevices.mk
-    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/netfilter.mk
-    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/netsupport.mk
-    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/video.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.2/modules/block.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.2/modules/crypto.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.2/modules/fs.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.2/modules/i2c.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.2/modules/input.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.2/modules/lib.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.2/modules/netdevices.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.2/modules/netfilter.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.2/modules/netsupport.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.2/modules/other.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.2/modules/video.mk
 popd
 
 # Wireless Drivers
@@ -34,20 +35,20 @@ git clone https://github.com/sbwml/openwrt-wireless-drivers package/kernel/wirel
 # ath10k-ct - fix mac80211 6.1-rc
 rm -rf package/kernel/ath10k-ct
 svn export -r 101133 https://github.com/openwrt/openwrt/branches/master/package/kernel/ath10k-ct package/kernel/ath10k-ct
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/ath10k-ct.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/openwrt-6.2/kmod-patches/ath10k-ct.patch | patch -p1
 
 # mt76 - fix build
 rm -rf package/kernel/mt76
 svn export -r 101133 https://github.com/openwrt/openwrt/branches/master/package/kernel/mt76 package/kernel/mt76
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/mt76.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/openwrt-6.2/kmod-patches/mt76.patch | patch -p1
 
 # add mt7922
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/add-mt7922.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/openwrt-6.2/kmod-patches/add-mt7922.patch | patch -p1
 mkdir -p package/network/utils/iwinfo/patches
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/0001-devices-add-MediaTek-MT7922-device-id.patch > package/network/utils/iwinfo/patches/0001-devices-add-MediaTek-MT7922-device-id.patch
+curl -s https://$mirror/openwrt/patch/openwrt-6.2/kmod-patches/0001-devices-add-MediaTek-MT7922-device-id.patch > package/network/utils/iwinfo/patches/0001-devices-add-MediaTek-MT7922-device-id.patch
 
 # wireless-regdb
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/500-world-regd-5GHz.patch > package/firmware/wireless-regdb/patches/500-world-regd-5GHz.patch
+curl -s https://$mirror/openwrt/patch/openwrt-6.2/500-world-regd-5GHz.patch > package/firmware/wireless-regdb/patches/500-world-regd-5GHz.patch
 
 # mac80211 - fix linux 6.1
 rm -rf package/kernel/mac80211
@@ -55,17 +56,17 @@ git clone https://$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211
 
 # kernel generic patches
 pushd target/linux/generic
-    svn export https://github.com/sbwml/target_linux_generic/branches/6.1/target/linux/generic/backport-6.1 backport-6.1
-    svn export https://github.com/sbwml/target_linux_generic/branches/6.1/target/linux/generic/hack-6.1 hack-6.1
-    svn export https://github.com/sbwml/target_linux_generic/branches/6.1/target/linux/generic/pending-6.1 pending-6.1
-    curl -s https://raw.githubusercontent.com/sbwml/target_linux_generic/6.1/target/linux/generic/config-6.1 > config-6.1
+    svn export https://github.com/sbwml/target_linux_generic/branches/6.2/target/linux/generic/backport-6.2 backport-6.2
+    svn export https://github.com/sbwml/target_linux_generic/branches/6.2/target/linux/generic/hack-6.2 hack-6.2
+    svn export https://github.com/sbwml/target_linux_generic/branches/6.2/target/linux/generic/pending-6.2 pending-6.2
+    curl -s https://raw.githubusercontent.com/sbwml/target_linux_generic/6.2/target/linux/generic/config-6.2 > config-6.2
 popd
 
 # kernel patch
-curl -s https://$mirror/openwrt/patch/kernel-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch > target/linux/generic/pending-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch
-curl -s https://$mirror/openwrt/patch/kernel-6.1/952-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-6.1/952-net-conntrack-events-support-multiple-registrant.patch
-curl -s https://$mirror/openwrt/patch/kernel-6.1/998-hide-panfrost-logs.patch > target/linux/generic/hack-6.1/998-hide-panfrost-logs.patch
-curl -s https://$mirror/openwrt/patch/kernel-6.1/999-hide-irq-logs.patch > target/linux/generic/hack-6.1/999-hide-irq-logs.patch
+curl -s https://$mirror/openwrt/patch/kernel-6.2/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch > target/linux/generic/pending-6.2/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch
+curl -s https://$mirror/openwrt/patch/kernel-6.2/952-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-6.2/952-net-conntrack-events-support-multiple-registrant.patch
+curl -s https://$mirror/openwrt/patch/kernel-6.2/998-hide-panfrost-logs.patch > target/linux/generic/hack-6.2/998-hide-panfrost-logs.patch
+curl -s https://$mirror/openwrt/patch/kernel-6.2/999-hide-irq-logs.patch > target/linux/generic/hack-6.2/999-hide-irq-logs.patch
 
 #################################################################
 
@@ -84,17 +85,17 @@ sed -i 's/default GCC_USE_VERSION_11/default GCC_USE_VERSION_12/g' toolchain/gcc
 sed -i 's/11.2.0/12.2.0/g' toolchain/gcc/Config.version
 
 # Fix GCC version check
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/toolchain/fix-gcc-version.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/openwrt-6.2/toolchain/fix-gcc-version.patch | patch -p1
 
 # binutils 2.38
 sed -i 's/default BINUTILS_USE_VERSION_2_37/default BINUTILS_USE_VERSION_2_38/g' toolchain/binutils/Config.in
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/toolchain/binutils-2.38.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/openwrt-6.2/toolchain/binutils-2.38.patch | patch -p1
 
 # feeds/packages/libs/libxcrypt - fix build for gcc-12
 sed -i "/Build\/InstallDev/iTARGET_CFLAGS += -Wno-strict-overflow\n" feeds/packages/libs/libxcrypt/Makefile
 
 # package/libs/libnl-tiny - fix build for gcc-12
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/package_libs_libnl-tiny-2022-11-01.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/openwrt-6.2/package_libs_libnl-tiny-2022-11-01.patch | patch -p1
 
 # feeds/packages/libs/libwebsockets - fix build for gcc-12
 curl -s https://raw.githubusercontent.com/openwrt/packages/9c5d4fb5a4d2f3157b9b9e4fc2a7a0457adccdf5/libs/libwebsockets/patches/020-gcc12.patch > feeds/packages/libs/libwebsockets/patches/020-gcc12.patch
@@ -109,7 +110,7 @@ popd
 # ksmbd luci
 rm -rf feeds/luci/applications/luci-app-ksmbd
 svn export https://github.com/openwrt/luci/branches/master/applications/luci-app-ksmbd feeds/luci/applications/luci-app-ksmbd
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/ksmbd/version.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/openwrt-6.2/ksmbd/version.patch | patch -p1
 sed -i 's/0666/0644/g;s/0777/0755/g' feeds/luci/applications/luci-app-ksmbd/htdocs/luci-static/resources/view/ksmbd.js
 
 # ksmbd tools

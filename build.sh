@@ -17,9 +17,9 @@ export isCN=`echo $ip_info | grep -Po 'country_code\":"\K[^"]+'`;
 
 # init url
 if [ "$isCN" = "CN" ]; then
-    export mirror=init.cooluc.com
+    export mirror=file.cooluc.com
 else
-    export mirror=init2.cooluc.com
+    export mirror=file.cooluc.com
 fi
 export gitea=git.cooluc.com
 
@@ -84,7 +84,7 @@ if [ "$soc" = "x86" ]; then
 elif [ "$soc" = "r5s" ]; then
     if [ "$3" = "kmod" ]; then
         echo -e "${GREEN_COLOR}Model: nanopi-r5s - kmod${RES}\r\n"
-        curl -s https://$mirror/tags/kernel-6.1 > kernel.txt
+        curl -s https://$mirror/tags/kernel-6.2 > kernel.txt
         kmod_hash=$(cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
         kmodpkg_name=$(echo $(cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
         echo -e "${GREEN_COLOR}kernel version: $kmodpkg_name ${RES}\r\n"
