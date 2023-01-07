@@ -1,0 +1,15 @@
+diff --git a/src/mod/common/nl/nl_handler.c b/src/mod/common/nl/nl_handler.c
+index 67956d6..418464e 100644
+--- a/src/mod/common/nl/nl_handler.c
++++ b/src/mod/common/nl/nl_handler.c
+@@ -208,8 +208,10 @@ static struct genl_family jool_family = {
+ #if LINUX_VERSION_AT_LEAST(5, 2, 0, 8, 0)
+ 	.policy = jool_policy,
+ #endif
++#if LINUX_VERSION_LOWER_THAN(6, 1, 0, 3, 0)
+ 	.pre_doit = pre_handle_request,
+ 	.post_doit = post_handle_request,
++#endif
+ 
+ #if LINUX_VERSION_AT_LEAST(4, 10, 0, 7, 5)
+ 	/*

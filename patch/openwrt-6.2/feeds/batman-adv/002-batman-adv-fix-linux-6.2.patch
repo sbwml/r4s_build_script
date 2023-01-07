@@ -1,0 +1,76 @@
+From be10569669173be2beefaf1ffb99280dcbc8f61a Mon Sep 17 00:00:00 2001
+From: Jakub Kicinski <kuba@kernel.org>
+Date: Fri, 4 Nov 2022 12:13:33 -0700
+Subject: [PATCH] batman-adv: genetlink: introduce split op representation
+
+We currently have two forms of operations - small ops and "full" ops
+(or just ops). The former does not have pointers for some of the less
+commonly used features (namely dump start/done and policy).
+
+The "full" ops, however, still don't contain all the necessary
+information. In particular the policy is per command ID, while
+do and dump often accept different attributes. It's also not
+possible to define different pre_doit and post_doit callbacks
+for different commands within the family.
+
+At the same time a lot of commands do not support dumping and
+therefore all the dump-related information is wasted space.
+
+Create a new command representation which can hold info about
+a do implementation or a dump implementation, but not both at
+the same time.
+
+Use this new representation on the command execution path
+(genl_family_rcv_msg) as we either run a do or a dump and
+don't have to create a "full" op there.
+
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[sven@narfation.org: Add compat code]
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+---
+ compat-include/net/genetlink.h | 7 +++++++
+ net/batman-adv/netlink.c       | 6 ++++--
+ 2 files changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/compat-include/net/genetlink.h b/compat-include/net/genetlink.h
+index 56a9ab22..05c57ce0 100644
+--- a/compat-include/net/genetlink.h
++++ b/compat-include/net/genetlink.h
+@@ -162,4 +162,11 @@ batadv_genl_unregister_family(struct batadv_genl_family *family)
+ 
+ #endif /* LINUX_VERSION_IS_LESS(5, 10, 0) */
+ 
++
++#if LINUX_VERSION_IS_LESS(6, 2, 0)
++
++#define genl_split_ops genl_ops
++
++#endif /* LINUX_VERSION_IS_LESS(6, 2, 0) */
++
+ #endif /* _NET_BATMAN_ADV_COMPAT_NET_GENETLINK_H_ */
+diff --git a/net/batman-adv/netlink.c b/net/batman-adv/netlink.c
+index 63253d4a..07f21cdb 100644
+--- a/net/batman-adv/netlink.c
++++ b/net/batman-adv/netlink.c
+@@ -1267,7 +1267,8 @@ batadv_get_vlan_from_info(struct batadv_priv *bat_priv, struct net *net,
+  *
+  * Return: 0 on success or negative error number in case of failure
+  */
+-static int batadv_pre_doit(const struct genl_ops *ops, struct sk_buff *skb,
++static int batadv_pre_doit(const struct genl_split_ops *ops,
++			   struct sk_buff *skb,
+ 			   struct genl_info *info)
+ {
+ 	struct net *net = genl_info_net(info);
+@@ -1332,7 +1333,8 @@ static int batadv_pre_doit(const struct genl_ops *ops, struct sk_buff *skb,
+  * @skb: Netlink message with request data
+  * @info: receiver information
+  */
+-static void batadv_post_doit(const struct genl_ops *ops, struct sk_buff *skb,
++static void batadv_post_doit(const struct genl_split_ops *ops,
++			     struct sk_buff *skb,
+ 			     struct genl_info *info)
+ {
+ 	struct batadv_hard_iface *hard_iface;

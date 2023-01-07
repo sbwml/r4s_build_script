@@ -1,0 +1,138 @@
+From a15d3f3c1c2a7c8439643ed37c937750122246b7 Mon Sep 17 00:00:00 2001
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date: Sun, 9 Oct 2022 20:44:02 -0600
+Subject: [PATCH] batman-adv: use get_random_u32_below() instead of deprecated
+ function
+
+This is a simple mechanical transformation done by:
+
+@@
+expression E;
+@@
+- prandom_u32_max
++ get_random_u32_below
+  (E)
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Acked-by: Darrick J. Wong <djwong@kernel.org> # for xfs
+Reviewed-by: SeongJae Park <sj@kernel.org> # for damon
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com> # for infiniband
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk> # for arm
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org> # for mmc
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+[sven@narfation.org: add compat code]
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+---
+ compat-include/linux/random.h   | 28 ++++++++++++++++++++++++++++
+ net/batman-adv/bat_iv_ogm.c     |  4 ++--
+ net/batman-adv/bat_v_elp.c      |  2 +-
+ net/batman-adv/bat_v_ogm.c      |  4 ++--
+ net/batman-adv/network-coding.c |  2 +-
+ 5 files changed, 34 insertions(+), 6 deletions(-)
+ create mode 100644 compat-include/linux/random.h
+
+diff --git a/compat-include/linux/random.h b/compat-include/linux/random.h
+new file mode 100644
+index 00000000..a19b8076
+--- /dev/null
++++ b/compat-include/linux/random.h
+@@ -0,0 +1,28 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (C) B.A.T.M.A.N. contributors:
++ *
++ * Marek Lindner, Simon Wunderlich
++ *
++ * This file contains macros for maintaining compatibility with older versions
++ * of the Linux kernel.
++ */
++
++#ifndef _NET_BATMAN_ADV_COMPAT_LINUX_RANDOM_H_
++#define _NET_BATMAN_ADV_COMPAT_LINUX_RANDOM_H_
++
++#include <linux/version.h>
++#include_next <linux/random.h>
++
++
++#if LINUX_VERSION_IS_LESS(6, 2, 0)
++
++static inline u32 batadv_get_random_u32_below(u32 ep_ro)
++{
++	return prandom_u32_max(ep_ro);
++}
++
++#define get_random_u32_below batadv_get_random_u32_below
++
++#endif /* LINUX_VERSION_IS_LESS(6, 2, 0) */
++
++#endif /* _NET_BATMAN_ADV_COMPAT_LINUX_RANDOM_H_ */
+diff --git a/net/batman-adv/bat_iv_ogm.c b/net/batman-adv/bat_iv_ogm.c
+index 7f6a7c96..114ee5da 100644
+--- a/net/batman-adv/bat_iv_ogm.c
++++ b/net/batman-adv/bat_iv_ogm.c
+@@ -280,7 +280,7 @@ batadv_iv_ogm_emit_send_time(const struct batadv_priv *bat_priv)
+ 	unsigned int msecs;
+ 
+ 	msecs = atomic_read(&bat_priv->orig_interval) - BATADV_JITTER;
+-	msecs += prandom_u32_max(2 * BATADV_JITTER);
++	msecs += get_random_u32_below(2 * BATADV_JITTER);
+ 
+ 	return jiffies + msecs_to_jiffies(msecs);
+ }
+@@ -288,7 +288,7 @@ batadv_iv_ogm_emit_send_time(const struct batadv_priv *bat_priv)
+ /* when do we schedule a ogm packet to be sent */
+ static unsigned long batadv_iv_ogm_fwd_send_time(void)
+ {
+-	return jiffies + msecs_to_jiffies(prandom_u32_max(BATADV_JITTER / 2));
++	return jiffies + msecs_to_jiffies(get_random_u32_below(BATADV_JITTER / 2));
+ }
+ 
+ /* apply hop penalty for a normal link */
+diff --git a/net/batman-adv/bat_v_elp.c b/net/batman-adv/bat_v_elp.c
+index f1741fbf..f9a58fb5 100644
+--- a/net/batman-adv/bat_v_elp.c
++++ b/net/batman-adv/bat_v_elp.c
+@@ -51,7 +51,7 @@ static void batadv_v_elp_start_timer(struct batadv_hard_iface *hard_iface)
+ 	unsigned int msecs;
+ 
+ 	msecs = atomic_read(&hard_iface->bat_v.elp_interval) - BATADV_JITTER;
+-	msecs += prandom_u32_max(2 * BATADV_JITTER);
++	msecs += get_random_u32_below(2 * BATADV_JITTER);
+ 
+ 	queue_delayed_work(batadv_event_workqueue, &hard_iface->bat_v.elp_wq,
+ 			   msecs_to_jiffies(msecs));
+diff --git a/net/batman-adv/bat_v_ogm.c b/net/batman-adv/bat_v_ogm.c
+index 033639df..addfd8c4 100644
+--- a/net/batman-adv/bat_v_ogm.c
++++ b/net/batman-adv/bat_v_ogm.c
+@@ -90,7 +90,7 @@ static void batadv_v_ogm_start_queue_timer(struct batadv_hard_iface *hard_iface)
+ 	unsigned int msecs = BATADV_MAX_AGGREGATION_MS * 1000;
+ 
+ 	/* msecs * [0.9, 1.1] */
+-	msecs += prandom_u32_max(msecs / 5) - (msecs / 10);
++	msecs += get_random_u32_below(msecs / 5) - (msecs / 10);
+ 	queue_delayed_work(batadv_event_workqueue, &hard_iface->bat_v.aggr_wq,
+ 			   msecs_to_jiffies(msecs / 1000));
+ }
+@@ -109,7 +109,7 @@ static void batadv_v_ogm_start_timer(struct batadv_priv *bat_priv)
+ 		return;
+ 
+ 	msecs = atomic_read(&bat_priv->orig_interval) - BATADV_JITTER;
+-	msecs += prandom_u32_max(2 * BATADV_JITTER);
++	msecs += get_random_u32_below(2 * BATADV_JITTER);
+ 	queue_delayed_work(batadv_event_workqueue, &bat_priv->bat_v.ogm_wq,
+ 			   msecs_to_jiffies(msecs));
+ }
+diff --git a/net/batman-adv/network-coding.c b/net/batman-adv/network-coding.c
+index 5f4aeeb6..bf29fba4 100644
+--- a/net/batman-adv/network-coding.c
++++ b/net/batman-adv/network-coding.c
+@@ -1009,7 +1009,7 @@ static struct batadv_nc_path *batadv_nc_get_path(struct batadv_priv *bat_priv,
+ static u8 batadv_nc_random_weight_tq(u8 tq)
+ {
+ 	/* randomize the estimated packet loss (max TQ - estimated TQ) */
+-	u8 rand_tq = prandom_u32_max(BATADV_TQ_MAX_VALUE + 1 - tq);
++	u8 rand_tq = get_random_u32_below(BATADV_TQ_MAX_VALUE + 1 - tq);
+ 
+ 	/* convert to (randomized) estimated tq again */
+ 	return BATADV_TQ_MAX_VALUE - rand_tq;

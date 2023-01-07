@@ -26,6 +26,7 @@ pushd package/kernel/linux/modules
     curl -Os https://$mirror/openwrt/patch/openwrt-6.2/modules/netsupport.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.2/modules/other.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.2/modules/video.mk
+    sed -i 's/+kmod-iio-core +kmod-iio-kfifo-buf +kmod-regmap-core/+kmod-iio-core +kmod-iio-kfifo-buf +kmod-industrialio-triggered-buffer +kmod-regmap-core/g' iio.mk
 popd
 
 # Wireless Drivers
