@@ -1190,7 +1190,7 @@ define KernelPackage/sctp
   FILES:= $(LINUX_DIR)/net/sctp/sctp.ko
   AUTOLOAD:= $(call AutoLoad,32,sctp)
   DEPENDS:=+kmod-lib-crc32c +kmod-crypto-md5 +kmod-crypto-hmac \
-    +(LINUX_5_15||LINUX_6_1):kmod-udptunnel4 +(LINUX_5_15||LINUX_6_1):kmod-udptunnel6
+    +(LINUX_5_15||LINUX_6_1||LINUX_6_2):kmod-udptunnel4 +(LINUX_5_15||LINUX_6_1||LINUX_6_2):kmod-udptunnel6
 endef
 
 define KernelPackage/sctp/description
