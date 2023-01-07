@@ -52,7 +52,7 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.2/500-world-regd-5GHz.patch > pa
 
 # mac80211 - fix linux 6.1
 rm -rf package/kernel/mac80211
-git clone https://$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211
+git clone https://$gitea/sbwml/package_kernel_mac80211 -b 6.2 package/kernel/mac80211
 
 # kernel generic patches
 pushd target/linux/generic
