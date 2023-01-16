@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 #################################################################
 
@@ -13,7 +13,6 @@ cat include/kernel-6.1 | grep HASH | awk -F- '{print $2}' | awk '{print $1}' | m
 # kernel modules
 git checkout package/kernel/linux
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/include_netfilter.patch | patch -p1
-curl -s https://raw.githubusercontent.com/openwrt/openwrt/b4d3694f81f423089ac5cc8d8e7b6af62428da3a/package/firmware/linux-firmware/Makefile > package/firmware/linux-firmware/Makefile
 pushd package/kernel/linux/modules
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/block.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/crypto.mk
@@ -27,18 +26,18 @@ pushd package/kernel/linux/modules
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/video.mk
 popd
 
-# Wireless Drivers
-rm -rf package/kernel/rtl8812au-ct
-git clone https://github.com/sbwml/openwrt-wireless-drivers package/kernel/wireless
+# linux-firmware
+rm -rf package/firmware/linux-firmware
+git clone https://nanopi:nanopi@$gitea/sbwml/package_firmware_linux-firmware package/firmware/linux-firmware
 
 # ath10k-ct - fix mac80211 6.1-rc
 rm -rf package/kernel/ath10k-ct
-svn export -r 101133 https://github.com/openwrt/openwrt/branches/master/package/kernel/ath10k-ct package/kernel/ath10k-ct
+cp -a ../master/openwrt/package/kernel/ath10k-ct package/kernel/ath10k-ct
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/ath10k-ct.patch | patch -p1
 
 # mt76 - fix build
 rm -rf package/kernel/mt76
-svn export -r 101133 https://github.com/openwrt/openwrt/branches/master/package/kernel/mt76 package/kernel/mt76
+cp -a ../master/openwrt/package/kernel/mt76 package/kernel/mt76
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/mt76.patch | patch -p1
 
 # add mt7922
@@ -51,15 +50,13 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.1/500-world-regd-5GHz.patch > pa
 
 # mac80211 - fix linux 6.1
 rm -rf package/kernel/mac80211
-git clone https://$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211
+git clone https://nanopi:nanopi@$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211
 
 # kernel generic patches
-pushd target/linux/generic
-    svn export https://github.com/sbwml/target_linux_generic/branches/6.1/target/linux/generic/backport-6.1 backport-6.1
-    svn export https://github.com/sbwml/target_linux_generic/branches/6.1/target/linux/generic/hack-6.1 hack-6.1
-    svn export https://github.com/sbwml/target_linux_generic/branches/6.1/target/linux/generic/pending-6.1 pending-6.1
-    curl -s https://raw.githubusercontent.com/sbwml/target_linux_generic/6.1/target/linux/generic/config-6.1 > config-6.1
-popd
+git clone https://github.com/sbwml/target_linux_generic
+mv target_linux_generic/target/linux/generic/* target/linux/generic/
+sed -i '/CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE/d' target/linux/generic/config-6.1
+rm -rf target_linux_generic
 
 # kernel patch
 curl -s https://$mirror/openwrt/patch/kernel-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch > target/linux/generic/pending-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch
@@ -71,7 +68,7 @@ curl -s https://$mirror/openwrt/patch/kernel-6.1/999-hide-irq-logs.patch > targe
 
 # tools/meson
 rm -rf tools/meson
-svn export https://github.com/openwrt/openwrt/branches/master/tools/meson tools/meson
+cp -a ../master/openwrt/tools/meson tools/meson
 
 # gcc-12
 curl -s https://github.com/openwrt/openwrt/commit/c4bd303086012afe2aebd213c892363512138bb7.patch | patch -p1
@@ -108,13 +105,13 @@ popd
 
 # ksmbd luci
 rm -rf feeds/luci/applications/luci-app-ksmbd
-svn export https://github.com/openwrt/luci/branches/master/applications/luci-app-ksmbd feeds/luci/applications/luci-app-ksmbd
+cp -a ../master/luci/applications/luci-app-ksmbd feeds/luci/applications/luci-app-ksmbd
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/ksmbd/version.patch | patch -p1
 sed -i 's/0666/0644/g;s/0777/0755/g' feeds/luci/applications/luci-app-ksmbd/htdocs/luci-static/resources/view/ksmbd.js
 
 # ksmbd tools
 rm -rf feeds/packages/net/ksmbd-tools
-svn export https://github.com/openwrt/packages/branches/master/net/ksmbd-tools feeds/packages/net/ksmbd-tools
+cp -a ../master/packages/net/ksmbd-tools feeds/packages/net/ksmbd-tools
 sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/ksmbd-tools/files/ksmbd.config.example
 sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages/net/ksmbd-tools/files/ksmbd.conf.template
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 RED_COLOR='\e[1;31m'
 GREEN_COLOR='\e[1;32m'
 YELLOW_COLOR='\e[1;33m'
@@ -85,24 +85,36 @@ elif [ "$soc" = "r5s" ]; then
     if [ "$3" = "kmod" ]; then
         echo -e "${GREEN_COLOR}Model: nanopi-r5s - kmod${RES}\r\n"
         curl -s https://$mirror/tags/kernel-6.1 > kernel.txt
+        cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}' > kmod_verion.txt
         kmod_hash=$(cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
         kmodpkg_name=$(echo $(cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
         echo -e "${GREEN_COLOR}kernel version: $kmodpkg_name ${RES}\r\n"
         rm -f kernel.txt
     else
         echo -e "${GREEN_COLOR}Model: nanopi-r5s${RES}\r\n"
+        [ "$1" = "rc" ] && model="nanopi-r5s"
     fi
 else
     echo -e "${GREEN_COLOR}Model: nanopi-r4s${RES}\r\n"
+    [ "$1" = "rc" ] && model="nanopi-r4s"
 fi
 
 echo -e "${GREEN_COLOR}$CURRENT_DATE${RES}\r\n"
 
 # get source
 if [ -d openwrt ]; then
-	rm -rf openwrt
+    rm -rf openwrt master
+    mkdir master
 fi
+
+# openwrt - releases
 git clone --depth=1 $github_mirror/openwrt/openwrt -b $branch
+
+# master
+git clone $github_mirror/openwrt/openwrt master/openwrt --depth=1
+git clone $github_mirror/openwrt/packages master/packages --depth=1
+git clone $github_mirror/openwrt/luci master/luci --depth=1
+
 if [ -d openwrt ]; then
     cd openwrt
     curl -Os https://$mirror/openwrt/patch/key.tar.gz && tar zxf key.tar.gz && rm -f key.tar.gz
@@ -184,11 +196,12 @@ chmod 0755 *sh
 bash 00-prepare_base.sh
 bash 02-prepare_package.sh
 bash 03-convert_translation.sh
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ] && [ "$1" != "stable" ] && [ "$1" != "dev" ]; then
     bash 01-prepare_base-mainline.sh
     bash 04-fix_kmod.sh
 fi
 rm -f 0*-*.sh
+rm -rf ../master
 
 # Load devices Config
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
@@ -223,7 +236,7 @@ if [ "$ALL_KMODS" = y ]; then
     make -j$cores
     [ $? -eq 0 ] && cp -a bin/targets/rockchip/armv8/packages kmod && rm -f kmod/Packages* && bash 99_clean_build_cache.sh || true
     echo -e "\r\n${GREEN_COLOR}Building OpenWrt With All Kmods ...${RES}\r\n"
-    curl -s https://$mirror/openwrt/22-config-musl-r5s-kmod > .config
+    curl -s https://$mirror/openwrt/22-aarch64_generic-kmod > .config
     rm -f package/libs/mbedtls/patches/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
     git checkout package/libs/mbedtls/Makefile
     make defconfig
@@ -293,6 +306,17 @@ else
     if [ -f bin/targets/rockchip/armv8/*-ext4-sysupgrade.img.gz ]; then
         echo -e "${GREEN_COLOR} Build success! ${RES}"
         echo -e " Build time: ${GREEN_COLOR}$(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s${RES}"
+        # OTA json
+        if [ "$1" = "rc" ]; then
+            curl -Lso ota.json https://github.com/sbwml/builder/releases/latest/download/fw.json || exit 0
+            VERSION=$(cat version.txt | sed 's/v//g')
+            SHA256=$(sha256sum bin/targets/rockchip/armv8/*-squashfs-sysupgrade.img.gz | awk '{print $1}')
+            if [ "$model" = "nanopi-r4s" ]; then
+                jq ".\"friendlyarm,nanopi-r4s\"[0].build_date=\"$CURRENT_DATE\"|.\"friendlyarm,nanopi-r4s\"[0].sha256sum=\"$SHA256\"|.\"friendlyarm,nanopi-r4s\"[0].url=\"https://r4s.cooluc.com/releases/openwrt-22.03/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz\"" ota.json > fw.json
+            elif [ "$model" = "nanopi-r5s" ]; then
+                jq ".\"friendlyarm,nanopi-r5s\"[0].build_date=\"$CURRENT_DATE\"|.\"friendlyarm,nanopi-r5s\"[0].sha256sum=\"$SHA256\"|.\"friendlyarm,nanopi-r5s\"[0].url=\"https://r5s.cooluc.com/releases/openwrt-22.03/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5s-squashfs-sysupgrade.img.gz\"" ota.json > fw.json
+            fi
+        fi
         # Backup download cache
         if [ "$isCN" = "CN" ] && [ "$1" = "stable" ] || [ "$1" = "rc" ]; then
             rm -rf dl/xray* dl/trojan* dl/v2ray* dl/adguardhome* dl/alist* dl/qbittorrent* dl/geo* dl/go-mod-cache

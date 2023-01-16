@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Fix linux-6.1
 
 # siit
 rm -rf feeds/packages/net/siit
-svn export https://github.com/openwrt/packages/branches/master/net/siit feeds/packages/net/siit
+cp -a ../master/packages/net/siit feeds/packages/net/siit
 
 # packages
 pushd feeds/packages
@@ -32,4 +32,4 @@ popd
 
 # routing - batman-adv
 rm -rf feeds/routing/batman-adv
-svn export -r 1947 https://github.com/immortalwrt/routing/branches/master/batman-adv feeds/routing/batman-adv
+svn export https://github.com/immortalwrt/routing/branches/master/batman-adv feeds/routing/batman-adv

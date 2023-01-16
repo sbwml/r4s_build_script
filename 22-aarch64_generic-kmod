@@ -10,6 +10,14 @@ CONFIG_KERNEL_BUILD_DOMAIN="cooluc.com"
 CONFIG_KERNEL_BUILD_USER="admin"
 # CONFIG_KERNEL_KALLSYMS is not set
 
+# rtw88 firmware
+CONFIG_PACKAGE_rtl8723du-firmware=m
+CONFIG_PACKAGE_rtl8821ce-firmware=m
+CONFIG_PACKAGE_rtl8822be-firmware=m
+CONFIG_PACKAGE_rtl8822be-firmware=m
+CONFIG_PACKAGE_rtl8822ce-firmware=m
+CONFIG_PACKAGE_rtl8822ce-firmware=m
+
 ### Fuck
 # CONFIG_PACKAGE_uqmi is not set
 

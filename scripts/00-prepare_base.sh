@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 #################################################################
 
@@ -44,14 +44,23 @@ sed -i 's/+uhttpd //' feeds/luci/collections/luci-light/Makefile
 # NIC driver - x86
 if [ "$soc" = "x86" ]; then
     # igb-intel
-    svn export https://github.com/coolsnowwolf/lede/trunk/package/lean/igb-intel package/kernel/igb-intel
+    svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/igb-intel package/kernel/igb-intel
     # r8101
     git clone https://github.com/sbwml/package_kernel_r8101 package/kernel/r8101
 fi
 # R8168 & R8125 & R8152
 git clone https://github.com/sbwml/package_kernel_r8168 package/kernel/r8168
-git clone https://github.com/sbwml/package_kernel_r8125 package/kernel/r8125
+#git clone https://github.com/sbwml/package_kernel_r8125 package/kernel/r8125
+git clone https://nanopi:nanopi@$gitea/sbwml/package_kernel_r8125 package/kernel/r8125
 git clone https://github.com/sbwml/package_kernel_r8152 package/kernel/r8152
+
+# Wireless Drivers
+rm -rf package/kernel/rtl8812au-ct
+git clone https://github.com/sbwml/openwrt-wireless-drivers package/kernel/wireless
+if [ "$version" = "releases" ] || [ "$version" = "snapshots-21.02" ]; then
+    rm -rf package/kernel/wireless/rtl88x2bu
+    git clone https://$gitea/sbwml/rtl88x2bu package/kernel/rtl88x2bu
+fi
 
 # Optimization level -Ofast
 if [ "$soc" = "rk3328" ]; then
@@ -134,8 +143,7 @@ fi
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     # dnsmasq-2.88
     rm -rf package/network/services/dnsmasq
-    svn export -r 100611 https://github.com/openwrt/openwrt/trunk/package/network/services/dnsmasq package/network/services/dnsmasq
-    curl -s https://$mirror/openwrt/patch/dnsmasq-5.10/dnsmasq-2.88.patch | patch -p1
+    cp -a ../master/openwrt/package/network/services/dnsmasq package/network/services/dnsmasq
     curl -s https://$mirror/openwrt/patch/dnsmasq-5.10/luci-add-filter-aaaa-option.patch | patch -p1
 else
     curl -s https://$mirror/openwrt/patch/dnsmasq/dnsmasq-add-filter-aaaa-option.patch | patch -p1
@@ -147,20 +155,20 @@ fi
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     # firewall4
     rm -rf package/network/config/firewall4
-    svn export https://github.com/openwrt/openwrt/branches/master/package/network/config/firewall4 package/network/config/firewall4
+    cp -a ../master/openwrt/package/network/config/firewall4 package/network/config/firewall4
     mkdir -p package/network/config/firewall4/patches
     curl -s https://$mirror/openwrt/patch/firewall4/999-01-firewall4-add-fullcone-support.patch > package/network/config/firewall4/patches/999-01-firewall4-add-fullcone-support.patch
     # kernel version
     curl -s https://$mirror/openwrt/patch/firewall4/002-fix-fw4.uc-adept-kernel-version-type-of-x.x.patch > package/network/config/firewall4/patches/002-fix-fw4.uc-adept-kernel-version-type-of-x.x.patch
     # libnftnl
     rm -rf package/libs/libnftnl
-    svn export https://github.com/openwrt/openwrt/branches/master/package/libs/libnftnl package/libs/libnftnl
+    cp -a ../master/openwrt/package/libs/libnftnl package/libs/libnftnl
     mkdir -p package/libs/libnftnl/patches
     curl -s https://$mirror/openwrt/patch/firewall4/libnftnl/001-libnftnl-add-fullcone-expression-support.patch > package/libs/libnftnl/patches/001-libnftnl-add-fullcone-expression-support.patch
     sed -i '/PKG_INSTALL:=1/iPKG_FIXUP:=autoreconf' package/libs/libnftnl/Makefile
     # nftables
     rm -rf package/network/utils/nftables
-    svn export https://github.com/openwrt/openwrt/branches/master/package/network/utils/nftables package/network/utils/nftables
+    cp -a ../master/openwrt/package/network/utils/nftables package/network/utils/nftables
     mkdir -p package/network/utils/nftables/patches
     curl -s https://$mirror/openwrt/patch/firewall4/nftables/002-nftables-add-fullcone-expression-support.patch > package/network/utils/nftables/patches/002-nftables-add-fullcone-expression-support.patch
     # hide nftables warning message
@@ -338,7 +346,7 @@ sed -i 's/services/network/g' feeds/luci/applications/luci-app-upnp/root/usr/sha
 
 # nginx - latest version
 rm -rf feeds/packages/net/nginx
-svn export https://github.com/sbwml/feeds_packages_net_nginx/trunk feeds/packages/net/nginx
+svn co https://github.com/sbwml/feeds_packages_net_nginx/trunk feeds/packages/net/nginx
 sed -i 's/procd_set_param stdout 1/procd_set_param stdout 0/g;s/procd_set_param stderr 1/procd_set_param stderr 0/g' feeds/packages/net/nginx/files/nginx.init
 
 # nginx - ubus
@@ -380,7 +388,7 @@ curl -s https://$mirror/openwrt/patch/luci/upload-ui.js.patch | patch -p1
 # samba4 default permissions
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     rm -rf feeds/packages/net/samba4
-    svn export -r 35254 https://github.com/openwrt/packages/branches/master/net/samba4 feeds/packages/net/samba4
+    cp -a ../master/packages/net/samba4 feeds/packages/net/samba4
 fi
 sed -i 's/invalid users = root/#invalid users = root/g' feeds/packages/net/samba4/files/smb.conf.template
 sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages/net/samba4/files/smb.conf.template
