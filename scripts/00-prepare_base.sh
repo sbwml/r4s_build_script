@@ -31,6 +31,16 @@ else
     fi
 fi
 
+# tools: fix PKG_SOURCE - openwrt-22.03.3
+if [ "$version" = "rc" ]; then
+    rm -rf tools/dosfstools
+    cp -a ../master/openwrt/tools/dosfstools tools/dosfstools
+    rm -rf tools/fakeroot
+    cp -a ../master/openwrt/tools/fakeroot tools/fakeroot
+    rm -rf tools/mtd-utils
+    cp -a ../master/openwrt/tools/mtd-utils tools/mtd-utils
+fi
+
 #################################################################
 
 # default LAN IP
@@ -71,8 +81,17 @@ elif [ "$soc" = "rk3568" ] || [ "$soc" = "r5s" ]; then
     curl -s https://$mirror/openwrt/patch/target-modify_for_rk3568.patch | patch -p1
 fi
 
+# MUSL LIBC
+if [ "$USE_GLIBC" = "y" ]; then
+    # O3 optimization
+    git checkout include/target.mk && \
+        curl -s https://$mirror/openwrt/patch/target-modify_for_glibc.patch | patch -p1
+    # musl-libc
+    git clone https://$gitea/sbwml/package_libs_musl-libc package/libs/musl-libc
+fi
+
 # Mbedtls AES & GCM Crypto Extensions
-if [ ! "$soc" = "x86" ]; then
+if [ ! "$soc" = "x86" ] && [ "$version" = "stable" ] || [ "$version" = "snapshots-21.02" ]; then
     if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
        curl -s https://$mirror/openwrt/patch/mbedtls-5.10/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch > package/libs/mbedtls/patches/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
     else
@@ -343,6 +362,11 @@ fi
 
 # UPnP - Move to network
 sed -i 's/services/network/g' feeds/luci/applications/luci-app-upnp/root/usr/share/luci/menu.d/luci-app-upnp.json
+
+# iproute2 - fix build with glibc
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
+    curl -s https://github.com/openwrt/openwrt/commit/fb15cb4ce9559021d463b5cb3816d8a9eeb8f3f9.patch | patch -p1
+fi
 
 # nginx - latest version
 rm -rf feeds/packages/net/nginx

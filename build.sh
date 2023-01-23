@@ -78,6 +78,11 @@ if [ "$soc" = "" ]; then
     export soc=rk3399
 fi
 
+# use glibc - openwrt-22.03
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ]; then
+    export USE_GLIBC=n
+fi
+
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}"
 if [ "$soc" = "x86" ]; then
     echo -e "${GREEN_COLOR}Model: x86_64${RES}\r\n"
@@ -224,21 +229,16 @@ else
     fi
 fi
 
+# glibc
+[ "$USE_GLIBC" = "y" ] && curl -s https://$mirror/openwrt/config-glibc >> .config
+
 # init openwrt config
 make defconfig
 
 # Compile
 if [ "$ALL_KMODS" = y ]; then
-    echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
-    curl -s https://$mirror/openwrt/22-config-musl-r5s > .config
-    sed -i '/samba4/d;/qbittorrent/d;/mosdns/d;/alist/d;/netdata/d;/vim/d;/ttyd/d;/coreutils/d;/procps-ng/d;/PACKAGE_shadow/d;/coremark/d;/aria2/d' .config
-    make defconfig
-    make -j$cores
-    [ $? -eq 0 ] && cp -a bin/targets/rockchip/armv8/packages kmod && rm -f kmod/Packages* && bash 99_clean_build_cache.sh || true
     echo -e "\r\n${GREEN_COLOR}Building OpenWrt With All Kmods ...${RES}\r\n"
-    curl -s https://$mirror/openwrt/22-aarch64_generic-kmod > .config
-    rm -f package/libs/mbedtls/patches/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
-    git checkout package/libs/mbedtls/Makefile
+    curl -s https://$mirror/openwrt/22-config-musl-r5s > .config
     make defconfig
     make -j$cores
     if [ $? -eq 0 ]; then
@@ -247,14 +247,14 @@ if [ "$ALL_KMODS" = y ]; then
         start_seconds=$(date --date="$starttime" +%s);
         end_seconds=$(date --date="$endtime" +%s);
         SEC=$((end_seconds-start_seconds));
-        cp -a bin/targets/rockchip/armv8/packages $kmodpkg_name
+        cp -a bin/targets/rockchip/armv8*/packages $kmodpkg_name
         \cp -a kmod/*.ipk $kmodpkg_name/ || true
         rm -f $kmodpkg_name/Packages*
         # driver firmware
         cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
-        cp -a bin/packages/aarch64_generic/base/hostapd-common*.ipk $kmodpkg_name/
+        cp -a bin/packages/aarch64_generic/base/hostapd*.ipk $kmodpkg_name/
         cp -a bin/packages/aarch64_generic/base/*iw*.ipk $kmodpkg_name/
-        cp -a bin/packages/aarch64_generic/base/wireless-regdb*.ipk $kmodpkg_name/
+        cp -a bin/packages/aarch64_generic/base/wireless*.ipk $kmodpkg_name/
         tar zcf kmod-packages.tar.gz $kmodpkg_name
         echo $kmodpkg_name > hash.txt
         echo -e "${GREEN_COLOR} Build success! ${RES}"
@@ -284,7 +284,7 @@ end_seconds=$(date --date="$endtime" +%s);
 SEC=$((end_seconds-start_seconds));
 
 if [ "$soc" = "x86" ]; then
-    if [ -f bin/targets/x86/64/*-ext4-combined-efi.img.gz ]; then
+    if [ -f bin/targets/x86/64*/*-ext4-combined-efi.img.gz ]; then
         echo -e "${GREEN_COLOR} Build success! ${RES}"
         echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
         # Backup download cache
@@ -297,20 +297,17 @@ if [ "$soc" = "x86" ]; then
         echo -e "${RED_COLOR} Build error... ${RES}"
         echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
         echo
-        if [ ! "$isCN" = "CN" ]; then
-            make -j1 V=s
-        fi
         exit 1
     fi
 else
-    if [ -f bin/targets/rockchip/armv8/*-ext4-sysupgrade.img.gz ]; then
+    if [ -f bin/targets/rockchip/armv8*/*-ext4-sysupgrade.img.gz ]; then
         echo -e "${GREEN_COLOR} Build success! ${RES}"
         echo -e " Build time: ${GREEN_COLOR}$(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s${RES}"
         # OTA json
         if [ "$1" = "rc" ]; then
             curl -Lso ota.json https://github.com/sbwml/builder/releases/latest/download/fw.json || exit 0
             VERSION=$(cat version.txt | sed 's/v//g')
-            SHA256=$(sha256sum bin/targets/rockchip/armv8/*-squashfs-sysupgrade.img.gz | awk '{print $1}')
+            SHA256=$(sha256sum bin/targets/rockchip/armv8*/*-squashfs-sysupgrade.img.gz | awk '{print $1}')
             if [ "$model" = "nanopi-r4s" ]; then
                 jq ".\"friendlyarm,nanopi-r4s\"[0].build_date=\"$CURRENT_DATE\"|.\"friendlyarm,nanopi-r4s\"[0].sha256sum=\"$SHA256\"|.\"friendlyarm,nanopi-r4s\"[0].url=\"https://r4s.cooluc.com/releases/openwrt-22.03/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz\"" ota.json > fw.json
             elif [ "$model" = "nanopi-r5s" ]; then
@@ -327,9 +324,6 @@ else
         echo -e "${RED_COLOR} Build error... ${RES}"
         echo -e " Build time: ${RED_COLOR}$(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s${RES}"
         echo
-        if [ ! "$isCN" = "CN" ]; then
-            make -j1 V=s
-        fi
         exit 1
     fi
 fi

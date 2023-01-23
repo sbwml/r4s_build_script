@@ -1,0 +1,11 @@
+
+# glibc
+CONFIG_DEVEL=y
+CONFIG_TOOLCHAINOPTS=y
+CONFIG_LIBC_USE_GLIBC=y
+CONFIG_PACKAGE_ldconfig=y
+CONFIG_PACKAGE_ldd=y
+CONFIG_PACKAGE_libstdcpp=y
+
+# musl compatible
+CONFIG_PACKAGE_musl-libc=y

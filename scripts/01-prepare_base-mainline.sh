@@ -17,6 +17,7 @@ pushd package/kernel/linux/modules
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/block.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/crypto.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/fs.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/hwmon.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/i2c.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/input.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/lib.mk
@@ -83,9 +84,10 @@ sed -i 's/11.2.0/12.2.0/g' toolchain/gcc/Config.version
 # Fix GCC version check
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/toolchain/fix-gcc-version.patch | patch -p1
 
-# binutils 2.38
-sed -i 's/default BINUTILS_USE_VERSION_2_37/default BINUTILS_USE_VERSION_2_38/g' toolchain/binutils/Config.in
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/toolchain/binutils-2.38.patch | patch -p1
+# binutils 2.40
+rm -rf toolchain/binutils
+cp -a ../master/openwrt/toolchain/binutils toolchain/binutils
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/toolchain/binutils-2.40.patch | patch -p1
 
 # feeds/packages/libs/libxcrypt - fix build for gcc-12
 sed -i "/Build\/InstallDev/iTARGET_CFLAGS += -Wno-strict-overflow\n" feeds/packages/libs/libxcrypt/Makefile
