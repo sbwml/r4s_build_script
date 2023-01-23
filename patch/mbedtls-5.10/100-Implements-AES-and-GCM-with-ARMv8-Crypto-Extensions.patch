@@ -25,6 +25,7 @@ QEMU seems to also need
   export LDFLAGS='-static'
 
 Then run normal make or cmake etc.
+
 ---
  ChangeLog.d/armv8_crypto_extensions.txt |   2 +
  include/mbedtls/armv8ce_aes.h           |  63 +++++++++++
@@ -34,9 +35,9 @@ Then run normal make or cmake etc.
  library/Makefile                        |   1 +
  library/aes.c                           |   9 ++
  library/armv8ce_aes.c                   | 142 ++++++++++++++++++++++++
- library/gcm.c                           |  15 +++
+ library/gcm.c                           |  19 ++++
  library/version_features.c              |   3 +
- 10 files changed, 257 insertions(+)
+ 10 files changed, 261 insertions(+)
  create mode 100644 ChangeLog.d/armv8_crypto_extensions.txt
  create mode 100644 include/mbedtls/armv8ce_aes.h
  create mode 100644 library/armv8ce_aes.c
@@ -139,7 +140,7 @@ index 7ae1ff9..c1ab946 100644
  #endif /* MBEDTLS_CHECK_CONFIG_H */
 +
 diff --git a/include/mbedtls/config.h b/include/mbedtls/config.h
-index 293923f..1902fd3 100644
+index 61db793..d2cbc04 100644
 --- a/include/mbedtls/config.h
 +++ b/include/mbedtls/config.h
 @@ -46,6 +46,7 @@
@@ -372,10 +373,21 @@ index 0000000..37b9fab
 +
 +#endif /* MBEDTLS_ARMV8CE_AES_C */
 diff --git a/library/gcm.c b/library/gcm.c
-index d0b7337..163ffc0 100644
+index d0b7337..6fd6beb 100644
 --- a/library/gcm.c
 +++ b/library/gcm.c
-@@ -79,6 +79,12 @@ static int gcm_gen_table( mbedtls_gcm_context *ctx )
+@@ -42,6 +42,10 @@
+ #include "mbedtls/aesni.h"
+ #endif
+ 
++#if defined(MBEDTLS_ARMV8CE_AES_C)
++#include "mbedtls/armv8ce_aes.h"
++#endif
++
+ #if !defined(MBEDTLS_GCM_ALT)
+ 
+ /* Parameter validation macros */
+@@ -79,6 +83,12 @@ static int gcm_gen_table( mbedtls_gcm_context *ctx )
      if( ( ret = mbedtls_cipher_update( &ctx->cipher_ctx, h, 16, h, &olen ) ) != 0 )
          return( ret );
  
@@ -388,7 +400,7 @@ index d0b7337..163ffc0 100644
      /* pack h as two 64-bits ints, big-endian */
      hi = MBEDTLS_GET_UINT32_BE( h,  0  );
      lo = MBEDTLS_GET_UINT32_BE( h,  4  );
-@@ -188,6 +194,11 @@ static void gcm_mult( mbedtls_gcm_context *ctx, const unsigned char x[16],
+@@ -188,6 +198,11 @@ static void gcm_mult( mbedtls_gcm_context *ctx, const unsigned char x[16],
      unsigned char lo, hi, rem;
      uint64_t zh, zl;
  
@@ -400,7 +412,7 @@ index d0b7337..163ffc0 100644
  #if defined(MBEDTLS_AESNI_C) && defined(MBEDTLS_HAVE_X86_64)
      if( mbedtls_aesni_has_support( MBEDTLS_AESNI_CLMUL ) ) {
          unsigned char h[16];
-@@ -516,6 +527,10 @@ void mbedtls_gcm_free( mbedtls_gcm_context *ctx )
+@@ -516,6 +531,10 @@ void mbedtls_gcm_free( mbedtls_gcm_context *ctx )
  
  #endif /* !MBEDTLS_GCM_ALT */
  

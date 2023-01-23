@@ -91,7 +91,7 @@ if [ "$USE_GLIBC" = "y" ]; then
 fi
 
 # Mbedtls AES & GCM Crypto Extensions
-if [ ! "$soc" = "x86" ] && [ "$version" = "stable" ] || [ "$version" = "snapshots-21.02" ]; then
+if [ ! "$soc" = "x86" ]; then
     if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
        curl -s https://$mirror/openwrt/patch/mbedtls-5.10/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch > package/libs/mbedtls/patches/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
     else
