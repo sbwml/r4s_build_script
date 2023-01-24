@@ -81,13 +81,19 @@ elif [ "$soc" = "rk3568" ] || [ "$soc" = "r5s" ]; then
     curl -s https://$mirror/openwrt/patch/target-modify_for_rk3568.patch | patch -p1
 fi
 
-# MUSL LIBC
+# IF USE GLIBC
 if [ "$USE_GLIBC" = "y" ]; then
     # O3 optimization
     git checkout include/target.mk && \
         curl -s https://$mirror/openwrt/patch/target-modify_for_glibc.patch | patch -p1
     # musl-libc
     git clone https://$gitea/sbwml/package_libs_musl-libc package/libs/musl-libc
+    # bump glibc version
+    rm -rf toolchain/glibc
+    cp -a ../master/openwrt/toolchain/glibc toolchain/glibc
+    # bump fstools version
+    rm -rf package/system/fstools
+    cp -a ../master/openwrt/package/system/fstools package/system/fstools
 fi
 
 # Mbedtls AES & GCM Crypto Extensions
@@ -114,9 +120,17 @@ fi
 
 # fstools - enable any device with non-MTD rootfs_data volume
 curl -s https://$mirror/openwrt/patch/fstools/block-mount-add-fstools-depends.patch | patch -p1
-curl -s https://$mirror/openwrt/patch/fstools/ntfs3-utf8.patch > package/system/fstools/patches/ntfs3-utf8.patch
+if [ "$USE_GLIBC" = "y" ]; then
+    curl -s https://$mirror/openwrt/patch/fstools/fstools-set-ntfs3-utf8-new.patch > package/system/fstools/patches/ntfs3-utf8.patch
+else
+    curl -s https://$mirror/openwrt/patch/fstools/ntfs3-utf8.patch > package/system/fstools/patches/ntfs3-utf8.patch
+fi
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
-    curl -s https://$mirror/openwrt/patch/fstools/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch > package/system/fstools/patches/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch
+    if [ "$USE_GLIBC" = "y" ]; then
+        curl -s https://$mirror/openwrt/patch/fstools/22-fstools-support-extroot-for-non-MTD-rootfs_data-new-version.patch > package/system/fstools/patches/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch
+    else
+        curl -s https://$mirror/openwrt/patch/fstools/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch > package/system/fstools/patches/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch
+    fi
 else
     curl -s https://$mirror/openwrt/patch/fstools/21-fstools-support-extroot-for-non-MTD-rootfs_data.patch > package/system/fstools/patches/21-fstools-support-extroot-for-non-MTD-rootfs_data.patch
 fi

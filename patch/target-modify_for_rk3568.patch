@@ -8,7 +8,7 @@ index 7526224..0281ed1 100644
    endif
 +  ifeq ($(BOARD),rockchip)
 +    CPU_CFLAGS = -Ofast -funsafe-math-optimizations -ffinite-math-only -fno-rounding-math -fno-signaling-nans -fcx-limited-range -fexcess-precision=fast -funroll-loops -ffunction-sections -fdata-sections -Wl,--gc-sections -pipe
-+    CPU_CFLAGS_generic = -march=armv8.2-a+crypto -mcpu=cortex-a55+crypto -mtune=cortex-a55
++    CPU_CFLAGS_generic = -march=armv8.2-a+crypto+crc -mcpu=cortex-a55+crypto+crc -mtune=cortex-a55
 +  endif
    ifneq ($(CPU_TYPE),)
      ifndef CPU_CFLAGS_$(CPU_TYPE)

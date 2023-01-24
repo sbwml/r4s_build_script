@@ -217,6 +217,7 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
         [ "$version" = "rc" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
     elif [ "$soc" = "r5s" ] && [ "$3" = "kmod" ]; then
         ALL_KMODS=y
+        curl -s https://$mirror/openwrt/22-config-musl-r5s > .config
     else
         curl -s https://$mirror/openwrt/22-config-musl-r4s > .config
         [ "$version" = "rc" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
@@ -238,7 +239,6 @@ make defconfig
 # Compile
 if [ "$ALL_KMODS" = y ]; then
     echo -e "\r\n${GREEN_COLOR}Building OpenWrt With All Kmods ...${RES}\r\n"
-    curl -s https://$mirror/openwrt/22-config-musl-r5s > .config
     make defconfig
     make -j$cores
     if [ $? -eq 0 ]; then
