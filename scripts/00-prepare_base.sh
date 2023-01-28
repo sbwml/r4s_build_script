@@ -430,6 +430,9 @@ curl -s https://$mirror/openwrt/patch/luci/upload-ui.js.patch | patch -p1
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     rm -rf feeds/packages/net/samba4
     cp -a ../master/packages/net/samba4 feeds/packages/net/samba4
+    # enable multi-channel
+    sed -i "/workgroup/a\ \n\ \t## enable multi-channel" feeds/packages/net/samba4/files/smb.conf.template
+    sed -i "/enable multi-channel/a\ \tmultichannel server support = yes" feeds/packages/net/samba4/files/smb.conf.template
 fi
 sed -i 's/invalid users = root/#invalid users = root/g' feeds/packages/net/samba4/files/smb.conf.template
 sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages/net/samba4/files/smb.conf.template
