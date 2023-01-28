@@ -80,7 +80,7 @@ fi
 
 # use glibc - openwrt-22.03
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ]; then
-    export USE_GLIBC=n
+    export USE_GLIBC=y
 fi
 
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}"
