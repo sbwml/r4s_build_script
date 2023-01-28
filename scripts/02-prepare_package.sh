@@ -50,6 +50,11 @@ else
     git clone https://github.com/sbwml/luci-app-qbittorrent -b 4.4.5 package/qbittorrent
 fi
 
+# Zerotier
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
+    git clone https://$gitea/sbwml/luci-app-zerotier package/new/luci-app-zerotier
+fi
+
 # Theme
 git clone --depth 1 https://github.com/sbwml/luci-theme-argon.git package/new/luci-theme-argon
 

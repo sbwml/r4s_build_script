@@ -1,0 +1,33 @@
+From 71f459400f0990eb577a43345cd8507c8c9f5638 Mon Sep 17 00:00:00 2001
+From: sbwml <984419930@qq.com>
+Date: Sat, 28 Jan 2023 20:31:55 +0800
+Subject: [PATCH 3/3] block: add xfsck support
+
+---
+ block.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/block.c b/block.c
+index 4b45200..6b8b28a 100644
+--- a/block.c
++++ b/block.c
+@@ -764,6 +764,7 @@ static void check_filesystem(struct probe_info *pr)
+ 	const char *e2fsck = "/usr/sbin/e2fsck";
+ 	const char *f2fsck = "/usr/sbin/fsck.f2fs";
+ 	const char *fatfsck = "/usr/sbin/fsck.fat";
++	const char *xfsck = "/usr/sbin/xfs_repair";
+ 	const char *btrfsck = "/usr/bin/btrfsck";
+ 	const char *ntfsck = "/usr/bin/ntfsfix";
+ 	const char *ckfs;
+@@ -776,6 +777,8 @@ static void check_filesystem(struct probe_info *pr)
+ 		ckfs = fatfsck;
+ 	} else if (!strncmp(pr->type, "f2fs", 4)) {
+ 		ckfs = f2fsck;
++	} else if (!strncmp(pr->type, "xfs", 3)) {
++		ckfs = xfsck;
+ 	} else if (!strncmp(pr->type, "ext", 3)) {
+ 		ckfs = e2fsck;
+ 	} else if (!strncmp(pr->type, "btrfs", 5)) {
+-- 
+2.34.1
+

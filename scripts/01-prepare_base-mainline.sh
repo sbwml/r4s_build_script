@@ -103,6 +103,9 @@ pushd feeds/packages
     curl -s https://github.com/openwrt/packages/commit/ea3ad6b0909b2f5d8a8dcbc4e866c9ed22f3fb10.patch  | patch -p1
 popd
 
+# uqmi - fix build for gcc-12
+curl -s https://github.com/openwrt/openwrt/commit/dc12c76dc52028b24cddba6a32141f9dbff64d0f.patch | patch -p1
+
 #################################################################
 
 # ksmbd luci

@@ -248,7 +248,6 @@ if [ "$ALL_KMODS" = y ]; then
         end_seconds=$(date --date="$endtime" +%s);
         SEC=$((end_seconds-start_seconds));
         cp -a bin/targets/rockchip/armv8*/packages $kmodpkg_name
-        \cp -a kmod/*.ipk $kmodpkg_name/ || true
         rm -f $kmodpkg_name/Packages*
         # driver firmware
         cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
