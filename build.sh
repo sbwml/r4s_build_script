@@ -1,11 +1,11 @@
 #!/bin/bash -e
-RED_COLOR='\e[1;31m'
-GREEN_COLOR='\e[1;32m'
-YELLOW_COLOR='\e[1;33m'
-BLUE_COLOR='\e[1;34m'
-PINK_COLOR='\e[1;35m'
-SHAN='\e[1;33;5m'
-RES='\e[0m'
+export RED_COLOR='\e[1;31m'
+export GREEN_COLOR='\e[1;32m'
+export YELLOW_COLOR='\e[1;33m'
+export BLUE_COLOR='\e[1;34m'
+export PINK_COLOR='\e[1;35m'
+export SHAN='\e[1;33;5m'
+export RES='\e[0m'
 
 #####################################
 #  NanoPi R4S OpenWrt Build Script  #
@@ -79,7 +79,7 @@ if [ "$soc" = "" ]; then
 fi
 
 # use glibc - openwrt-22.03
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ]; then
+if [ "$version" != "releases" ] && [ "$version" != "snapshots-21.02" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ]; then
     export USE_GLIBC=y
 fi
 

@@ -1,0 +1,37 @@
+diff --git a/package/libs/toolchain/Makefile b/package/libs/toolchain/Makefile
+index f9f8ac9..bc19738 100644
+--- a/package/libs/toolchain/Makefile
++++ b/package/libs/toolchain/Makefile
+@@ -450,6 +450,14 @@ define Package/ldconfig/config
+ 	endmenu
+ endef
+ 
++define Package/locale
++$(call Package/libc/Default)
++  DEPENDS:=@!USE_MUSL
++  SECTION:=utils
++  CATEGORY:=Utilities
++  TITLE:=LOCALE trace utility
++endef
++
+ define Build/Prepare
+ 	mkdir -p $(PKG_BUILD_DIR)
+ endef
+@@ -595,6 +603,12 @@ ifeq ($(CONFIG_EXTERNAL_TOOLCHAIN),)
+ 	$(CP) $(TOOLCHAIN_DIR)/sbin/ldconfig $(1)/sbin/
+   endef
+ 
++  define Package/locale/install
++	$(INSTALL_DIR) $(1)/usr/bin/
++	$(CP) $(TOOLCHAIN_DIR)/bin/locale $(1)/usr/bin/
++	$(CP) $(TOOLCHAIN_DIR)/bin/localedef $(1)/usr/bin/
++  endef
++
+ else
+ 
+   define Package/libgcc/install
+@@ -735,3 +749,4 @@ $(eval $(call BuildPackage,libgfortran))
+ $(eval $(call BuildPackage,libgomp))
+ $(eval $(call BuildPackage,ldd))
+ $(eval $(call BuildPackage,ldconfig))
++$(eval $(call BuildPackage,locale))

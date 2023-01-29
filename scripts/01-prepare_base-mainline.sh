@@ -65,48 +65,10 @@ curl -s https://$mirror/openwrt/patch/kernel-6.1/952-net-conntrack-events-suppor
 curl -s https://$mirror/openwrt/patch/kernel-6.1/998-hide-panfrost-logs.patch > target/linux/generic/hack-6.1/998-hide-panfrost-logs.patch
 curl -s https://$mirror/openwrt/patch/kernel-6.1/999-hide-irq-logs.patch > target/linux/generic/hack-6.1/999-hide-irq-logs.patch
 
-#################################################################
-
-# tools/meson
-rm -rf tools/meson
-cp -a ../master/openwrt/tools/meson tools/meson
-
-# gcc-12
-#curl -s https://github.com/openwrt/openwrt/commit/c4bd303086012afe2aebd213c892363512138bb7.patch | patch -p1
-#curl -s https://github.com/openwrt/openwrt/commit/3c06a344e9c7c03c49c9153342e68a5390651323.patch | patch -p1
-#curl -s https://github.com/openwrt/openwrt/commit/e6cc3ded0709aa6c7a190c31575bb5c19e204cd2.patch | patch -p1
-#curl -s https://github.com/openwrt/openwrt/commit/fac1f38d7559230eddbbab996c32b12b314fae15.patch | patch -p1
-
-# switch to gcc-12 by default
-#sed -i 's/default GCC_USE_VERSION_11/default GCC_USE_VERSION_12/g' toolchain/gcc/Config.in
-#sed -i 's/11.2.0/12.2.0/g' toolchain/gcc/Config.version
-
-# Fix GCC version check
-#curl -s https://$mirror/openwrt/patch/openwrt-6.1/toolchain/fix-gcc-version.patch | patch -p1
-
-# binutils 2.40
-rm -rf toolchain/binutils
-cp -a ../master/openwrt/toolchain/binutils toolchain/binutils
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/toolchain/binutils-2.40.patch | patch -p1
-
-# feeds/packages/libs/libxcrypt - fix build for gcc-12
-sed -i "/Build\/InstallDev/iTARGET_CFLAGS += -Wno-strict-overflow\n" feeds/packages/libs/libxcrypt/Makefile
-
-# package/libs/libnl-tiny - fix build for gcc-12
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/package_libs_libnl-tiny-2022-11-01.patch | patch -p1
-
-# feeds/packages/libs/libwebsockets - fix build for gcc-12
-curl -s https://raw.githubusercontent.com/openwrt/packages/9c5d4fb5a4d2f3157b9b9e4fc2a7a0457adccdf5/libs/libwebsockets/patches/020-gcc12.patch > feeds/packages/libs/libwebsockets/patches/020-gcc12.patch
-
 # feeds/packages/net/gensio - fix linux 6.1
 pushd feeds/packages
     curl -s https://github.com/openwrt/packages/commit/ea3ad6b0909b2f5d8a8dcbc4e866c9ed22f3fb10.patch  | patch -p1
 popd
-
-# uqmi - fix build for gcc-12
-curl -s https://github.com/openwrt/openwrt/commit/dc12c76dc52028b24cddba6a32141f9dbff64d0f.patch | patch -p1
-
-#################################################################
 
 # ksmbd luci
 rm -rf feeds/luci/applications/luci-app-ksmbd

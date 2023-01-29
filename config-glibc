@@ -6,6 +6,7 @@ CONFIG_LIBC_USE_GLIBC=y
 CONFIG_PACKAGE_ldconfig=y
 CONFIG_PACKAGE_ldd=y
 CONFIG_PACKAGE_libstdcpp=y
+CONFIG_PACKAGE_locale=y
 
 # musl compatible
 CONFIG_PACKAGE_musl-libc=y

@@ -88,12 +88,15 @@ if [ "$USE_GLIBC" = "y" ]; then
         curl -s https://$mirror/openwrt/patch/target-modify_for_glibc.patch | patch -p1
     # musl-libc
     git clone https://$gitea/sbwml/package_libs_musl-libc package/libs/musl-libc
-    # bump glibc version
-    rm -rf toolchain/glibc
-    cp -a ../master/openwrt/toolchain/glibc toolchain/glibc
     # bump fstools version
     rm -rf package/system/fstools
-    cp -a ../master/openwrt/package/system/fstools package/system/fstools
+    cp -a ../master/openwrt/package/system/fstools package/system/fstools\
+    # install locale
+    curl -s https://$mirror/openwrt/patch/openwrt-6.1/toolchain/glibc-locale.patch | patch -p1
+    # locale data
+    mkdir -p files/lib/locale
+    curl -so files/lib/locale/locale-archive https://us.cooluc.com/gnu-locale/locale-archive
+    [ "$?" -ne 0 ] && echo -e "${RED_COLOR} Locale file download failed... ${RES}"
 fi
 
 # Mbedtls AES & GCM Crypto Extensions
@@ -447,10 +450,16 @@ sed -i 's/16384/65535/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
 
 # profile
 sed -i 's#\\u@\\h:\\w\\\$#\\[\\e[32;1m\\][\\u@\\h\\[\\e[0m\\] \\[\\033[01;34m\\]\\W\\[\\033[00m\\]\\[\\e[32;1m\\]]\\[\\e[0m\\]\\\$#g' package/base-files/files/etc/profile
-sed -ri 's/(export PATH=")[^"]*/\1%PATH%:\/opt\/bin:\/opt\/sbin:~\/bin/' package/base-files/files/etc/profile
+sed -ri 's/(export PATH=")[^"]*/\1%PATH%:\/opt\/bin:\/opt\/sbin:\/opt\/usr\/bin:\/opt\/usr\/sbin/' package/base-files/files/etc/profile
 
 # bash
 sed -i 's#ash#bash#g' package/base-files/files/etc/passwd
 sed -i '\#export ENV=/etc/shinit#a export HISTCONTROL=ignoredups' package/base-files/files/etc/profile
+mkdir -p files/root
+curl -so files/root/.bash_profile https://$mirror/openwrt/files/root/.bash_profile
+curl -so files/root/.bashrc https://$mirror/openwrt/files/root/.bashrc
+
+# GNU LANG
+sed -i '\#export PATH#i [ -f /lib/ld-linux-aarch64.so.1 ] && export LANG="en_US.UTF-8"' package/base-files/files/etc/profile
 
 ################# Fix Build ####################
