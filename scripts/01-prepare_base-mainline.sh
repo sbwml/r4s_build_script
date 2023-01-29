@@ -72,17 +72,17 @@ rm -rf tools/meson
 cp -a ../master/openwrt/tools/meson tools/meson
 
 # gcc-12
-curl -s https://github.com/openwrt/openwrt/commit/c4bd303086012afe2aebd213c892363512138bb7.patch | patch -p1
-curl -s https://github.com/openwrt/openwrt/commit/3c06a344e9c7c03c49c9153342e68a5390651323.patch | patch -p1
-curl -s https://github.com/openwrt/openwrt/commit/e6cc3ded0709aa6c7a190c31575bb5c19e204cd2.patch | patch -p1
-curl -s https://github.com/openwrt/openwrt/commit/fac1f38d7559230eddbbab996c32b12b314fae15.patch | patch -p1
+#curl -s https://github.com/openwrt/openwrt/commit/c4bd303086012afe2aebd213c892363512138bb7.patch | patch -p1
+#curl -s https://github.com/openwrt/openwrt/commit/3c06a344e9c7c03c49c9153342e68a5390651323.patch | patch -p1
+#curl -s https://github.com/openwrt/openwrt/commit/e6cc3ded0709aa6c7a190c31575bb5c19e204cd2.patch | patch -p1
+#curl -s https://github.com/openwrt/openwrt/commit/fac1f38d7559230eddbbab996c32b12b314fae15.patch | patch -p1
 
 # switch to gcc-12 by default
-sed -i 's/default GCC_USE_VERSION_11/default GCC_USE_VERSION_12/g' toolchain/gcc/Config.in
-sed -i 's/11.2.0/12.2.0/g' toolchain/gcc/Config.version
+#sed -i 's/default GCC_USE_VERSION_11/default GCC_USE_VERSION_12/g' toolchain/gcc/Config.in
+#sed -i 's/11.2.0/12.2.0/g' toolchain/gcc/Config.version
 
 # Fix GCC version check
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/toolchain/fix-gcc-version.patch | patch -p1
+#curl -s https://$mirror/openwrt/patch/openwrt-6.1/toolchain/fix-gcc-version.patch | patch -p1
 
 # binutils 2.40
 rm -rf toolchain/binutils
