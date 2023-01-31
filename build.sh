@@ -79,7 +79,7 @@ if [ "$soc" = "" ]; then
 fi
 
 # use glibc - openwrt-22.03
-if [ "$version" != "releases" ] && [ "$version" != "snapshots-21.02" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ] && [ "$1" != "stable" ] && [ "$1" != "dev" ]; then
     export USE_GLIBC=y
 fi
 
@@ -107,11 +107,7 @@ fi
 echo -e "${GREEN_COLOR}$CURRENT_DATE${RES}\r\n"
 
 # get source
-if [ -d openwrt ]; then
-    rm -rf openwrt master
-    mkdir master
-fi
-
+rm -rf openwrt master && mkdir master
 # openwrt - releases
 git clone --depth=1 $github_mirror/openwrt/openwrt -b $branch
 
@@ -320,6 +316,8 @@ else
         fi
         exit 0
     else
+        make V=s
+        echo
         echo -e "${RED_COLOR} Build error... ${RES}"
         echo -e " Build time: ${RED_COLOR}$(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s${RES}"
         echo

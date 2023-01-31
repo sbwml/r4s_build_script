@@ -90,9 +90,9 @@ if [ "$USE_GLIBC" = "y" ]; then
     git clone https://$gitea/sbwml/package_libs_musl-libc package/libs/musl-libc
     # bump fstools version
     rm -rf package/system/fstools
-    cp -a ../master/openwrt/package/system/fstools package/system/fstools\
-    # install locale
-    curl -s https://$mirror/openwrt/patch/openwrt-6.1/toolchain/glibc-locale.patch | patch -p1
+    cp -a ../master/openwrt/package/system/fstools package/system/fstools
+    # glibc-common
+    curl -s https://$mirror/openwrt/patch/openwrt-6.1/toolchain/glibc-common.patch | patch -p1
     # locale data
     mkdir -p files/lib/locale
     curl -so files/lib/locale/locale-archive https://us.cooluc.com/gnu-locale/locale-archive
@@ -460,6 +460,6 @@ curl -so files/root/.bash_profile https://$mirror/openwrt/files/root/.bash_profi
 curl -so files/root/.bashrc https://$mirror/openwrt/files/root/.bashrc
 
 # GNU LANG
-sed -i '\#export PATH#i [ -f /lib/ld-linux-aarch64.so.1 ] && export LANG="en_US.UTF-8"' package/base-files/files/etc/profile
+sed -i '\#export PATH#i [ -f /lib/ld-linux-aarch64.so.1 ] && export LANG="en_US.UTF-8" I18NPATH="/usr/share/i18n"' package/base-files/files/etc/profile
 
 ################# Fix Build ####################
