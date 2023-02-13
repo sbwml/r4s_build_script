@@ -53,8 +53,6 @@ sed -i 's/+uhttpd //' feeds/luci/collections/luci-light/Makefile
 
 # NIC driver - x86
 if [ "$soc" = "x86" ]; then
-    # igb-intel
-    svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/igb-intel package/kernel/igb-intel
     # r8101
     git clone https://github.com/sbwml/package_kernel_r8101 package/kernel/r8101
 fi
@@ -70,6 +68,9 @@ git clone https://github.com/sbwml/openwrt-wireless-drivers package/kernel/wirel
 if [ "$version" = "releases" ] || [ "$version" = "snapshots-21.02" ]; then
     rm -rf package/kernel/wireless/rtl88x2bu
     git clone https://$gitea/sbwml/rtl88x2bu package/kernel/rtl88x2bu
+else
+    # hostapd: make LAR-friendly AP mode for AX200/AX210
+    curl -s https://$mirror/openwrt/patch/hostapd-22.03/800-hostapd-2.10-lar.patch > package/network/services/hostapd/patches/800-hostapd-2.10-lar.patch
 fi
 
 # Optimization level -Ofast
@@ -390,7 +391,7 @@ fi
 
 # nginx - latest version
 rm -rf feeds/packages/net/nginx
-svn co https://github.com/sbwml/feeds_packages_net_nginx/trunk feeds/packages/net/nginx
+git clone https://github.com/sbwml/feeds_packages_net_nginx feeds/packages/net/nginx
 sed -i 's/procd_set_param stdout 1/procd_set_param stdout 0/g;s/procd_set_param stderr 1/procd_set_param stderr 0/g' feeds/packages/net/nginx/files/nginx.init
 
 # nginx - ubus

@@ -32,4 +32,4 @@ popd
 
 # routing - batman-adv
 rm -rf feeds/routing/batman-adv
-svn export https://github.com/immortalwrt/routing/branches/master/batman-adv feeds/routing/batman-adv
+cp -a ../master/routing/batman-adv feeds/routing/batman-adv

@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
-# golang 19 - openwrt 21/22: Fix build alist
+# golang 1.20
 rm -rf feeds/packages/lang/golang
-git clone https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
+git clone https://github.com/sbwml/packages_lang_golang -b 20.x feeds/packages/lang/golang
 
 # Default settings
 git clone https://github.com/sbwml/default-settings package/new/default-settings
@@ -12,6 +12,12 @@ fi
 
 # DDNS
 sed -i '/boot()/,+2d' feeds/packages/net/ddns-scripts/files/etc/init.d/ddns
+
+# FRP
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
+    rm -rf feeds/packages/net/frp
+    git clone https://github.com/sbwml/feeds_packages_net_frp feeds/packages/net/frp
+fi
 
 # autoCore
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
@@ -32,7 +38,7 @@ else
 fi
 
 # SSRP & Passwall
-rm -rf feeds/packages/net/xray-core
+rm -rf feeds/packages/net/{xray-core,v2ray-core}
 git clone https://github.com/sbwml/openwrt_helloworld package/helloworld -b v5
 
 # alist

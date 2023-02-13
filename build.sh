@@ -80,25 +80,21 @@ fi
 
 # use glibc - openwrt-22.03
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ] && [ "$1" != "stable" ] && [ "$1" != "dev" ]; then
-    export USE_GLIBC=y
+    export USE_GLIBC=n
 fi
 
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}"
 if [ "$soc" = "x86" ]; then
     echo -e "${GREEN_COLOR}Model: x86_64${RES}\r\n"
 elif [ "$soc" = "r5s" ]; then
-    if [ "$3" = "kmod" ]; then
-        echo -e "${GREEN_COLOR}Model: nanopi-r5s - kmod${RES}\r\n"
-        curl -s https://$mirror/tags/kernel-6.1 > kernel.txt
-        cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}' > kmod_verion.txt
-        kmod_hash=$(cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
-        kmodpkg_name=$(echo $(cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
-        echo -e "${GREEN_COLOR}kernel version: $kmodpkg_name ${RES}\r\n"
-        rm -f kernel.txt
-    else
-        echo -e "${GREEN_COLOR}Model: nanopi-r5s${RES}\r\n"
-        [ "$1" = "rc" ] && model="nanopi-r5s"
-    fi
+    echo -e "${GREEN_COLOR}Model: nanopi-r5s${RES}\r\n"
+    [ "$1" = "rc" ] && model="nanopi-r5s"
+    curl -s https://$mirror/tags/kernel-6.1 > kernel.txt
+    cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}' > kmod_verion.txt
+    kmod_hash=$(cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
+    kmodpkg_name=$(echo $(cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
+    echo -e "${GREEN_COLOR}kernel version: $kmodpkg_name ${RES}\r\n"
+    rm -f kernel.txt
 else
     echo -e "${GREEN_COLOR}Model: nanopi-r4s${RES}\r\n"
     [ "$1" = "rc" ] && model="nanopi-r4s"
@@ -115,6 +111,7 @@ git clone --depth=1 $github_mirror/openwrt/openwrt -b $branch
 git clone $github_mirror/openwrt/openwrt master/openwrt --depth=1
 git clone $github_mirror/openwrt/packages master/packages --depth=1
 git clone $github_mirror/openwrt/luci master/luci --depth=1
+git clone $github_mirror/openwrt/routing master/routing --depth=1
 
 if [ -d openwrt ]; then
     cd openwrt
@@ -208,12 +205,10 @@ rm -rf ../master
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     if [ "$soc" = "x86" ]; then
         curl -s https://$mirror/openwrt/22-config-musl-x86 > .config
-    elif [ "$soc" = "r5s" ] && [ "$3" != "kmod" ]; then
+    elif [ "$soc" = "r5s" ]; then
         curl -s https://$mirror/openwrt/22-config-musl-r5s > .config
         [ "$version" = "rc" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
-    elif [ "$soc" = "r5s" ] && [ "$3" = "kmod" ]; then
         ALL_KMODS=y
-        curl -s https://$mirror/openwrt/22-config-musl-r5s > .config
     else
         curl -s https://$mirror/openwrt/22-config-musl-r4s > .config
         [ "$version" = "rc" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
@@ -230,47 +225,14 @@ fi
 [ "$USE_GLIBC" = "y" ] && curl -s https://$mirror/openwrt/config-glibc >> .config
 
 # init openwrt config
+rm -rf tmp/*
 make defconfig
 
 # Compile
-if [ "$ALL_KMODS" = y ]; then
-    echo -e "\r\n${GREEN_COLOR}Building OpenWrt With All Kmods ...${RES}\r\n"
-    make defconfig
-    make -j$cores
-    if [ $? -eq 0 ]; then
-        # Compile time
-        endtime=`date +'%Y-%m-%d %H:%M:%S'`
-        start_seconds=$(date --date="$starttime" +%s);
-        end_seconds=$(date --date="$endtime" +%s);
-        SEC=$((end_seconds-start_seconds));
-        cp -a bin/targets/rockchip/armv8*/packages $kmodpkg_name
-        rm -f $kmodpkg_name/Packages*
-        # driver firmware
-        cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
-        cp -a bin/packages/aarch64_generic/base/hostapd*.ipk $kmodpkg_name/
-        cp -a bin/packages/aarch64_generic/base/*iw*.ipk $kmodpkg_name/
-        cp -a bin/packages/aarch64_generic/base/wireless*.ipk $kmodpkg_name/
-        tar zcf kmod-packages.tar.gz $kmodpkg_name
-        echo $kmodpkg_name > hash.txt
-        echo -e "${GREEN_COLOR} Build success! ${RES}"
-        echo -e " Build time: ${GREEN_COLOR}$(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s${RES}"
-        exit 0
-    else
-        # Compile time
-        endtime=`date +'%Y-%m-%d %H:%M:%S'`
-        start_seconds=$(date --date="$starttime" +%s);
-        end_seconds=$(date --date="$endtime" +%s);
-        SEC=$((end_seconds-start_seconds));
-        echo -e "${RED_COLOR} Build error... ${RES}"
-        echo -e " Build time: ${RED_COLOR}$(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s${RES}"
-        exit 1
-    fi
-else
-    echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
-    sed -i "/BUILD_DATE/d" package/base-files/files/usr/lib/os-release
-    sed -i "/BUILD_ID/aBUILD_DATE=\"$CURRENT_DATE\"" package/base-files/files/usr/lib/os-release
-    make -j$cores
-fi
+echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
+sed -i "/BUILD_DATE/d" package/base-files/files/usr/lib/os-release
+sed -i "/BUILD_ID/aBUILD_DATE=\"$CURRENT_DATE\"" package/base-files/files/usr/lib/os-release
+make -j$cores
 
 # Compile time
 endtime=`date +'%Y-%m-%d %H:%M:%S'`
@@ -296,6 +258,20 @@ if [ "$soc" = "x86" ]; then
     fi
 else
     if [ -f bin/targets/rockchip/armv8*/*-ext4-sysupgrade.img.gz ]; then
+        if [ "$ALL_KMODS" = y ]; then
+            cp -a bin/targets/rockchip/armv8*/packages $kmodpkg_name
+            rm -f $kmodpkg_name/Packages*
+            # driver firmware
+            cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
+            cp -a bin/packages/aarch64_generic/base/hostapd*.ipk $kmodpkg_name/
+            cp -a bin/packages/aarch64_generic/base/*iw*.ipk $kmodpkg_name/
+            cp -a bin/packages/aarch64_generic/base/wireless*.ipk $kmodpkg_name/
+            cp -a bin/packages/aarch64_generic/base/wpa*.ipk $kmodpkg_name/
+            bash kmod-sign $kmodpkg_name
+            tar zcf kmod-$kmodpkg_name.tar.gz $kmodpkg_name
+            rm -rf $kmodpkg_name
+            echo $kmodpkg_name > hash.txt
+        fi
         echo -e "${GREEN_COLOR} Build success! ${RES}"
         echo -e " Build time: ${GREEN_COLOR}$(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s${RES}"
         # OTA json
@@ -316,7 +292,6 @@ else
         fi
         exit 0
     else
-        make V=s
         echo
         echo -e "${RED_COLOR} Build error... ${RES}"
         echo -e " Build time: ${RED_COLOR}$(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s${RES}"
