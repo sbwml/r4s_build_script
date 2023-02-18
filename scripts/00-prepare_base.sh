@@ -24,6 +24,8 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     if [ "$soc" = "x86" ]; then
         echo "CONFIG_CRYPTO_AES_NI_INTEL=y" >> target/linux/x86/config-5.10
     fi
+    # fix DHCP leases showing as expired once ntp updates the time
+    curl -s https://github.com/openwrt/openwrt/commit/fcaa5e39219e49a83d22dab44d4398d8f64abd0a.patch | patch -p1
 else
     curl -s https://$mirror/openwrt/patch/kernel_modules/5.4-video.mk > package/kernel/linux/modules/video.mk
     if [ "$soc" = "x86" ]; then
@@ -71,6 +73,8 @@ if [ "$version" = "releases" ] || [ "$version" = "snapshots-21.02" ]; then
 else
     # hostapd: make LAR-friendly AP mode for AX200/AX210
     curl -s https://$mirror/openwrt/patch/hostapd-22.03/800-hostapd-2.10-lar.patch > package/network/services/hostapd/patches/800-hostapd-2.10-lar.patch
+    # hostapd: hack version
+    sed -ri "s/(PKG_RELEASE:=)[^\"]*/\199.2/" package/network/services/hostapd/Makefile
 fi
 
 # Optimization level -Ofast
@@ -98,6 +102,9 @@ if [ "$USE_GLIBC" = "y" ]; then
     mkdir -p files/lib/locale
     curl -so files/lib/locale/locale-archive https://us.cooluc.com/gnu-locale/locale-archive
     [ "$?" -ne 0 ] && echo -e "${RED_COLOR} Locale file download failed... ${RES}"
+    # GNU LANG
+    mkdir package/base-files/files/etc/profile.d
+    echo 'export LANG="en_US.UTF-8" I18NPATH="/usr/share/i18n"' > package/base-files/files/etc/profile.d/sys_locale.sh
 fi
 
 # Mbedtls AES & GCM Crypto Extensions
@@ -181,9 +188,12 @@ fi
 
 # Dnsmasq
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
-    # dnsmasq-2.88
+    # Dnsmasq Latest version
+    DNSMASQ_VERSION=2.89
+    DNSMASQ_HASH=02bd230346cf0b9d5909f5e151df168b2707103785eb616b56685855adebb609
     rm -rf package/network/services/dnsmasq
     cp -a ../master/openwrt/package/network/services/dnsmasq package/network/services/dnsmasq
+    sed -ri "s/(PKG_UPSTREAM_VERSION:=)[^\"]*/\1$DNSMASQ_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$DNSMASQ_HASH/" package/network/services/dnsmasq/Makefile
     curl -s https://$mirror/openwrt/patch/dnsmasq-5.10/luci-add-filter-aaaa-option.patch | patch -p1
 else
     curl -s https://$mirror/openwrt/patch/dnsmasq/dnsmasq-add-filter-aaaa-option.patch | patch -p1
@@ -403,19 +413,17 @@ mkdir -p files/etc/nginx/conf.d
 curl -s https://$mirror/openwrt/nginx/luci.locations > files/etc/nginx/conf.d/luci.locations
 curl -s https://$mirror/openwrt/nginx/uci.conf.template > files/etc/nginx/uci.conf.template
 
-# LED
-mkdir -p files/etc/hotplug.d/iface
-cat > files/etc/hotplug.d/iface/40-leds <<"EOF"
-#!/bin/sh
-[ "$ACTION" = ifup ] && /etc/init.d/led restart
-EOF
-chmod 755 files/etc/hotplug.d/iface/40-leds
-
 # uwsgi - fix timeout
 sed -i '$a cgi-timeout = 600' feeds/packages/net/uwsgi/files-luci-support/luci-*.ini
 sed -i '/limit-as/c\limit-as = 5000' feeds/packages/net/uwsgi/files-luci-support/luci-webui.ini
 # disable error log
 sed -i "s/procd_set_param stderr 1/procd_set_param stderr 0/g" feeds/packages/net/uwsgi/files/uwsgi.init
+
+# rpcd bump version
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
+    rm -rf package/system/rpcd
+    cp -a ../master/openwrt/package/system/rpcd package/system/rpcd
+fi
 
 # rpcd - fix timeout
 sed -i 's/option timeout 30/option timeout 60/g' package/system/rpcd/files/rpcd.config
@@ -447,7 +455,7 @@ sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/samba.confi
 sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/smb.conf.template
 
 # Max connection limite
-sed -i 's/16384/65535/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
+[ "$version" = "releases" ] || [ "$version" = "snapshots-21.02" ] && sed -i 's/16384/65536/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
 
 # profile
 sed -i 's#\\u@\\h:\\w\\\$#\\[\\e[32;1m\\][\\u@\\h\\[\\e[0m\\] \\[\\033[01;34m\\]\\W\\[\\033[00m\\]\\[\\e[32;1m\\]]\\[\\e[0m\\]\\\$#g' package/base-files/files/etc/profile
@@ -459,8 +467,3 @@ sed -i '\#export ENV=/etc/shinit#a export HISTCONTROL=ignoredups' package/base-f
 mkdir -p files/root
 curl -so files/root/.bash_profile https://$mirror/openwrt/files/root/.bash_profile
 curl -so files/root/.bashrc https://$mirror/openwrt/files/root/.bashrc
-
-# GNU LANG
-sed -i '\#export PATH#i [ -f /lib/ld-linux-aarch64.so.1 ] && export LANG="en_US.UTF-8" I18NPATH="/usr/share/i18n"' package/base-files/files/etc/profile
-
-################# Fix Build ####################

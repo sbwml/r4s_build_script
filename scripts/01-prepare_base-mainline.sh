@@ -43,8 +43,17 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/mt76.patch | patc
 
 # add mt7922
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/add-mt7922.patch | patch -p1
+rm -rf package/network/utils/iwinfo
+cp -a ../master/openwrt/package/network/utils/iwinfo package/network/utils/iwinfo
 mkdir -p package/network/utils/iwinfo/patches
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/0001-devices-add-MediaTek-MT7922-device-id.patch > package/network/utils/iwinfo/patches/0001-devices-add-MediaTek-MT7922-device-id.patch
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/iwinfo/0001-devices-add-MediaTek-MT7922-device-id.patch > package/network/utils/iwinfo/patches/0001-devices-add-MediaTek-MT7922-device-id.patch
+
+# iwinfo: add rtl8812/14/21au devices
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/iwinfo/0004-add-rtl8812au-devices.patch > package/network/utils/iwinfo/patches/0004-add-rtl8812au-devices.patch
+
+# iw
+rm -rf package/network/utils/iw
+cp -a ../master/openwrt/package/network/utils/iw package/network/utils/iw
 
 # wireless-regdb
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/500-world-regd-5GHz.patch > package/firmware/wireless-regdb/patches/500-world-regd-5GHz.patch
