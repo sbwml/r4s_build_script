@@ -83,13 +83,23 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5
     export USE_GLIBC=n
 fi
 
+# nanopi - openwrt 22.03 kernel version
+if [ "$KERNEL_TESTING" = 1 ]; then
+    export KERNEL_TESTING=1
+    export KERNEL_VER=6.2
+else
+    export KERNEL_TESTING=""
+    export KERNEL_VER=6.1
+fi
+
+# print version
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}"
 if [ "$soc" = "x86" ]; then
     echo -e "${GREEN_COLOR}Model: x86_64${RES}\r\n"
 elif [ "$soc" = "r5s" ]; then
     echo -e "${GREEN_COLOR}Model: nanopi-r5s${RES}\r\n"
     [ "$1" = "rc" ] && model="nanopi-r5s"
-    curl -s https://$mirror/tags/kernel-6.1 > kernel.txt
+    curl -s https://$mirror/tags/kernel-$KERNEL_VER > kernel.txt
     cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}' > kmod_verion.txt
     kmod_hash=$(cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
     kmodpkg_name=$(echo $(cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
@@ -224,6 +234,10 @@ fi
 # glibc
 [ "$USE_GLIBC" = "y" ] && curl -s https://$mirror/openwrt/config-glibc >> .config
 
+# linux-6.2
+[ "$KERNEL_TESTING" = 1 ] && echo CONFIG_TESTING_KERNEL=y >> .config
+[ "$KERNEL_TESTING" = 1 ] && echo '# CONFIG_PACKAGE_kmod-pf-ring is not set' >> .config
+
 # init openwrt config
 rm -rf tmp/*
 make defconfig
@@ -257,7 +271,7 @@ if [ "$soc" = "x86" ]; then
         exit 1
     fi
 else
-    if [ -f bin/targets/rockchip/armv8*/*-ext4-sysupgrade.img.gz ]; then
+    if [ -f bin/targets/rockchip/armv8*/*-r5s-ext4-sysupgrade.img.gz ] || [ -f bin/targets/rockchip/armv8*/*-r4s-ext4-sysupgrade.img.gz ]; then
         if [ "$ALL_KMODS" = y ]; then
             cp -a bin/targets/rockchip/armv8*/packages $kmodpkg_name
             rm -f $kmodpkg_name/Packages*
@@ -278,11 +292,13 @@ else
         if [ "$1" = "rc" ]; then
             curl -Lso ota.json https://github.com/sbwml/builder/releases/latest/download/fw.json || exit 0
             VERSION=$(cat version.txt | sed 's/v//g')
-            SHA256=$(sha256sum bin/targets/rockchip/armv8*/*-squashfs-sysupgrade.img.gz | awk '{print $1}')
             if [ "$model" = "nanopi-r4s" ]; then
+                SHA256=$(sha256sum bin/targets/rockchip/armv8*/*-squashfs-sysupgrade.img.gz | awk '{print $1}')
                 jq ".\"friendlyarm,nanopi-r4s\"[0].build_date=\"$CURRENT_DATE\"|.\"friendlyarm,nanopi-r4s\"[0].sha256sum=\"$SHA256\"|.\"friendlyarm,nanopi-r4s\"[0].url=\"https://r4s.cooluc.com/releases/openwrt-22.03/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz\"" ota.json > fw.json
             elif [ "$model" = "nanopi-r5s" ]; then
-                jq ".\"friendlyarm,nanopi-r5s\"[0].build_date=\"$CURRENT_DATE\"|.\"friendlyarm,nanopi-r5s\"[0].sha256sum=\"$SHA256\"|.\"friendlyarm,nanopi-r5s\"[0].url=\"https://r5s.cooluc.com/releases/openwrt-22.03/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5s-squashfs-sysupgrade.img.gz\"" ota.json > fw.json
+                SHA256_R5C=$(sha256sum bin/targets/rockchip/armv8*/*-r5c-squashfs-sysupgrade.img.gz | awk '{print $1}')
+                SHA256_R5S=$(sha256sum bin/targets/rockchip/armv8*/*-r5s-squashfs-sysupgrade.img.gz | awk '{print $1}')
+                jq ".\"friendlyarm,nanopi-r5s\"[0].build_date=\"$CURRENT_DATE\"|.\"friendlyarm,nanopi-r5s\"[0].sha256sum=\"$SHA256_R5S\"|.\"friendlyarm,nanopi-r5s\"[0].url=\"https://r5s.cooluc.com/releases/openwrt-22.03/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5s-squashfs-sysupgrade.img.gz\"|.\"friendlyarm,nanopi-r5c\"[0].build_date=\"$CURRENT_DATE\"|.\"friendlyarm,nanopi-r5c\"[0].sha256sum=\"$SHA256_R5C\"|.\"friendlyarm,nanopi-r5c\"[0].url=\"https://r5s.cooluc.com/releases/openwrt-22.03/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5c-squashfs-sysupgrade.img.gz\"" ota.json > fw.json
             fi
         fi
         # Backup download cache

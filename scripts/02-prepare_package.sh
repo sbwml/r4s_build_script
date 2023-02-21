@@ -83,6 +83,9 @@ git clone https://github.com/sbwml/luci-app-mosdns package/mosdns
 # OpenAppFilter
 git clone https://github.com/sbwml/OpenAppFilter --depth=1 package/new/OpenAppFilter
 
+# iperf3 - 3.13
+sed -ri "s/(PKG_VERSION:=)[^\"]*/\13.13/;s/(PKG_HASH:=)[^\"]*/\1bee427aeb13d6a2ee22073f23261f63712d82befaa83ac8cb4db5da4c2bdc865/" feeds/packages/net/iperf3/Makefile
+
 # 带宽监控
 sed -i 's/services/network/g' feeds/luci/applications/luci-app-nlbwmon/root/usr/share/luci/menu.d/luci-app-nlbwmon.json
 sed -i 's/services/network/g' feeds/luci/applications/luci-app-nlbwmon/htdocs/luci-static/resources/view/nlbw/config.js

@@ -7,12 +7,20 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) stable
 
 ## nanopi-r4s openwrt-22.03
 ```shell
+# linux-6.1
 bash <(curl -sS https://init2.cooluc.com/build.sh) rc
+
+# linux-6.2 - testing
+KERNEL_TESTING=1 bash <(curl -sS https://init2.cooluc.com/build.sh) rc
 ```
 
-## nanopi-r5s openwrt-22.03
+## nanopi-r5s/r5c openwrt-22.03
 ```shell
+# linux-6.1
 bash <(curl -sS https://init2.cooluc.com/build.sh) rc r5s
+
+# linux-6.2 - testing
+KERNEL_TESTING=1 bash <(curl -sS https://init2.cooluc.com/build.sh) rc r5s
 ```
 
 ## x86_64 openwrt-21.02

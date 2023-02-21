@@ -20,6 +20,11 @@ pushd feeds/packages
   curl -s https://github.com/openwrt/packages/commit/c0683d3f012096fc7b2fbe8b8dc81ea424945e9b.patch | patch -p1
   # xtables-addons
   curl -s https://github.com/openwrt/packages/commit/c4b55eea7f242e4c6dd06efca66280b856841299.patch | patch -p1
+  [ "$KERNEL_TESTING" = 1 ] && curl -s https://$mirror/openwrt/patch/openwrt-6.1/feeds/xtables-addons/999-fix-linux-6.2.patch > net/xtables-addons/patches/999-fix-linux-6.2.patch
+  # jool - fix linux-6.2
+  [ "$KERNEL_TESTING" = 1 ] && curl -s https://$mirror/openwrt/patch/openwrt-6.1/feeds/jool/002-fix-linux-6.2.patch > net/jool/patches/002-fix-linux-6.2.patch
+  # ovpn-dco - fix linux-6.2
+  [ "$KERNEL_TESTING" = 1 ] && curl -s https://$mirror/openwrt/patch/openwrt-6.1/feeds/ovpn-dco/Makefile > kernel/ovpn-dco/Makefile
 popd
 
 # telephony

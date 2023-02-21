@@ -8,7 +8,8 @@ git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip-6.x target/li
 
 # kernel - 6.x
 curl -s https://$mirror/tags/kernel-6.1 > include/kernel-6.1
-cat include/kernel-6.1 | grep HASH | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}' > .vermagic
+curl -s https://$mirror/tags/kernel-6.2 > include/kernel-6.2
+cat include/kernel-$KERNEL_VER | grep HASH | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}' > .vermagic
 
 # kernel modules
 git checkout package/kernel/linux
@@ -25,6 +26,8 @@ pushd package/kernel/linux/modules
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/netfilter.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/netsupport.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/video.mk
+    [ "$KERNEL_TESTING" = 1 ] && curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/other.mk
+    [ "$KERNEL_TESTING" = 1 ] && sed -i 's/+kmod-iio-core +kmod-iio-kfifo-buf +kmod-regmap-core/+kmod-iio-core +kmod-iio-kfifo-buf +kmod-regmap-core +kmod-industrialio-triggered-buffer/g' iio.mk
 popd
 
 # linux-firmware
@@ -60,19 +63,29 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.1/500-world-regd-5GHz.patch > pa
 
 # mac80211 - fix linux 6.1
 rm -rf package/kernel/mac80211
-git clone https://nanopi:nanopi@$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211
+if [ "$KERNEL_TESTING" = 1 ]; then
+    git clone https://nanopi:nanopi@$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b 6.2
+else
+    git clone https://nanopi:nanopi@$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211
+fi
 
 # kernel generic patches
 git clone https://github.com/sbwml/target_linux_generic
 mv target_linux_generic/target/linux/generic/* target/linux/generic/
-sed -i '/CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE/d' target/linux/generic/config-6.1
+sed -i '/CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE/d' target/linux/generic/config-6.1 target/linux/generic/config-6.2
 rm -rf target_linux_generic
 
 # kernel patch
+# 6.1
 curl -s https://$mirror/openwrt/patch/kernel-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch > target/linux/generic/pending-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch
 curl -s https://$mirror/openwrt/patch/kernel-6.1/952-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-6.1/952-net-conntrack-events-support-multiple-registrant.patch
 curl -s https://$mirror/openwrt/patch/kernel-6.1/998-hide-panfrost-logs.patch > target/linux/generic/hack-6.1/998-hide-panfrost-logs.patch
 curl -s https://$mirror/openwrt/patch/kernel-6.1/999-hide-irq-logs.patch > target/linux/generic/hack-6.1/999-hide-irq-logs.patch
+# 6.2
+cp target/linux/generic/pending-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch target/linux/generic/pending-6.2/
+cp target/linux/generic/hack-6.1/952-net-conntrack-events-support-multiple-registrant.patch target/linux/generic/hack-6.2/
+cp target/linux/generic/hack-6.1/998-hide-panfrost-logs.patch target/linux/generic/hack-6.2/
+cp target/linux/generic/hack-6.1/999-hide-irq-logs.patch target/linux/generic/hack-6.2/
 
 # feeds/packages/net/gensio - fix linux 6.1
 pushd feeds/packages
@@ -91,5 +104,5 @@ cp -a ../master/packages/net/ksmbd-tools feeds/packages/net/ksmbd-tools
 sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/ksmbd-tools/files/ksmbd.config.example
 sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages/net/ksmbd-tools/files/ksmbd.conf.template
 
-# ksmbd module - fix for linux 6.x
+# drop ksmbd - use kernel ksmdb
 rm -rf package/kernel/ksmbd

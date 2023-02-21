@@ -420,7 +420,7 @@ sed -i '/limit-as/c\limit-as = 5000' feeds/packages/net/uwsgi/files-luci-support
 sed -i "s/procd_set_param stderr 1/procd_set_param stderr 0/g" feeds/packages/net/uwsgi/files/uwsgi.init
 
 # rpcd bump version
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" != "x86" ]; then
     rm -rf package/system/rpcd
     cp -a ../master/openwrt/package/system/rpcd package/system/rpcd
 fi
