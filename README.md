@@ -1,4 +1,4 @@
-# NanoPi R4S/R5S & X86_64 OpenWrt 简易构建脚本
+# NanoPi R4S/R5S/R5C & X86_64 OpenWrt 简易构建脚本
 
 ## nanopi-r4s openwrt-21.02
 ```shell

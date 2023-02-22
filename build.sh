@@ -100,7 +100,6 @@ elif [ "$soc" = "r5s" ]; then
     echo -e "${GREEN_COLOR}Model: nanopi-r5s${RES}\r\n"
     [ "$1" = "rc" ] && model="nanopi-r5s"
     curl -s https://$mirror/tags/kernel-$KERNEL_VER > kernel.txt
-    cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}' > kmod_verion.txt
     kmod_hash=$(cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
     kmodpkg_name=$(echo $(cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
     echo -e "${GREEN_COLOR}kernel version: $kmodpkg_name ${RES}\r\n"
@@ -284,7 +283,6 @@ else
             bash kmod-sign $kmodpkg_name
             tar zcf kmod-$kmodpkg_name.tar.gz $kmodpkg_name
             rm -rf $kmodpkg_name
-            echo $kmodpkg_name > hash.txt
         fi
         echo -e "${GREEN_COLOR} Build success! ${RES}"
         echo -e " Build time: ${GREEN_COLOR}$(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s${RES}"

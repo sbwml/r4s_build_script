@@ -44,8 +44,8 @@ CONFIG_BUSYBOX_CONFIG_FEATURE_SYSLOG_INFO=y
 
 ### Dnsmasq
 CONFIG_PACKAGE_dnsmasq-full=y
-CONFIG_PACKAGE_dnsmasq_full_broken_rtc=y
 CONFIG_PACKAGE_dnsmasq_full_ipset=y
+# CONFIG_PACKAGE_dnsmasq_full_broken_rtc is not set
 # CONFIG_PACKAGE_dnsmasq is not set
 
 ### Docker

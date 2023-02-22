@@ -40,12 +40,10 @@ cp -a ../master/openwrt/package/kernel/ath10k-ct package/kernel/ath10k-ct
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/ath10k-ct.patch | patch -p1
 
 # mt76 - fix build
-rm -rf package/kernel/mt76
-cp -a ../master/openwrt/package/kernel/mt76 package/kernel/mt76
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/mt76.patch | patch -p1
+rm -rf package/kernel/mt76/patches
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/mt76/Makefile > package/kernel/mt76/Makefile
 
-# add mt7922
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/add-mt7922.patch | patch -p1
+# iwinfo: add mt7922
 rm -rf package/network/utils/iwinfo
 cp -a ../master/openwrt/package/network/utils/iwinfo package/network/utils/iwinfo
 mkdir -p package/network/utils/iwinfo/patches
