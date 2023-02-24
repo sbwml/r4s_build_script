@@ -100,8 +100,8 @@ elif [ "$soc" = "r5s" ]; then
     echo -e "${GREEN_COLOR}Model: nanopi-r5s${RES}\r\n"
     [ "$1" = "rc" ] && model="nanopi-r5s"
     curl -s https://$mirror/tags/kernel-$KERNEL_VER > kernel.txt
-    kmod_hash=$(cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
-    kmodpkg_name=$(echo $(cat kernel.txt | grep HASH | awk -F- '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
+    kmod_hash=$(grep HASH kernel.txt | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
+    kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F- '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
     echo -e "${GREEN_COLOR}kernel version: $kmodpkg_name ${RES}\r\n"
     rm -f kernel.txt
 else
@@ -162,10 +162,10 @@ sed -ie 's/^\(.\).*vermagic$/\1cp $(TOPDIR)\/.vermagic $(LINUX_DIR)\/.vermagic/'
 
 # feeds mirror
 if [[ "$1" = "stable" ]] || [[ "$1" = "rc" ]]; then
-    packages="^$(cat feeds.conf.default | grep packages | awk -F^ '{print $2}')"
-    luci="^$(cat feeds.conf.default | grep luci | awk -F^ '{print $2}')"
-    routing="^$(cat feeds.conf.default | grep routing | awk -F^ '{print $2}')"
-    telephony="^$(cat feeds.conf.default | grep telephony | awk -F^ '{print $2}')"
+    packages="^$(grep packages feeds.conf.default | awk -F^ '{print $2}')"
+    luci="^$(grep luci feeds.conf.default | awk -F^ '{print $2}')"
+    routing="^$(grep routing feeds.conf.default | awk -F^ '{print $2}')"
+    telephony="^$(grep telephony feeds.conf.default | awk -F^ '{print $2}')"
 else
     packages=";$branch"
     luci=";$branch"
@@ -289,7 +289,7 @@ else
         # OTA json
         if [ "$1" = "rc" ]; then
             curl -Lso ota.json https://github.com/sbwml/builder/releases/latest/download/fw.json || exit 0
-            VERSION=$(cat version.txt | sed 's/v//g')
+            VERSION=$(sed 's/v//g' version.txt)
             if [ "$model" = "nanopi-r4s" ]; then
                 SHA256=$(sha256sum bin/targets/rockchip/armv8*/*-squashfs-sysupgrade.img.gz | awk '{print $1}')
                 jq ".\"friendlyarm,nanopi-r4s\"[0].build_date=\"$CURRENT_DATE\"|.\"friendlyarm,nanopi-r4s\"[0].sha256sum=\"$SHA256\"|.\"friendlyarm,nanopi-r4s\"[0].url=\"https://r4s.cooluc.com/releases/openwrt-22.03/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz\"" ota.json > fw.json

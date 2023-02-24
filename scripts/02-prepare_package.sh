@@ -51,7 +51,7 @@ sed -i "s/services/nas/g" \
   aliyundrive-webdav/openwrt/luci-app-aliyundrive-webdav/luasrc/view/aliyundrive-webdav/*.htm
 sed -i 's/("AliyunDrive WebDAV"), 10)/("AliyunDrive WebDAV"), 101)/g' aliyundrive-webdav/openwrt/luci-app-aliyundrive-webdav/luasrc/controller/aliyundrive-webdav.lua
 sed -i 's/8080/6087/g' aliyundrive-webdav/openwrt/aliyundrive-webdav/files/aliyundrive-webdav.config aliyundrive-webdav/openwrt/aliyundrive-webdav/files/aliyundrive-webdav.init
-mv aliyundrive-webdav/openwrt package/aliyundrive-webdav
+mv aliyundrive-webdav/openwrt package/new/aliyundrive-webdav
 rm -rf aliyundrive-webdav
 
 # Netdata

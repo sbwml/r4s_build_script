@@ -9,7 +9,7 @@ git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip-6.x target/li
 # kernel - 6.x
 curl -s https://$mirror/tags/kernel-6.1 > include/kernel-6.1
 curl -s https://$mirror/tags/kernel-6.2 > include/kernel-6.2
-cat include/kernel-$KERNEL_VER | grep HASH | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}' > .vermagic
+grep HASH include/kernel-$KERNEL_VER | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}' > .vermagic
 
 # kernel modules
 git checkout package/kernel/linux
