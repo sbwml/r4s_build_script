@@ -31,6 +31,61 @@ pushd package/kernel/linux/modules
     [ "$KERNEL_TESTING" = 1 ] && sed -i 's/+kmod-iio-core +kmod-iio-kfifo-buf +kmod-regmap-core/+kmod-iio-core +kmod-iio-kfifo-buf +kmod-regmap-core +kmod-industrialio-triggered-buffer/g' iio.mk
 popd
 
+# linux-firmware
+rm -rf package/firmware/linux-firmware
+git clone https://nanopi:nanopi@$gitea/sbwml/package_firmware_linux-firmware package/firmware/linux-firmware
+
+# ath10k-ct - fix mac80211 6.1-rc
+rm -rf package/kernel/ath10k-ct
+cp -a ../master/openwrt/package/kernel/ath10k-ct package/kernel/ath10k-ct
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/ath10k-ct.patch | patch -p1
+
+# mt76 - fix build
+rm -rf package/kernel/mt76/patches
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/mt76/Makefile > package/kernel/mt76/Makefile
+
+# iwinfo: add mt7922
+rm -rf package/network/utils/iwinfo
+cp -a ../master/openwrt/package/network/utils/iwinfo package/network/utils/iwinfo
+mkdir -p package/network/utils/iwinfo/patches
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/iwinfo/0001-devices-add-MediaTek-MT7922-device-id.patch > package/network/utils/iwinfo/patches/0001-devices-add-MediaTek-MT7922-device-id.patch
+
+# iwinfo: add rtl8812/14/21au devices
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/iwinfo/0004-add-rtl8812au-devices.patch > package/network/utils/iwinfo/patches/0004-add-rtl8812au-devices.patch
+
+# iw
+rm -rf package/network/utils/iw
+cp -a ../master/openwrt/package/network/utils/iw package/network/utils/iw
+
+# wireless-regdb
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/500-world-regd-5GHz.patch > package/firmware/wireless-regdb/patches/500-world-regd-5GHz.patch
+
+# mac80211 - fix linux 6.1
+rm -rf package/kernel/mac80211
+if [ "$KERNEL_TESTING" = 1 ]; then
+    git clone https://nanopi:nanopi@$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b 6.2
+else
+    git clone https://nanopi:nanopi@$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211
+fi
+
+# kernel generic patches
+git clone https://github.com/sbwml/target_linux_generic
+mv target_linux_generic/target/linux/generic/* target/linux/generic/
+sed -i '/CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE/d' target/linux/generic/config-6.1 target/linux/generic/config-6.2
+rm -rf target_linux_generic
+
+# kernel patch
+# 6.1
+curl -s https://$mirror/openwrt/patch/kernel-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch > target/linux/generic/pending-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch
+curl -s https://$mirror/openwrt/patch/kernel-6.1/952-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-6.1/952-net-conntrack-events-support-multiple-registrant.patch
+curl -s https://$mirror/openwrt/patch/kernel-6.1/998-hide-panfrost-logs.patch > target/linux/generic/hack-6.1/998-hide-panfrost-logs.patch
+curl -s https://$mirror/openwrt/patch/kernel-6.1/999-hide-irq-logs.patch > target/linux/generic/hack-6.1/999-hide-irq-logs.patch
+# 6.2
+cp target/linux/generic/pending-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch target/linux/generic/pending-6.2/
+cp target/linux/generic/hack-6.1/952-net-conntrack-events-support-multiple-registrant.patch target/linux/generic/hack-6.2/
+cp target/linux/generic/hack-6.1/998-hide-panfrost-logs.patch target/linux/generic/hack-6.2/
+cp target/linux/generic/hack-6.1/999-hide-irq-logs.patch target/linux/generic/hack-6.2/
+
 # BBRv2 - linux-6.1
 pushd target/linux/generic/backport-6.1
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0001-net-tcp_bbr-broaden-app-limited-rate-sample-detectio.patch
@@ -91,60 +146,39 @@ pushd target/linux/generic/backport-6.2
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.2/0025-net-tcp_bbr-v2-Fix-missing-ECT-markings-on-retransmi.patch
 popd
 
-# linux-firmware
-rm -rf package/firmware/linux-firmware
-git clone https://nanopi:nanopi@$gitea/sbwml/package_firmware_linux-firmware package/firmware/linux-firmware
-
-# ath10k-ct - fix mac80211 6.1-rc
-rm -rf package/kernel/ath10k-ct
-cp -a ../master/openwrt/package/kernel/ath10k-ct package/kernel/ath10k-ct
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/ath10k-ct.patch | patch -p1
-
-# mt76 - fix build
-rm -rf package/kernel/mt76/patches
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/mt76/Makefile > package/kernel/mt76/Makefile
-
-# iwinfo: add mt7922
-rm -rf package/network/utils/iwinfo
-cp -a ../master/openwrt/package/network/utils/iwinfo package/network/utils/iwinfo
-mkdir -p package/network/utils/iwinfo/patches
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/iwinfo/0001-devices-add-MediaTek-MT7922-device-id.patch > package/network/utils/iwinfo/patches/0001-devices-add-MediaTek-MT7922-device-id.patch
-
-# iwinfo: add rtl8812/14/21au devices
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/iwinfo/0004-add-rtl8812au-devices.patch > package/network/utils/iwinfo/patches/0004-add-rtl8812au-devices.patch
-
-# iw
-rm -rf package/network/utils/iw
-cp -a ../master/openwrt/package/network/utils/iw package/network/utils/iw
-
-# wireless-regdb
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/500-world-regd-5GHz.patch > package/firmware/wireless-regdb/patches/500-world-regd-5GHz.patch
-
-# mac80211 - fix linux 6.1
-rm -rf package/kernel/mac80211
-if [ "$KERNEL_TESTING" = 1 ]; then
-    git clone https://nanopi:nanopi@$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b 6.2
-else
-    git clone https://nanopi:nanopi@$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211
-fi
-
-# kernel generic patches
-git clone https://github.com/sbwml/target_linux_generic
-mv target_linux_generic/target/linux/generic/* target/linux/generic/
-sed -i '/CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE/d' target/linux/generic/config-6.1 target/linux/generic/config-6.2
-rm -rf target_linux_generic
-
-# kernel patch
-# 6.1
-curl -s https://$mirror/openwrt/patch/kernel-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch > target/linux/generic/pending-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch
-curl -s https://$mirror/openwrt/patch/kernel-6.1/952-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-6.1/952-net-conntrack-events-support-multiple-registrant.patch
-curl -s https://$mirror/openwrt/patch/kernel-6.1/998-hide-panfrost-logs.patch > target/linux/generic/hack-6.1/998-hide-panfrost-logs.patch
-curl -s https://$mirror/openwrt/patch/kernel-6.1/999-hide-irq-logs.patch > target/linux/generic/hack-6.1/999-hide-irq-logs.patch
-# 6.2
-cp target/linux/generic/pending-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch target/linux/generic/pending-6.2/
-cp target/linux/generic/hack-6.1/952-net-conntrack-events-support-multiple-registrant.patch target/linux/generic/hack-6.2/
-cp target/linux/generic/hack-6.1/998-hide-panfrost-logs.patch target/linux/generic/hack-6.2/
-cp target/linux/generic/hack-6.1/999-hide-irq-logs.patch target/linux/generic/hack-6.2/
+# LRNG
+pushd target/linux/generic/backport-6.2
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0001-LRNG-Entropy-Source-and-DRNG-Manager.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0002-LRNG-allocate-one-DRNG-instance-per-NUMA-node.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0003-LRNG-proc-interface.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0004-LRNG-add-switchable-DRNG-support.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0005-LRNG-add-common-generic-hash-support.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0006-crypto-DRBG-externalize-DRBG-functions-for-LRNG.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0007-LRNG-add-SP800-90A-DRBG-extension.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0008-LRNG-add-kernel-crypto-API-PRNG-extension.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0009-LRNG-add-atomic-DRNG-implementation.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0010-LRNG-add-common-timer-based-entropy-source-code.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0011-LRNG-add-interrupt-entropy-source.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0012-scheduler-add-entropy-sampling-hook.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0013-LRNG-add-scheduler-based-entropy-source.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0014-LRNG-add-SP800-90B-compliant-health-tests.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0015-LRNG-add-random.c-entropy-source-support.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0016-LRNG-CPU-entropy-source.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0017-crypto-move-Jitter-RNG-header-include-dir.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0018-LRNG-add-Jitter-RNG-fast-noise-source.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0019-LRNG-add-option-to-enable-runtime-entropy-rate-c.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0020-LRNG-add-interface-for-gathering-of-raw-entropy.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0021-LRNG-add-power-on-and-runtime-self-tests.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0022-LRNG-sysctls-and-proc-interface.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0023-LRMG-add-drop-in-replacement-random-4-API.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0024-LRNG-add-kernel-crypto-API-interface.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0025-LRNG-add-dev-lrng-device-file-support.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng-49/v49-0026-LRNG-add-hwrand-framework-interface.patch
+popd
+cp -a target/linux/generic/backport-6.2/v49-*.patch target/linux/generic/backport-6.1/
+curl -o target/linux/generic/backport-6.1/v49-01-add_arch_get_random_longs_early.patch https://$mirror/openwrt/patch/kernel-6.1/lrng-49/backports-6.1/v49-01-add_arch_get_random_longs_early.patch
+curl -o target/linux/generic/backport-6.1/v49-02-revert_add_hwgenerator_randomness_update.patch https://$mirror/openwrt/patch/kernel-6.1/lrng-49/backports-6.1/v49-02-revert_add_hwgenerator_randomness_update.patch
+curl -s https://$mirror/openwrt/patch/kernel-6.1/config-lrng | tee -a target/linux/generic/config-6.1 target/linux/generic/config-6.2
 
 # feeds/packages/net/gensio - fix linux 6.1
 pushd feeds/packages

@@ -1,0 +1,16 @@
+--- linux-6.1.14/drivers/char/lrng/lrng_es_mgr.c.orig	2023-02-26 16:11:47.822392343 +0100
++++ linux-6.1.14/drivers/char/lrng/lrng_es_mgr.c	2023-02-26 16:12:16.111982846 +0100
+@@ -383,11 +383,11 @@ void __init lrng_rand_initialize_early(v
+ 	unsigned int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(seed.data); i += longs) {
+-		longs = arch_get_random_seed_longs(seed.data + i,
++		longs = arch_get_random_seed_longs_early(seed.data + i,
+ 						   ARRAY_SIZE(seed.data) - i);
+ 		if (longs)
+ 			continue;
+-		longs = arch_get_random_longs(seed.data + i,
++		longs = arch_get_random_longs_early(seed.data + i,
+ 					      ARRAY_SIZE(seed.data) - i);
+ 		if (longs)
+ 			continue;
