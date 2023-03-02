@@ -1046,6 +1046,30 @@ endef
 $(eval $(call KernelPackage,tcp-bbr))
 
 
+define KernelPackage/tcp-bbr2
+  SUBMENU:=$(NETWORK_SUPPORT_MENU)
+  TITLE:=BBRv2 TCP congestion control
+  KCONFIG:=CONFIG_TCP_CONG_BBR2
+  FILES:=$(LINUX_DIR)/net/ipv4/tcp_bbr2.ko
+  AUTOLOAD:=$(call AutoProbe,tcp_bbr)
+endef
+
+define KernelPackage/tcp-bbr2/description
+ Kernel module for BBRv2 (Bottleneck Bandwidth and RTT) TCP congestion
+ control. It requires the fq ("Fair Queue") pacing packet scheduler.
+ For kernel 5.13+, TCP internal pacing is implemented as fallback.
+endef
+
+TCP_BBR_SYSCTL_CONF:=sysctl-tcp-bbr2.conf
+
+define KernelPackage/tcp-bbr2/install
+	$(INSTALL_DIR) $(1)/etc/sysctl.d
+	$(INSTALL_DATA) ./files/$(TCP_BBR_SYSCTL_CONF) $(1)/etc/sysctl.d/12-tcp-bbr2.conf
+endef
+
+$(eval $(call KernelPackage,tcp-bbr2))
+
+
 define KernelPackage/tcp-hybla
   SUBMENU:=$(NETWORK_SUPPORT_MENU)
   TITLE:=TCP-Hybla congestion control algorithm
