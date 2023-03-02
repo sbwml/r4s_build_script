@@ -71,7 +71,7 @@ if [ "$version" = "releases" ] || [ "$version" = "snapshots-21.02" ]; then
     git clone https://$gitea/sbwml/rtl88x2bu package/kernel/rtl88x2bu
 else
     # hostapd: make LAR-friendly AP mode for AX200/AX210
-    curl -s https://$mirror/openwrt/patch/hostapd-22.03/800-hostapd-2.10-lar.patch > package/network/services/hostapd/patches/800-hostapd-2.10-lar.patch
+    curl -s https://$mirror/openwrt/patch/hostapd-22.03/999-hostapd-2.10-lar.patch > package/network/services/hostapd/patches/999-hostapd-2.10-lar.patch
     # hostapd: hack version
     sed -ri "s/(PKG_RELEASE:=)[^\"]*/\199.2/" package/network/services/hostapd/Makefile
 fi
