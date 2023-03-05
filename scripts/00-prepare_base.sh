@@ -23,9 +23,9 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     curl -s https://$mirror/openwrt/patch/kernel_modules/5.10-video.mk > package/kernel/linux/modules/video.mk
     if [ "$soc" = "x86" ]; then
         echo "CONFIG_CRYPTO_AES_NI_INTEL=y" >> target/linux/x86/config-5.10
+        echo '# CONFIG_DVB_USB is not set' >> target/linux/x86/config-5.10
+        sed -i 's/hwmon, +PACKAGE_kmod-thermal:kmod-thermal/hwmon/g' package/kernel/linux/modules/hwmon.mk
     fi
-    # fix DHCP leases showing as expired once ntp updates the time
-    curl -s https://github.com/openwrt/openwrt/commit/fcaa5e39219e49a83d22dab44d4398d8f64abd0a.patch | patch -p1
 else
     curl -s https://$mirror/openwrt/patch/kernel_modules/5.4-video.mk > package/kernel/linux/modules/video.mk
     if [ "$soc" = "x86" ]; then
@@ -408,9 +408,8 @@ sed -i 's/ubus_parallel_req 2/ubus_parallel_req 6/g' feeds/packages/net/nginx/fi
 sed -i '/ubus_parallel_req/a\        ubus_script_timeout 600;' feeds/packages/net/nginx/files-luci-support/60_nginx-luci-support
 
 # nginx - uwsgi timeout & enable brotli
-mkdir -p files/etc/nginx/conf.d
-curl -s https://$mirror/openwrt/nginx/luci.locations > files/etc/nginx/conf.d/luci.locations
-curl -s https://$mirror/openwrt/nginx/uci.conf.template > files/etc/nginx/uci.conf.template
+curl -s https://$mirror/openwrt/nginx/luci.locations > feeds/packages/net/nginx/files-luci-support/luci.locations
+curl -s https://$mirror/openwrt/nginx/uci.conf.template > feeds/packages/net/nginx-util/files/uci.conf.template
 
 # uwsgi - fix timeout
 sed -i '$a cgi-timeout = 600' feeds/packages/net/uwsgi/files-luci-support/luci-*.ini
