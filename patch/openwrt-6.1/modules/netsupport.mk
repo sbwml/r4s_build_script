@@ -1028,7 +1028,6 @@ define KernelPackage/tcp-bbr
   KCONFIG:=CONFIG_TCP_CONG_BBR
   FILES:=$(LINUX_DIR)/net/ipv4/tcp_bbr.ko
   AUTOLOAD:=$(call AutoProbe,tcp_bbr)
-  CONFLICTS:=kmod-tcp-bbr2
 endef
 
 define KernelPackage/tcp-bbr/description
@@ -1053,7 +1052,6 @@ define KernelPackage/tcp-bbr2
   KCONFIG:=CONFIG_TCP_CONG_BBR2
   FILES:=$(LINUX_DIR)/net/ipv4/tcp_bbr2.ko
   AUTOLOAD:=$(call AutoProbe,tcp_bbr)
-  CONFLICTS:=kmod-tcp-bbr
 endef
 
 define KernelPackage/tcp-bbr2/description
