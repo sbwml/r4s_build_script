@@ -1,0 +1,47 @@
+From bd7418182b6c5a782730b80f40b25a0ae9a6d096 Mon Sep 17 00:00:00 2001
+From: Joan Bruguera <joanbrugueram@gmail.com>
+Date: Sat, 18 Feb 2023 23:36:56 +0000
+Subject: [PATCH] Fix build for Linux 6.3-rc1
+
+The 1st parameter of `crypto_completion_t` is now the user data passed to the
+callback instead of the `crypto_async_request`.
+Migrate to the new API and add a shim to keep compatibility with old kernels.
+
+See also: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=255e48eb17684157336bd6dd98d22c1b2d9e3f43
+
+Signed-off-by: Joan Bruguera <joanbrugueram@gmail.com>
+---
+ cryptlib.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/cryptlib.c b/cryptlib.c
+index 77b2a35c..4d739e53 100644
+--- a/cryptlib.c
++++ b/cryptlib.c
+@@ -42,9 +42,9 @@
+ extern const struct crypto_type crypto_givcipher_type;
+ #endif
+ 
+-static void cryptodev_complete(struct crypto_async_request *req, int err)
++static void cryptodev_complete(void *data, int err)
+ {
+-	struct cryptodev_result *res = req->data;
++	struct cryptodev_result *res = data;
+ 
+ 	if (err == -EINPROGRESS)
+ 		return;
+@@ -53,6 +53,14 @@ static void cryptodev_complete(struct crypto_async_request *req, int err)
+ 	complete(&res->completion);
+ }
+ 
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(6, 3, 0))
++static void cryptodev_complete_shim(struct crypto_async_request *req, int err)
++{
++	cryptodev_complete(req->data, err);
++}
++#define cryptodev_complete cryptodev_complete_shim
++#endif
++
+ int cryptodev_get_cipher_keylen(unsigned int *keylen, struct session_op *sop,
+ 		int aead)
+ {

@@ -12,6 +12,9 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) rc
 
 # linux-6.2 - testing
 KERNEL_TESTING=1 bash <(curl -sS https://init2.cooluc.com/build.sh) rc
+
+# linux-6.3 - testing
+KERNEL_TESTING=1 KERNEL_VER=6.3 bash <(curl -sS https://init2.cooluc.com/build.sh) rc
 ```
 
 ## nanopi-r5s/r5c openwrt-22.03
@@ -21,6 +24,9 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) rc r5s
 
 # linux-6.2 - testing
 KERNEL_TESTING=1 bash <(curl -sS https://init2.cooluc.com/build.sh) rc r5s
+
+# linux-6.3 - testing
+KERNEL_TESTING=1 KERNEL_VER=6.3 bash <(curl -sS https://init2.cooluc.com/build.sh) rc r5s
 ```
 
 ## x86_64 openwrt-21.02

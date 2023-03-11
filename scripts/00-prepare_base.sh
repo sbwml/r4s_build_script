@@ -465,3 +465,8 @@ sed -i '\#export ENV=/etc/shinit#a export HISTCONTROL=ignoredups' package/base-f
 mkdir -p files/root
 curl -so files/root/.bash_profile https://$mirror/openwrt/files/root/.bash_profile
 curl -so files/root/.bashrc https://$mirror/openwrt/files/root/.bashrc
+
+#############
+
+# drop antfs
+rm -rf feeds/packages/kernel/antfs feeds/packages/utils/antfs-mount

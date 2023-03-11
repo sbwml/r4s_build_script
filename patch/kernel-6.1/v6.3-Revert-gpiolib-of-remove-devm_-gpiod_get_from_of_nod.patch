@@ -1,0 +1,198 @@
+From c01418d73b8469aca78cf395a6cf1455f691b652 Mon Sep 17 00:00:00 2001
+From: sbwml <984419930@qq.com>
+Date: Sat, 11 Mar 2023 14:41:41 +0800
+Subject: [PATCH] Revert "gpiolib: of: remove [devm_]gpiod_get_from_of_node()
+ APIs"
+
+This reverts commit 650f2dc970539b3344a98c4bd18efa309e66623b.
+---
+ drivers/gpio/gpiolib-devres.c | 55 +++++++++++++++++++++++++++++++++++
+ drivers/gpio/gpiolib-of.c     | 46 +++++++++++++++++++++++++++++
+ include/linux/gpio/consumer.h | 48 ++++++++++++++++++++++++++++++
+ 3 files changed, 149 insertions(+)
+
+diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
+index fe9ce6b19f15..16a696249229 100644
+--- a/drivers/gpio/gpiolib-devres.c
++++ b/drivers/gpio/gpiolib-devres.c
+@@ -129,6 +129,61 @@ struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(devm_gpiod_get_index);
+ 
++/**
++ * devm_gpiod_get_from_of_node() - obtain a GPIO from an OF node
++ * @dev:	device for lifecycle management
++ * @node:	handle of the OF node
++ * @propname:	name of the DT property representing the GPIO
++ * @index:	index of the GPIO to obtain for the consumer
++ * @dflags:	GPIO initialization flags
++ * @label:	label to attach to the requested GPIO
++ *
++ * Returns:
++ * On successful request the GPIO pin is configured in accordance with
++ * provided @dflags.
++ *
++ * In case of error an ERR_PTR() is returned.
++ */
++struct gpio_desc *devm_gpiod_get_from_of_node(struct device *dev,
++					      const struct device_node *node,
++					      const char *propname, int index,
++					      enum gpiod_flags dflags,
++					      const char *label)
++{
++	struct gpio_desc **dr;
++	struct gpio_desc *desc;
++
++	desc = gpiod_get_from_of_node(node, propname, index, dflags, label);
++	if (IS_ERR(desc))
++		return desc;
++
++	/*
++	 * For non-exclusive GPIO descriptors, check if this descriptor is
++	 * already under resource management by this device.
++	 */
++	if (dflags & GPIOD_FLAGS_BIT_NONEXCLUSIVE) {
++		struct devres *dres;
++
++		dres = devres_find(dev, devm_gpiod_release,
++				   devm_gpiod_match, &desc);
++		if (dres)
++			return desc;
++	}
++
++	dr = devres_alloc(devm_gpiod_release, sizeof(struct gpio_desc *),
++			  GFP_KERNEL);
++	if (!dr) {
++		gpiod_put(desc);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	*dr = desc;
++	devres_add(dev, dr);
++
++	return desc;
++}
++EXPORT_SYMBOL_GPL(devm_gpiod_get_from_of_node);
++
+ /**
+  * devm_fwnode_gpiod_get_index - get a GPIO descriptor from a given node
+  * @dev:	GPIO consumer
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 266352b1a966..544bcdef3e4b 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -433,6 +433,52 @@ static unsigned long of_convert_gpio_flags(enum of_gpio_flags flags)
+ 	return lflags;
+ }
+ 
++/**
++ * gpiod_get_from_of_node() - obtain a GPIO from an OF node
++ * @node:	handle of the OF node
++ * @propname:	name of the DT property representing the GPIO
++ * @index:	index of the GPIO to obtain for the consumer
++ * @dflags:	GPIO initialization flags
++ * @label:	label to attach to the requested GPIO
++ *
++ * Returns:
++ * On successful request the GPIO pin is configured in accordance with
++ * provided @dflags.
++ *
++ * In case of error an ERR_PTR() is returned.
++ */
++struct gpio_desc *gpiod_get_from_of_node(const struct device_node *node,
++					 const char *propname, int index,
++					 enum gpiod_flags dflags,
++					 const char *label)
++{
++	unsigned long lflags;
++	struct gpio_desc *desc;
++	enum of_gpio_flags of_flags;
++	int ret;
++
++	desc = of_get_named_gpiod_flags(node, propname, index, &of_flags);
++	if (!desc || IS_ERR(desc))
++		return desc;
++
++	ret = gpiod_request(desc, label);
++	if (ret == -EBUSY && (dflags & GPIOD_FLAGS_BIT_NONEXCLUSIVE))
++		return desc;
++	if (ret)
++		return ERR_PTR(ret);
++
++	lflags = of_convert_gpio_flags(of_flags);
++
++	ret = gpiod_configure_flags(desc, propname, lflags, dflags);
++	if (ret < 0) {
++		gpiod_put(desc);
++		return ERR_PTR(ret);
++	}
++
++	return desc;
++}
++EXPORT_SYMBOL_GPL(gpiod_get_from_of_node);
++
+ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
+ 					     const char *con_id,
+ 					     unsigned int idx,
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 59cb20cfac3d..45da8f137fe5 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -581,6 +581,54 @@ struct gpio_desc *devm_fwnode_gpiod_get(struct device *dev,
+ 					   flags, label);
+ }
+ 
++#if IS_ENABLED(CONFIG_GPIOLIB) && IS_ENABLED(CONFIG_OF_GPIO)
++struct device_node;
++
++struct gpio_desc *gpiod_get_from_of_node(const struct device_node *node,
++					 const char *propname, int index,
++					 enum gpiod_flags dflags,
++					 const char *label);
++
++#else  /* CONFIG_GPIOLIB && CONFIG_OF_GPIO */
++
++struct device_node;
++
++static inline
++struct gpio_desc *gpiod_get_from_of_node(const struct device_node *node,
++					 const char *propname, int index,
++					 enum gpiod_flags dflags,
++					 const char *label)
++{
++	return ERR_PTR(-ENOSYS);
++}
++
++#endif /* CONFIG_GPIOLIB && CONFIG_OF_GPIO */
++
++#ifdef CONFIG_GPIOLIB
++struct device_node;
++
++struct gpio_desc *devm_gpiod_get_from_of_node(struct device *dev,
++					      const struct device_node *node,
++					      const char *propname, int index,
++					      enum gpiod_flags dflags,
++					      const char *label);
++
++#else  /* CONFIG_GPIOLIB */
++
++struct device_node;
++
++static inline
++struct gpio_desc *devm_gpiod_get_from_of_node(struct device *dev,
++					      const struct device_node *node,
++					      const char *propname, int index,
++					      enum gpiod_flags dflags,
++					      const char *label)
++{
++	return ERR_PTR(-ENOSYS);
++}
++
++#endif /* CONFIG_GPIOLIB */
++
+ struct acpi_gpio_params {
+ 	unsigned int crs_entry_index;
+ 	unsigned int line_index;
+-- 
+2.34.1
+

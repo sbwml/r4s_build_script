@@ -44,16 +44,6 @@ git clone https://github.com/sbwml/openwrt_helloworld package/helloworld -b v5
 # alist
 git clone https://github.com/sbwml/openwrt-alist package/alist
 
-# aliyundrive-webdav
-git clone https://github.com/messense/aliyundrive-webdav --depth=1
-sed -i "s/services/nas/g" \
-  aliyundrive-webdav/openwrt/luci-app-aliyundrive-webdav/luasrc/controller/aliyundrive-webdav.lua \
-  aliyundrive-webdav/openwrt/luci-app-aliyundrive-webdav/luasrc/view/aliyundrive-webdav/*.htm
-sed -i 's/("AliyunDrive WebDAV"), 10)/("AliyunDrive WebDAV"), 101)/g' aliyundrive-webdav/openwrt/luci-app-aliyundrive-webdav/luasrc/controller/aliyundrive-webdav.lua
-sed -i 's/8080/6087/g' aliyundrive-webdav/openwrt/aliyundrive-webdav/files/aliyundrive-webdav.config aliyundrive-webdav/openwrt/aliyundrive-webdav/files/aliyundrive-webdav.init
-mv aliyundrive-webdav/openwrt package/new/aliyundrive-webdav
-rm -rf aliyundrive-webdav
-
 # Netdata
 rm -rf feeds/packages/admin/netdata
 cp -a ../master/packages/admin/netdata feeds/packages/admin/netdata
@@ -79,6 +69,7 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     rm -rf feeds/packages/net/v2ray-geodata
 fi
 git clone https://github.com/sbwml/luci-app-mosdns package/mosdns
+curl -s https://$mirror/openwrt/patch/mosdns.data | base64 -d | patch -p1
 
 # OpenAppFilter
 git clone https://github.com/sbwml/OpenAppFilter --depth=1 package/new/OpenAppFilter

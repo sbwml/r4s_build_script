@@ -5,17 +5,21 @@
 # Rockchip - target - r4s/r5s
 rm -rf target/linux/rockchip
 git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip-6.x target/linux/rockchip
+[ "$KERNEL_TESTING" = 1 ] && sed -ri "s/(KERNEL_TESTING_PATCHVER:=)[^\"]*/\1$KERNEL_VER/" target/linux/rockchip/Makefile
 
 # kernel - 6.x
 curl -s https://$mirror/tags/kernel-6.1 > include/kernel-6.1
 curl -s https://$mirror/tags/kernel-6.2 > include/kernel-6.2
-grep HASH include/kernel-$KERNEL_VER | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}' > .vermagic
+curl -s https://$mirror/tags/kernel-6.3 > include/kernel-6.3
+grep HASH include/kernel-$KERNEL_VER | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}' > .vermagic
 
 # kernel generic patches
 git clone https://github.com/sbwml/target_linux_generic
 mv target_linux_generic/target/linux/generic/* target/linux/generic/
-sed -i '/CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE/d' target/linux/generic/config-6.1 target/linux/generic/config-6.2
+sed -i '/CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE/d' target/linux/generic/config-6.1 target/linux/generic/config-6.2 target/linux/generic/config-6.3
 rm -rf target_linux_generic
+curl -s https://$mirror/openwrt/patch/kernel-6.1/v6.3-Revert-u64_stat-Remove-the-obsolete-fetch_irq-varian.patch > target/linux/generic/backport-6.3/998-Revert-u64_stat-Remove-the-obsolete-fetch_irq-varian.patch
+curl -s https://$mirror/openwrt/patch/kernel-6.1/v6.3-Revert-gpiolib-of-remove-devm_-gpiod_get_from_of_nod.patch > target/linux/generic/backport-6.3/999-Revert-gpiolib-of-remove-devm_-gpiod_get_from_of_nod.patch
 
 # kernel modules
 git checkout package/kernel/linux
@@ -34,6 +38,7 @@ pushd package/kernel/linux/modules
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/netsupport.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/video.mk
     [ "$KERNEL_TESTING" = 1 ] && curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/other.mk
+    [ "$KERNEL_TESTING" = 1 ] && curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/iio.mk
     [ "$KERNEL_TESTING" = 1 ] && sed -i 's/+kmod-iio-core +kmod-iio-kfifo-buf +kmod-regmap-core/+kmod-iio-core +kmod-iio-kfifo-buf +kmod-regmap-core +kmod-industrialio-triggered-buffer/g' iio.mk
 popd
 
@@ -97,6 +102,35 @@ pushd target/linux/generic/backport-6.2
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.2/0025-net-tcp_bbr-v2-Fix-missing-ECT-markings-on-retransmi.patch
 popd
 
+# BBRv2 - linux-6.3
+pushd target/linux/generic/backport-6.3
+    cp ../backport-6.2/0001-net-tcp_bbr-broaden-app-limited-rate-sample-detectio.patch .
+    cp ../backport-6.2/0002-net-tcp_bbr-v2-shrink-delivered_mstamp-first_tx_msta.patch .
+    cp ../backport-6.2/0003-net-tcp_bbr-v2-snapshot-packets-in-flight-at-transmi.patch .
+    cp ../backport-6.2/0004-net-tcp_bbr-v2-count-packets-lost-over-TCP-rate-samp.patch .
+    cp ../backport-6.2/0005-net-tcp_bbr-v2-export-FLAG_ECE-in-rate_sample.is_ece.patch .
+    cp ../backport-6.2/0006-net-tcp_bbr-v2-introduce-ca_ops-skb_marked_lost-CC-m.patch .
+    cp ../backport-6.2/0007-net-tcp_bbr-v2-factor-out-tx.in_flight-setting-into-.patch .
+    cp ../backport-6.2/0008-net-tcp_bbr-v2-adjust-skb-tx.in_flight-upon-merge-in.patch .
+    cp ../backport-6.2/0009-net-tcp_bbr-v2-adjust-skb-tx.in_flight-upon-split-in.patch .
+    cp ../backport-6.2/0010-net-tcp_bbr-v2-set-tx.in_flight-for-skbs-in-repair-w.patch .
+    cp ../backport-6.2/0011-net-tcp-add-new-ca-opts-flag-TCP_CONG_WANTS_CE_EVENT.patch .
+    cp ../backport-6.2/0013-net-tcp-add-fast_ack_mode-1-skip-rwin-check-in-tcp_f.patch .
+    cp ../backport-6.2/0014-net-tcp_bbr-v2-BBRv2-bbr2-congestion-control-for-Lin.patch .
+    cp ../backport-6.2/0015-net-test-add-.config-for-kernel-circa-v5.10-with-man.patch .
+    cp ../backport-6.2/0016-net-test-adds-a-gce-install.sh-script-to-build-and-i.patch .
+    cp ../backport-6.2/0017-net-test-scripts-for-testing-bbr2-with-upstream-Linu.patch .
+    cp ../backport-6.2/0018-net-tcp_bbr-v2-add-a-README.md-for-TCP-BBR-v2-alpha-.patch .
+    cp ../backport-6.2/0019-net-tcp_bbr-v2-remove-unnecessary-rs.delivered_ce-lo.patch .
+    cp ../backport-6.2/0020-net-gbuild-add-Gconfig.bbr2-to-gbuild-kernel-with-CO.patch .
+    cp ../backport-6.2/0021-net-tcp_bbr-v2-remove-field-bw_rtts-that-is-unused-i.patch .
+    cp ../backport-6.2/0022-net-tcp_bbr-v2-remove-cycle_rand-parameter-that-is-u.patch .
+    cp ../backport-6.2/0023-net-test-use-crt-namespace-when-nsperf-disables-crt..patch .
+    cp ../backport-6.2/0024-net-tcp_bbr-v2-don-t-assume-prior_cwnd-was-set-enter.patch .
+    cp ../backport-6.2/0025-net-tcp_bbr-v2-Fix-missing-ECT-markings-on-retransmi.patch .
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.3/0012-net-tcp-re-generalize-TSO-sizing-in-TCP-CC-module-AP.patch
+popd
+
 # linux-firmware
 rm -rf package/firmware/linux-firmware
 git clone https://nanopi:nanopi@$gitea/sbwml/package_firmware_linux-firmware package/firmware/linux-firmware
@@ -139,17 +173,23 @@ fi
 curl -s https://$mirror/openwrt/patch/kernel-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch > target/linux/generic/pending-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch
 curl -s https://$mirror/openwrt/patch/kernel-6.1/952-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-6.1/952-net-conntrack-events-support-multiple-registrant.patch
 curl -s https://$mirror/openwrt/patch/kernel-6.1/998-hide-panfrost-logs.patch > target/linux/generic/hack-6.1/998-hide-panfrost-logs.patch
-curl -s https://$mirror/openwrt/patch/kernel-6.1/999-hide-irq-logs.patch > target/linux/generic/hack-6.1/999-hide-irq-logs.patch
 # 6.2
 cp target/linux/generic/pending-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch target/linux/generic/pending-6.2/
 cp target/linux/generic/hack-6.1/952-net-conntrack-events-support-multiple-registrant.patch target/linux/generic/hack-6.2/
 cp target/linux/generic/hack-6.1/998-hide-panfrost-logs.patch target/linux/generic/hack-6.2/
-cp target/linux/generic/hack-6.1/999-hide-irq-logs.patch target/linux/generic/hack-6.2/
+# 6.3
+cp target/linux/generic/pending-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch target/linux/generic/pending-6.3/
+cp target/linux/generic/hack-6.1/952-net-conntrack-events-support-multiple-registrant.patch target/linux/generic/hack-6.3/
+cp target/linux/generic/hack-6.1/998-hide-panfrost-logs.patch target/linux/generic/hack-6.3/
 
 # feeds/packages/net/gensio - fix linux 6.1
 pushd feeds/packages
     curl -s https://github.com/openwrt/packages/commit/ea3ad6b0909b2f5d8a8dcbc4e866c9ed22f3fb10.patch  | patch -p1
 popd
+
+# cryptodev-linux - fix linux 6.3
+mkdir package/kernel/cryptodev-linux/patches
+curl -s https://$mirror/openwrt/patch/openwrt-6.1/fix-linux-6.3/cryptodev-linux/001-fix-linux-6.3.patch > package/kernel/cryptodev-linux/patches/001-fix-linux-6.3.patch
 
 # ksmbd luci
 rm -rf feeds/luci/applications/luci-app-ksmbd

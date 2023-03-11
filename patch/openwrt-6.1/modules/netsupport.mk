@@ -692,7 +692,7 @@ endef
 $(eval $(call KernelPackage,mppe))
 
 
-SCHED_MODULES_CORE = sch_ingress sch_hfsc sch_htb sch_tbf cls_basic cls_fw cls_route cls_flow cls_tcindex cls_u32 em_u32 act_gact act_mirred act_skbedit cls_matchall
+SCHED_MODULES_CORE = sch_ingress sch_hfsc sch_htb sch_tbf cls_basic cls_fw cls_route cls_flow cls_tcindex@lt6.3 cls_u32 em_u32 act_gact act_mirred act_skbedit cls_matchall
 SCHED_FILES_CORE = $(foreach mod,$(SCHED_MODULES_CORE),$(LINUX_DIR)/net/sched/$(mod).ko)
 
 define KernelPackage/sched-core
@@ -913,7 +913,9 @@ define KernelPackage/sched-mqprio
   TITLE:=Multi-queue priority scheduler (MQPRIO)
   DEPENDS:=+kmod-sched-core
   KCONFIG:=CONFIG_NET_SCH_MQPRIO
-  FILES:=$(LINUX_DIR)/net/sched/sch_mqprio.ko
+  FILES:= \
+	$(LINUX_DIR)/net/sched/sch_mqprio.ko \
+	$(LINUX_DIR)/net/sched/sch_mqprio_lib.ko@ge6.3
   AUTOLOAD:=$(call AutoProbe, sch_mqprio)
 endef
 
@@ -982,7 +984,7 @@ endef
 $(eval $(call KernelPackage,bpf-test))
 
 
-SCHED_MODULES_EXTRA = sch_codel sch_dsmark sch_gred sch_multiq sch_sfq sch_teql sch_fq act_pedit act_simple act_csum em_cmp em_nbyte em_meta em_text
+SCHED_MODULES_EXTRA = sch_codel sch_dsmark@lt6.3 sch_gred sch_multiq sch_sfq sch_teql sch_fq act_pedit act_simple act_csum em_cmp em_nbyte em_meta em_text
 SCHED_FILES_EXTRA = $(foreach mod,$(SCHED_MODULES_EXTRA),$(LINUX_DIR)/net/sched/$(mod).ko)
 
 define KernelPackage/sched
@@ -1214,7 +1216,7 @@ define KernelPackage/sctp
   FILES:= $(LINUX_DIR)/net/sctp/sctp.ko
   AUTOLOAD:= $(call AutoLoad,32,sctp)
   DEPENDS:=+kmod-lib-crc32c +kmod-crypto-md5 +kmod-crypto-hmac \
-    +(LINUX_5_15||LINUX_6_1||LINUX_6_2):kmod-udptunnel4 +(LINUX_5_15||LINUX_6_1||LINUX_6_2):kmod-udptunnel6
+    +(LINUX_5_15||LINUX_6_1||LINUX_6_2||LINUX_6_3):kmod-udptunnel4 +(LINUX_5_15||LINUX_6_1||LINUX_6_2||LINUX_6_3):kmod-udptunnel6
 endef
 
 define KernelPackage/sctp/description

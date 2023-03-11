@@ -86,7 +86,7 @@ fi
 # nanopi - openwrt 22.03 kernel version
 if [ "$KERNEL_TESTING" = 1 ]; then
     export KERNEL_TESTING=1
-    export KERNEL_VER=6.2
+    [ "$KERNEL_VER" = "6.3" ] && export KERNEL_VER=6.3 || export KERNEL_VER=6.2
 else
     export KERNEL_TESTING=""
     export KERNEL_VER=6.1
@@ -100,8 +100,8 @@ elif [ "$soc" = "r5s" ]; then
     echo -e "${GREEN_COLOR}Model: nanopi-r5s${RES}\r\n"
     [ "$1" = "rc" ] && model="nanopi-r5s"
     curl -s https://$mirror/tags/kernel-$KERNEL_VER > kernel.txt
-    kmod_hash=$(grep HASH kernel.txt | awk -F- '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
-    kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F- '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
+    kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
+    kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
     echo -e "${GREEN_COLOR}kernel version: $kmodpkg_name ${RES}\r\n"
     rm -f kernel.txt
 else
@@ -236,6 +236,18 @@ fi
 # linux-6.2
 [ "$KERNEL_TESTING" = 1 ] && echo CONFIG_TESTING_KERNEL=y >> .config
 [ "$KERNEL_TESTING" = 1 ] && echo '# CONFIG_PACKAGE_kmod-pf-ring is not set' >> .config
+
+# linux-6.3
+# waiting for repair !!!
+if [ "$KERNEL_VER" = "6.3" ]; then
+    cat >> .config <<"EOF"
+# CONFIG_PACKAGE_perf is not set
+# CONFIG_PACKAGE_kmod-dahdi is not set
+# CONFIG_PACKAGE_kmod-dahdi-dummy is not set
+# CONFIG_PACKAGE_kmod-dahdi-echocan-oslec is not set
+# CONFIG_PACKAGE_kmod-dahdi-hfcs is not set
+EOF
+fi
 
 # init openwrt config
 rm -rf tmp/*

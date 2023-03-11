@@ -38,3 +38,9 @@ popd
 # routing - batman-adv
 rm -rf feeds/routing/batman-adv
 cp -a ../master/routing/batman-adv feeds/routing/batman-adv
+
+# mdio-netlink - fix 6.3
+if [ "$KERNEL_TESTING" = 1 ]; then
+  mkdir feeds/packages/kernel/mdio-netlink/patches
+  curl -s https://$mirror/openwrt/patch/openwrt-6.1/fix-linux-6.3/mdio-netlink/001-fix-linux-6.3.patch > feeds/packages/kernel/mdio-netlink/patches/001-fix-linux-6.3.patch
+fi
