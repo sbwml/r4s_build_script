@@ -73,7 +73,7 @@ else
     # hostapd: make LAR-friendly AP mode for AX200/AX210
     curl -s https://$mirror/openwrt/patch/hostapd-22.03/999-hostapd-2.10-lar.patch > package/network/services/hostapd/patches/999-hostapd-2.10-lar.patch
     # hostapd: hack version
-    sed -ri "s/(PKG_RELEASE:=)[^\"]*/\199.2/" package/network/services/hostapd/Makefile
+    # sed -ri "s/(PKG_RELEASE:=)[^\"]*/\199.2/" package/network/services/hostapd/Makefile
 fi
 
 # Optimization level -Ofast
@@ -359,6 +359,12 @@ curl -s https://$mirror/openwrt/patch/sqm/001-help-translation.patch > feeds/pac
 # Docker
 rm -rf feeds/luci/applications/luci-app-dockerman
 git clone https://$gitea/sbwml/luci-app-dockerman -b master feeds/luci/applications/luci-app-dockerman
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
+    rm -rf feeds/packages/utils/docker feeds/packages/utils/dockerd feeds/packages/utils/containerd
+    cp -a ../master/packages/utils/docker feeds/packages/utils/docker
+    cp -a ../master/packages/utils/dockerd feeds/packages/utils/dockerd
+    cp -a ../master/packages/utils/containerd feeds/packages/utils/containerd
+fi
 sed -i '/sysctl.d/d' feeds/packages/utils/dockerd/Makefile
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     pushd feeds/packages
@@ -436,13 +442,19 @@ curl -s https://$mirror/openwrt/patch/luci/luci-refresh-interval.patch | patch -
 # Luci ui.js
 curl -s https://$mirror/openwrt/patch/luci/upload-ui.js.patch | patch -p1
 
-# samba4 default permissions
+# samba4
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
+    # bump version
+    SAMBA4_VERSION=4.18.0
+    SAMBA4_HASH=70348656ef807be9c8be4465ca157cef4d99818e234253d2c684cc18b8408149
     rm -rf feeds/packages/net/samba4
     cp -a ../master/packages/net/samba4 feeds/packages/net/samba4
+    sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$SAMBA4_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$SAMBA4_HASH/" feeds/packages/net/samba4/Makefile
     # enable multi-channel
-    sed -i "/workgroup/a\ \n\ \t## enable multi-channel" feeds/packages/net/samba4/files/smb.conf.template
-    sed -i "/enable multi-channel/a\ \tmultichannel server support = yes" feeds/packages/net/samba4/files/smb.conf.template
+    sed -i '/workgroup/a \\n\t## enable multi-channel' feeds/packages/net/samba4/files/smb.conf.template
+    sed -i '/enable multi-channel/a \\tserver multi channel support = yes' feeds/packages/net/samba4/files/smb.conf.template
+    # fix patch - v4.18.0
+    curl -s https://$mirror/openwrt/patch/samba4/v4.18.0-009-samba-4-11-fix-host-tools-checks.patch.patch > feeds/packages/net/samba4/patches/009-samba-4-11-fix-host-tools-checks.patch.patch
 fi
 sed -i 's/invalid users = root/#invalid users = root/g' feeds/packages/net/samba4/files/smb.conf.template
 sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages/net/samba4/files/smb.conf.template

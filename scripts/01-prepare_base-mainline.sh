@@ -12,6 +12,7 @@ curl -s https://$mirror/tags/kernel-6.1 > include/kernel-6.1
 curl -s https://$mirror/tags/kernel-6.2 > include/kernel-6.2
 curl -s https://$mirror/tags/kernel-6.3 > include/kernel-6.3
 grep HASH include/kernel-$KERNEL_VER | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}' > .vermagic
+curl -s https://$mirror/openwrt/patch/KBUILD_BUILD_TIMESTAMP.patch | patch -p1
 
 # kernel generic patches
 git clone https://github.com/sbwml/target_linux_generic

@@ -288,8 +288,6 @@ else
             rm -f $kmodpkg_name/Packages*
             # driver firmware
             cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
-            cp -a bin/packages/aarch64_generic/base/hostapd*.ipk $kmodpkg_name/
-            cp -a bin/packages/aarch64_generic/base/wpa*.ipk $kmodpkg_name/
             cp -a bin/packages/aarch64_generic/base/*iwinfo*.ipk $kmodpkg_name/
             \cp -a bin/packages/aarch64_generic/base/iw*.ipk $kmodpkg_name/
             bash kmod-sign $kmodpkg_name
