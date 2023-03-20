@@ -8,14 +8,10 @@ if [ "$version" = "releases" ] || [ "$version" = "snapshots-21.02" ]; then
 	git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip -b 21.02 target/linux/rockchip
 fi
 
-# Rockchip - rkbin & u-boot 2022.04
-rm -rf package/boot/uboot-rockchip
-git clone https://$gitea/sbwml/package_boot_uboot-rockchip package/boot/uboot-rockchip
-git clone https://$gitea/sbwml/arm-trusted-firmware-rockchip-vendor package/boot/arm-trusted-firmware-rockchip-vendor
-if [ "$soc" = "r5s" ]; then
-    git clone https://$gitea/sbwml/package_boot_uboot-rk356x package/boot/uboot-rk356x
-    git clone https://$gitea/sbwml/arm-trusted-firmware-rk356x package/boot/arm-trusted-firmware-rk356x
-fi
+# Rockchip - rkbin & u-boot 2023.01
+rm -rf package/boot/uboot-rockchip package/boot/arm-trusted-firmware-rockchip
+git clone https://github.com/sbwml/package_boot_uboot-rockchip package/boot/uboot-rockchip
+git clone https://github.com/sbwml/arm-trusted-firmware-rockchip package/boot/arm-trusted-firmware-rockchip
 
 # Fix
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
