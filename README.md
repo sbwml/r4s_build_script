@@ -62,10 +62,10 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) rc x86
  # init url
  if [ "$isCN" = "CN" ]; then
 -    export mirror=init.cooluc.com
-+    export mirror=https://raw.githubusercontent.com/你的用户名/r4s_build_script/master
++    export mirror=raw.githubusercontent.com/你的用户名/r4s_build_script/master
  else
 -    export mirror=init2.cooluc.com
-+    export mirror=https://raw.githubusercontent.com/你的用户名/r4s_build_script/master
++    export mirror=raw.githubusercontent.com/你的用户名/r4s_build_script/master
  fi
  export gitea=git.cooluc.com
  
