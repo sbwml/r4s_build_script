@@ -174,11 +174,11 @@ jobs:
       id: compileopenwrt
       run: |
         if [ "${{ matrix.model }}" = "nanopi-r5s" ]; then
-          bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh ${{ matrix.tag.type }} r5s
+          bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) ${{ matrix.tag.type }} r5s
         elif [ "${{ matrix.model }}" = "x86_64" ]; then
-          bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh ${{ matrix.tag.type }} x86
+          bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) ${{ matrix.tag.type }} x86
         else
-          bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh ${{ matrix.tag.type }}
+          bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) ${{ matrix.tag.type }}
         fi
         cd openwrt
         tags=$(git describe --abbrev=0 --tags)
