@@ -68,8 +68,8 @@ git clone --depth 1 https://github.com/sbwml/luci-theme-argon.git package/new/lu
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     rm -rf feeds/packages/net/v2ray-geodata
 fi
-git clone https://github.com/sbwml/luci-app-mosdns package/mosdns
-curl -s https://$mirror/openwrt/patch/mosdns.data | base64 -d | patch -p1
+git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
+curl -s https://$mirror/openwrt/patch/mosdns_v5.data | base64 -d | patch -p1
 
 # OpenAppFilter
 git clone https://github.com/sbwml/OpenAppFilter --depth=1 package/new/OpenAppFilter

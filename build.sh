@@ -251,7 +251,11 @@ fi
 
 # init openwrt config
 rm -rf tmp/*
-make defconfig
+if [ "$BUILD" = "0" ]; then
+    exit 0
+else
+    make defconfig
+fi
 
 # Compile
 echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
