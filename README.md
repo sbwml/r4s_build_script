@@ -101,7 +101,11 @@ KERNEL_TESTING=1 KERNEL_VER=6.3 bash <(curl -sS https://raw.githubusercontent.co
 -----------------
 
 
-### 四、使用 Github Actions 构建，任务流样本（把下面 `你的用户名` 替换成 `你的 GitHub 用户名`）
+### 四、使用 Github Actions 构建，任务流样本
+
+#### 新建一个空白仓库，或直接在该仓库上创建 Github Actions 任务流，配置文件如下（把下面 `你的用户名` 替换成 `你的 GitHub 用户名`）
+
+#### 创建：`.github/workflows/build-release.yml` 文件后，点击仓库的 ⭐Star 既可触发编译任务。
 
 ```yaml
 name: Build releases
