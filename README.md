@@ -52,7 +52,7 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) rc x86
 
 ### 二、修改构建脚本文件：`openwrt/build.sh`
 
-将 init.cooluc.com 补丁默认连接替换为你的 github raw 连接，像这样 `https://raw.githubusercontent.com/你的用户名/r4s_build_script/master`
+将 init.cooluc.com 补丁默认连接替换为你的 github raw 连接（不带 https://），像这样 `raw.githubusercontent.com/你的用户名/r4s_build_script/master`
 
 ```diff
 --- a/openwrt/build.sh
