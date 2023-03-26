@@ -62,12 +62,6 @@ CONFIG_PACKAGE_luci-app-dockerman=y
 CONFIG_PACKAGE_luci-lib-docker=y
 
 ### Luci
-CONFIG_LUCI_LANG_en=y
-CONFIG_LUCI_LANG_zh_Hans=y
-CONFIG_NGINX_HTTP_BROTLI=y
-CONFIG_NGINX_HTTP_REAL_IP=y
-CONFIG_NGINX_HTTP_SUB=y
-CONFIG_NGINX_STREAM_CORE_MODULE=y
 CONFIG_PACKAGE_luci=y
 CONFIG_PACKAGE_luci-lib-base=y
 CONFIG_PACKAGE_luci-lib-ip=y
@@ -80,6 +74,12 @@ CONFIG_PACKAGE_luci-ssl-nginx=y
 CONFIG_PACKAGE_luci-theme-argon=y
 CONFIG_PACKAGE_luci-theme-material=y
 CONFIG_PACKAGE_luci-theme-openwrt-2020=y
+CONFIG_LUCI_LANG_en=y
+CONFIG_LUCI_LANG_zh_Hans=y
+CONFIG_NGINX_HTTP_BROTLI=y
+CONFIG_NGINX_HTTP_REAL_IP=y
+CONFIG_NGINX_HTTP_SUB=y
+CONFIG_NGINX_STREAM_CORE_MODULE=y
 # CONFIG_LUCI_CSSTIDY is not set
 # CONFIG_LUCI_JSMIN is not set
 
@@ -95,8 +95,8 @@ CONFIG_PACKAGE_luci-app-diskman=y
 CONFIG_PACKAGE_luci-app-eqos=y
 CONFIG_PACKAGE_luci-app-filebrowser=y
 CONFIG_PACKAGE_luci-app-frpc=y
-# CONFIG_PACKAGE_luci-app-frps is not set
 CONFIG_PACKAGE_luci-app-gowebdav=y
+CONFIG_PACKAGE_luci-app-mentohust=y
 CONFIG_PACKAGE_luci-app-mosdns=y
 CONFIG_PACKAGE_luci-app-netdata=y
 CONFIG_PACKAGE_luci-app-nlbwmon=y
@@ -123,13 +123,16 @@ CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Brook=y
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ChinaDNS_NG=y
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Hysteria=y
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_IPv6_Nat=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Libev_Client=y
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Rust_Client=y
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Rust_Server=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ShadowsocksR_Libev_Client=y
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Trojan_GO=y
+CONFIG_PACKAGE_luci-app-passwall_INCLUDE_V2ray_Geodata=y
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Xray_Plugin=y
-# CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ShadowsocksR_Libev_Client is not set
-# CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Libev_Client is not set
 # CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Libev_Server is not set
+# CONFIG_PACKAGE_luci-app-passwall_INCLUDE_V2ray is not set
+# CONFIG_PACKAGE_luci-app-passwall_INCLUDE_V2ray_Plugin is not set
 
 ### SSR Plus
 CONFIG_PACKAGE_luci-app-ssr-plus=y
@@ -139,13 +142,9 @@ CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Kcptun=y
 CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Redsocks2=y
 CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Simple_Obfs=y
 CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Trojan=y
-CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray=y
-CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_V2ray_Plugin=y
-# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Libev_Client is not set
-
-# GeoIP
-CONFIG_PACKAGE_v2ray-geoip=y
-CONFIG_PACKAGE_v2ray-geosite=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Xray=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks_Xray_Plugin=y
+CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Libev_Client=y
 
 ### DDNS Scripts
 CONFIG_PACKAGE_ddns-scripts=y
@@ -186,14 +185,17 @@ CONFIG_PACKAGE_kmod-fs-ntfs3=y
 CONFIG_PACKAGE_kmod-fs-vfat=y
 CONFIG_PACKAGE_kmod-fs-xfs=y
 CONFIG_PACKAGE_kmod-hwmon-pwmfan=y
+CONFIG_PACKAGE_kmod-inet-diag=y
 CONFIG_PACKAGE_kmod-ipsec4=y
 CONFIG_PACKAGE_kmod-ipsec6=y
 CONFIG_PACKAGE_kmod-ipt-nat6=y
 CONFIG_PACKAGE_kmod-ipt-offload=y
+CONFIG_PACKAGE_kmod-ipt-tproxy=y
 CONFIG_PACKAGE_kmod-iptunnel6=y
-CONFIG_PACKAGE_kmod-inet-diag=y
+CONFIG_PACKAGE_kmod-nf-socket=y
 CONFIG_PACKAGE_kmod-nft-fullcone=y
 CONFIG_PACKAGE_kmod-nft-offload=y
+CONFIG_PACKAGE_kmod-nft-socket=y
 CONFIG_PACKAGE_kmod-nft-tproxy=y
 CONFIG_PACKAGE_kmod-nls-cp936=y
 CONFIG_PACKAGE_kmod-nls-cp950=y
@@ -225,12 +227,14 @@ CONFIG_PACKAGE_f2fs-tools=y
 CONFIG_PACKAGE_file=y
 CONFIG_PACKAGE_htop=y
 CONFIG_PACKAGE_iperf3=y
+CONFIG_PACKAGE_iputils-ping=y
 CONFIG_PACKAGE_lrzsz=y
 CONFIG_PACKAGE_lsblk=y
 CONFIG_PACKAGE_lscpu=y
 CONFIG_PACKAGE_lsof=y
 CONFIG_PACKAGE_pciutils=y
 CONFIG_PACKAGE_qrencode=y
+CONFIG_PACKAGE_rename=y
 CONFIG_PACKAGE_resize2fs=y
 CONFIG_PACKAGE_rsync=y
 CONFIG_PACKAGE_screen=y
@@ -250,11 +254,8 @@ CONFIG_PACKAGE_xfs-mkfs=y
 CONFIG_PACKAGE_xz-utils=y
 CONFIG_PACKAGE_xz=y
 CONFIG_PACKAGE_zip=y
-CONFIG_PACKAGE_iputils-ping=y
-CONFIG_PACKAGE_rename=y
 
 ### Shadow Utilities
-# CONFIG_shadow-all is not set
 CONFIG_PACKAGE_shadow-groupadd=y
 CONFIG_PACKAGE_shadow-groupdel=y
 CONFIG_PACKAGE_shadow-groupmod=y
@@ -264,6 +265,7 @@ CONFIG_PACKAGE_shadow-useradd=y
 CONFIG_PACKAGE_shadow-userdel=y
 CONFIG_PACKAGE_shadow-usermod=y
 CONFIG_PACKAGE_shadow-utils=y
+# CONFIG_shadow-all is not set
 
 ### GNU Core Utilities
 CONFIG_PACKAGE_coreutils=y

@@ -59,6 +59,13 @@ git clone https://github.com/sbwml/package_kernel_r8168 package/kernel/r8168
 git clone https://github.com/sbwml/package_kernel_r8125 package/kernel/r8125
 git clone https://github.com/sbwml/package_kernel_r8152 package/kernel/r8152
 
+# netifd - fix auto-negotiate by upstream
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
+    rm -f package/kernel/r8125/patches/101-legacy-2500baseX.patch
+    mkdir -p package/network/config/netifd/patches
+    curl -s https://$mirror/openwrt/patch/netifd/100-system-linux-fix-autoneg-for-2.5G-5G-10G.patch > package/network/config/netifd/patches/100-system-linux-fix-autoneg-for-2.5G-5G-10G.patch
+fi
+
 # Wireless Drivers
 rm -rf package/kernel/rtl8812au-ct
 git clone https://github.com/sbwml/openwrt-wireless-drivers package/kernel/wireless
