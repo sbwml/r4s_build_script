@@ -86,7 +86,7 @@ fi
 # nanopi - openwrt 22.03 kernel version
 if [ "$KERNEL_TESTING" = 1 ]; then
     export KERNEL_TESTING=1
-    [ "$KERNEL_VER" = "6.3" ] && export KERNEL_VER=6.3 || export KERNEL_VER=6.2
+    [ "$KERNEL_VER" = "6.3" ] && export KERNEL_VER=6.3 || export KERNEL_VER=6.3
 else
     export KERNEL_TESTING=""
     export KERNEL_VER=6.1
@@ -233,9 +233,8 @@ fi
 # glibc
 [ "$USE_GLIBC" = "y" ] && curl -s https://$mirror/openwrt/config-glibc >> .config
 
-# linux-6.2
+# testing kernel
 [ "$KERNEL_TESTING" = 1 ] && echo CONFIG_TESTING_KERNEL=y >> .config
-[ "$KERNEL_TESTING" = 1 ] && echo '# CONFIG_PACKAGE_kmod-pf-ring is not set' >> .config
 
 # linux-6.3
 # waiting for repair !!!
@@ -246,6 +245,7 @@ if [ "$KERNEL_VER" = "6.3" ]; then
 # CONFIG_PACKAGE_kmod-dahdi-dummy is not set
 # CONFIG_PACKAGE_kmod-dahdi-echocan-oslec is not set
 # CONFIG_PACKAGE_kmod-dahdi-hfcs is not set
+# CONFIG_PACKAGE_kmod-pf-ring is not set
 EOF
 fi
 

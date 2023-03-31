@@ -481,6 +481,12 @@ mkdir -p files/root
 curl -so files/root/.bash_profile https://$mirror/openwrt/files/root/.bash_profile
 curl -so files/root/.bashrc https://$mirror/openwrt/files/root/.bashrc
 
+# NTP
+sed -i 's/0.openwrt.pool.ntp.org/time.cloud.tencent.com/g' package/base-files/files/bin/config_generate
+sed -i 's/1.openwrt.pool.ntp.org/ntp.aliyun.com/g' package/base-files/files/bin/config_generate
+sed -i 's/2.openwrt.pool.ntp.org/ntp.tuna.tsinghua.edu.cn/g' package/base-files/files/bin/config_generate
+sed -i 's/3.openwrt.pool.ntp.org/time.apple.com/g' package/base-files/files/bin/config_generate
+
 #############
 
 # drop antfs
