@@ -240,7 +240,6 @@ fi
 # waiting for repair !!!
 if [ "$KERNEL_VER" = "6.3" ]; then
     cat >> .config <<"EOF"
-# CONFIG_PACKAGE_perf is not set
 # CONFIG_PACKAGE_kmod-dahdi is not set
 # CONFIG_PACKAGE_kmod-dahdi-dummy is not set
 # CONFIG_PACKAGE_kmod-dahdi-echocan-oslec is not set

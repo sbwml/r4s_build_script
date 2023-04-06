@@ -17,6 +17,9 @@ curl -s https://$mirror/openwrt/patch/KBUILD_BUILD_TIMESTAMP.patch | patch -p1
 git clone https://github.com/sbwml/target_linux_generic
 mv target_linux_generic/target/linux/generic/* target/linux/generic/
 sed -i '/CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE/d' target/linux/generic/config-6.1 target/linux/generic/config-6.3
+if [ "$soc" = "rk3399" ] || [ "$soc" = "rk3568" ] || [ "$soc" = "r5s" ]; then
+    sed -i 's/rtc0/rtc1/g' target/linux/generic/config-6.1 target/linux/generic/config-6.3
+fi
 rm -rf target_linux_generic
 
 # kernel modules
