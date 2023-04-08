@@ -17,9 +17,6 @@ curl -s https://$mirror/openwrt/patch/KBUILD_BUILD_TIMESTAMP.patch | patch -p1
 git clone https://github.com/sbwml/target_linux_generic
 mv target_linux_generic/target/linux/generic/* target/linux/generic/
 sed -i '/CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE/d' target/linux/generic/config-6.1 target/linux/generic/config-6.3
-if [ "$soc" = "rk3399" ] || [ "$soc" = "rk3568" ] || [ "$soc" = "r5s" ]; then
-    sed -i 's/rtc0/rtc1/g' target/linux/generic/config-6.1 target/linux/generic/config-6.3
-fi
 rm -rf target_linux_generic
 
 # kernel modules
@@ -161,6 +158,12 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.1/fix-linux-6.3/cryptodev-linux/
 
 # gpio-button-hotplug - fix linux 6.3
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/fix-linux-6.3/v6.3-fix-gpio-button-hotplug.patch | patch -p1
+
+# RTC
+if [ "$soc" = "rk3399" ] || [ "$soc" = "rk3568" ] || [ "$soc" = "r5s" ]; then
+    curl -s https://$mirror/openwrt/patch/rtc/sysfixtime > package/base-files/files/etc/init.d/sysfixtime
+    chmod 755 package/base-files/files/etc/init.d/sysfixtime
+fi
 
 # ksmbd luci
 rm -rf feeds/luci/applications/luci-app-ksmbd

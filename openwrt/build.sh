@@ -291,8 +291,6 @@ else
             rm -f $kmodpkg_name/Packages*
             # driver firmware
             cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
-            cp -a bin/packages/aarch64_generic/base/*iwinfo*.ipk $kmodpkg_name/
-            \cp -a bin/packages/aarch64_generic/base/iw*.ipk $kmodpkg_name/
             bash kmod-sign $kmodpkg_name
             tar zcf kmod-$kmodpkg_name.tar.gz $kmodpkg_name
             rm -rf $kmodpkg_name
@@ -315,7 +313,7 @@ else
         # Backup download cache
         if [ "$isCN" = "CN" ] && [ "$1" = "stable" ] || [ "$1" = "rc" ]; then
             rm -rf dl/xray* dl/trojan* dl/v2ray* dl/adguardhome* dl/alist* dl/qbittorrent* dl/geo* dl/go-mod-cache
-            tar cf ../dl.gz dl
+            tar -cf ../dl.gz dl
         fi
         exit 0
     else
