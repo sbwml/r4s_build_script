@@ -80,7 +80,7 @@ fi
 
 # use glibc - openwrt-22.03
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ] && [ "$1" != "stable" ] && [ "$1" != "dev" ]; then
-    export USE_GLIBC=n
+    export USE_GLIBC=$USE_GLIBC
 fi
 
 # nanopi - openwrt 22.03 kernel version
@@ -250,7 +250,7 @@ fi
 
 # init openwrt config
 rm -rf tmp/*
-if [ "$BUILD" = "0" ]; then
+if [ "$BUILD" = "n" ]; then
     exit 0
 else
     make defconfig

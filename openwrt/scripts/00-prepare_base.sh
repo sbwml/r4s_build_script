@@ -102,7 +102,7 @@ if [ "$USE_GLIBC" = "y" ]; then
     curl -s https://$mirror/openwrt/patch/openwrt-6.1/toolchain/glibc-common.patch | patch -p1
     # locale data
     mkdir -p files/lib/locale
-    curl -so files/lib/locale/locale-archive https://us.cooluc.com/gnu-locale/locale-archive
+    curl -Lso files/lib/locale/locale-archive https://github.com/sbwml/r4s_build_script/releases/download/locale/locale-archive
     [ "$?" -ne 0 ] && echo -e "${RED_COLOR} Locale file download failed... ${RES}"
     # GNU LANG
     mkdir package/base-files/files/etc/profile.d
@@ -136,7 +136,7 @@ curl -s https://$mirror/openwrt/patch/fstools/block-mount-add-fstools-depends.pa
 if [ "$USE_GLIBC" = "y" ]; then
     curl -s https://$mirror/openwrt/patch/fstools/fstools-set-ntfs3-utf8-new.patch > package/system/fstools/patches/ntfs3-utf8.patch
     curl -s https://$mirror/openwrt/patch/fstools/glibc/0001-libblkid-tiny-add-support-for-XFS-superblock.patch > package/system/fstools/patches/0001-libblkid-tiny-add-support-for-XFS-superblock.patch
-    curl -s https://$mirror/openwrt/patch/fstools/glibc/0002-libblkid-tiny-add-support-for-exFAT-superblock.patch > package/system/fstools/patches/0002-libblkid-tiny-add-support-for-exFAT-superblock.patch
+    #curl -s https://$mirror/openwrt/patch/fstools/glibc/0002-libblkid-tiny-add-support-for-exFAT-superblock.patch > package/system/fstools/patches/0002-libblkid-tiny-add-support-for-exFAT-superblock.patch
     curl -s https://$mirror/openwrt/patch/fstools/glibc/0003-block-add-xfsck-support.patch > package/system/fstools/patches/0003-block-add-xfsck-support.patch
 else
     curl -s https://$mirror/openwrt/patch/fstools/ntfs3-utf8.patch > package/system/fstools/patches/ntfs3-utf8.patch
