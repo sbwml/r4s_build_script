@@ -48,6 +48,8 @@ sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
 sed -i 's/+uhttpd /+luci-nginx /g' feeds/luci/collections/luci/Makefile
 sed -i 's/+uhttpd-mod-ubus //' feeds/luci/collections/luci/Makefile
 sed -i 's/+uhttpd /+luci-nginx /g' feeds/luci/collections/luci-light/Makefile
+sed -i "s/+luci /+luci-nginx /g" feeds/luci/collections/luci-ssl-openssl/Makefile
+sed -i "s/+luci /+luci-nginx /g" feeds/luci/collections/luci-ssl/Makefile
 
 # NIC driver - x86
 if [ "$soc" = "x86" ]; then

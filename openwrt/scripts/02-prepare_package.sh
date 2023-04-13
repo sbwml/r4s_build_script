@@ -61,6 +61,9 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     git clone https://$gitea/sbwml/luci-app-zerotier package/new/luci-app-zerotier
 fi
 
+# xunlei
+git clone https://github.com/sbwml/luci-app-xunlei package/xunlei
+
 # Theme
 git clone --depth 1 https://github.com/sbwml/luci-theme-argon.git package/new/luci-theme-argon
 
