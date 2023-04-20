@@ -209,8 +209,11 @@ CONFIG_PACKAGE_kmod-usb2=y
 CONFIG_PACKAGE_kmod-usb3=y
 
 # rtw88 firmware
-CONFIG_PACKAGE_rtl8723du-firmware=m
-CONFIG_PACKAGE_rtl8821ce-firmware=m
+CONFIG_PACKAGE_rtl8723d-firmware=m
+CONFIG_PACKAGE_rtl8761a-firmware=m
+CONFIG_PACKAGE_rtl8761b-firmware=m
+CONFIG_PACKAGE_rtl8761bu-firmware=m
+CONFIG_PACKAGE_rtl8821c-firmware=m
 CONFIG_PACKAGE_rtl8822be-firmware=m
 CONFIG_PACKAGE_rtl8822ce-firmware=m
 

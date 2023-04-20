@@ -35,7 +35,7 @@ pushd package/kernel/linux/modules
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/netfilter.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/netsupport.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/video.mk
-    [ "$KERNEL_TESTING" = 1 ] && curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/other.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/other.mk
     [ "$KERNEL_TESTING" = 1 ] && curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/iio.mk
     [ "$KERNEL_TESTING" = 1 ] && sed -i 's/+kmod-iio-core +kmod-iio-kfifo-buf +kmod-regmap-core/+kmod-iio-core +kmod-iio-kfifo-buf +kmod-regmap-core +kmod-industrialio-triggered-buffer/g' iio.mk
 popd
@@ -132,9 +132,9 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.1/500-world-regd-5GHz.patch > pa
 # mac80211 - fix linux 6.1
 rm -rf package/kernel/mac80211
 if [ "$KERNEL_TESTING" = 1 ]; then
-    git clone https://nanopi:nanopi@$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b 6.2
+    git clone https://nanopi:nanopi@$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b 6.3
 else
-    git clone https://nanopi:nanopi@$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211
+    git clone https://nanopi:nanopi@$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b 6.1
 fi
 
 # kernel patch

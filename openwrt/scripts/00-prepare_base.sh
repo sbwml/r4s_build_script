@@ -193,12 +193,11 @@ fi
 # Dnsmasq
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     # Dnsmasq Latest version
-    DNSMASQ_VERSION=2.89
-    DNSMASQ_HASH=02bd230346cf0b9d5909f5e151df168b2707103785eb616b56685855adebb609
+    #DNSMASQ_VERSION=2.89
+    #DNSMASQ_HASH=02bd230346cf0b9d5909f5e151df168b2707103785eb616b56685855adebb609
     rm -rf package/network/services/dnsmasq
     cp -a ../master/openwrt/package/network/services/dnsmasq package/network/services/dnsmasq
-    sed -ri "s/(PKG_UPSTREAM_VERSION:=)[^\"]*/\1$DNSMASQ_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$DNSMASQ_HASH/" package/network/services/dnsmasq/Makefile
-    curl -s https://$mirror/openwrt/patch/dnsmasq-5.10/luci-add-filter-aaaa-option.patch | patch -p1
+    #sed -ri "s/(PKG_UPSTREAM_VERSION:=)[^\"]*/\1$DNSMASQ_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$DNSMASQ_HASH/" package/network/services/dnsmasq/Makefile
 else
     curl -s https://$mirror/openwrt/patch/dnsmasq/dnsmasq-add-filter-aaaa-option.patch | patch -p1
     curl -s https://$mirror/openwrt/patch/dnsmasq/luci-add-filter-aaaa-option.patch | patch -p1
@@ -447,19 +446,20 @@ curl -s https://$mirror/openwrt/patch/luci/luci-refresh-interval.patch | patch -
 # Luci ui.js
 curl -s https://$mirror/openwrt/patch/luci/upload-ui.js.patch | patch -p1
 
+# Luci diagnostics.js
+sed -i "s/openwrt.org/www.qq.com/g" feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/diagnostics.js
+
 # samba4
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     # bump version
-    SAMBA4_VERSION=4.18.0
-    SAMBA4_HASH=70348656ef807be9c8be4465ca157cef4d99818e234253d2c684cc18b8408149
+    SAMBA4_VERSION=4.18.2
+    SAMBA4_HASH=5bf87e179616cd12a52d85fb8b26eec709f13709a2b67fe42b1fb0213f7e8106
     rm -rf feeds/packages/net/samba4
     cp -a ../master/packages/net/samba4 feeds/packages/net/samba4
     sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$SAMBA4_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$SAMBA4_HASH/" feeds/packages/net/samba4/Makefile
     # enable multi-channel
     sed -i '/workgroup/a \\n\t## enable multi-channel' feeds/packages/net/samba4/files/smb.conf.template
     sed -i '/enable multi-channel/a \\tserver multi channel support = yes' feeds/packages/net/samba4/files/smb.conf.template
-    # fix patch - v4.18.0
-    curl -s https://$mirror/openwrt/patch/samba4/v4.18.0-009-samba-4-11-fix-host-tools-checks.patch.patch > feeds/packages/net/samba4/patches/009-samba-4-11-fix-host-tools-checks.patch.patch
 fi
 sed -i 's/invalid users = root/#invalid users = root/g' feeds/packages/net/samba4/files/smb.conf.template
 sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages/net/samba4/files/smb.conf.template
