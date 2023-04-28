@@ -198,11 +198,13 @@ curl -sO https://$mirror/openwrt/scripts/01-prepare_base-mainline.sh
 curl -sO https://$mirror/openwrt/scripts/02-prepare_package.sh
 curl -sO https://$mirror/openwrt/scripts/03-convert_translation.sh
 curl -sO https://$mirror/openwrt/scripts/04-fix_kmod.sh
+curl -sO https://$mirror/openwrt/scripts/05-fix-source.sh
 curl -sO https://$mirror/openwrt/scripts/99_clean_build_cache.sh
 chmod 0755 *sh
 bash 00-prepare_base.sh
 bash 02-prepare_package.sh
 bash 03-convert_translation.sh
+bash 05-fix-source.sh
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ] && [ "$1" != "stable" ] && [ "$1" != "dev" ]; then
     bash 01-prepare_base-mainline.sh
     bash 04-fix_kmod.sh

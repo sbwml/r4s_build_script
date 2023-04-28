@@ -58,8 +58,8 @@ if [ "$soc" = "x86" ]; then
 fi
 # R8168 & R8125 & R8152
 git clone https://github.com/sbwml/package_kernel_r8168 package/kernel/r8168
-git clone https://github.com/sbwml/package_kernel_r8125 package/kernel/r8125
 git clone https://github.com/sbwml/package_kernel_r8152 package/kernel/r8152
+git clone https://$gitea/sbwml/package_kernel_r8125 package/kernel/r8125
 
 # netifd - fix auto-negotiate by upstream
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
@@ -482,6 +482,15 @@ sed -i '\#export ENV=/etc/shinit#a export HISTCONTROL=ignoredups' package/base-f
 mkdir -p files/root
 curl -so files/root/.bash_profile https://$mirror/openwrt/files/root/.bash_profile
 curl -so files/root/.bashrc https://$mirror/openwrt/files/root/.bashrc
+
+# coreutils
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
+    COREUTILS_VERSION=9.3
+    COREUTILS_HASH=adbcfcfe899235b71e8768dcf07cd532520b7f54f9a8064843f8d199a904bbaa
+    sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$COREUTILS_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$COREUTILS_HASH/" feeds/packages/utils/coreutils/Makefile
+    rm -rf feeds/packages/utils/coreutils/patches/*.patch
+    curl -s https://$mirror/openwrt/patch/coreutils-9.3/001-no_docs_man_tests.patch > feeds/packages/utils/coreutils/patches/001-no_docs_man_tests.patch
+fi
 
 # NTP
 sed -i 's/0.openwrt.pool.ntp.org/time.cloud.tencent.com/g' package/base-files/files/bin/config_generate
