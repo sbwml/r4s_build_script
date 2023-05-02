@@ -70,16 +70,12 @@ CONFIG_PACKAGE_luci-lib-jsonc=y
 CONFIG_PACKAGE_luci-lib-nixio=y
 CONFIG_PACKAGE_luci-nginx=y
 CONFIG_PACKAGE_luci-proto-wireguard=y
-CONFIG_PACKAGE_luci-ssl-nginx=y
 CONFIG_PACKAGE_luci-theme-argon=y
 CONFIG_PACKAGE_luci-theme-material=y
 CONFIG_PACKAGE_luci-theme-openwrt-2020=y
+CONFIG_PACKAGE_nginx-all-module=y
 CONFIG_LUCI_LANG_en=y
 CONFIG_LUCI_LANG_zh_Hans=y
-CONFIG_NGINX_HTTP_BROTLI=y
-CONFIG_NGINX_HTTP_REAL_IP=y
-CONFIG_NGINX_HTTP_SUB=y
-CONFIG_NGINX_STREAM_CORE_MODULE=y
 # CONFIG_LUCI_CSSTIDY is not set
 # CONFIG_LUCI_JSMIN is not set
 
@@ -274,6 +270,7 @@ CONFIG_PACKAGE_coreutils-dd=y
 CONFIG_PACKAGE_coreutils-dircolors=y
 CONFIG_PACKAGE_coreutils-ls=y
 CONFIG_PACKAGE_coreutils-md5sum=y
+CONFIG_PACKAGE_coreutils-mkdir=y
 CONFIG_PACKAGE_coreutils-mv=y
 CONFIG_PACKAGE_coreutils-nproc=y
 CONFIG_PACKAGE_coreutils-rm=y

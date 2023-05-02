@@ -9,5 +9,5 @@ else
 fi
 [ $? -ne 0 ] && exit 1
 
-grep name /tmp/tags.json | grep v21 | head -1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g' | sed 's/v//g' > v21
+# grep name /tmp/tags.json | grep v21 | head -1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g' | sed 's/v//g' > v21
 grep name /tmp/tags.json | grep v22 | head -1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g' | sed 's/v//g' > v22
