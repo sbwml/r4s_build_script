@@ -50,25 +50,16 @@ fi
 
 # Source branch
 if [ "$1" = "dev" ]; then
-    export branch=openwrt-21.02
-    export version=snapshots-21.02
-elif [ "$1" = "dev2" ]; then
     export branch=openwrt-22.03
     export version=snapshots-22.03
-elif [ "$1" = "stable" ]; then
-    latest_release="v$(curl -s https://$mirror/tags/v21)"
-    export branch=$latest_release
-    export version=releases
 elif [ "$1" = "rc" ]; then
     latest_release="v$(curl -s https://$mirror/tags/v22)"
     export branch=$latest_release
     export version=rc
 elif [ -z "$1" ]; then
     echo -e "\r\n${RED_COLOR}Building type not specified.${RES}\r\n"
-    echo -e "Build 21.02-releases: ${GREEN_COLOR}bash build.sh stable${RES}"
-    echo -e "Build 21.02-snapshots: ${GREEN_COLOR}bash build.sh dev${RES}"
     echo -e "Build 22.03-rc: ${GREEN_COLOR}bash build.sh rc${RES}"
-    echo -e "Build 22.03-snapshots: ${GREEN_COLOR}bash build.sh dev2${RES}\r\n"
+    echo -e "Build 22.03-snapshots: ${GREEN_COLOR}bash build.sh dev${RES}\r\n"
     exit 1
 fi
 
@@ -79,7 +70,7 @@ if [ "$soc" = "" ]; then
 fi
 
 # use glibc - openwrt-22.03
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ] && [ "$1" != "stable" ] && [ "$1" != "dev" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ]; then
     export USE_GLIBC=$USE_GLIBC
 fi
 
@@ -131,27 +122,14 @@ else
 fi
 
 # tags
-if [ "$1" = "stable" ] || [ "$1" = "rc" ]; then
+if [ "$1" = "rc" ]; then
     git describe --abbrev=0 --tags > version.txt
 else
     git branch | awk '{print $2}' > version.txt
 fi
 
 # kenrel vermagic - https://downloads.openwrt.org/
-if [ "$1" = "stable" ]; then
-    latest_version="$(curl -s https://$mirror/tags/v21)"
-    if [ "$soc" = "rk3399" ]; then
-        kenrel_vermagic=`curl -s https://$openwrt_release_mirror/"$latest_version"/targets/rockchip/armv8/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
-    else
-        kenrel_vermagic=`curl -s https://$openwrt_release_mirror/"$latest_version"/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
-    fi
-elif [ "$1" = "dev" ]; then
-    if [ "$soc" = "rk3399" ]; then
-        kenrel_vermagic=`curl -s https://$openwrt_release_mirror/21.02-SNAPSHOT/targets/rockchip/armv8/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
-    else
-        kenrel_vermagic=`curl -s https://$openwrt_release_mirror/21.02-SNAPSHOT/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
-    fi
-elif [ "$1" = "dev2" ]; then
+if [ "$1" = "dev" ]; then
     [ "$soc" = "x86" ] && kenrel_vermagic=`curl -s https://$openwrt_release_mirror/22.03-SNAPSHOT/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
 elif [ "$1" = "rc" ]; then
     latest_version="$(curl -s https://$mirror/tags/v22)"
@@ -161,7 +139,7 @@ echo $kenrel_vermagic > .vermagic
 sed -ie 's/^\(.\).*vermagic$/\1cp $(TOPDIR)\/.vermagic $(LINUX_DIR)\/.vermagic/' include/kernel-defaults.mk
 
 # feeds mirror
-if [[ "$1" = "stable" ]] || [[ "$1" = "rc" ]]; then
+if [ "$1" = "rc" ]; then
     packages="^$(grep packages feeds.conf.default | awk -F^ '{print $2}')"
     luci="^$(grep luci feeds.conf.default | awk -F^ '{print $2}')"
     routing="^$(grep routing feeds.conf.default | awk -F^ '{print $2}')"
@@ -205,7 +183,7 @@ bash 00-prepare_base.sh
 bash 02-prepare_package.sh
 bash 03-convert_translation.sh
 bash 05-fix-source.sh
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ] && [ "$1" != "stable" ] && [ "$1" != "dev" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ]; then
     bash 01-prepare_base-mainline.sh
     bash 04-fix_kmod.sh
 fi
@@ -223,12 +201,6 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     else
         curl -s https://$mirror/openwrt/22-config-musl-r4s > .config
         [ "$version" = "rc" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
-    fi
-else
-    if [ "$soc" = "x86" ]; then
-        curl -s https://$mirror/openwrt/21-config-musl-x86 > .config
-    else
-        curl -s https://$mirror/openwrt/21-config-musl-r4s > .config
     fi
 fi
 
@@ -275,8 +247,8 @@ if [ "$soc" = "x86" ]; then
         echo -e "${GREEN_COLOR} Build success! ${RES}"
         echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
         # Backup download cache
-        if [ "$isCN" = "CN" ] && [ "$1" = "stable" ] || [ "$1" = "rc" ]; then
-            rm -rf dl/xray* dl/trojan* dl/v2ray* dl/adguardhome* dl/alist* dl/qbittorrent* dl/geo* dl/go-mod-cache
+        if [ "$isCN" = "CN" ] && [ "$1" = "rc" ]; then
+            rm -rf dl/geo* dl/go-mod-cache
             tar cf ../dl.gz dl
         fi
         exit 0
@@ -314,7 +286,7 @@ else
             fi
         fi
         # Backup download cache
-        if [ "$isCN" = "CN" ] && [ "$1" = "stable" ] || [ "$1" = "rc" ]; then
+        if [ "$isCN" = "CN" ] && [ "$1" = "rc" ]; then
             rm -rf dl/xray* dl/trojan* dl/v2ray* dl/adguardhome* dl/alist* dl/qbittorrent* dl/geo* dl/go-mod-cache
             tar -cf ../dl.gz dl
         fi

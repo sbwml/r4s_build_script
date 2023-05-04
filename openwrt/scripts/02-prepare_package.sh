@@ -26,22 +26,14 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
 fi
 
 # autoCore
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
-	git clone https://github.com/sbwml/autocore-arm -b openwrt-22.03 package/new/autocore
-else
-	git clone https://github.com/sbwml/autocore-arm -b openwrt-21.02 package/new/autocore
-fi
+git clone https://github.com/sbwml/autocore-arm -b openwrt-22.03 package/new/autocore
 
 # Aria2 & ariaNG
 rm -rf feeds/packages/net/ariang
 rm -rf feeds/luci/applications/luci-app-aria2
 git clone https://github.com/sbwml/ariang-nginx package/ariang-nginx
 rm -rf feeds/packages/net/aria2
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
-    git clone https://github.com/sbwml/feeds_packages_net_aria2 -b 22.03 feeds/packages/net/aria2
-else
-    git clone https://github.com/sbwml/feeds_packages_net_aria2 -b 21.02 feeds/packages/net/aria2
-fi
+git clone https://github.com/sbwml/feeds_packages_net_aria2 -b 22.03 feeds/packages/net/aria2
 
 # SSRP & Passwall
 rm -rf feeds/packages/net/{xray-core,v2ray-core}
@@ -56,11 +48,7 @@ cp -a ../master/packages/admin/netdata feeds/packages/admin/netdata
 sed -i 's/syslog/none/g' feeds/packages/admin/netdata/files/netdata.conf
 
 # qBittorrent
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
-    git clone https://github.com/sbwml/luci-app-qbittorrent package/qbittorrent
-else
-    git clone https://github.com/sbwml/luci-app-qbittorrent -b 4.4.5 package/qbittorrent
-fi
+git clone https://github.com/sbwml/luci-app-qbittorrent package/qbittorrent
 
 # Zerotier
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then

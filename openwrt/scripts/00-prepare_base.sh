@@ -2,12 +2,6 @@
 
 #################################################################
 
-# Rockchip - target
-rm -rf target/linux/rockchip
-if [ "$version" = "releases" ] || [ "$version" = "snapshots-21.02" ]; then
-	git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip -b 21.02 target/linux/rockchip
-fi
-
 # Rockchip - rkbin & u-boot 2023.01
 rm -rf package/boot/uboot-rockchip package/boot/arm-trusted-firmware-rockchip
 git clone https://github.com/sbwml/package_boot_uboot-rockchip package/boot/uboot-rockchip
@@ -21,11 +15,6 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
         echo "CONFIG_CRYPTO_AES_NI_INTEL=y" >> target/linux/x86/config-5.10
         echo '# CONFIG_DVB_USB is not set' >> target/linux/x86/config-5.10
         sed -i 's/hwmon, +PACKAGE_kmod-thermal:kmod-thermal/hwmon/g' package/kernel/linux/modules/hwmon.mk
-    fi
-else
-    curl -s https://$mirror/openwrt/patch/kernel_modules/5.4-video.mk > package/kernel/linux/modules/video.mk
-    if [ "$soc" = "x86" ]; then
-        echo "CONFIG_CRYPTO_AES_NI_INTEL=y" >> target/linux/x86/config-5.4
     fi
 fi
 
@@ -71,10 +60,7 @@ fi
 # Wireless Drivers
 rm -rf package/kernel/rtl8812au-ct
 git clone https://github.com/sbwml/openwrt-wireless-drivers package/kernel/wireless
-if [ "$version" = "releases" ] || [ "$version" = "snapshots-21.02" ]; then
-    rm -rf package/kernel/wireless/rtl88x2bu
-    git clone https://$gitea/sbwml/rtl88x2bu package/kernel/rtl88x2bu
-else
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     # hostapd: make LAR-friendly AP mode for AX200/AX210
     curl -s https://$mirror/openwrt/patch/hostapd-22.03/999-hostapd-2.10-lar.patch > package/network/services/hostapd/patches/999-hostapd-2.10-lar.patch
     # hostapd: hack version
@@ -115,10 +101,8 @@ fi
 if [ ! "$soc" = "x86" ]; then
     if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
        curl -s https://$mirror/openwrt/patch/mbedtls-5.10/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch > package/libs/mbedtls/patches/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
-    else
-       curl -s https://$mirror/openwrt/patch/mbedtls/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch > package/libs/mbedtls/patches/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
     fi
-    curl -s https://$mirror/openwrt/patch/mbedtls/mbedtls.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/mbedtls-5.10/mbedtls.patch | patch -p1
 fi
 
 # NTFS3
@@ -128,9 +112,6 @@ curl -s https://$mirror/openwrt/patch/util-linux/util-linux_ntfs3.patch > packag
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     curl -s https://$mirror/openwrt/patch/ntfs3-5.10/997-fs-ntfs3-Add-paragon-ntfs3-driver.patch > target/linux/generic/hack-5.10/997-fs-ntfs3-Add-paragon-ntfs3-driver.patch
     curl -s https://$mirror/openwrt/patch/ntfs3-5.10/22.03-add-ntfs3-support.patch | patch -p1
-else
-    curl -s https://$mirror/openwrt/patch/ntfs3-5.4/997-fs-ntfs3-Add-paragon-ntfs3-driver.patch > target/linux/generic/hack-5.4/997-fs-ntfs3-Add-paragon-ntfs3-driver.patch
-    curl -s https://$mirror/openwrt/patch/ntfs3-5.4/21.02-add-ntfs3-support.patch | patch -p1
 fi
 
 # fstools - enable any device with non-MTD rootfs_data volume
@@ -149,45 +130,19 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     else
         curl -s https://$mirror/openwrt/patch/fstools/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch > package/system/fstools/patches/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch
     fi
-else
-    curl -s https://$mirror/openwrt/patch/fstools/21-fstools-support-extroot-for-non-MTD-rootfs_data.patch > package/system/fstools/patches/21-fstools-support-extroot-for-non-MTD-rootfs_data.patch
 fi
 
 # QEMU for aarch64
 pushd feeds/packages
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     curl -s https://$mirror/openwrt/patch/qemu/qemu-aarch64_master.patch > qemu-aarch64.patch
-else
-    curl -s https://$mirror/openwrt/patch/qemu/qemu-aarch64_21.02.patch > qemu-aarch64.patch
 fi
 git apply qemu-aarch64.patch && rm qemu-aarch64.patch
 popd
 
-# KVM
-if [ "$version" = "releases" ] || [ "$version" = "snapshots-21.02" ]; then
-    cat >> target/linux/rockchip/config-default <<EOF
-CONFIG_VIRTUALIZATION=y
-CONFIG_KVM=y
-CONFIG_KVM_ARM_HOST=y
-CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT=y
-CONFIG_KVM_INDIRECT_VECTORS=y
-CONFIG_KVM_MMIO=y
-CONFIG_KVM_VFIO=y
-CONFIG_VHOST_NET=y
-EOF
-fi
-
-# util-linux
-if [ "$version" = "releases" ] || [ "$version" = "snapshots-21.02" ]; then
-    curl -s https://$mirror/openwrt/patch/util-linux/util-linux-2.38.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/util-linux/util-linux_taskset.patch | patch -p1
-fi
-
 # Patch arm64 model name
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     curl -s https://$mirror/openwrt/patch/kernel-5.10/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch > target/linux/generic/hack-5.10/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch
-else
-    curl -s https://$mirror/openwrt/patch/kernel/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch > target/linux/generic/pending-5.4/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch
 fi
 
 # Dnsmasq
@@ -198,10 +153,6 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     rm -rf package/network/services/dnsmasq
     cp -a ../master/openwrt/package/network/services/dnsmasq package/network/services/dnsmasq
     #sed -ri "s/(PKG_UPSTREAM_VERSION:=)[^\"]*/\1$DNSMASQ_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$DNSMASQ_HASH/" package/network/services/dnsmasq/Makefile
-else
-    curl -s https://$mirror/openwrt/patch/dnsmasq/dnsmasq-add-filter-aaaa-option.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/dnsmasq/luci-add-filter-aaaa-option.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/dnsmasq/900-add-filter-aaaa-option.patch > package/network/services/dnsmasq/patches/900-add-filter-aaaa-option.patch
 fi
 
 # Patch FireWall - FullCone
@@ -228,10 +179,6 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     pushd feeds/luci
         curl -s https://$mirror/openwrt/patch/luci/luci-nftables.patch | patch -p1
     popd
-else
-    # firewall3
-    mkdir -p package/network/config/firewall/patches
-    curl -s https://$mirror/openwrt/patch/firewall/fullconenat.patch > package/network/config/firewall/patches/fullconenat.patch
 fi
 
 # Patch Kernel - FullCone
@@ -239,28 +186,20 @@ if [ "$version" = "rc" ]; then
     curl -s https://$mirror/openwrt/patch/kernel-5.10/952-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch
 elif [ "$version" = "snapshots-22.03" ]; then
     curl -s https://$mirror/openwrt/patch/kernel-5.10/22-952-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch
-else
-    curl -s https://$mirror/openwrt/patch/kernel/952-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-5.4/952-net-conntrack-events-support-multiple-registrant.patch
 fi
 
-# Patch FullCone Option  21/22
+# Patch FullCone Option 22
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     curl -s https://$mirror/openwrt/patch/firewall4/luci-app-firewall_add_fullcone.patch | patch -p1
-else
-    curl -s https://$mirror/openwrt/patch/firewall/luci-app-firewall_add_fullcone.patch | patch -p1
 fi
 
 # FullCone module
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     git clone https://$gitea/sbwml/nft-fullcone package/new/nft-fullcone
-else
-    git clone https://$gitea/sbwml/fullconenat package/network/fullconenat
 fi
 
 # TCP performance optimizations backport from linux/net-next
-if [ ! "$version" = "rc" ] && [ ! "$version" = "snapshots-22.03" ]; then
-    curl -s https://$mirror/openwrt/patch/backport/695-tcp-optimizations.patch > target/linux/generic/backport-5.4/695-tcp-optimizations.patch
-else
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     curl -s https://$mirror/openwrt/patch/backport-5.10/780-v5.17-tcp-defer-skb-freeing-after-socket-lock-is-released.patch > target/linux/generic/backport-5.10/780-v5.17-tcp-defer-skb-freeing-after-socket-lock-is-released.patch
 fi
 
@@ -297,46 +236,6 @@ CONFIG_LRU_GEN=y
 CONFIG_LRU_GEN_ENABLED=y
 # CONFIG_LRU_GEN_STATS is not set
 EOF
-else
-  pushd target/linux/generic/backport-5.4
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-01-UPSTREAM-mm-vmscan.c-use-update_lru_size-in-update_l.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-02-BACKPORT-mm-remove-superfluous-__ClearPageActive.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-03-BACKPORT-mm-use-self-explanatory-macros-rather-than-.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-04-BACKPORT-mm-vmscan.c-use-add_page_to_lru_list.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-05-BACKPORT-include-linux-mm_inline.h-shuffle-lru-list-.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-06-BACKPORT-mm-don-t-pass-enum-lru_list-to-lru-list-add.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-07-UPSTREAM-mm-swap.c-don-t-pass-enum-lru_list-to-trace.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-08-BACKPORT-mm-swap.c-don-t-pass-enum-lru_list-to-del_p.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-09-BACKPORT-mm-add-__clear_page_lru_flags-to-replace-pa.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-10-UPSTREAM-mm-VM_BUG_ON-lru-page-flags.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-11-BACKPORT-include-linux-mm_inline.h-fold-page_lru_bas.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-12-UPSTREAM-include-linux-mm_inline.h-fold-__update_lru.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-13-BACKPORT-mm-swapcache-support-to-handle-the-shadow-e.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-14-BACKPORT-FROMLIST-include-linux-mm.h-do-not-warn-in-.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-15-FROMLIST-include-linux-nodemask.h-define-next_memory.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-16-FROMLIST-include-linux-cgroup.h-export-cgroup_mutex.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-17-BACKPORT-FROMLIST-mm-x86-support-the-access-bit-on-n.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-18-FROMLIST-mm-workingset.c-refactor-pack_shadow-and-un.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-19-BACKPORT-FROMLIST-mm-multigenerational-lru-groundwor.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-20-BACKPORT-FROMLIST-mm-multigenerational-lru-activatio.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-21-BACKPORT-FROMLIST-mm-multigenerational-lru-mm_struct.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-22-BACKPORT-FROMLIST-mm-multigenerational-lru-aging.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-23-BACKPORT-FROMLIST-mm-multigenerational-lru-eviction.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-24-BACKPORT-FROMLIST-mm-multigenerational-lru-user-inte.patch"
-    curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-25-BACKPORT-FROMLIST-mm-multigenerational-lru-Kconfig.patch"
-    if [ "$version" = "releases" ]; then
-      curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-26-CHROMIUM-mm-multigenerational-lru-add-arch_has_hw_pt.patch"
-    else
-      curl -sO "https://$mirror/openwrt/patch/kernel/MGLRU/020-26-new-CHROMIUM-mm-multigenerational-lru-add-arch_has_hw_pt.patch"
-    fi
-  popd
-  cat >> target/linux/generic/config-5.4 <<"EOF"
-CONFIG_LRU_GEN=y
-CONFIG_LRU_GEN_ENABLED=y
-# CONFIG_LRU_GEN_STATS is not set
-CONFIG_NR_LRU_GENS=7
-CONFIG_TIERS_PER_GEN=4
-EOF
 fi
 
 # OpenSSL
@@ -345,15 +244,10 @@ curl -s https://$mirror/openwrt/patch/openssl/11895.patch > package/libs/openssl
 curl -s https://$mirror/openwrt/patch/openssl/14578.patch > package/libs/openssl/patches/14578.patch
 curl -s https://$mirror/openwrt/patch/openssl/16575.patch > package/libs/openssl/patches/16575.patch
 curl -s https://$mirror/openwrt/patch/openssl/999-Ofast.patch > package/libs/openssl/patches/999-Ofast.patch
-if [ "$version" = "stable" ] || [ "$version" = "dev" ]; then
-    curl -s https://$mirror/openwrt/patch/openssl/600-eng_dyn-Avoid-spurious-errors-when-checking-for-3.x-engine.patch > package/libs/openssl/patches/600-eng_dyn-Avoid-spurious-errors-when-checking-for-3.x-engine.patch
-fi
 
 # enable cryptodev
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     curl -s https://$mirror/openwrt/patch/openssl/22-openssl_cryptodev.patch | patch -p1
-else
-    curl -s https://$mirror/openwrt/patch/openssl/21-openssl_cryptodev.patch | patch -p1
 fi
 
 # SQM Translation
@@ -444,7 +338,7 @@ curl -s https://$mirror/openwrt/patch/luci/20_memory.js.patch | patch -p1
 curl -s https://$mirror/openwrt/patch/luci/luci-refresh-interval.patch | patch -p1
 
 # Luci ui.js
-curl -s https://$mirror/openwrt/patch/luci/upload-ui.js.patch | patch -p1
+[ "$version" = "rc" ] && curl -s https://$mirror/openwrt/patch/luci/upload-ui.js.patch | patch -p1
 
 # Luci diagnostics.js
 sed -i "s/openwrt.org/www.qq.com/g" feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/diagnostics.js
@@ -468,9 +362,6 @@ sed -i 's/#directory mask/directory mask/g' feeds/packages/net/samba4/files/smb.
 sed -i 's/0666/0644/g;s/0744/0755/g;s/0777/0755/g' feeds/luci/applications/luci-app-samba4/htdocs/luci-static/resources/view/samba4.js
 sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/samba.config
 sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/smb.conf.template
-
-# Max connection limite
-[ "$version" = "releases" ] || [ "$version" = "snapshots-21.02" ] && sed -i 's/16384/65536/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
 
 # profile
 sed -i 's#\\u@\\h:\\w\\\$#\\[\\e[32;1m\\][\\u@\\h\\[\\e[0m\\] \\[\\033[01;34m\\]\\W\\[\\033[00m\\]\\[\\e[32;1m\\]]\\[\\e[0m\\]\\\$#g' package/base-files/files/etc/profile
