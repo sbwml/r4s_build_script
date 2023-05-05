@@ -88,7 +88,7 @@ echo -e "\r\n${GREEN_COLOR}Building $branch${RES}"
 if [ "$soc" = "x86" ]; then
     echo -e "${GREEN_COLOR}Model: x86_64${RES}\r\n"
 elif [ "$soc" = "r5s" ]; then
-    echo -e "${GREEN_COLOR}Model: nanopi-r5s${RES}\r\n"
+    echo -e "${GREEN_COLOR}Model: nanopi-r5s/r5c${RES}\r\n"
     [ "$1" = "rc" ] && model="nanopi-r5s"
     curl -s https://$mirror/tags/kernel-$KERNEL_VER > kernel.txt
     kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
@@ -207,6 +207,12 @@ fi
 # glibc
 [ "$USE_GLIBC" = "y" ] && curl -s https://$mirror/openwrt/config-glibc >> .config
 
+# clean directory - github actions
+[ "$isCN" != "CN" ] && echo 'CONFIG_AUTOREMOVE=y' >> .config
+
+# sdk
+[ "$BUILD_SDK" = "y" ] && curl -s https://$mirror/openwrt/config-sdk >> .config
+
 # testing kernel
 [ "$KERNEL_TESTING" = 1 ] && echo CONFIG_TESTING_KERNEL=y >> .config
 
@@ -259,7 +265,7 @@ if [ "$soc" = "x86" ]; then
         exit 1
     fi
 else
-    if [ -f bin/targets/rockchip/armv8*/*-r5s-ext4-sysupgrade.img.gz ] || [ -f bin/targets/rockchip/armv8*/*-r4s-ext4-sysupgrade.img.gz ]; then
+    if [ -f bin/targets/rockchip/armv8*/*-r5s-ext4-sysupgrade.img.gz ] || [ -f bin/targets/rockchip/armv8*/*-r5c-ext4-sysupgrade.img.gz ] || [ -f bin/targets/rockchip/armv8*/*-r4s-ext4-sysupgrade.img.gz ]; then
         if [ "$ALL_KMODS" = y ]; then
             cp -a bin/targets/rockchip/armv8*/packages $kmodpkg_name
             rm -f $kmodpkg_name/Packages*
@@ -287,7 +293,7 @@ else
         fi
         # Backup download cache
         if [ "$isCN" = "CN" ] && [ "$1" = "rc" ]; then
-            rm -rf dl/xray* dl/trojan* dl/v2ray* dl/adguardhome* dl/alist* dl/qbittorrent* dl/geo* dl/go-mod-cache
+            rm -rf dl/geo* dl/go-mod-cache
             tar -cf ../dl.gz dl
         fi
         exit 0

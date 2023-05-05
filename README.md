@@ -45,10 +45,6 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) rc x86
 将 init.cooluc.com 补丁默认连接替换为你的 github raw 连接（不带 https://），像这样 `raw.githubusercontent.com/你的用户名/r4s_build_script/master`
 
 ```diff
---- a/openwrt/build.sh
-+++ b/openwrt/build.sh
-@@ -17,9 +17,9 @@ export isCN=`echo $ip_info | grep -Po 'country_code\":"\K[^"]+'`;
- 
  # init url
  if [ "$isCN" = "CN" ]; then
 -    export mirror=init.cooluc.com
@@ -58,8 +54,6 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) rc x86
 +    export mirror=raw.githubusercontent.com/你的用户名/r4s_build_script/master
  fi
  export gitea=git.cooluc.com
- 
-
 ```
 
 ### 三、在服务器上执行基于你自己仓库的构建脚本，即可编译所需固件
@@ -89,7 +83,7 @@ KERNEL_TESTING=1 bash <(curl -sS https://raw.githubusercontent.com/你的用户�
 
 #### 新建一个空白仓库（必须，不能直接在本仓库进行构建），并在新仓库上创建 Github Actions 任务流，配置文件如下（把下面 `你的用户名` 替换成 `你的 GitHub 用户名`）
 
-#### 创建：`.github/workflows/build-release.yml` 文件后，点击仓库的 ⭐Star 既可触发编译任务。
+#### 创建：`.github/workflows/build-release.yml` 文件后，点击仓库的 ⭐Star 既可触发编译任务。（ps：你必须为仓库添加 Actions Secrets，Name: `workflow_token` Secret：`你的 GitHub Token`）
 
 ```yaml
 name: Build releases
