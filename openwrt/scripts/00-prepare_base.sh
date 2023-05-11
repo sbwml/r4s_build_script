@@ -88,9 +88,9 @@ if [ "$USE_GLIBC" = "y" ]; then
     cp -a ../master/openwrt/package/system/fstools package/system/fstools
     # glibc-common
     curl -s https://$mirror/openwrt/patch/openwrt-6.1/toolchain/glibc-common.patch | patch -p1
-    # locale data
-    mkdir -p files/lib/locale
-    curl -Lso files/lib/locale/locale-archive https://github.com/sbwml/r4s_build_script/releases/download/locale/locale-archive
+    # glibc-common - locale data
+    mkdir -p package/libs/toolchain/glibc-locale
+    curl -Lso package/libs/toolchain/glibc-locale/locale-archive https://github.com/sbwml/r4s_build_script/releases/download/locale/locale-archive
     [ "$?" -ne 0 ] && echo -e "${RED_COLOR} Locale file download failed... ${RES}"
     # GNU LANG
     mkdir package/base-files/files/etc/profile.d

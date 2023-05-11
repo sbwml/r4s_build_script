@@ -83,7 +83,7 @@ KERNEL_TESTING=1 bash <(curl -sS https://raw.githubusercontent.com/你的用户�
 
 #### 新建一个空白仓库（必须，不能直接在本仓库进行构建），并在新仓库上创建 Github Actions 任务流，配置文件如下（把下面 `你的用户名` 替换成 `你的 GitHub 用户名`）
 
-#### 创建：`.github/workflows/build-release.yml` 文件后，点击仓库的 ⭐Star 既可触发编译任务。（ps：你必须为仓库添加 Actions Secrets，Name: `workflow_token` Secret：`你的 GitHub Token`）
+#### 创建：`.github/workflows/build-release.yml` 文件后，点击仓库的 ⭐Star 既可触发编译任务。（ps：你必须为仓库添加 Actions Secrets，Name: `workflow_token` Secret：`你的 GitHub Token`，`commit: master` master 必须更改为你仓库的分支名称）
 
 ```yaml
 name: Build releases
