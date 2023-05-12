@@ -6,15 +6,6 @@ git clone https://github.com/sbwml/packages_lang_golang -b 20.x feeds/packages/l
 
 # Default settings
 git clone https://github.com/sbwml/default-settings package/new/default-settings
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
-    sed -i 's,iptables-mod-fullconenat,iptables-nft +kmod-nft-fullcone,g' package/new/default-settings/Makefile
-fi
-
-# xfsprogs - 6.2.0
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
-    rm -rf feeds/packages/utils/xfsprogs
-    git clone https://github.com/sbwml/packages_utils_xfsprogs package/xfsprogs
-fi
 
 # DDNS
 sed -i '/boot()/,+2d' feeds/packages/net/ddns-scripts/files/etc/init.d/ddns

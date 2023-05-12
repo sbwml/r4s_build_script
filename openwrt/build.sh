@@ -15,12 +15,14 @@ export RES='\e[0m'
 ip_info=`curl -s https://ip.cooluc.com`;
 export isCN=`echo $ip_info | grep -Po 'country_code\":"\K[^"]+'`;
 
-# init url
+# script url
 if [ "$isCN" = "CN" ]; then
     export mirror=init.cooluc.com
 else
     export mirror=init2.cooluc.com
 fi
+
+# private gitea
 export gitea=git.cooluc.com
 
 # Check root
@@ -57,50 +59,59 @@ elif [ "$1" = "rc" ]; then
     export branch=$latest_release
     export version=rc
 elif [ -z "$1" ]; then
-    echo -e "\r\n${RED_COLOR}Building type not specified.${RES}\r\n"
-    echo -e "Build 22.03-rc: ${GREEN_COLOR}bash build.sh rc${RES}"
-    echo -e "Build 22.03-snapshots: ${GREEN_COLOR}bash build.sh dev${RES}\r\n"
+    echo -e "\n${RED_COLOR}Building type not specified.${RES}\n"
+    echo -e "Usage:\n"
+    echo -e "nanopi-r4s releases: ${GREEN_COLOR}bash build.sh rc nanopi-r4s${RES}"
+    echo -e "nanopi-r4s snapshots: ${GREEN_COLOR}bash build.sh dev nanopi-r4s${RES}"
+    echo -e "nanopi-r5s releases: ${GREEN_COLOR}bash build.sh rc nanopi-r5s${RES}"
+    echo -e "nanopi-r5s snapshots: ${GREEN_COLOR}bash build.sh dev nanopi-r5s${RES}"
+    echo -e "x86_64 releases: ${GREEN_COLOR}bash build.sh rc x86_64${RES}"
+    echo -e "x86_64 snapshots: ${GREEN_COLOR}bash build.sh dev x86_64${RES}\n"
     exit 1
 fi
 
-# Soc
-export soc=$2
-if [ "$soc" = "" ]; then
-    export soc=rk3399
-fi
+# platform
+export platform=$2
+[ "$platform" = "nanopi-r4s" ] || [ "$platform" = "" ] && export platform="rk3399"
+[ "$platform" = "nanopi-r5s" ] && export platform="rk3568"
+[ "$platform" = "x86_64" ] && export platform="x86_64"
 
 # use glibc - openwrt-22.03
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$platform" = "rk3568" ] || [ "$platform" = "rk3399" ]; then
     export USE_GLIBC=$USE_GLIBC
 fi
 
 # nanopi - openwrt 22.03 kernel version
 if [ "$KERNEL_TESTING" = 1 ]; then
     export KERNEL_TESTING=1
-    [ "$KERNEL_VER" = "6.3" ] && export KERNEL_VER=6.3 || export KERNEL_VER=6.3
+    export KERNEL_VER=6.3
 else
     export KERNEL_TESTING=""
     export KERNEL_VER=6.1
 fi
 
 # print version
-echo -e "\r\n${GREEN_COLOR}Building $branch${RES}"
-if [ "$soc" = "x86" ]; then
-    echo -e "${GREEN_COLOR}Model: x86_64${RES}\r\n"
-elif [ "$soc" = "r5s" ]; then
-    echo -e "${GREEN_COLOR}Model: nanopi-r5s/r5c${RES}\r\n"
+echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
+if [ "$platform" = "x86_64" ]; then
+    echo -e "${GREEN_COLOR}Model: x86_64${RES}"
+elif [ "$platform" = "rk3568" ]; then
+    echo -e "${GREEN_COLOR}Model: nanopi-r5s/r5c${RES}"
     [ "$1" = "rc" ] && model="nanopi-r5s"
     curl -s https://$mirror/tags/kernel-$KERNEL_VER > kernel.txt
     kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
     kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
-    echo -e "${GREEN_COLOR}kernel version: $kmodpkg_name ${RES}\r\n"
+    echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
     rm -f kernel.txt
 else
-    echo -e "${GREEN_COLOR}Model: nanopi-r4s${RES}\r\n"
+    echo -e "${GREEN_COLOR}Model: nanopi-r4s${RES}"
     [ "$1" = "rc" ] && model="nanopi-r4s"
+    curl -s https://$mirror/tags/kernel-$KERNEL_VER > kernel.txt
+    kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
+    kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
+    echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
+    rm -f kernel.txt
 fi
-
-echo -e "${GREEN_COLOR}$CURRENT_DATE${RES}\r\n"
+echo -e "${GREEN_COLOR}Date: $CURRENT_DATE${RES}\r\n"
 
 # get source
 rm -rf openwrt master && mkdir master
@@ -130,10 +141,10 @@ fi
 
 # kenrel vermagic - https://downloads.openwrt.org/
 if [ "$1" = "dev" ]; then
-    [ "$soc" = "x86" ] && kenrel_vermagic=`curl -s https://$openwrt_release_mirror/22.03-SNAPSHOT/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
+    [ "$platform" = "x86_64" ] && kenrel_vermagic=`curl -s https://$openwrt_release_mirror/22.03-SNAPSHOT/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
 elif [ "$1" = "rc" ]; then
     latest_version="$(curl -s https://$mirror/tags/v22)"
-    [ "$soc" = "x86" ] && kenrel_vermagic=`curl -s https://$openwrt_release_mirror/"$latest_version"/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
+    [ "$platform" = "x86_64" ] && kenrel_vermagic=`curl -s https://$openwrt_release_mirror/"$latest_version"/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
 fi
 echo $kenrel_vermagic > .vermagic
 sed -ie 's/^\(.\).*vermagic$/\1cp $(TOPDIR)\/.vermagic $(LINUX_DIR)\/.vermagic/' include/kernel-defaults.mk
@@ -183,7 +194,7 @@ bash 00-prepare_base.sh
 bash 02-prepare_package.sh
 bash 03-convert_translation.sh
 bash 05-fix-source.sh
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" = "r5s" ] || [ "$soc" = "rk3399" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$platform" = "rk3568" ] || [ "$platform" = "rk3399" ]; then
     bash 01-prepare_base-mainline.sh
     bash 04-fix_kmod.sh
 fi
@@ -192,9 +203,9 @@ rm -rf ../master
 
 # Load devices Config
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
-    if [ "$soc" = "x86" ]; then
+    if [ "$platform" = "x86_64" ]; then
         curl -s https://$mirror/openwrt/22-config-musl-x86 > .config
-    elif [ "$soc" = "r5s" ]; then
+    elif [ "$platform" = "rk3568" ]; then
         curl -s https://$mirror/openwrt/22-config-musl-r5s > .config
         [ "$version" = "rc" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
         ALL_KMODS=y
@@ -248,7 +259,7 @@ start_seconds=$(date --date="$starttime" +%s);
 end_seconds=$(date --date="$endtime" +%s);
 SEC=$((end_seconds-start_seconds));
 
-if [ "$soc" = "x86" ]; then
+if [ "$platform" = "x86_64" ]; then
     if [ -f bin/targets/x86/64*/*-ext4-combined-efi.img.gz ]; then
         echo -e "${GREEN_COLOR} Build success! ${RES}"
         echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"

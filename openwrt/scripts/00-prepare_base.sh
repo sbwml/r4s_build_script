@@ -11,7 +11,7 @@ git clone https://github.com/sbwml/arm-trusted-firmware-rockchip package/boot/ar
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     curl -s https://$mirror/openwrt/patch/kernel-5.10/config-5.10 > target/linux/generic/config-5.10
     curl -s https://$mirror/openwrt/patch/kernel_modules/5.10-video.mk > package/kernel/linux/modules/video.mk
-    if [ "$soc" = "x86" ]; then
+    if [ "$platform" = "x86_64" ]; then
         echo "CONFIG_CRYPTO_AES_NI_INTEL=y" >> target/linux/x86/config-5.10
         echo '# CONFIG_DVB_USB is not set' >> target/linux/x86/config-5.10
         sed -i 's/hwmon, +PACKAGE_kmod-thermal:kmod-thermal/hwmon/g' package/kernel/linux/modules/hwmon.mk
@@ -41,7 +41,7 @@ sed -i "s/+luci /+luci-nginx /g" feeds/luci/collections/luci-ssl-openssl/Makefil
 sed -i "s/+luci /+luci-nginx /g" feeds/luci/collections/luci-ssl/Makefile
 
 # NIC driver - x86
-if [ "$soc" = "x86" ]; then
+if [ "$platform" = "x86_64" ]; then
     # r8101
     git clone https://github.com/sbwml/package_kernel_r8101 package/kernel/r8101
 fi
@@ -68,11 +68,11 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
 fi
 
 # Optimization level -Ofast
-if [ "$soc" = "rk3328" ]; then
+if [ "$platform" = "rk3328" ]; then
     curl -s https://$mirror/openwrt/patch/target-modify_for_rk3328.patch | patch -p1
-elif [ "$soc" = "rk3399" ]; then
+elif [ "$platform" = "rk3399" ]; then
     curl -s https://$mirror/openwrt/patch/target-modify_for_rk3399.patch | patch -p1
-elif [ "$soc" = "rk3568" ] || [ "$soc" = "r5s" ]; then
+elif [ "$platform" = "rk3568" ]; then
     curl -s https://$mirror/openwrt/patch/target-modify_for_rk3568.patch | patch -p1
 fi
 
@@ -95,10 +95,12 @@ if [ "$USE_GLIBC" = "y" ]; then
     # GNU LANG
     mkdir package/base-files/files/etc/profile.d
     echo 'export LANG="en_US.UTF-8" I18NPATH="/usr/share/i18n"' > package/base-files/files/etc/profile.d/sys_locale.sh
+    # build - drop `--disable-profile`
+    sed -i "/disable-profile/d" toolchain/glibc/common.mk
 fi
 
 # Mbedtls AES & GCM Crypto Extensions
-if [ ! "$soc" = "x86" ]; then
+if [ ! "$platform" = "x86_64" ]; then
     if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
        curl -s https://$mirror/openwrt/patch/mbedtls-5.10/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch > package/libs/mbedtls/patches/100-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
     fi
@@ -322,7 +324,7 @@ sed -i '/limit-as/c\limit-as = 5000' feeds/packages/net/uwsgi/files-luci-support
 sed -i "s/procd_set_param stderr 1/procd_set_param stderr 0/g" feeds/packages/net/uwsgi/files/uwsgi.init
 
 # rpcd bump version
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$soc" != "x86" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$platform" != "x86_64" ]; then
     rm -rf package/system/rpcd
     cp -a ../master/openwrt/package/system/rpcd package/system/rpcd
 fi
@@ -381,6 +383,12 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$COREUTILS_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$COREUTILS_HASH/" feeds/packages/utils/coreutils/Makefile
     rm -rf feeds/packages/utils/coreutils/patches/*.patch
     curl -s https://$mirror/openwrt/patch/coreutils-9.3/001-no_docs_man_tests.patch > feeds/packages/utils/coreutils/patches/001-no_docs_man_tests.patch
+fi
+
+# xfsprogs - 6.2.0
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
+    rm -rf feeds/packages/utils/xfsprogs
+    git clone https://github.com/sbwml/packages_utils_xfsprogs package/xfsprogs
 fi
 
 # NTP

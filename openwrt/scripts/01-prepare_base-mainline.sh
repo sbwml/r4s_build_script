@@ -160,7 +160,7 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.1/fix-linux-6.3/cryptodev-linux/
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/fix-linux-6.3/v6.3-fix-gpio-button-hotplug.patch | patch -p1
 
 # RTC
-if [ "$soc" = "rk3399" ] || [ "$soc" = "rk3568" ] || [ "$soc" = "r5s" ]; then
+if [ "$platform" = "rk3399" ] || [ "$platform" = "rk3568" ]; then
     curl -s https://$mirror/openwrt/patch/rtc/sysfixtime > package/base-files/files/etc/init.d/sysfixtime
     chmod 755 package/base-files/files/etc/init.d/sysfixtime
 fi
