@@ -72,13 +72,15 @@ fi
 
 # platform
 export platform=$2
-[ "$platform" = "nanopi-r4s" ] || [ "$platform" = "" ] && export platform="rk3399"
-[ "$platform" = "nanopi-r5s" ] && export platform="rk3568"
-[ "$platform" = "x86_64" ] && export platform="x86_64"
+[ "$platform" = "nanopi-r4s" ] || [ "$platform" = "" ] && export platform="rk3399" toolchain_arch="aarch64"
+[ "$platform" = "nanopi-r5s" ] && export platform="rk3568" toolchain_arch="aarch64"
+[ "$platform" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
 
 # use glibc - openwrt-22.03
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$platform" = "rk3568" ] || [ "$platform" = "rk3399" ]; then
     export USE_GLIBC=$USE_GLIBC
+else
+    export USE_GLIBC=n
 fi
 
 # nanopi - openwrt 22.03 kernel version
@@ -179,7 +181,7 @@ fi
 
 ###############################################
 
-echo -e "\r\n${GREEN_COLOR}Patching ...${RES}\r\n"
+echo -e "\n${GREEN_COLOR}Patching ...${RES}\n"
 
 # scripts
 curl -sO https://$mirror/openwrt/scripts/00-prepare_base.sh
@@ -239,6 +241,17 @@ if [ "$KERNEL_VER" = "6.3" ]; then
 EOF
 fi
 
+# Toolchain Cache
+if [ "$BUILD_FAST" = "y" ] && [ "$USE_GLIBC" != "y" ] && [ "$(whoami)" = "runner" ]; then
+    echo -e "\n${GREEN_COLOR}Download Toolchain ...${RES}"
+    curl -L https://us.cooluc.com/openwrt-toolchain/$toolchain_arch/toolchain.tar.gz -o toolchain.tar.gz $CURL_BAR
+    echo -e "\n${GREEN_COLOR}Process Toolchain ...${RES}\n"
+    tar -zxf toolchain.tar.gz && rm -f toolchain.tar.gz
+    mkdir bin
+    find ./staging_dir/ -name '*' -exec touch {} \; >/dev/null 2>&1
+    find ./tmp/ -name '*' -exec touch {} \; >/dev/null 2>&1
+fi
+
 # init openwrt config
 rm -rf tmp/*
 if [ "$BUILD" = "n" ]; then
@@ -248,10 +261,19 @@ else
 fi
 
 # Compile
-echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
-sed -i "/BUILD_DATE/d" package/base-files/files/usr/lib/os-release
-sed -i "/BUILD_ID/aBUILD_DATE=\"$CURRENT_DATE\"" package/base-files/files/usr/lib/os-release
-make -j$cores
+if [ "$BUILD_TOOLCHAIN" = "y" ]; then
+    echo -e "\r\n${GREEN_COLOR}Building Toolchain ...${RES}\r\n"
+    make -j$cores toolchain/compile
+    mkdir -p toolchain-cache
+    echo $toolchain_arch > toolchain-cache/arch.txt
+    [ $? -eq 0 ] && tar -zcf toolchain-cache/toolchain.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
+    exit 0
+else
+    echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
+    sed -i "/BUILD_DATE/d" package/base-files/files/usr/lib/os-release
+    sed -i "/BUILD_ID/aBUILD_DATE=\"$CURRENT_DATE\"" package/base-files/files/usr/lib/os-release
+    make -j$cores
+fi
 
 # Compile time
 endtime=`date +'%Y-%m-%d %H:%M:%S'`

@@ -20,6 +20,14 @@ sudo apt-get install -y build-essential flex bison g++ gawk gcc-multilib g++-mul
 export USE_GLIBC=y
 ```
 
+### 快速构建（仅限 Github Actions）
+##### 脚本会使用 toolchain 缓存代替源码构建，与常规构建相比能节省大约 60 分钟的编译耗时，仅适用于 Github Actions `ubuntu-22.04` 环境
+##### 只需在构建固件前执行以下命令即可启用快速构建
+
+```
+export BUILD_FAST=y BUILD_SDK=y
+```
+
 ---------------
 
 ### 构建 nanopi-r4s openwrt-22.03
@@ -98,7 +106,7 @@ bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_scri
 -----------------
 
 
-### 使用 Github Actions 构建
+# 使用 Github Actions 构建
 
 新建一个空白仓库，并在新仓库上创建 Github Actions 任务流，Actions 模板参考最下方（把下面 `你的用户名` 替换成 `你的 GitHub 用户名`）
 

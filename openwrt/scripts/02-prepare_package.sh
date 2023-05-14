@@ -46,6 +46,10 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     git clone https://$gitea/sbwml/luci-app-zerotier package/new/luci-app-zerotier
 fi
 
+# 解除网易云音乐播放限制
+git clone https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic package/new/luci-app-unblockneteasemusic
+sed -i 's/解除网易云音乐播放限制/解锁网易云音乐/g' package/new/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
+
 # xunlei
 git clone https://github.com/sbwml/luci-app-xunlei package/xunlei
 

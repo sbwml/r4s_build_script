@@ -121,7 +121,6 @@ curl -s https://$mirror/openwrt/patch/fstools/block-mount-add-fstools-depends.pa
 if [ "$USE_GLIBC" = "y" ]; then
     curl -s https://$mirror/openwrt/patch/fstools/fstools-set-ntfs3-utf8-new.patch > package/system/fstools/patches/ntfs3-utf8.patch
     curl -s https://$mirror/openwrt/patch/fstools/glibc/0001-libblkid-tiny-add-support-for-XFS-superblock.patch > package/system/fstools/patches/0001-libblkid-tiny-add-support-for-XFS-superblock.patch
-    #curl -s https://$mirror/openwrt/patch/fstools/glibc/0002-libblkid-tiny-add-support-for-exFAT-superblock.patch > package/system/fstools/patches/0002-libblkid-tiny-add-support-for-exFAT-superblock.patch
     curl -s https://$mirror/openwrt/patch/fstools/glibc/0003-block-add-xfsck-support.patch > package/system/fstools/patches/0003-block-add-xfsck-support.patch
 else
     curl -s https://$mirror/openwrt/patch/fstools/ntfs3-utf8.patch > package/system/fstools/patches/ntfs3-utf8.patch
