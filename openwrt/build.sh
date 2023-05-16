@@ -31,6 +31,13 @@ if [ "$(id -u)" = "0" ]; then
     exit 1
 fi
 
+# Check CPU
+LOW_CPU=$(lscpu | grep "Model name" | grep E5-2673 | wc -l)
+if [ "$BUILD_EXTRA" = "y" ] && [ "$(whoami)" = "runner" ] && [ "$LOW_CPU" -ne "0" ]; then
+    echo -e "\n${RED_COLOR} Unable to use BUILD_EXTRA=y in low performance GitHub Actions. ${RES}\n"
+    exit 1
+fi
+
 # Start time
 starttime=`date +'%Y-%m-%d %H:%M:%S'`
 CURRENT_DATE=$(date +%s)
@@ -217,11 +224,15 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
     fi
 fi
 
-# glibc
-[ "$USE_GLIBC" = "y" ] && curl -s https://$mirror/openwrt/config-glibc >> .config
+# extra
+[ "$BUILD_EXTRA" = "y" ] && curl -s https://$mirror/openwrt/config-extra >> .config
 
-# clean directory - github actions
-[ "$isCN" != "CN" ] && echo 'CONFIG_AUTOREMOVE=y' >> .config
+# glibc
+if [ "$USE_GLIBC" = "y" ]; then
+    curl -s https://$mirror/openwrt/config-glibc >> .config
+    # use qbittorrent_static - fix qbittorrent Chinese path on glibc
+    [ $(grep -c "luci-app-qbittorrent=y" .config) -ge '1' ] && echo 'CONFIG_PACKAGE_luci-app-qbittorrent_static=y' >> .config
+fi
 
 # sdk
 [ "$BUILD_SDK" = "y" ] && curl -s https://$mirror/openwrt/config-sdk >> .config
@@ -241,11 +252,15 @@ if [ "$KERNEL_VER" = "6.3" ]; then
 EOF
 fi
 
+# clean directory - github actions
+[ "$(whoami)" = "runner" ] && echo 'CONFIG_AUTOREMOVE=y' >> .config
+
 # Toolchain Cache
-if [ "$BUILD_FAST" = "y" ] && [ "$USE_GLIBC" != "y" ] && [ "$(whoami)" = "runner" ]; then
+if [ "$BUILD_FAST" = "y" ] && [ "$(whoami)" = "runner" ]; then
+    [ "$USE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
     echo -e "\n${GREEN_COLOR}Download Toolchain ...${RES}"
-    curl -L https://us.cooluc.com/openwrt-toolchain/$toolchain_arch/toolchain.tar.gz -o toolchain.tar.gz $CURL_BAR
-    echo -e "\n${GREEN_COLOR}Process Toolchain ...${RES}\n"
+    curl -L https://us.cooluc.com/openwrt-toolchain/$toolchain_arch-$LIBC/toolchain.tar.gz -o toolchain.tar.gz $CURL_BAR
+    echo -e "\n${GREEN_COLOR}Process Toolchain ...${RES}"
     tar -zxf toolchain.tar.gz && rm -f toolchain.tar.gz
     mkdir bin
     find ./staging_dir/ -name '*' -exec touch {} \; >/dev/null 2>&1
