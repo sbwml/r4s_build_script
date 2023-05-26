@@ -317,13 +317,17 @@ sed -i '/ubus_parallel_req/a\        ubus_script_timeout 600;' feeds/packages/ne
 curl -s https://$mirror/openwrt/nginx/luci.locations > feeds/packages/net/nginx/files-luci-support/luci.locations
 curl -s https://$mirror/openwrt/nginx/uci.conf.template > feeds/packages/net/nginx-util/files/uci.conf.template
 
+# uwsgi - bump version
+if [ "$version" = "snapshots-23.05" ]; then
+    rm -rf feeds/packages/net/uwsgi
+    cp -a ../master/packages/net/uwsgi feeds/packages/net/uwsgi
+fi
+
 # uwsgi - fix timeout
 sed -i '$a cgi-timeout = 600' feeds/packages/net/uwsgi/files-luci-support/luci-*.ini
 sed -i '/limit-as/c\limit-as = 5000' feeds/packages/net/uwsgi/files-luci-support/luci-webui.ini
 # disable error log
 sed -i "s/procd_set_param stderr 1/procd_set_param stderr 0/g" feeds/packages/net/uwsgi/files/uwsgi.init
-# uwsgi - fix python3.11
-[ "$version" = "snapshots-23.05" ] && curl -s https://$mirror/openwrt/patch/uwsgi/999-fix-python3.11.patch > feeds/packages/net/uwsgi/patches/999-fix-python3.11.patch
 
 # rpcd bump version
 if [ "$version" = "rc" ] && [ "$platform" != "x86_64" ]; then
