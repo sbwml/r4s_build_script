@@ -21,7 +21,7 @@ rm -rf target_linux_generic
 
 # kernel modules
 git checkout package/kernel/linux
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/include_netfilter.patch | patch -p1
+[ "$version" = "rc" ] && curl -s https://$mirror/openwrt/patch/openwrt-6.1/include_netfilter.patch | patch -p1
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/files/sysctl-tcp-bbr2.conf > package/kernel/linux/files/sysctl-tcp-bbr2.conf
 pushd package/kernel/linux/modules
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/block.mk
@@ -38,6 +38,7 @@ pushd package/kernel/linux/modules
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/other.mk
     [ "$KERNEL_TESTING" = 1 ] && curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/iio.mk
     [ "$KERNEL_TESTING" = 1 ] && sed -i 's/+kmod-iio-core +kmod-iio-kfifo-buf +kmod-regmap-core/+kmod-iio-core +kmod-iio-kfifo-buf +kmod-regmap-core +kmod-industrialio-triggered-buffer/g' iio.mk
+    [ "$KERNEL_TESTING" = 1 ] && curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/usb.mk
 popd
 
 # BBRv2 - linux-6.1
@@ -149,8 +150,14 @@ cp target/linux/generic/hack-6.1/998-hide-panfrost-logs.patch target/linux/gener
 
 # feeds/packages/net/gensio - fix linux 6.1
 pushd feeds/packages
-    curl -s https://github.com/openwrt/packages/commit/ea3ad6b0909b2f5d8a8dcbc4e866c9ed22f3fb10.patch | patch -p1
+    [ "$version" = "rc" ] && curl -s https://github.com/openwrt/packages/commit/ea3ad6b0909b2f5d8a8dcbc4e866c9ed22f3fb10.patch | patch -p1
 popd
+
+# ubnt-ledbar - fix linux-6.1
+if [ "$version" = "snapshots-23.05" ]; then
+    rm -rf package/kernel/ubnt-ledbar
+    cp -a ../master/openwrt/package/kernel/ubnt-ledbar package/kernel/ubnt-ledbar
+fi
 
 # cryptodev-linux - fix linux 6.3
 mkdir package/kernel/cryptodev-linux/patches

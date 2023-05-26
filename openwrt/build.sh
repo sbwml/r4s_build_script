@@ -59,12 +59,14 @@ fi
 
 # Source branch
 if [ "$1" = "dev" ]; then
-    export branch=openwrt-22.03
-    export version=snapshots-22.03
+    export branch=openwrt-23.05
+    export version=snapshots-23.05
+    export toolchain_version=openwrt-23.05
 elif [ "$1" = "rc" ]; then
     latest_release="v$(curl -s https://$mirror/tags/v22)"
     export branch=$latest_release
     export version=rc
+    export toolchain_version=openwrt-22.03
 elif [ -z "$1" ]; then
     echo -e "\n${RED_COLOR}Building type not specified.${RES}\n"
     echo -e "Usage:\n"
@@ -84,7 +86,7 @@ export platform=$2
 [ "$platform" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
 
 # use glibc - openwrt-22.03
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$platform" = "rk3568" ] || [ "$platform" = "rk3399" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] && [ "$platform" = "rk3568" ] || [ "$platform" = "rk3399" ]; then
     export USE_GLIBC=$USE_GLIBC
 else
     export USE_GLIBC=n
@@ -203,7 +205,7 @@ bash 00-prepare_base.sh
 bash 02-prepare_package.sh
 bash 03-convert_translation.sh
 bash 05-fix-source.sh
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ] && [ "$platform" = "rk3568" ] || [ "$platform" = "rk3399" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] && [ "$platform" = "rk3568" ] || [ "$platform" = "rk3399" ]; then
     bash 01-prepare_base-mainline.sh
     bash 04-fix_kmod.sh
 fi
@@ -211,7 +213,7 @@ rm -f 0*-*.sh
 rm -rf ../master
 
 # Load devices Config
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-22.03" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
     if [ "$platform" = "x86_64" ]; then
         curl -s https://$mirror/openwrt/22-config-musl-x86 > .config
     elif [ "$platform" = "rk3568" ]; then
@@ -259,7 +261,7 @@ fi
 if [ "$BUILD_FAST" = "y" ] && [ "$(whoami)" = "runner" ]; then
     [ "$USE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
     echo -e "\n${GREEN_COLOR}Download Toolchain ...${RES}"
-    curl -L https://us.cooluc.com/openwrt-toolchain/$toolchain_arch-$LIBC/toolchain.tar.gz -o toolchain.tar.gz $CURL_BAR
+    curl -L https://us.cooluc.com/openwrt-toolchain/$toolchain_version/$toolchain_arch-$LIBC/toolchain.tar.gz -o toolchain.tar.gz $CURL_BAR
     echo -e "\n${GREEN_COLOR}Process Toolchain ...${RES}"
     tar -zxf toolchain.tar.gz && rm -f toolchain.tar.gz
     mkdir bin

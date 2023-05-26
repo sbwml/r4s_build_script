@@ -1,0 +1,38 @@
+diff --git a/package/libs/mbedtls/Config.in b/package/libs/mbedtls/Config.in
+index ffabd79..93a5d02 100644
+--- a/package/libs/mbedtls/Config.in
++++ b/package/libs/mbedtls/Config.in
+@@ -140,6 +140,11 @@ config MBEDTLS_ECP_DP_CURVE448_ENABLED
+ 
+ comment "Build Options - unselect features to reduce binary size"
+ 
++config MBEDTLS_ARMV8CE_AES_C
++	bool "MBEDTLS_ARMV8CE_AES_C"
++	default y
++	depends on aarch64 && !TARGET_bcm27xx
++
+ config MBEDTLS_CERTS_C
+ 	bool "MBEDTLS_CERTS_C"
+ 	default n
+diff --git a/package/libs/mbedtls/Makefile b/package/libs/mbedtls/Makefile
+index a6a7ac3..16661e6 100644
+--- a/package/libs/mbedtls/Makefile
++++ b/package/libs/mbedtls/Makefile
+@@ -60,6 +60,7 @@ MBEDTLS_BUILD_OPTS_CIPHERS= \
+ MBEDTLS_BUILD_OPTS= \
+   $(MBEDTLS_BUILD_OPTS_CURVES) \
+   $(MBEDTLS_BUILD_OPTS_CIPHERS) \
++  CONFIG_MBEDTLS_ARMV8CE_AES_C \
+   CONFIG_MBEDTLS_CERTS_C \
+   CONFIG_MBEDTLS_CIPHER_MODE_OFB \
+   CONFIG_MBEDTLS_CIPHER_MODE_XTS \
+@@ -122,6 +123,9 @@ CSR generation (gen_key, cert_req)
+ endef
+ 
+ TARGET_CFLAGS := $(filter-out -O%,$(TARGET_CFLAGS))
++ifneq ($(CONFIG_MBEDTLS_ARMV8CE_AES_C),)
++  TARGET_CFLAGS := $(filter-out -march=%,$(TARGET_CFLAGS))
++endif
+ 
+ CMAKE_OPTIONS += \
+ 	-DCMAKE_POSITION_INDEPENDENT_CODE=ON \
