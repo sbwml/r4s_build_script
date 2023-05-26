@@ -252,7 +252,8 @@ fi
 
 # Docker
 rm -rf feeds/luci/applications/luci-app-dockerman
-git clone https://$gitea/sbwml/luci-app-dockerman -b master feeds/luci/applications/luci-app-dockerman
+[ "$version" = "rc" ] && git clone https://$gitea/sbwml/luci-app-dockerman -b openwrt-22.03 feeds/luci/applications/luci-app-dockerman
+[ "$version" = "snapshots-23.05" ] && git clone https://$gitea/sbwml/luci-app-dockerman -b openwrt-23.05 feeds/luci/applications/luci-app-dockerman
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
     rm -rf feeds/packages/utils/docker feeds/packages/utils/dockerd feeds/packages/utils/containerd
     cp -a ../master/packages/utils/docker feeds/packages/utils/docker
