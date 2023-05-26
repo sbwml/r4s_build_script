@@ -325,5 +325,6 @@ CONFIG_VERSION_FILENAMES=y
 # CONFIG_PACKAGE_kmod-rtl8189es is not set
 # CONFIG_PACKAGE_kmod-rtl8192eu is not set
 # CONFIG_PACKAGE_kmod-rtl8812au-ac is not set
+# CONFIG_PACKAGE_kmod-rtl8812au-ct is not set
 # CONFIG_PACKAGE_kmod-rtl8821cu is not set
 # CONFIG_PACKAGE_kmod-rtl88x2bu is not set
