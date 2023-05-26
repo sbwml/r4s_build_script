@@ -16,6 +16,9 @@ if [ "$version" = "rc" ]; then
     fi
 fi
 
+# Fix x86 - CONFIG_ALL_KMODS
+[ "$version" = "snapshots-23.05" ] && [ "$platform" = "x86_64" ] && sed -i 's/hwmon, +PACKAGE_kmod-thermal:kmod-thermal/hwmon/g' package/kernel/linux/modules/hwmon.mk
+
 # default LAN IP
 sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
 
