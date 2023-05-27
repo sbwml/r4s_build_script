@@ -409,3 +409,6 @@ sed -i 's/3.openwrt.pool.ntp.org/time.apple.com/g' package/base-files/files/bin/
 
 # drop antfs
 rm -rf feeds/packages/kernel/antfs feeds/packages/utils/antfs-mount
+
+# uqmi - fix gcc11
+[ "$version" = "snapshots-23.05" ] && sed -i '/dangling-pointer/d' package/network/utils/uqmi/Makefile
