@@ -254,6 +254,9 @@ if [ "$KERNEL_VER" = "6.3" ]; then
 EOF
 fi
 
+# openwrt-23.05 gcc11
+[ "$version" = "snapshots-23.05" ] && curl -s https://$mirror/openwrt/config-gcc11 >> .config
+
 # clean directory - github actions
 [ "$(whoami)" = "runner" ] && echo 'CONFIG_AUTOREMOVE=y' >> .config
 

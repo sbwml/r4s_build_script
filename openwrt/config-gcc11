@@ -1,0 +1,5 @@
+
+# gcc 11 - better performance
+CONFIG_DEVEL=y
+CONFIG_TOOLCHAINOPTS=y
+CONFIG_GCC_USE_VERSION_11=y
