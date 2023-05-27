@@ -51,7 +51,7 @@ fi
 # source mirror
 if [ "$isCN" = "CN" ]; then
     export github_mirror="https://github.com"
-    openwrt_release_mirror="mirrors.pku.edu.cn/openwrt/releases"
+    openwrt_release_mirror="mirror.sjtu.edu.cn/openwrt/releases"
 else
     export github_mirror="https://github.com"
     openwrt_release_mirror="downloads.openwrt.org/releases"
@@ -152,7 +152,7 @@ fi
 
 # kenrel vermagic - https://downloads.openwrt.org/
 if [ "$1" = "dev" ]; then
-    [ "$platform" = "x86_64" ] && kenrel_vermagic=`curl -s https://$openwrt_release_mirror/22.03-SNAPSHOT/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
+    [ "$platform" = "x86_64" ] && kenrel_vermagic=`curl -s https://$openwrt_release_mirror/23.05-SNAPSHOT/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
 elif [ "$1" = "rc" ]; then
     latest_version="$(curl -s https://$mirror/tags/v22)"
     [ "$platform" = "x86_64" ] && kenrel_vermagic=`curl -s https://$openwrt_release_mirror/"$latest_version"/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
