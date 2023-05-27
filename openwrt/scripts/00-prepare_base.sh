@@ -283,11 +283,6 @@ sed -i 's/enable-skill/enable-skill --disable-modern-top/g' feeds/packages/utils
 sed -i 's/services/system/g' feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/luci-app-ttyd.json
 sed -i '3 a\\t\t"order": 50,' feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/luci-app-ttyd.json
 
-# iptables
-if [ "$version" = "snapshots-23.05" ]; then
-    [ $(grep PKG_VERSION:= package/network/utils/iptables/Makefile | awk -F= '{print $2}') = "1.8.8" ] && curl -s https://github.com/openwrt/openwrt/commit/898255f45d691255801ec0c91fab00dbcd1ee7bf.patch | patch -p1
-fi
-
 # UPnP - fix 22.03
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
     rm -rf feeds/packages/net/miniupnpd
