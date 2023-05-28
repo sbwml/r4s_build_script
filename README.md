@@ -30,7 +30,9 @@ export BUILD_FAST=y BUILD_SDK=y
 
 ---------------
 
-### 构建 nanopi-r4s openwrt-22.03
+## 构建 OpenWrt 22.03 正式版
+
+### nanopi-r4s
 ```shell
 # linux-6.1
 bash <(curl -sS https://init2.cooluc.com/build.sh) rc nanopi-r4s
@@ -39,7 +41,7 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) rc nanopi-r4s
 KERNEL_TESTING=1 bash <(curl -sS https://init2.cooluc.com/build.sh) rc nanopi-r4s
 ```
 
-### 构建 nanopi-r5s/r5c openwrt-22.03
+### nanopi-r5s/r5c
 ```shell
 # linux-6.1
 bash <(curl -sS https://init2.cooluc.com/build.sh) rc nanopi-r5s
@@ -48,10 +50,36 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) rc nanopi-r5s
 KERNEL_TESTING=1 bash <(curl -sS https://init2.cooluc.com/build.sh) rc nanopi-r5s
 ```
 
-### 构建 x86_64 openwrt-22.03
+### x86_64
 ```shell
 # linux-5.10 (follow upstream)
 bash <(curl -sS https://init2.cooluc.com/build.sh) rc x86_64
+```
+
+## 构建 OpenWrt 23.05 开发版
+
+### nanopi-r4s
+```shell
+# linux-6.1
+bash <(curl -sS https://init2.cooluc.com/build.sh) dev nanopi-r4s
+
+# linux-6.3 - testing
+KERNEL_TESTING=1 bash <(curl -sS https://init2.cooluc.com/build.sh) dev nanopi-r4s
+```
+
+### nanopi-r5s/r5c
+```shell
+# linux-6.1
+bash <(curl -sS https://init2.cooluc.com/build.sh) dev nanopi-r5s
+
+# linux-6.3 - testing
+KERNEL_TESTING=1 bash <(curl -sS https://init2.cooluc.com/build.sh) dev nanopi-r5s
+```
+
+### x86_64
+```shell
+# linux-5.15 (follow upstream)
+bash <(curl -sS https://init2.cooluc.com/build.sh) dev x86_64
 ```
 
 -----------------
