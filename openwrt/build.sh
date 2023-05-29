@@ -218,13 +218,14 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
         curl -s https://$mirror/openwrt/22-config-musl-x86 > .config
     elif [ "$platform" = "rk3568" ]; then
         curl -s https://$mirror/openwrt/22-config-musl-r5s > .config
-        [ "$version" = "rc" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
         ALL_KMODS=y
     else
         curl -s https://$mirror/openwrt/22-config-musl-r4s > .config
-        [ "$version" = "rc" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
     fi
 fi
+
+# ota
+[ "$ENABLE_OTA" = "y" ] && [ "$version" = "rc" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
 
 # extra
 [ "$BUILD_EXTRA" = "y" ] && curl -s https://$mirror/openwrt/config-extra >> .config
@@ -305,6 +306,12 @@ if [ "$platform" = "x86_64" ]; then
     if [ -f bin/targets/x86/64*/*-ext4-combined-efi.img.gz ]; then
         echo -e "${GREEN_COLOR} Build success! ${RES}"
         echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
+        # OTA json
+        FW_URL=$(curl -s https://api.github.com/repos/sbwml/builder/releases | grep browser_download_url | grep fw.json | head -1 | awk '{print $2}' | sed 's/\"//g')
+        curl -Lso ota.json $FW_URL || exit 0
+        VERSION=$(sed 's/v//g' version.txt)
+        SHA256=$(sha256sum bin/targets/x86/64/*-generic-squashfs-combined-efi.img.gz | awk '{print $1}')
+        jq ".\"x86_64\"[0].build_date=\"$CURRENT_DATE\"|.\"x86_64\"[0].sha256sum=\"$SHA256\"|.\"x86_64\"[0].url=\"https://x86.cooluc.com/releases/openwrt-22.03/v$VERSION/openwrt-$VERSION-x86-64-generic-squashfs-combined-efi.img.gz\"" ota.json > fw.json
         # Backup download cache
         if [ "$isCN" = "CN" ] && [ "$1" = "rc" ]; then
             rm -rf dl/geo* dl/go-mod-cache
