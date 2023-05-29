@@ -52,7 +52,7 @@ define KernelPackage/hwmon-adt7410
 	$(LINUX_DIR)/drivers/hwmon/adt7x10.ko \
 	$(LINUX_DIR)/drivers/hwmon/adt7410.ko
   AUTOLOAD:=$(call AutoLoad,60,adt7x10 adt7410)
-  $(call AddDepends/hwmon,+kmod-i2c-core)
+  $(call AddDepends/hwmon,+kmod-i2c-core +LINUX_6_1:kmod-regmap-core)
 endef
 
 define KernelPackage/hwmon-adt7410/description
@@ -106,6 +106,25 @@ define KernelPackage/hwmon-drivetemp/description
 endef
 
 $(eval $(call KernelPackage,hwmon-drivetemp))
+
+
+define KernelPackage/hwmon-gsc
+  TITLE:=Gateworks System Controller support
+  KCONFIG:=CONFIG_MFD_GATEWORKS_GSC \
+        CONFIG_SENSORS_GSC
+  FILES:= \
+	$(LINUX_DIR)/drivers/mfd/gateworks-gsc.ko \
+	$(LINUX_DIR)/drivers/hwmon/gsc-hwmon.ko
+  AUTOLOAD:=$(call AutoLoad,20,gsc-hwmon,1)
+  $(call AddDepends/hwmon,+kmod-i2c-core)
+endef
+
+define KernelPackage/hwmon-gsc/description
+ Kernel module for Gateworks System Controller with temperature sensor,
+ADCs, and FAN controller
+endef
+
+$(eval $(call KernelPackage,hwmon-gsc))
 
 
 define KernelPackage/hwmon-gpiofan
@@ -335,6 +354,21 @@ endef
 $(eval $(call KernelPackage,hwmon-ltc4151))
 
 
+define KernelPackage/hwmon-max6642
+  TITLE:=MAX6642 monitoring support
+  KCONFIG:=CONFIG_SENSORS_MAX6642
+  FILES:=$(LINUX_DIR)/drivers/hwmon/max6642.ko
+  AUTOLOAD:=$(call AutoLoad,60,max6642 max6642)
+  $(call AddDepends/hwmon,+kmod-i2c-core)
+endef
+
+define KernelPackage/hwmon-max6642/description
+ Kernel module for Maxim MAX6642 temperature monitor
+endef
+
+$(eval $(call KernelPackage,hwmon-max6642))
+
+
 define KernelPackage/hwmon-mcp3021
   TITLE:=MCP3021/3221 monitoring support
   KCONFIG:=CONFIG_SENSORS_MCP3021
@@ -430,7 +464,7 @@ define KernelPackage/hwmon-pwmfan
   KCONFIG:=CONFIG_SENSORS_PWM_FAN
   FILES:=$(LINUX_DIR)/drivers/hwmon/pwm-fan.ko
   AUTOLOAD:=$(call AutoLoad,60,pwm-fan)
-  $(call AddDepends/hwmon)
+  $(call AddDepends/hwmon, +kmod-thermal)
 endef
 
 define KernelPackage/hwmon-pwmfan/description
@@ -533,6 +567,20 @@ endef
 
 $(eval $(call KernelPackage,hwmon-tmp421))
 
+
+define KernelPackage/hwmon-tps23861
+  TITLE:=Texas Instruments TPS23861 PoE PSE
+  KCONFIG:=CONFIG_SENSORS_TPS23861
+  FILES:=$(LINUX_DIR)/drivers/hwmon/tps23861.ko
+  AUTOLOAD:=$(call AutoProbe,tps23861)
+  $(call AddDepends/hwmon,+kmod-i2c-core +kmod-regmap-i2c)
+endef
+
+define KernelPackage/hwmon-tps23861/description
+  Kernel module for the Texas Instruments TPS23861 802.3at PoE PSE chips.
+endef
+
+$(eval $(call KernelPackage,hwmon-tps23861))
 
 define KernelPackage/hwmon-vid
   TITLE:=VID/VRM/VRD voltage conversion module.

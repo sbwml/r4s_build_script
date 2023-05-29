@@ -15,30 +15,44 @@ curl -s https://$mirror/openwrt/patch/KBUILD_BUILD_TIMESTAMP.patch | patch -p1
 
 # kernel generic patches
 git clone https://github.com/sbwml/target_linux_generic
+rm -rf target/linux/generic/*-6.* target/linux/generic/files
 mv target_linux_generic/target/linux/generic/* target/linux/generic/
 sed -i '/CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE/d' target/linux/generic/config-6.1 target/linux/generic/config-6.3
 rm -rf target_linux_generic
 
 # kernel modules
+rm -rf package/kernel/linux package/kernel/hwmon-gsc
 git checkout package/kernel/linux
 [ "$version" = "rc" ] && curl -s https://$mirror/openwrt/patch/openwrt-6.1/include_netfilter.patch | patch -p1
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/files/sysctl-tcp-bbr2.conf > package/kernel/linux/files/sysctl-tcp-bbr2.conf
 pushd package/kernel/linux/modules
+    rm -f [a-z]*.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/block.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/can.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/crypto.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/firewire.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/fs.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/gpio-cascade.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/hwmon.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/i2c.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/iio.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/input.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/leds.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/lib.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/multiplexer.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/netdevices.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/netfilter.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/netsupport.mk
-    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/video.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/nls.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/other.mk
-    [ "$KERNEL_TESTING" = 1 ] && curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/iio.mk
-    [ "$KERNEL_TESTING" = 1 ] && sed -i 's/+kmod-iio-core +kmod-iio-kfifo-buf +kmod-regmap-core/+kmod-iio-core +kmod-iio-kfifo-buf +kmod-regmap-core +kmod-industrialio-triggered-buffer/g' iio.mk
-    [ "$KERNEL_TESTING" = 1 ] && curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/usb.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/pcmcia.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/sound.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/spi.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/usb.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/video.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/virt.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/w1.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/wpan.mk
 popd
 
 # BBRv2 - linux-6.1
