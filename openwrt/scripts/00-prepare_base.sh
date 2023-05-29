@@ -386,6 +386,10 @@ curl -so files/root/.bashrc https://$mirror/openwrt/files/root/.bashrc
 # rootfs files
 mkdir -p files/etc/sysctl.d
 curl -so files/etc/sysctl.d/15-vm-swappiness.conf https://$mirror/openwrt/files/etc/sysctl.d/15-vm-swappiness.conf
+if [ "$version" = "snapshots-23.05" ]; then
+    # fix E1187: Failed to source defaults.vim
+    touch files/root/.vimrc
+fi
 
 # coreutils
 if [ "$version" = "rc" ]; then
