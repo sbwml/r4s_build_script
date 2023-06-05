@@ -14,12 +14,6 @@ if [ "$version" = "rc" ]; then
         echo '# CONFIG_DVB_USB is not set' >> target/linux/x86/config-5.10
         sed -i 's/hwmon, +PACKAGE_kmod-thermal:kmod-thermal/hwmon/g' package/kernel/linux/modules/hwmon.mk
     fi
-elif [ "$version" = "snapshots-23.05" ]; then
-    if [ "$platform" = "x86_64" ]; then
-        sed -i 's/# CONFIG_TLS is not set/CONFIG_TLS=y/g' target/linux/generic/config-5.15
-        sed -i 's/# CONFIG_TLS_DEVICE is not set/CONFIG_TLS_DEVICE=y/g' target/linux/generic/config-5.15
-        sed -i '/CONFIG_TLS_DEVICE/aCONFIG_CHELSIO_TLS_DEVICE=y' target/linux/generic/config-5.15
-    fi
 fi
 
 # Fix x86 - CONFIG_ALL_KMODS
