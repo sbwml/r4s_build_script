@@ -213,7 +213,7 @@ bash 00-prepare_base.sh
 bash 02-prepare_package.sh
 bash 03-convert_translation.sh
 bash 05-fix-source.sh
-[ "$platform" = "rk3568" ] || [ "$platform" = "rk3399" ]; then
+if [ "$platform" = "rk3568" ] || [ "$platform" = "rk3399" ]; then
     bash 01-prepare_base-mainline.sh
     bash 04-fix_kmod.sh
 fi
