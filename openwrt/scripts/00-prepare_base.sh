@@ -17,7 +17,7 @@ if [ "$version" = "rc" ]; then
 fi
 
 # Fix x86 - CONFIG_ALL_KMODS
-[ "$version" = "snapshots-23.05" ] && [ "$platform" = "x86_64" ] && sed -i 's/hwmon, +PACKAGE_kmod-thermal:kmod-thermal/hwmon/g' package/kernel/linux/modules/hwmon.mk
+[ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && [ "$platform" = "x86_64" ] && sed -i 's/hwmon, +PACKAGE_kmod-thermal:kmod-thermal/hwmon/g' package/kernel/linux/modules/hwmon.mk
 
 # default LAN IP
 sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
@@ -40,7 +40,7 @@ git clone https://github.com/sbwml/package_kernel_r8152 package/kernel/r8152
 git clone https://$gitea/sbwml/package_kernel_r8125 package/kernel/r8125
 
 # netifd - fix auto-negotiate by upstream
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "rc2" ] || [ "$version" = "snapshots-23.05" ]; then
     mkdir -p package/network/config/netifd/patches
     curl -s https://$mirror/openwrt/patch/netifd/100-system-linux-fix-autoneg-for-2.5G-5G-10G.patch > package/network/config/netifd/patches/100-system-linux-fix-autoneg-for-2.5G-5G-10G.patch
 fi
@@ -113,9 +113,9 @@ if [ "$USE_GLIBC" = "y" ]; then
     curl -s https://$mirror/openwrt/patch/fstools/glibc/0003-block-add-xfsck-support.patch > package/system/fstools/patches/0003-block-add-xfsck-support.patch
 else
     [ "$version" = "rc" ] && curl -s https://$mirror/openwrt/patch/fstools/ntfs3-utf8.patch > package/system/fstools/patches/ntfs3-utf8.patch
-    [ "$version" = "snapshots-23.05" ] && curl -s https://$mirror/openwrt/patch/fstools/fstools-set-ntfs3-utf8-new.patch > package/system/fstools/patches/ntfs3-utf8.patch
+    [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && curl -s https://$mirror/openwrt/patch/fstools/fstools-set-ntfs3-utf8-new.patch > package/system/fstools/patches/ntfs3-utf8.patch
 fi
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     if [ "$USE_GLIBC" = "y" ]; then
         curl -s https://$mirror/openwrt/patch/fstools/22-fstools-support-extroot-for-non-MTD-rootfs_data-new-version.patch > package/system/fstools/patches/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch
     else
@@ -125,7 +125,7 @@ fi
 
 # QEMU for aarch64
 pushd feeds/packages
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     curl -s https://$mirror/openwrt/patch/qemu/qemu-aarch64_master.patch > qemu-aarch64.patch
 fi
 git apply qemu-aarch64.patch && rm qemu-aarch64.patch
@@ -134,12 +134,12 @@ popd
 # Patch arm64 model name
 if [ "$version" = "rc" ]; then
     curl -s https://$mirror/openwrt/patch/kernel-5.10/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch > target/linux/generic/hack-5.10/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch
-elif [ "$version" = "snapshots-23.05" ]; then
+elif [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     curl -s https://$mirror/openwrt/patch/kernel-5.15/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch > target/linux/generic/hack-5.15/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch
 fi
 
 # Dnsmasq
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     # Dnsmasq Latest version
     #DNSMASQ_VERSION=2.89
     #DNSMASQ_HASH=02bd230346cf0b9d5909f5e151df168b2707103785eb616b56685855adebb609
@@ -149,7 +149,7 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
 fi
 
 # Patch FireWall - FullCone
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     # firewall4
     rm -rf package/network/config/firewall4
     cp -a ../master/openwrt/package/network/config/firewall4 package/network/config/firewall4
@@ -177,24 +177,24 @@ fi
 # Patch Kernel - FullCone
 if [ "$version" = "rc" ]; then
     curl -s https://$mirror/openwrt/patch/kernel-5.10/952-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch
-elif [ "$version" = "snapshots-23.05" ]; then
+elif [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     curl -s https://$mirror/openwrt/patch/kernel-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch
 fi
 
 # Patch FullCone Option 22
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     curl -s https://$mirror/openwrt/patch/firewall4/luci-app-firewall_add_fullcone.patch | patch -p1
 fi
 
 # FullCone module
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     git clone https://$gitea/sbwml/nft-fullcone package/new/nft-fullcone
 fi
 
 # TCP performance optimizations backport from linux/net-next
 if [ "$version" = "rc" ]; then
     curl -s https://$mirror/openwrt/patch/backport-5.10/780-v5.17-tcp-defer-skb-freeing-after-socket-lock-is-released.patch > target/linux/generic/backport-5.10/780-v5.17-tcp-defer-skb-freeing-after-socket-lock-is-released.patch
-elif [ "$version" = "snapshots-23.05" ]; then
+elif [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     curl -s https://$mirror/openwrt/patch/backport-5.15/680-01-v5.17-tcp-avoid-indirect-calls-to-sock_rfree.patch > target/linux/generic/backport-5.15/680-01-v5.17-tcp-avoid-indirect-calls-to-sock_rfree.patch
     curl -s https://$mirror/openwrt/patch/backport-5.15/680-02-v5.17-tcp-defer-skb-freeing-after-socket-lock-is-released.patch > target/linux/generic/backport-5.15/680-02-v5.17-tcp-defer-skb-freeing-after-socket-lock-is-released.patch
 fi
@@ -241,26 +241,26 @@ if [ "$version" = "rc" ]; then
     curl -s https://$mirror/openwrt/patch/openssl/14578.patch > package/libs/openssl/patches/14578.patch
     curl -s https://$mirror/openwrt/patch/openssl/16575.patch > package/libs/openssl/patches/16575.patch
     curl -s https://$mirror/openwrt/patch/openssl/999-Ofast.patch > package/libs/openssl/patches/999-Ofast.patch
-elif [ "$version" = "snapshots-23.05" ]; then
+elif [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     curl -s https://$mirror/openwrt/patch/openssl/999-3.0-Ofast.patch > package/libs/openssl/patches/999-Ofast.patch
 fi
 
 # enable cryptodev
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     curl -s https://$mirror/openwrt/patch/openssl/22-openssl_cryptodev.patch | patch -p1
 fi
 
 # Docker
 rm -rf feeds/luci/applications/luci-app-dockerman
 git clone https://$gitea/sbwml/luci-app-dockerman -b openwrt-23.05 feeds/luci/applications/luci-app-dockerman
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     rm -rf feeds/packages/utils/docker feeds/packages/utils/dockerd feeds/packages/utils/containerd
     cp -a ../master/packages/utils/docker feeds/packages/utils/docker
     cp -a ../master/packages/utils/dockerd feeds/packages/utils/dockerd
     cp -a ../master/packages/utils/containerd feeds/packages/utils/containerd
 fi
 sed -i '/sysctl.d/d' feeds/packages/utils/dockerd/Makefile
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     pushd feeds/packages
         curl -s https://$mirror/openwrt/patch/docker/dockerd-fix-bridge-network.patch | patch -p1
     popd
@@ -270,7 +270,7 @@ pushd feeds/packages
 popd
 
 # haproxy - fix build for 23.05
-if [ "$version" = "snapshots-23.05" ]; then
+if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     rm -rf feeds/packages/net/haproxy
     git clone https://github.com/sbwml/feeds_packages_net_haproxy feeds/packages/net/haproxy
 fi
@@ -283,7 +283,7 @@ sed -i 's/services/system/g' feeds/luci/applications/luci-app-ttyd/root/usr/shar
 sed -i '3 a\\t\t"order": 50,' feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/luci-app-ttyd.json
 
 # UPnP - fix 22.03
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     rm -rf feeds/packages/net/miniupnpd
     git clone https://$gitea/sbwml/miniupnpd feeds/packages/net/miniupnpd
     rm -rf feeds/luci/applications/luci-app-upnp
@@ -318,7 +318,7 @@ curl -s https://$mirror/openwrt/nginx/luci.locations > feeds/packages/net/nginx/
 curl -s https://$mirror/openwrt/nginx/uci.conf.template > feeds/packages/net/nginx-util/files/uci.conf.template
 
 # uwsgi - bump version
-if [ "$version" = "snapshots-23.05" ]; then
+if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     rm -rf feeds/packages/net/uwsgi
     cp -a ../master/packages/net/uwsgi feeds/packages/net/uwsgi
 fi
@@ -352,7 +352,7 @@ curl -s https://$mirror/openwrt/patch/luci/luci-refresh-interval.patch | patch -
 sed -i "s/openwrt.org/www.qq.com/g" feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/diagnostics.js
 
 # samba4
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
+if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     # bump version
     SAMBA4_VERSION=4.18.2
     SAMBA4_HASH=5bf87e179616cd12a52d85fb8b26eec709f13709a2b67fe42b1fb0213f7e8106
@@ -385,7 +385,7 @@ curl -so files/root/.bashrc https://$mirror/openwrt/files/root/.bashrc
 # rootfs files
 mkdir -p files/etc/sysctl.d
 curl -so files/etc/sysctl.d/15-vm-swappiness.conf https://$mirror/openwrt/files/etc/sysctl.d/15-vm-swappiness.conf
-if [ "$version" = "snapshots-23.05" ]; then
+if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     # fix E1187: Failed to source defaults.vim
     touch files/root/.vimrc
 fi
@@ -414,4 +414,4 @@ sed -i 's/3.openwrt.pool.ntp.org/time.apple.com/g' package/base-files/files/bin/
 rm -rf feeds/packages/kernel/antfs feeds/packages/utils/antfs-mount
 
 # uqmi - fix gcc11
-[ "$version" = "snapshots-23.05" ] && sed -i '/dangling-pointer/d' package/network/utils/uqmi/Makefile
+[ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && sed -i '/dangling-pointer/d' package/network/utils/uqmi/Makefile

@@ -168,7 +168,7 @@ pushd feeds/packages
 popd
 
 # ubnt-ledbar - fix linux-6.1
-if [ "$version" = "snapshots-23.05" ]; then
+if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     rm -rf package/kernel/ubnt-ledbar
     cp -a ../master/openwrt/package/kernel/ubnt-ledbar package/kernel/ubnt-ledbar
 fi

@@ -11,14 +11,12 @@ git clone https://github.com/sbwml/default-settings package/new/default-settings
 sed -i '/boot()/,+2d' feeds/packages/net/ddns-scripts/files/etc/init.d/ddns
 
 # FRP
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
-    rm -rf feeds/packages/net/frp
-    git clone https://github.com/sbwml/feeds_packages_net_frp feeds/packages/net/frp
-fi
+rm -rf feeds/packages/net/frp
+git clone https://github.com/sbwml/feeds_packages_net_frp feeds/packages/net/frp
 
 # autoCore
 [ "$version" = "rc" ] && git clone https://github.com/sbwml/autocore-arm -b openwrt-22.03 package/new/autocore
-[ "$version" = "snapshots-23.05" ] && git clone https://github.com/sbwml/autocore-arm -b openwrt-23.05 package/new/autocore
+[ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && git clone https://github.com/sbwml/autocore-arm -b openwrt-23.05 package/new/autocore
 
 # Aria2 & ariaNG
 rm -rf feeds/packages/net/ariang
@@ -43,9 +41,7 @@ sed -i 's/syslog/none/g' feeds/packages/admin/netdata/files/netdata.conf
 git clone https://github.com/sbwml/luci-app-qbittorrent package/qbittorrent
 
 # Zerotier
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
-    git clone https://$gitea/sbwml/luci-app-zerotier package/new/luci-app-zerotier
-fi
+git clone https://$gitea/sbwml/luci-app-zerotier package/new/luci-app-zerotier
 
 # 解除网易云音乐播放限制
 git clone https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic package/new/luci-app-unblockneteasemusic
@@ -58,9 +54,7 @@ git clone https://github.com/sbwml/luci-app-xunlei package/xunlei
 git clone --depth 1 https://github.com/sbwml/luci-theme-argon.git package/new/luci-theme-argon
 
 # Mosdns
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ]; then
-    rm -rf feeds/packages/net/v2ray-geodata
-fi
+rm -rf feeds/packages/net/v2ray-geodata
 git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
 
 # OpenAppFilter
@@ -76,7 +70,7 @@ sed -i 's/services/network/g' feeds/luci/applications/luci-app-nlbwmon/htdocs/lu
 #### 磁盘分区 / 清理内存 / 打印机 / 定时重启 / 数据监控 / KMS / 访问控制（互联网时间）/ ADG luci / IP 限速 / 文件管理器 / CPU / 迅雷快鸟
 rm -rf feeds/packages/utils/coremark
 git clone https://github.com/sbwml/openwrt_pkgs package/openwrt_pkgs --depth=1
-[ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] && rm -rf package/openwrt_pkgs/ddns-scripts-dnspod
+rm -rf package/openwrt_pkgs/ddns-scripts-dnspod
 
 # 翻译
 sed -i 's,发送,Transmission,g' feeds/luci/applications/luci-app-transmission/po/zh_Hans/transmission.po
