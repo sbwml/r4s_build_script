@@ -50,10 +50,30 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) rc nanopi-r5s
 KERNEL_TESTING=1 bash <(curl -sS https://init2.cooluc.com/build.sh) rc nanopi-r5s
 ```
 
+## 构建 OpenWrt 23.05 候选版（RC）
+
+### nanopi-r4s
+```shell
+# linux-6.1
+bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 nanopi-r4s
+
+# linux-6.3 - testing
+KERNEL_TESTING=1 bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 nanopi-r4s
+```
+
+### nanopi-r5s/r5c
+```shell
+# linux-6.1
+bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 nanopi-r5s
+
+# linux-6.3 - testing
+KERNEL_TESTING=1 bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 nanopi-r5s
+```
+
 ### x86_64
 ```shell
-# linux-5.10 (follow upstream)
-bash <(curl -sS https://init2.cooluc.com/build.sh) rc x86_64
+# linux-5.15 (follow upstream)
+bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 x86_64
 ```
 
 ## 构建 OpenWrt 23.05 开发版
