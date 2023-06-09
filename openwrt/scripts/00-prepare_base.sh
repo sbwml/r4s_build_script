@@ -9,15 +9,12 @@ git clone https://github.com/sbwml/arm-trusted-firmware-rockchip package/boot/ar
 if [ "$version" = "rc" ]; then
     curl -s https://$mirror/openwrt/patch/kernel-5.10/config-5.10 > target/linux/generic/config-5.10
     curl -s https://$mirror/openwrt/patch/kernel_modules/5.10-video.mk > package/kernel/linux/modules/video.mk
-    if [ "$platform" = "x86_64" ]; then
-        echo "CONFIG_CRYPTO_AES_NI_INTEL=y" >> target/linux/x86/config-5.10
-        echo '# CONFIG_DVB_USB is not set' >> target/linux/x86/config-5.10
-        sed -i 's/hwmon, +PACKAGE_kmod-thermal:kmod-thermal/hwmon/g' package/kernel/linux/modules/hwmon.mk
-    fi
 fi
 
 # Fix x86 - CONFIG_ALL_KMODS
-[ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && [ "$platform" = "x86_64" ] && sed -i 's/hwmon, +PACKAGE_kmod-thermal:kmod-thermal/hwmon/g' package/kernel/linux/modules/hwmon.mk
+if [ "$platform" = "x86_64" ]; then
+    sed -i 's/hwmon, +PACKAGE_kmod-thermal:kmod-thermal/hwmon/g' package/kernel/linux/modules/hwmon.mk
+fi
 
 # default LAN IP
 sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
@@ -252,12 +249,17 @@ fi
 
 # Docker
 rm -rf feeds/luci/applications/luci-app-dockerman
-git clone https://$gitea/sbwml/luci-app-dockerman -b openwrt-23.05 feeds/luci/applications/luci-app-dockerman
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
-    rm -rf feeds/packages/utils/docker feeds/packages/utils/dockerd feeds/packages/utils/containerd
+if [ "$version" = "rc" ]; then
+    git clone https://$gitea/sbwml/luci-app-dockerman -b openwrt-22.03 feeds/luci/applications/luci-app-dockerman
+else
+    git clone https://$gitea/sbwml/luci-app-dockerman -b openwrt-23.05 feeds/luci/applications/luci-app-dockerman
+fi
+if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
+    rm -rf feeds/packages/utils/docker feeds/packages/utils/dockerd feeds/packages/utils/containerd feeds/packages/utils/runc
     cp -a ../master/packages/utils/docker feeds/packages/utils/docker
     cp -a ../master/packages/utils/dockerd feeds/packages/utils/dockerd
     cp -a ../master/packages/utils/containerd feeds/packages/utils/containerd
+    cp -a ../master/packages/utils/runc feeds/packages/utils/runc
 fi
 sed -i '/sysctl.d/d' feeds/packages/utils/dockerd/Makefile
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then

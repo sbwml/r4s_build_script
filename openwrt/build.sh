@@ -327,7 +327,8 @@ if [ "$platform" = "x86_64" ]; then
         fi
         exit 0
     else
-        echo -e "${RED_COLOR} Build error... ${RES}"
+        [ "$(whoami)" = "runner" ] && make V=s
+        echo -e "\n${RED_COLOR} Build error... ${RES}"
         echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
         echo
         exit 1
@@ -366,8 +367,8 @@ else
         fi
         exit 0
     else
-        echo
-        echo -e "${RED_COLOR} Build error... ${RES}"
+        [ "$(whoami)" = "runner" ] && make V=s
+        echo -e "\n${RED_COLOR} Build error... ${RES}"
         echo -e " Build time: ${RED_COLOR}$(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s${RES}"
         echo
         exit 1
