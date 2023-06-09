@@ -37,6 +37,9 @@ rm -rf feeds/packages/admin/netdata
 cp -a ../master/packages/admin/netdata feeds/packages/admin/netdata
 sed -i 's/syslog/none/g' feeds/packages/admin/netdata/files/netdata.conf
 
+# OpenAI
+git clone https://github.com/sbwml/luci-app-openai package/openai
+
 # qBittorrent
 git clone https://github.com/sbwml/luci-app-qbittorrent package/qbittorrent
 
