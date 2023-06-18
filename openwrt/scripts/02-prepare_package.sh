@@ -29,6 +29,17 @@ git clone https://github.com/sbwml/feeds_packages_net_aria2 -b 22.03 feeds/packa
 rm -rf feeds/packages/net/{xray-core,v2ray-core}
 git clone https://github.com/sbwml/openwrt_helloworld package/helloworld -b v5
 
+# fw4 科学工具
+if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
+    # homeproxy
+    git clone https://github.com/immortalwrt/homeproxy package/homeproxy/homeproxy
+    sed -i "s/ImmortalWrt/OpenWrt/g" package/homeproxy/homeproxy/po/zh_Hans/homeproxy.po
+    sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" package/homeproxy/homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
+    # sing-box
+    cp -a ../master/immortalwrt_packages/net/sing-box package/homeproxy/sing-box
+    sed -i 's#../../lang/golang/golang-package.mk#$(TOPDIR)/feeds/packages/lang/golang/golang-package.mk#g' package/homeproxy/sing-box/Makefile
+fi
+
 # alist
 git clone https://github.com/sbwml/openwrt-alist package/alist
 
@@ -72,7 +83,11 @@ sed -i 's/services/network/g' feeds/luci/applications/luci-app-nlbwmon/htdocs/lu
 
 #### 磁盘分区 / 清理内存 / 打印机 / 定时重启 / 数据监控 / KMS / 访问控制（互联网时间）/ ADG luci / IP 限速 / 文件管理器 / CPU / 迅雷快鸟
 rm -rf feeds/packages/utils/coremark
-git clone https://github.com/sbwml/openwrt_pkgs package/openwrt_pkgs --depth=1
+if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
+    git clone https://github.com/sbwml/openwrt_pkgs package/openwrt_pkgs --depth=1
+else
+    git clone https://github.com/sbwml/openwrt_pkgs package/openwrt_pkgs -b 22.03 --depth=1
+fi
 rm -rf package/openwrt_pkgs/ddns-scripts-dnspod
 
 # 翻译

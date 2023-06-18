@@ -30,26 +30,6 @@ export BUILD_FAST=y BUILD_SDK=y
 
 ---------------
 
-## 构建 OpenWrt 22.03 正式版
-
-### nanopi-r4s
-```shell
-# linux-6.1
-bash <(curl -sS https://init2.cooluc.com/build.sh) rc nanopi-r4s
-
-# linux-6.3 - testing
-KERNEL_TESTING=1 bash <(curl -sS https://init2.cooluc.com/build.sh) rc nanopi-r4s
-```
-
-### nanopi-r5s/r5c
-```shell
-# linux-6.1
-bash <(curl -sS https://init2.cooluc.com/build.sh) rc nanopi-r5s
-
-# linux-6.3 - testing
-KERNEL_TESTING=1 bash <(curl -sS https://init2.cooluc.com/build.sh) rc nanopi-r5s
-```
-
 ## 构建 OpenWrt 23.05 候选版（RC）
 
 ### nanopi-r4s
@@ -127,28 +107,22 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) dev x86_64
 
 ### 三、在服务器上执行基于你自己仓库的构建脚本，即可编译所需固件
 
-#### nanopi-r4s openwrt-22.03
+#### nanopi-r4s openwrt-23.05
 ```shell
 # linux-6.1
-bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc nanopi-r4s
-
-# linux-6.3 - testing
-KERNEL_TESTING=1 bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc nanopi-r4s
+bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc2 nanopi-r4s
 ```
 
-#### nanopi-r5s/r5c openwrt-22.03
+#### nanopi-r5s/r5c openwrt-23.05
 ```shell
 # linux-6.1
-bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc nanopi-r5s
-
-# linux-6.3 - testing
-KERNEL_TESTING=1 bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc nanopi-r5s
+bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc2 nanopi-r5s
 ```
 
-#### x86_64 openwrt-22.03
+#### x86_64 openwrt-23.05
 ```shell
 # linux-5.10 (follow upstream)
-bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc x86_64
+bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc2 x86_64
 ```
 
 -----------------
@@ -190,8 +164,8 @@ jobs:
           - nanopi-r5s
           - x86_64
         tag:
-          - type: rc
-            version: openwrt-22.03
+          - type: rc2
+            version: openwrt-23.05
 
     steps:
     - name: Checkout
@@ -208,14 +182,13 @@ jobs:
 
     - name: Free disk space
       run: |
-        sudo sed -i 's/azure.archive.ubuntu.com/mirror.enzu.com/g' /etc/apt/sources.list
         sudo rm -rf /etc/apt/sources.list.d
         sudo swapoff -a
         sudo rm -f /swapfile
         sudo docker image prune -a -f
         sudo systemctl stop docker
         sudo snap set system refresh.retain=2
-        sudo apt-get -y purge dotnet* firefox clang* ghc* google* llvm* mono* mongo* mysql* php*
+        sudo apt-get -y purge firefox clang* ghc* google* llvm* mono* mongo* mysql* php*
         sudo apt-get -y autoremove --purge
         sudo apt-get clean
         sudo rm -rf /etc/mysql /etc/php /usr/lib/jvm /usr/libexec/docker /usr/local /usr/src/* /var/lib/docker /var/lib/gems /var/lib/mysql /var/lib/snapd /etc/skel /opt/{microsoft,az,hostedtoolcache,cni,mssql-tools,pipx} /usr/share/{az*,dotnet,swift,miniconda,gradle*,java,kotlinc,ri,sbt} /root/{.sbt,.local,.npm}
@@ -223,7 +196,7 @@ jobs:
         rm -rf ~/{.cargo,.dotnet,.rustup}
         df -h
 
-    - name: Init build dependencies
+    - name: Build System Setup
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |

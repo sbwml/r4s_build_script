@@ -134,11 +134,13 @@ rm -rf openwrt master && mkdir master
 # openwrt - releases
 git clone --depth=1 $github_mirror/openwrt/openwrt -b $branch
 
-# master
+# openwrt master
 git clone $github_mirror/openwrt/openwrt master/openwrt --depth=1
 git clone $github_mirror/openwrt/packages master/packages --depth=1
 git clone $github_mirror/openwrt/luci master/luci --depth=1
 git clone $github_mirror/openwrt/routing master/routing --depth=1
+# immortalwrt master
+git clone $github_mirror/immortalwrt/packages master/immortalwrt_packages --depth=1
 
 if [ -d openwrt ]; then
     cd openwrt
