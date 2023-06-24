@@ -97,15 +97,6 @@ else
     export USE_GLIBC=n
 fi
 
-# nanopi - openwrt 22.03 kernel version
-if [ "$KERNEL_TESTING" = 1 ]; then
-    export KERNEL_TESTING=1
-    export KERNEL_VER=6.3
-else
-    export KERNEL_TESTING=""
-    export KERNEL_VER=6.1
-fi
-
 # print version
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
 if [ "$platform" = "x86_64" ]; then
@@ -113,7 +104,7 @@ if [ "$platform" = "x86_64" ]; then
 elif [ "$platform" = "rk3568" ]; then
     echo -e "${GREEN_COLOR}Model: nanopi-r5s/r5c${RES}"
     [ "$1" = "rc" ] || [ "$1" = "rc2" ] && model="nanopi-r5s"
-    curl -s https://$mirror/tags/kernel-$KERNEL_VER > kernel.txt
+    curl -s https://$mirror/tags/kernel-6.1 > kernel.txt
     kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
     kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
     echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
@@ -121,7 +112,7 @@ elif [ "$platform" = "rk3568" ]; then
 else
     echo -e "${GREEN_COLOR}Model: nanopi-r4s${RES}"
     [ "$1" = "rc" ] || [ "$1" = "rc2" ] && model="nanopi-r4s"
-    curl -s https://$mirror/tags/kernel-$KERNEL_VER > kernel.txt
+    curl -s https://$mirror/tags/kernel-6.1 > kernel.txt
     kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
     kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
     echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
@@ -247,21 +238,6 @@ fi
 
 # sdk
 [ "$BUILD_SDK" = "y" ] && curl -s https://$mirror/openwrt/config-sdk >> .config
-
-# testing kernel
-[ "$KERNEL_TESTING" = 1 ] && echo CONFIG_TESTING_KERNEL=y >> .config
-
-# linux-6.3
-# waiting for repair !!!
-if [ "$KERNEL_VER" = "6.3" ]; then
-    cat >> .config <<"EOF"
-# CONFIG_PACKAGE_kmod-dahdi is not set
-# CONFIG_PACKAGE_kmod-dahdi-dummy is not set
-# CONFIG_PACKAGE_kmod-dahdi-echocan-oslec is not set
-# CONFIG_PACKAGE_kmod-dahdi-hfcs is not set
-# CONFIG_PACKAGE_kmod-pf-ring is not set
-EOF
-fi
 
 # openwrt-23.05 gcc11
 [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && curl -s https://$mirror/openwrt/config-gcc11 >> .config

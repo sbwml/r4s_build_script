@@ -23,11 +23,6 @@ pushd feeds/packages
   # xtables-addons
   [ "$version" = "rc" ] && curl -s https://github.com/openwrt/packages/commit/c4b55eea7f242e4c6dd06efca66280b856841299.patch | patch -p1
   [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && rm -rf net/xtables-addons && git clone https://github.com/sbwml/feeds_packages_net_xtables-addons net/xtables-addons
-  [ "$KERNEL_TESTING" = 1 ] && curl -s https://$mirror/openwrt/patch/openwrt-6.1/feeds/xtables-addons/999-fix-linux-6.2.patch > net/xtables-addons/patches/999-fix-linux-6.2.patch
-  # jool - fix linux-6.2
-  [ "$KERNEL_TESTING" = 1 ] && curl -s https://$mirror/openwrt/patch/openwrt-6.1/feeds/jool/002-fix-linux-6.2.patch > net/jool/patches/002-fix-linux-6.2.patch
-  # ovpn-dco - fix linux-6.2
-  [ "$KERNEL_TESTING" = 1 ] && curl -s https://$mirror/openwrt/patch/openwrt-6.1/feeds/ovpn-dco/Makefile > kernel/ovpn-dco/Makefile
 popd
 
 # telephony
@@ -42,9 +37,3 @@ popd
 # routing - batman-adv
 rm -rf feeds/routing/batman-adv
 cp -a ../master/routing/batman-adv feeds/routing/batman-adv
-
-# mdio-netlink - fix 6.3
-if [ "$KERNEL_TESTING" = 1 ]; then
-  mkdir feeds/packages/kernel/mdio-netlink/patches
-  curl -s https://$mirror/openwrt/patch/openwrt-6.1/fix-linux-6.3/mdio-netlink/001-fix-linux-6.3.patch > feeds/packages/kernel/mdio-netlink/patches/001-fix-linux-6.3.patch
-fi

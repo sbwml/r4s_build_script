@@ -25,6 +25,11 @@ sed -i 's/+uhttpd-mod-ubus //' feeds/luci/collections/luci/Makefile
 sed -i 's/+uhttpd /+luci-nginx /g' feeds/luci/collections/luci-light/Makefile
 sed -i "s/+luci /+luci-nginx /g" feeds/luci/collections/luci-ssl-openssl/Makefile
 sed -i "s/+luci /+luci-nginx /g" feeds/luci/collections/luci-ssl/Makefile
+if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
+    sed -i 's/+uhttpd +uhttpd-mod-ubus /+luci-nginx /g' feeds/packages/net/wg-installer/Makefile
+    sed -i '/uhttpd-mod-ubus/d' feeds/luci/collections/luci-light/Makefile
+    sed -i 's/+luci-nginx \\$/+luci-nginx/' feeds/luci/collections/luci-light/Makefile
+fi
 
 # NIC driver - x86
 if [ "$platform" = "x86_64" ]; then
@@ -232,19 +237,21 @@ EOF
 fi
 
 # OpenSSL
-sed -i "s/O3/Ofast/g" package/libs/openssl/Makefile
-if [ "$version" = "rc" ]; then
-    curl -s https://$mirror/openwrt/patch/openssl/11895.patch > package/libs/openssl/patches/11895.patch
-    curl -s https://$mirror/openwrt/patch/openssl/14578.patch > package/libs/openssl/patches/14578.patch
-    curl -s https://$mirror/openwrt/patch/openssl/16575.patch > package/libs/openssl/patches/16575.patch
-    curl -s https://$mirror/openwrt/patch/openssl/999-Ofast.patch > package/libs/openssl/patches/999-Ofast.patch
-elif [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
-    curl -s https://$mirror/openwrt/patch/openssl/999-3.0-Ofast.patch > package/libs/openssl/patches/999-Ofast.patch
-fi
+if [ ! "$platform" = "x86_64" ]; then
+    sed -i "s/O3/Ofast/g" package/libs/openssl/Makefile
+    if [ "$version" = "rc" ]; then
+        curl -s https://$mirror/openwrt/patch/openssl/11895.patch > package/libs/openssl/patches/11895.patch
+        curl -s https://$mirror/openwrt/patch/openssl/14578.patch > package/libs/openssl/patches/14578.patch
+        curl -s https://$mirror/openwrt/patch/openssl/16575.patch > package/libs/openssl/patches/16575.patch
+        curl -s https://$mirror/openwrt/patch/openssl/999-Ofast.patch > package/libs/openssl/patches/999-Ofast.patch
+    elif [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
+        curl -s https://$mirror/openwrt/patch/openssl/999-3.0-Ofast.patch > package/libs/openssl/patches/999-Ofast.patch
+    fi
 
-# enable cryptodev
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
-    curl -s https://$mirror/openwrt/patch/openssl/22-openssl_cryptodev.patch | patch -p1
+    # enable cryptodev
+    if [ "$version" = "rc" ]; then
+        curl -s https://$mirror/openwrt/patch/openssl/22-openssl_cryptodev.patch | patch -p1
+    fi
 fi
 
 # Docker
