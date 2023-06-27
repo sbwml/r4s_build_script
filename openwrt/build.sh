@@ -86,8 +86,8 @@ fi
 
 # platform
 export platform=$2
-[ "$platform" = "nanopi-r4s" ] || [ "$platform" = "" ] && export platform="rk3399" toolchain_arch="aarch64"
-[ "$platform" = "nanopi-r5s" ] && export platform="rk3568" toolchain_arch="aarch64"
+[ "$platform" = "nanopi-r4s" ] && export platform="rk3399" toolchain_arch="nanopi-r4s"
+[ "$platform" = "nanopi-r5s" ] && export platform="rk3568" toolchain_arch="nanopi-r5s"
 [ "$platform" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
 
 # use glibc - openwrt-22.03
@@ -245,11 +245,14 @@ fi
 # clean directory - github actions
 [ "$(whoami)" = "runner" ] && echo 'CONFIG_AUTOREMOVE=y' >> .config
 
+# uhttpd
+[ "$ENABLE_UHTTPD" = "y" ] && sed -i '/nginx/d' .config && echo 'CONFIG_PACKAGE_ariang=y' >> .config
+
 # Toolchain Cache
 if [ "$BUILD_FAST" = "y" ] && [ "$(whoami)" = "runner" ]; then
     [ "$USE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
     echo -e "\n${GREEN_COLOR}Download Toolchain ...${RES}"
-    curl -L https://us.cooluc.com/openwrt-toolchain/$toolchain_version/$toolchain_arch-$LIBC/toolchain.tar.gz -o toolchain.tar.gz $CURL_BAR
+    curl -L https://us.cooluc.com/openwrt-toolchain/$toolchain_version/$toolchain_arch/$LIBC/toolchain.tar.gz -o toolchain.tar.gz $CURL_BAR
     echo -e "\n${GREEN_COLOR}Process Toolchain ...${RES}"
     tar -zxf toolchain.tar.gz && rm -f toolchain.tar.gz
     mkdir bin
@@ -269,9 +272,10 @@ fi
 if [ "$BUILD_TOOLCHAIN" = "y" ]; then
     echo -e "\r\n${GREEN_COLOR}Building Toolchain ...${RES}\r\n"
     make -j$cores toolchain/compile
+    [ $? -ne 0 ] && exit 1
     mkdir -p toolchain-cache
     echo $toolchain_arch > toolchain-cache/arch.txt
-    [ $? -eq 0 ] && tar -zcf toolchain-cache/toolchain.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
+    tar -zcf toolchain-cache/toolchain.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
     exit 0
 else
     echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"

@@ -197,7 +197,7 @@ $(eval $(call KernelPackage,nf-flow))
 define KernelPackage/nf-socket
   SUBMENU:=$(NF_MENU)
   TITLE:=Netfilter socket lookup support
-  KCONFIG:= $(KCOFNIG_NF_SOCKET)
+  KCONFIG:= $(KCONFIG_NF_SOCKET)
   FILES:=$(foreach mod,$(NF_SOCKET-m),$(LINUX_DIR)/net/$(mod).ko)
   AUTOLOAD:=$(call AutoProbe,$(notdir $(NF_SOCKET-m)))
 endef
@@ -208,7 +208,7 @@ $(eval $(call KernelPackage,nf-socket))
 define KernelPackage/nf-tproxy
   SUBMENU:=$(NF_MENU)
   TITLE:=Netfilter tproxy support
-  KCONFIG:= $(KCOFNIG_NF_TPROXY)
+  KCONFIG:= $(KCONFIG_NF_TPROXY)
   FILES:=$(foreach mod,$(NF_TPROXY-m),$(LINUX_DIR)/net/$(mod).ko)
   AUTOLOAD:=$(call AutoProbe,$(notdir $(NF_TPROXY-m)))
 endef
@@ -512,6 +512,7 @@ define KernelPackage/ipt-nat/description
 endef
 
 $(eval $(call KernelPackage,ipt-nat))
+
 
 define KernelPackage/ipt-raw
   TITLE:=Netfilter IPv4 raw table support
@@ -1148,7 +1149,7 @@ $(eval $(call KernelPackage,nft-bridge))
 
 define KernelPackage/nft-dup-inet
   SUBMENU:=$(NF_MENU)
-  TITLE:=Netfilter nf_tables dup in ip/ip6/inet familly support
+  TITLE:=Netfilter nf_tables dup in ip/ip6/inet family support
   DEPENDS:=+kmod-nft-core +kmod-nf-conntrack +IPV6:kmod-nf-conntrack6
   KCONFIG:= \
 	CONFIG_NF_DUP_IPV4 \

@@ -599,9 +599,7 @@ define KernelPackage/video-uvc
   TITLE:=USB Video Class (UVC) support
   DEPENDS:=@USB_SUPPORT +kmod-usb-core +kmod-video-videobuf2 +kmod-input-core
   KCONFIG:= CONFIG_USB_VIDEO_CLASS
-  FILES:= \
-	$(LINUX_DIR)/drivers/media/$(V4L2_USB_DIR)/uvc/uvcvideo.ko \
-	$(LINUX_DIR)/drivers/media/common/uvc.ko@ge6.3
+  FILES:=$(LINUX_DIR)/drivers/media/$(V4L2_USB_DIR)/uvc/uvcvideo.ko
   AUTOLOAD:=$(call AutoProbe,uvcvideo)
   $(call AddDepends/camera)
 endef

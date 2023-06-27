@@ -140,7 +140,11 @@ jobs:
   build:
     if: github.event.repository.owner.id == github.event.sender.id
     name: Build ${{ matrix.model }}-${{ matrix.tag.version }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+        working-directory: /home/runner
     strategy:
       fail-fast: false
       matrix:

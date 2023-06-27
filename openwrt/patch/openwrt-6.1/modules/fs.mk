@@ -124,8 +124,7 @@ define KernelPackage/fs-cifs
     +kmod-crypto-des \
     +kmod-asn1-decoder \
     +kmod-oid-registry \
-    +kmod-dnsresolver \
-    +(LINUX_6_3):kmod-fs-fscache
+    +kmod-dnsresolver
 endef
 
 define KernelPackage/fs-cifs/description

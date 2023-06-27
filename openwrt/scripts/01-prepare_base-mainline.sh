@@ -85,21 +85,37 @@ pushd target/linux/generic/backport-6.1
 popd
 
 # linux-firmware
-rm -rf package/firmware/linux-firmware
-git clone https://nanopi:nanopi@$gitea/sbwml/package_firmware_linux-firmware package/firmware/linux-firmware
+if [ "$version" = "rc" ]; then
+    rm -rf package/firmware/linux-firmware
+    git clone https://nanopi:nanopi@$gitea/sbwml/package_firmware_linux-firmware package/firmware/linux-firmware
+else
+    sed -i '$a\Package/rtw89-firmware = $(call Package/firmware-default,RealTek RTW89 firmware)\
+define Package/rtw89-firmware/install\
+\t$(INSTALL_DIR) $(1)/lib/firmware/rtw89\
+\t$(CP) \\\
+\t\t$(PKG_BUILD_DIR)/rtw89/* \\\
+\t\t$(1)/lib/firmware/rtw89\
+endef\
+$(eval $(call BuildPackage,rtw89-firmware))' package/firmware/linux-firmware/realtek.mk
+fi
 
 # ath10k-ct - fix mac80211 6.1-rc
-rm -rf package/kernel/ath10k-ct
-cp -a ../master/openwrt/package/kernel/ath10k-ct package/kernel/ath10k-ct
+if [ "$version" = "rc" ]; then
+    rm -rf package/kernel/ath10k-ct
+    cp -a ../master/openwrt/package/kernel/ath10k-ct package/kernel/ath10k-ct
+fi
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/ath10k-ct.patch | patch -p1
 
-# mt76 - fix build
-rm -rf package/kernel/mt76/patches
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/mt76/Makefile > package/kernel/mt76/Makefile
+# mt76 - add mt7922 firmware
+sed -i '/define KernelPackage\/mt7921-common/idefine KernelPackage\/mt7922-firmware\n  $(KernelPackage\/mt76-default)\n  DEPENDS+=+kmod-mt7921-common\n  TITLE:=MediaTek MT7922 firmware\nendef\n' package/kernel/mt76/Makefile
+sed -i '/define Package\/mt76-test\/install/idefine KernelPackage\/mt7922-firmware\/install\n\t$(INSTALL_DIR) $(1)\/lib\/firmware\/mediatek\n\tcp \\\n\t\t$(PKG_BUILD_DIR)\/firmware\/WIFI_MT7922_patch_mcu_1_1_hdr.bin \\\n\t\t$(PKG_BUILD_DIR)\/firmware\/WIFI_RAM_CODE_MT7922_1.bin \\\n\t\t$(1)\/lib\/firmware\/mediatek\nendef\n' package/kernel/mt76/Makefile
+sed -i '/$(eval \$(call KernelPackage,mt7921-firmware))/a $(eval \$(call KernelPackage,mt7922-firmware))' package/kernel/mt76/Makefile
 
-# iwinfo: add mt7922
-rm -rf package/network/utils/iwinfo
-cp -a ../master/openwrt/package/network/utils/iwinfo package/network/utils/iwinfo
+# iwinfo: add mt7922 device id
+if [ "$version" = "rc" ]; then
+    rm -rf package/network/utils/iwinfo
+    cp -a ../master/openwrt/package/network/utils/iwinfo package/network/utils/iwinfo
+fi
 mkdir -p package/network/utils/iwinfo/patches
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/iwinfo/0001-devices-add-MediaTek-MT7922-device-id.patch > package/network/utils/iwinfo/patches/0001-devices-add-MediaTek-MT7922-device-id.patch
 
@@ -107,8 +123,10 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.1/iwinfo/0001-devices-add-MediaT
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/iwinfo/0004-add-rtl8812au-devices.patch > package/network/utils/iwinfo/patches/0004-add-rtl8812au-devices.patch
 
 # iw
-rm -rf package/network/utils/iw
-cp -a ../master/openwrt/package/network/utils/iw package/network/utils/iw
+if [ "$version" = "rc" ]; then
+    rm -rf package/network/utils/iw
+    cp -a ../master/openwrt/package/network/utils/iw package/network/utils/iw
+fi
 
 # wireless-regdb
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/500-world-regd-5GHz.patch > package/firmware/wireless-regdb/patches/500-world-regd-5GHz.patch
@@ -139,18 +157,3 @@ if [ "$platform" = "rk3399" ] || [ "$platform" = "rk3568" ]; then
     curl -s https://$mirror/openwrt/patch/rtc/sysfixtime > package/base-files/files/etc/init.d/sysfixtime
     chmod 755 package/base-files/files/etc/init.d/sysfixtime
 fi
-
-# ksmbd luci
-rm -rf feeds/luci/applications/luci-app-ksmbd
-cp -a ../master/luci/applications/luci-app-ksmbd feeds/luci/applications/luci-app-ksmbd
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/ksmbd/version.patch | patch -p1
-sed -i 's/0666/0644/g;s/0777/0755/g' feeds/luci/applications/luci-app-ksmbd/htdocs/luci-static/resources/view/ksmbd.js
-
-# ksmbd tools
-rm -rf feeds/packages/net/ksmbd-tools
-cp -a ../master/packages/net/ksmbd-tools feeds/packages/net/ksmbd-tools
-sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/ksmbd-tools/files/ksmbd.config.example
-sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages/net/ksmbd-tools/files/ksmbd.conf.template
-
-# drop ksmbd - use kernel ksmdb
-rm -rf package/kernel/ksmbd

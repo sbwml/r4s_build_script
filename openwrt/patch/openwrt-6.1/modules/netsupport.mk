@@ -913,9 +913,7 @@ define KernelPackage/sched-mqprio
   TITLE:=Multi-queue priority scheduler (MQPRIO)
   DEPENDS:=+kmod-sched-core
   KCONFIG:=CONFIG_NET_SCH_MQPRIO
-  FILES:= \
-	$(LINUX_DIR)/net/sched/sch_mqprio.ko \
-	$(LINUX_DIR)/net/sched/sch_mqprio_lib.ko@ge6.3
+  FILES:=$(LINUX_DIR)/net/sched/sch_mqprio.ko
   AUTOLOAD:=$(call AutoProbe, sch_mqprio)
 endef
 
@@ -984,7 +982,7 @@ endef
 $(eval $(call KernelPackage,bpf-test))
 
 
-SCHED_MODULES_EXTRA = sch_codel sch_dsmark@lt6.3 sch_gred sch_multiq sch_sfq sch_teql sch_fq act_pedit act_simple act_csum em_cmp em_nbyte em_meta em_text
+SCHED_MODULES_EXTRA = sch_codel sch_dsmark sch_gred sch_multiq sch_sfq sch_teql sch_fq act_pedit act_simple act_csum em_cmp em_nbyte em_meta em_text
 SCHED_FILES_EXTRA = $(foreach mod,$(SCHED_MODULES_EXTRA),$(LINUX_DIR)/net/sched/$(mod).ko)
 
 define KernelPackage/sched
