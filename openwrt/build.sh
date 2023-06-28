@@ -240,7 +240,9 @@ fi
 [ "$BUILD_SDK" = "y" ] && curl -s https://$mirror/openwrt/config-sdk >> .config
 
 # openwrt-23.05 gcc11
-[ "$USE_GLIBC" != "y" ] && [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && curl -s https://$mirror/openwrt/config-gcc11 >> .config
+if [ ! "$USE_GLIBC" = "y" ]; then
+    [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && curl -s https://$mirror/openwrt/config-gcc11 >> .config
+fi
 
 # clean directory - github actions
 [ "$(whoami)" = "runner" ] && echo 'CONFIG_AUTOREMOVE=y' >> .config
@@ -252,7 +254,7 @@ fi
 if [ "$BUILD_FAST" = "y" ] && [ "$(whoami)" = "runner" ]; then
     [ "$USE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
     echo -e "\n${GREEN_COLOR}Download Toolchain ...${RES}"
-    curl -L https://us.cooluc.com/openwrt-toolchain/$toolchain_version/$toolchain_arch/$LIBC/toolchain.tar.gz -o toolchain.tar.gz $CURL_BAR
+    curl -L https://github.com/sbwml/toolchain-cache/releases/latest/download/toolchain_"$LIBC"_"$toolchain_arch".tar.gz -o toolchain.tar.gz $CURL_BAR
     echo -e "\n${GREEN_COLOR}Process Toolchain ...${RES}"
     tar -zxf toolchain.tar.gz && rm -f toolchain.tar.gz
     mkdir bin
@@ -274,8 +276,8 @@ if [ "$BUILD_TOOLCHAIN" = "y" ]; then
     make -j$cores toolchain/compile
     [ $? -ne 0 ] && exit 1
     mkdir -p toolchain-cache
-    echo $toolchain_arch > toolchain-cache/arch.txt
-    tar -zcf toolchain-cache/toolchain.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
+    [ "$USE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
+    tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch".tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
     exit 0
 else
     echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
