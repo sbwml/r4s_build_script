@@ -1,5 +1,5 @@
 diff --git a/package/libs/toolchain/Makefile b/package/libs/toolchain/Makefile
-index f9f8ac9..e851d09 100644
+index f9f8ac9..ce7337b 100644
 --- a/package/libs/toolchain/Makefile
 +++ b/package/libs/toolchain/Makefile
 @@ -450,6 +450,14 @@ define Package/ldconfig/config
@@ -25,7 +25,7 @@ index f9f8ac9..e851d09 100644
    endef
  
    define Package/ldconfig/install
-@@ -595,6 +602,30 @@ ifeq ($(CONFIG_EXTERNAL_TOOLCHAIN),)
+@@ -595,6 +602,29 @@ ifeq ($(CONFIG_EXTERNAL_TOOLCHAIN),)
  	$(CP) $(TOOLCHAIN_DIR)/sbin/ldconfig $(1)/sbin/
    endef
  
@@ -33,7 +33,6 @@ index f9f8ac9..e851d09 100644
 +	$(INSTALL_DIR) $(1)/lib/locale/
 +	$(CP) ./glibc-locale/locale-archive $(1)/lib/locale/
 +	$(INSTALL_DIR) $(1)/usr/bin/
-+	$(CP) $(TOOLCHAIN_DIR)/bin/catchsegv $(1)/usr/bin/
 +	$(CP) $(TOOLCHAIN_DIR)/bin/gencat $(1)/usr/bin/
 +	$(CP) $(TOOLCHAIN_DIR)/bin/getconf $(1)/usr/bin/
 +	$(CP) $(TOOLCHAIN_DIR)/bin/getent $(1)/usr/bin/
@@ -56,7 +55,7 @@ index f9f8ac9..e851d09 100644
  else
  
    define Package/libgcc/install
-@@ -735,3 +766,4 @@ $(eval $(call BuildPackage,libgfortran))
+@@ -735,3 +765,4 @@ $(eval $(call BuildPackage,libgfortran))
  $(eval $(call BuildPackage,libgomp))
  $(eval $(call BuildPackage,ldd))
  $(eval $(call BuildPackage,ldconfig))

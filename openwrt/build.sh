@@ -240,7 +240,7 @@ fi
 [ "$BUILD_SDK" = "y" ] && curl -s https://$mirror/openwrt/config-sdk >> .config
 
 # openwrt-23.05 gcc11
-[ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && curl -s https://$mirror/openwrt/config-gcc11 >> .config
+[ "$USE_GLIBC" != "y" ] && [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && curl -s https://$mirror/openwrt/config-gcc11 >> .config
 
 # clean directory - github actions
 [ "$(whoami)" = "runner" ] && echo 'CONFIG_AUTOREMOVE=y' >> .config

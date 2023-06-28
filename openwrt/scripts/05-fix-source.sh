@@ -18,3 +18,9 @@ sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages
 
 # drop ksmbd - use kernel ksmdb
 rm -rf package/kernel/ksmbd
+
+
+#### glibc #####
+if [ "$version" != "rc" ] && [ "$USE_GLIBC" = "y" ]; then
+    sed -i 's/-Wno-error=maybe-uninitialized/-Wno-error=maybe-uninitialized \\\n\t-Wno-error=dangling-pointer/g' package/network/utils/uqmi/Makefile
+fi
