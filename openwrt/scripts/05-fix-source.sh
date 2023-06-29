@@ -4,6 +4,12 @@
 # luci-app-firewall
 curl -s https://raw.githubusercontent.com/openwrt/luci/master/applications/luci-app-firewall/po/zh_Hans/firewall.po > feeds/luci/applications/luci-app-firewall/po/zh_Hans/firewall.po
 
+# drop antfs
+rm -rf feeds/packages/kernel/antfs feeds/packages/utils/antfs-mount
+
+# uqmi - fix gcc11
+[ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && sed -i '/dangling-pointer/d' package/network/utils/uqmi/Makefile
+
 # ksmbd luci
 rm -rf feeds/luci/applications/luci-app-ksmbd
 cp -a ../master/luci/applications/luci-app-ksmbd feeds/luci/applications/luci-app-ksmbd
@@ -19,8 +25,9 @@ sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages
 # drop ksmbd - use kernel ksmdb
 rm -rf package/kernel/ksmbd
 
-
 #### glibc #####
+
+# uqmi
 if [ "$version" != "rc" ] && [ "$USE_GLIBC" = "y" ]; then
     sed -i 's/-Wno-error=maybe-uninitialized/-Wno-error=maybe-uninitialized \\\n\t-Wno-error=dangling-pointer/g' package/network/utils/uqmi/Makefile
 fi

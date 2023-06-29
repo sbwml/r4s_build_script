@@ -44,10 +44,8 @@ git clone https://github.com/sbwml/package_kernel_r8152 package/kernel/r8152
 git clone https://$gitea/sbwml/package_kernel_r8125 package/kernel/r8125
 
 # netifd - fix auto-negotiate by upstream
-if [ "$version" = "rc" ] || [ "$version" = "rc2" ] || [ "$version" = "snapshots-23.05" ]; then
-    mkdir -p package/network/config/netifd/patches
-    curl -s https://$mirror/openwrt/patch/netifd/100-system-linux-fix-autoneg-for-2.5G-5G-10G.patch > package/network/config/netifd/patches/100-system-linux-fix-autoneg-for-2.5G-5G-10G.patch
-fi
+mkdir -p package/network/config/netifd/patches
+curl -s https://$mirror/openwrt/patch/netifd/100-system-linux-fix-autoneg-for-2.5G-5G-10G.patch > package/network/config/netifd/patches/100-system-linux-fix-autoneg-for-2.5G-5G-10G.patch
 
 # Wireless Drivers
 rm -rf package/kernel/rtl8812au-ct
@@ -119,20 +117,15 @@ else
     [ "$version" = "rc" ] && curl -s https://$mirror/openwrt/patch/fstools/ntfs3-utf8.patch > package/system/fstools/patches/ntfs3-utf8.patch
     [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && curl -s https://$mirror/openwrt/patch/fstools/fstools-set-ntfs3-utf8-new.patch > package/system/fstools/patches/ntfs3-utf8.patch
 fi
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
-    if [ "$USE_GLIBC" = "y" ]; then
-        curl -s https://$mirror/openwrt/patch/fstools/22-fstools-support-extroot-for-non-MTD-rootfs_data-new-version.patch > package/system/fstools/patches/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch
-    else
-        curl -s https://$mirror/openwrt/patch/fstools/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch > package/system/fstools/patches/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch
-    fi
+if [ "$USE_GLIBC" = "y" ]; then
+    curl -s https://$mirror/openwrt/patch/fstools/22-fstools-support-extroot-for-non-MTD-rootfs_data-new-version.patch > package/system/fstools/patches/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch
+else
+    curl -s https://$mirror/openwrt/patch/fstools/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch > package/system/fstools/patches/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch
 fi
 
 # QEMU for aarch64
 pushd feeds/packages
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
-    curl -s https://$mirror/openwrt/patch/qemu/qemu-aarch64_master.patch > qemu-aarch64.patch
-fi
-git apply qemu-aarch64.patch && rm qemu-aarch64.patch
+    curl -s https://$mirror/openwrt/patch/qemu/qemu-aarch64_master.patch | patch -p1
 popd
 
 # Patch arm64 model name
@@ -143,13 +136,10 @@ elif [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
 fi
 
 # Dnsmasq
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
+if [ "$version" = "rc" ]; then
     # Dnsmasq Latest version
-    #DNSMASQ_VERSION=2.89
-    #DNSMASQ_HASH=02bd230346cf0b9d5909f5e151df168b2707103785eb616b56685855adebb609
     rm -rf package/network/services/dnsmasq
     cp -a ../master/openwrt/package/network/services/dnsmasq package/network/services/dnsmasq
-    #sed -ri "s/(PKG_UPSTREAM_VERSION:=)[^\"]*/\1$DNSMASQ_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$DNSMASQ_HASH/" package/network/services/dnsmasq/Makefile
 fi
 
 # Patch FireWall - FullCone
@@ -186,14 +176,10 @@ elif [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
 fi
 
 # Patch FullCone Option 22
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
-    curl -s https://$mirror/openwrt/patch/firewall4/luci-app-firewall_add_fullcone.patch | patch -p1
-fi
+curl -s https://$mirror/openwrt/patch/firewall4/luci-app-firewall_add_fullcone.patch | patch -p1
 
 # FullCone module
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
-    git clone https://$gitea/sbwml/nft-fullcone package/new/nft-fullcone
-fi
+git clone https://$gitea/sbwml/nft-fullcone package/new/nft-fullcone
 
 # TCP performance optimizations backport from linux/net-next
 if [ "$version" = "rc" ]; then
@@ -269,17 +255,9 @@ if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     cp -a ../master/packages/utils/runc feeds/packages/utils/runc
 fi
 sed -i '/sysctl.d/d' feeds/packages/utils/dockerd/Makefile
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
-    pushd feeds/packages
-        curl -s https://$mirror/openwrt/patch/docker/dockerd-fix-bridge-network.patch | patch -p1
-    popd
-fi
-
-# haproxy - fix build for 23.05
-if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
-    rm -rf feeds/packages/net/haproxy
-    cp -a ../master/packages/net/haproxy feeds/packages/net/haproxy
-fi
+pushd feeds/packages
+    curl -s https://$mirror/openwrt/patch/docker/dockerd-fix-bridge-network.patch | patch -p1
+popd
 
 # procps-ng - top
 sed -i 's/enable-skill/enable-skill --disable-modern-top/g' feeds/packages/utils/procps-ng/Makefile
@@ -288,19 +266,17 @@ sed -i 's/enable-skill/enable-skill --disable-modern-top/g' feeds/packages/utils
 sed -i 's/services/system/g' feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/luci-app-ttyd.json
 sed -i '3 a\\t\t"order": 50,' feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/luci-app-ttyd.json
 
-# UPnP - fix 22.03
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
-    rm -rf feeds/packages/net/miniupnpd
-    git clone https://$gitea/sbwml/miniupnpd feeds/packages/net/miniupnpd
-    rm -rf feeds/luci/applications/luci-app-upnp
-    git clone https://$gitea/sbwml/luci-app-upnp feeds/luci/applications/luci-app-upnp
-    pushd feeds/packages
-        curl -s https://$mirror/openwrt/patch/miniupnpd/1.patch | patch -p1
-        curl -s https://$mirror/openwrt/patch/miniupnpd/2.patch | patch -p1
-        curl -s https://$mirror/openwrt/patch/miniupnpd/3.patch | patch -p1
-        curl -s https://$mirror/openwrt/patch/miniupnpd/4.patch | patch -p1
-    popd
-fi
+# UPnP
+rm -rf feeds/packages/net/miniupnpd
+git clone https://$gitea/sbwml/miniupnpd feeds/packages/net/miniupnpd
+rm -rf feeds/luci/applications/luci-app-upnp
+git clone https://$gitea/sbwml/luci-app-upnp feeds/luci/applications/luci-app-upnp
+pushd feeds/packages
+    curl -s https://$mirror/openwrt/patch/miniupnpd/1.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/miniupnpd/2.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/miniupnpd/3.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/miniupnpd/4.patch | patch -p1
+popd
 
 # UPnP - Move to network
 sed -i 's/services/network/g' feeds/luci/applications/luci-app-upnp/root/usr/share/luci/menu.d/luci-app-upnp.json
@@ -357,18 +333,16 @@ curl -s https://$mirror/openwrt/patch/luci/luci-refresh-interval.patch | patch -
 # Luci diagnostics.js
 sed -i "s/openwrt.org/www.qq.com/g" feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/diagnostics.js
 
-# samba4
-if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
-    # bump version
-    SAMBA4_VERSION=4.18.3
-    SAMBA4_HASH=c67e1453165a3918ffffad600236ca3966b47bde4798e89ae600ae3903ccc32c
-    rm -rf feeds/packages/net/samba4
-    cp -a ../master/packages/net/samba4 feeds/packages/net/samba4
-    sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$SAMBA4_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$SAMBA4_HASH/" feeds/packages/net/samba4/Makefile
-    # enable multi-channel
-    sed -i '/workgroup/a \\n\t## enable multi-channel' feeds/packages/net/samba4/files/smb.conf.template
-    sed -i '/enable multi-channel/a \\tserver multi channel support = yes' feeds/packages/net/samba4/files/smb.conf.template
-fi
+# samba4 - bump version
+SAMBA4_VERSION=4.18.3
+SAMBA4_HASH=c67e1453165a3918ffffad600236ca3966b47bde4798e89ae600ae3903ccc32c
+rm -rf feeds/packages/net/samba4
+cp -a ../master/packages/net/samba4 feeds/packages/net/samba4
+sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$SAMBA4_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$SAMBA4_HASH/" feeds/packages/net/samba4/Makefile
+# enable multi-channel
+sed -i '/workgroup/a \\n\t## enable multi-channel' feeds/packages/net/samba4/files/smb.conf.template
+sed -i '/enable multi-channel/a \\tserver multi channel support = yes' feeds/packages/net/samba4/files/smb.conf.template
+# default config
 sed -i 's/invalid users = root/#invalid users = root/g' feeds/packages/net/samba4/files/smb.conf.template
 sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages/net/samba4/files/smb.conf.template
 sed -i 's/#create mask/create mask/g' feeds/packages/net/samba4/files/smb.conf.template
@@ -414,10 +388,3 @@ sed -i 's/1.openwrt.pool.ntp.org/ntp.aliyun.com/g' package/base-files/files/bin/
 sed -i 's/2.openwrt.pool.ntp.org/ntp.tuna.tsinghua.edu.cn/g' package/base-files/files/bin/config_generate
 sed -i 's/3.openwrt.pool.ntp.org/time.apple.com/g' package/base-files/files/bin/config_generate
 
-#############
-
-# drop antfs
-rm -rf feeds/packages/kernel/antfs feeds/packages/utils/antfs-mount
-
-# uqmi - fix gcc11
-[ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && sed -i '/dangling-pointer/d' package/network/utils/uqmi/Makefile

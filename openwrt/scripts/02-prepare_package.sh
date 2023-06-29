@@ -11,8 +11,10 @@ git clone https://github.com/sbwml/default-settings package/new/default-settings
 sed -i '/boot()/,+2d' feeds/packages/net/ddns-scripts/files/etc/init.d/ddns
 
 # FRP
-rm -rf feeds/packages/net/frp
-git clone https://github.com/sbwml/feeds_packages_net_frp feeds/packages/net/frp
+if [ "$version" = "rc" ]; then
+    rm -rf feeds/packages/net/frp
+    cp -a ../master/packages/net/frp feeds/packages/net/frp
+fi
 
 # autoCore
 [ "$version" = "rc" ] && git clone https://github.com/sbwml/autocore-arm -b openwrt-22.03 package/new/autocore
