@@ -125,7 +125,11 @@ fi
 
 # QEMU for aarch64
 pushd feeds/packages
-    curl -s https://$mirror/openwrt/patch/qemu/qemu-aarch64_master.patch | patch -p1
+if [ "$version" = "rc" ]; then
+    curl -s https://$mirror/openwrt/patch/qemu/qemu-aarch64_22.03.patch | patch -p1
+else
+    curl -s https://$mirror/openwrt/patch/qemu/qemu-aarch64_23.05.patch | patch -p1
+fi
 popd
 
 # Patch arm64 model name

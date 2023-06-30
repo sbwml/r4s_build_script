@@ -232,8 +232,6 @@ fi
 # glibc
 if [ "$USE_GLIBC" = "y" ]; then
     curl -s https://$mirror/openwrt/config-glibc >> .config
-    # use qbittorrent_static - fix qbittorrent Chinese path on glibc
-    [ $(grep -c "luci-app-qbittorrent=y" .config) -ge '1' ] && echo 'CONFIG_PACKAGE_luci-app-qbittorrent_static=y' >> .config
 fi
 
 # sdk

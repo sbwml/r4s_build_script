@@ -582,7 +582,6 @@ define KernelPackage/fs-ntfs3
   DEPENDS:=+kmod-nls-base
   KCONFIG:= \
 	CONFIG_NTFS3_FS \
-	CONFIG_NTFS3_64BIT_CLUSTER=y \
 	CONFIG_NTFS3_LZX_XPRESS=y \
 	CONFIG_NTFS3_FS_POSIX_ACL=y
   FILES:=$(LINUX_DIR)/fs/ntfs3/ntfs3.ko
