@@ -1,5 +1,5 @@
 diff --git a/utils/qemu/Makefile b/utils/qemu/Makefile
-index bee7450..ddae30d 100644
+index bee745052..9d20c9ab1 100644
 --- a/utils/qemu/Makefile
 +++ b/utils/qemu/Makefile
 @@ -28,8 +28,8 @@ PKG_BUILD_DEPENDS+=spice-protocol
@@ -13,3 +13,11 @@ index bee7450..ddae30d 100644
  QEMU_DEPS_IN_HOST += +libstdcpp
  QEMU_DEPS_IN_HOST += $(ICONV_DEPENDS)
  
+@@ -220,6 +220,7 @@ endef
+ qemu-target-list :=	\
+ 	x86_64-softmmu	\
+ 	arm-softmmu	\
++	aarch64-softmmu	\
+ 
+ qemu-target-x86_64-softmmu-deps:= \
+ 	+qemu-firmware-pxe \

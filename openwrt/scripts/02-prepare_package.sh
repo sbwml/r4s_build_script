@@ -10,11 +10,17 @@ git clone https://github.com/sbwml/default-settings package/new/default-settings
 # DDNS
 sed -i '/boot()/,+2d' feeds/packages/net/ddns-scripts/files/etc/init.d/ddns
 
-# FRP
+# FRPC
 if [ "$version" = "rc" ]; then
     rm -rf feeds/packages/net/frp
     cp -a ../master/packages/net/frp feeds/packages/net/frp
 fi
+sed -i 's/procd_set_param stdout $stdout/procd_set_param stdout 0/g' feeds/packages/net/frp/files/frpc.init
+sed -i 's/procd_set_param stderr $stderr/procd_set_param stderr 0/g' feeds/packages/net/frp/files/frpc.init
+sed -i 's/stdout stderr //g' feeds/packages/net/frp/files/frpc.init
+sed -i '/stdout:bool/d;/stderr:bool/d' feeds/packages/net/frp/files/frpc.init
+sed -i '/stdout/d;/stderr/d' feeds/packages/net/frp/files/frpc.config
+sed -i '/Log stdout/d;/Log stderr/d' feeds/luci/applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js
 
 # autoCore
 [ "$version" = "rc" ] && git clone https://github.com/sbwml/autocore-arm -b openwrt-22.03 package/new/autocore
