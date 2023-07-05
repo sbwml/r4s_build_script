@@ -263,6 +263,13 @@ pushd feeds/packages
     curl -s https://$mirror/openwrt/patch/docker/dockerd-fix-bridge-network.patch | patch -p1
 popd
 
+# cgroupfs-mount
+if [ ! "$version" = "rc" ]; then
+    pushd feeds/packages
+        curl -s https://$mirror/openwrt/patch/cgroupfs-mount/0001-fix-cgroupfs-mount.patch | patch -p1
+    popd
+fi
+
 # procps-ng - top
 sed -i 's/enable-skill/enable-skill --disable-modern-top/g' feeds/packages/utils/procps-ng/Makefile
 
