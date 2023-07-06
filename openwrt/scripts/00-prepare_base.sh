@@ -14,6 +14,7 @@ fi
 # Fix x86 - CONFIG_ALL_KMODS
 if [ "$platform" = "x86_64" ]; then
     sed -i 's/hwmon, +PACKAGE_kmod-thermal:kmod-thermal/hwmon/g' package/kernel/linux/modules/hwmon.mk
+    [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && curl -s https://$mirror/openwrt/patch/kernel-5.15/netsupport.mk.patch | patch -p1
 fi
 
 # default LAN IP
