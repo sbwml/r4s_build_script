@@ -226,6 +226,9 @@ fi
 # ota
 [ "$ENABLE_OTA" = "y" ] && [ "$version" = "rc2" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
 
+# bpf
+[ "$ENABLE_BPF" = "y" ] && curl -s https://$mirror/openwrt/config-bpf >> .config
+
 # extra
 [ "$BUILD_EXTRA" = "y" ] && curl -s https://$mirror/openwrt/config-extra >> .config
 
