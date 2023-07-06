@@ -1,0 +1,13 @@
+diff --git a/include/target.mk b/include/target.mk
+index b5e3e7f..88f3da1 100644
+--- a/include/target.mk
++++ b/include/target.mk
+@@ -208,7 +208,7 @@ LINUX_RECONF_DIFF = $(SCRIPT_DIR)/kconfig.pl - '>' $(call __linux_confcmd,$(filt
+ ifeq ($(DUMP),1)
+   BuildTarget=$(BuildTargets/DumpCurrent)
+ 
+-  CPU_CFLAGS = -Os -pipe
++  CPU_CFLAGS = -O2 -march=x86-64-v2 -pipe
+   ifneq ($(findstring mips,$(ARCH)),)
+     ifneq ($(findstring mips64,$(ARCH)),)
+       CPU_TYPE ?= mips64

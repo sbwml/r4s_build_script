@@ -62,6 +62,8 @@ elif [ "$platform" = "rk3399" ]; then
     curl -s https://$mirror/openwrt/patch/target-modify_for_rk3399.patch | patch -p1
 elif [ "$platform" = "rk3568" ]; then
     curl -s https://$mirror/openwrt/patch/target-modify_for_rk3568.patch | patch -p1
+elif [ "$platform" = "x86_64" ]; then
+    curl -s https://$mirror/openwrt/patch/target-modify_for_x86_64.patch | patch -p1
 fi
 
 # IF USE GLIBC
