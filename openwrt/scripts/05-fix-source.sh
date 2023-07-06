@@ -25,6 +25,11 @@ sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages
 # drop ksmbd - use kernel ksmdb
 rm -rf package/kernel/ksmbd
 
+#### bpf #####
+
+# add clang-15 support
+sed -i 's/command -v clang/command -v clang clang-15/g' include/bpf.mk
+
 #### glibc #####
 
 # uqmi
