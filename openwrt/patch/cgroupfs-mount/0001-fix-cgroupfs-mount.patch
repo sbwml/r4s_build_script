@@ -1,5 +1,5 @@
 diff --git a/utils/cgroupfs-mount/files/cgroupfs-mount.init b/utils/cgroupfs-mount/files/cgroupfs-mount.init
-index 0d6b68d..8b9d154 100755
+index 0d6b68d..4ae3185 100755
 --- a/utils/cgroupfs-mount/files/cgroupfs-mount.init
 +++ b/utils/cgroupfs-mount/files/cgroupfs-mount.init
 @@ -4,9 +4,17 @@ START=01
@@ -20,6 +20,7 @@ index 0d6b68d..8b9d154 100755
 +		fi
 +	}
  
+-	cgroupfs-mount
 +	umount_cgroup
- 	cgroupfs-mount
++	cgroupfs-mount v2
  }
