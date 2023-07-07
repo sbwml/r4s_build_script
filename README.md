@@ -10,6 +10,24 @@ sudo apt-get update
 sudo apt-get install -y build-essential flex bison g++ gawk gcc-multilib g++-multilib gettext git libfuse-dev libncurses5-dev libssl-dev python3 python3-pip python3-ply python3-distutils python3-pyelftools rsync unzip zlib1g-dev file wget subversion patch upx-ucl autoconf automake curl asciidoc binutils bzip2 lib32gcc-s1 libc6-dev-i386 uglifyjs msmtp texinfo libreadline-dev libglib2.0-dev xmlto libelf-dev libtool autopoint antlr3 gperf ccache swig coreutils haveged scons libpython3-dev
 ```
 
+##### 安装 clang-15 - 启用 BPF 支持时需要
+##### 一些过旧的发行版没有提供 clang-15，可以通过 llvm 官方提供源安装：https://apt.llvm.org
+```shell
+# debian 11
+sudo sh -c 'echo "deb http://apt.llvm.org/bullseye/ llvm-toolchain-bullseye-15 main" >> /etc/apt/sources.list'
+sudo sh -c 'echo "deb-src http://apt.llvm.org/bullseye/ llvm-toolchain-bullseye-15 main" >> /etc/apt/sources.list'
+wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install -y clang-15
+
+# ubuntu 20.04
+sudo sh -c 'echo "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main" >> /etc/apt/sources.list'
+sudo sh -c 'echo "deb-src http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main" >> /etc/apt/sources.list'
+wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install -y clang-15
+```
+
 ---------------
 
 ### 启用 glibc （测试）
@@ -18,6 +36,13 @@ sudo apt-get install -y build-essential flex bison g++ gawk gcc-multilib g++-mul
 
 ```
 export USE_GLIBC=y
+```
+
+### 启用 BPF 支持
+##### 只需在构建固件前执行以下命令即可启用 BPF 支持
+
+```
+export ENABLE_BPF=y
 ```
 
 ### 快速构建（仅限 Github Actions）
@@ -189,8 +214,11 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
+        sudo sh -c 'echo "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main" >> /etc/apt/sources.list'
+        sudo sh -c 'echo "deb-src http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main" >> /etc/apt/sources.list'
+        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo apt-get update
-        sudo apt-get install -y build-essential flex bison g++ gawk gcc-multilib g++-multilib gettext git libfuse-dev libncurses5-dev libssl-dev python3 python3-pip python3-ply python3-distutils python3-pyelftools rsync unzip zlib1g-dev file wget subversion patch upx-ucl autoconf automake curl proxychains-ng asciidoc binutils bzip2 lib32gcc-s1 libc6-dev-i386 uglifyjs msmtp texinfo libreadline-dev libglib2.0-dev xmlto libelf-dev libtool autopoint antlr3 gperf ccache swig coreutils haveged scons libpython3-dev
+        sudo apt-get install -y build-essential clang-15 cmake flex bison g++ gawk gcc-multilib g++-multilib gettext git libfuse-dev libncurses5-dev libssl-dev python3 python3-pip python3-ply python3-distutils python3-pyelftools rsync unzip zlib1g-dev file wget subversion patch upx-ucl autoconf automake curl proxychains-ng asciidoc binutils bzip2 lib32gcc-s1 libc6-dev-i386 uglifyjs msmtp texinfo libreadline-dev libglib2.0-dev xmlto libelf-dev libtool autopoint antlr3 gperf ccache swig coreutils haveged scons libpython3-dev
         sudo apt-get clean
         git config --global user.name 'GitHub Actions' && git config --global user.email 'noreply@github.com'
         df -h
