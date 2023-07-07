@@ -78,7 +78,7 @@ if [ "$USE_GLIBC" = "y" ]; then
     rm -rf package/system/fstools
     cp -a ../master/openwrt/package/system/fstools package/system/fstools
     # glibc-common
-    curl -s https://$mirror/openwrt/patch/openwrt-6.1/toolchain/glibc-common.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/glibc/glibc-common.patch | patch -p1
     # glibc-common - locale data
     mkdir -p package/libs/toolchain/glibc-locale
     curl -Lso package/libs/toolchain/glibc-locale/locale-archive https://github.com/sbwml/r4s_build_script/releases/download/locale/locale-archive

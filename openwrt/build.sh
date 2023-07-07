@@ -91,11 +91,7 @@ export platform=$2
 [ "$platform" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
 
 # use glibc - openwrt-22.03
-if [ "$platform" = "rk3568" ] || [ "$platform" = "rk3399" ]; then
-    export USE_GLIBC=$USE_GLIBC
-else
-    export USE_GLIBC=n
-fi
+export USE_GLIBC=$USE_GLIBC
 
 # print version
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
