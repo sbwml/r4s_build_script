@@ -7,8 +7,8 @@ index 7526224..0281ed1 100644
      CPU_CFLAGS_archs = -mcpu=archs
    endif
 +  ifeq ($(BOARD),rockchip)
-+    CPU_CFLAGS = -O3 -funroll-loops -ffunction-sections -fdata-sections -Wl,--gc-sections -pipe
-+    CPU_CFLAGS_generic = -march=armv8-a+crypto+crc -mcpu=cortex-a53+crypto+crc -mtune=cortex-a53
++    CPU_CFLAGS = -O3 -Wl,--gc-sections -pipe
++    CPU_CFLAGS_generic = -march=armv8-a+crc+crypto
 +  endif
    ifneq ($(CPU_TYPE),)
      ifndef CPU_CFLAGS_$(CPU_TYPE)

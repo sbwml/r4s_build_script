@@ -57,21 +57,14 @@ if [ "$version" = "rc" ]; then
 fi
 
 # Optimization level -Ofast
-if [ "$platform" = "rk3328" ]; then
-    curl -s https://$mirror/openwrt/patch/target-modify_for_rk3328.patch | patch -p1
-elif [ "$platform" = "rk3399" ]; then
-    curl -s https://$mirror/openwrt/patch/target-modify_for_rk3399.patch | patch -p1
-elif [ "$platform" = "rk3568" ]; then
-    curl -s https://$mirror/openwrt/patch/target-modify_for_rk3568.patch | patch -p1
-elif [ "$platform" = "x86_64" ]; then
+if [ "$platform" = "x86_64" ]; then
     curl -s https://$mirror/openwrt/patch/target-modify_for_x86_64.patch | patch -p1
+else
+    curl -s https://$mirror/openwrt/patch/target-modify_for_rockchip.patch | patch -p1
 fi
 
 # IF USE GLIBC
 if [ "$USE_GLIBC" = "y" ]; then
-    # O3 optimization
-    git checkout include/target.mk && \
-        curl -s https://$mirror/openwrt/patch/target-modify_for_glibc.patch | patch -p1
     # musl-libc
     git clone https://$gitea/sbwml/package_libs_musl-libc package/libs/musl-libc
     # bump fstools version

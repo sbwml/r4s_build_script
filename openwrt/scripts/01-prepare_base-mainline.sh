@@ -9,13 +9,11 @@ git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip-6.x target/li
 # kernel - 6.x
 curl -s https://$mirror/tags/kernel-6.1 > include/kernel-6.1
 grep HASH include/kernel-6.1 | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}' > .vermagic
-curl -s https://$mirror/openwrt/patch/KBUILD_BUILD_TIMESTAMP.patch | patch -p1
 
 # kernel generic patches
 git clone https://github.com/sbwml/target_linux_generic
 rm -rf target/linux/generic/*-6.* target/linux/generic/files
 mv target_linux_generic/target/linux/generic/* target/linux/generic/
-sed -i '/CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE/d' target/linux/generic/config-6.1
 rm -rf target_linux_generic
 
 # kernel modules

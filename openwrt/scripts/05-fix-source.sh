@@ -10,6 +10,9 @@ rm -rf feeds/packages/kernel/antfs feeds/packages/utils/antfs-mount
 # uqmi - fix gcc11
 [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && sed -i '/dangling-pointer/d' package/network/utils/uqmi/Makefile
 
+# xdp-tools
+[ "$platform" != "x86_64" ] && sed -i '/TARGET_LDFLAGS +=/iTARGET_CFLAGS += -Wno-error=maybe-uninitialized\n' package/network/utils/xdp-tools/Makefile
+
 # ksmbd luci
 rm -rf feeds/luci/applications/luci-app-ksmbd
 cp -a ../master/luci/applications/luci-app-ksmbd feeds/luci/applications/luci-app-ksmbd
