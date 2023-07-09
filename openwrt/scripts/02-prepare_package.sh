@@ -37,6 +37,9 @@ git clone https://github.com/sbwml/feeds_packages_net_aria2 -b 22.03 feeds/packa
 rm -rf feeds/packages/net/{xray-core,v2ray-core}
 git clone https://github.com/sbwml/openwrt_helloworld package/helloworld -b v5
 
+# DAED
+git clone https://github.com/sbwml/luci-app-daed package/daed
+
 # immortalwrt packages
 if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     # homeproxy
@@ -46,10 +49,6 @@ if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     # sing-box
     cp -a ../master/immortalwrt_packages/net/sing-box package/homeproxy/sing-box
     sed -i 's#../../lang/golang/golang-package.mk#$(TOPDIR)/feeds/packages/lang/golang/golang-package.mk#g' package/homeproxy/sing-box/Makefile
-    # daed
-    mkdir -p package/daed
-    cp -a ../master/immortalwrt_packages/net/daed package/daed/daed
-    sed -i 's#../../lang/golang/golang-package.mk#$(TOPDIR)/feeds/packages/lang/golang/golang-package.mk#g' package/daed/daed/Makefile
 fi
 
 # alist
