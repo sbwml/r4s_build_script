@@ -378,7 +378,9 @@ curl -so files/root/.bashrc https://$mirror/openwrt/files/root/.bashrc
 # rootfs files
 mkdir -p files/etc/sysctl.d
 curl -so files/etc/sysctl.d/15-vm-swappiness.conf https://$mirror/openwrt/files/etc/sysctl.d/15-vm-swappiness.conf
-if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
+mkdir -p files/etc/hotplug.d/net
+curl -so files/etc/hotplug.d/net/01-maximize_nic_rx_tx_buffers https://$mirror/openwrt/files/etc/hotplug.d/net/01-maximize_nic_rx_tx_buffers
+if [ ! "$version" = "rc" ]; then
     # fix E1187: Failed to source defaults.vim
     touch files/root/.vimrc
 fi
