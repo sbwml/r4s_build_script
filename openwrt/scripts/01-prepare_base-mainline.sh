@@ -111,6 +111,7 @@ pushd target/linux/generic/hack-6.1
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0024-LRNG-add-kernel-crypto-API-interface.patch
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0025-LRNG-add-dev-lrng-device-file-support.patch
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0026-LRNG-add-hwrand-framework-interface.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0027-LRNG-fix-get_random_u32_below-error.patch
 popd
 
 # linux-firmware
