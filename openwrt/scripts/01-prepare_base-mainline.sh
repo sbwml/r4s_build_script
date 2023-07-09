@@ -82,6 +82,37 @@ pushd target/linux/generic/backport-6.1
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0027-net-test-tcp-plb-Add-PLB-tests.patch
 popd
 
+# LRNG v48 - linux-6.1
+curl -s https://$mirror/openwrt/patch/kernel-6.1/config-lrng >> target/linux/generic/config-6.1
+pushd target/linux/generic/hack-6.1
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0001-crypto-Entropy-Source-and-DRNG-Manager.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0002-LRNG-allocate-one-DRNG-instance-per-NUMA-node.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0003-LRNG-proc-interface.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0004-LRNG-add-switchable-DRNG-support.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0005-LRNG-add-common-generic-hash-support.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0006-crypto-DRBG-externalize-DRBG-functions-for-LRNG.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0007-LRNG-add-SP800-90A-DRBG-extension.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0008-LRNG-add-kernel-crypto-API-PRNG-extension.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0009-LRNG-add-atomic-DRNG-implementation.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0010-LRNG-add-common-timer-based-entropy-source-code.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0011-LRNG-add-interrupt-entropy-source.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0012-scheduler-add-entropy-sampling-hook.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0013-LRNG-add-scheduler-based-entropy-source.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0014-LRNG-add-SP800-90B-compliant-health-tests.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0015-LRNG-add-random.c-entropy-source-support.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0016-LRNG-CPU-entropy-source.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0017-crypto-move-Jitter-RNG-header-include-dir.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0018-LRNG-add-Jitter-RNG-fast-noise-source.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0019-LRNG-add-option-to-enable-runtime-entropy-rate-c.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0020-LRNG-add-interface-for-gathering-of-raw-entropy.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0021-LRNG-add-power-on-and-runtime-self-tests.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0022-LRNG-sysctls-and-proc-interface.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0023-LRMG-add-drop-in-replacement-random-4-API.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0024-LRNG-add-kernel-crypto-API-interface.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0025-LRNG-add-dev-lrng-device-file-support.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v48_6.1/999-0026-LRNG-add-hwrand-framework-interface.patch
+popd
+
 # linux-firmware
 if [ "$version" = "rc" ]; then
     rm -rf package/firmware/linux-firmware
