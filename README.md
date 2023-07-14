@@ -46,7 +46,7 @@ export ENABLE_BPF=y
 ```
 
 ### 快速构建（仅限 Github Actions）
-##### 脚本会使用 toolchain 缓存代替源码构建，与常规构建相比能节省大约 60 分钟的编译耗时，仅适用于 Github Actions `ubuntu-22.04` 环境
+##### 脚本会使用 toolchain 缓存代替源码构建，与常规构建相比能节省大约 60 分钟的编译耗时，仅适用于 Github Actions `ubuntu-20.04` 环境
 ##### 只需在构建固件前执行以下命令即可启用快速构建
 
 ```
