@@ -34,14 +34,10 @@ if [ "$ENABLE_UHTTPD" != "y" ]; then
     fi
 fi
 
-# NIC driver - x86
-if [ "$platform" = "x86_64" ]; then
-    # r8101
-    git clone https://github.com/sbwml/package_kernel_r8101 package/kernel/r8101
-fi
-# R8168 & R8125 & R8152
+# NIC driver - R8168 & R8125 & R8152 & R8101
 git clone https://github.com/sbwml/package_kernel_r8168 package/kernel/r8168
 git clone https://github.com/sbwml/package_kernel_r8152 package/kernel/r8152
+git clone https://github.com/sbwml/package_kernel_r8101 package/kernel/r8101
 git clone https://$gitea/sbwml/package_kernel_r8125 package/kernel/r8125
 
 # netifd - fix auto-negotiate by upstream
@@ -352,8 +348,8 @@ curl -s https://$mirror/openwrt/patch/luci/luci-refresh-interval.patch | patch -
 sed -i "s/openwrt.org/www.qq.com/g" feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/diagnostics.js
 
 # samba4 - bump version
-SAMBA4_VERSION=4.18.3
-SAMBA4_HASH=c67e1453165a3918ffffad600236ca3966b47bde4798e89ae600ae3903ccc32c
+SAMBA4_VERSION=4.18.5
+SAMBA4_HASH=095256ac332e1d9fbf9b7ff7823f92a3233d3ed658ce7fc9b33905c2243f447f
 rm -rf feeds/packages/net/samba4
 cp -a ../master/packages/net/samba4 feeds/packages/net/samba4
 sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$SAMBA4_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$SAMBA4_HASH/" feeds/packages/net/samba4/Makefile
