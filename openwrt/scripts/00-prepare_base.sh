@@ -347,6 +347,9 @@ curl -s https://$mirror/openwrt/patch/luci/luci-refresh-interval.patch | patch -
 # Luci diagnostics.js
 sed -i "s/openwrt.org/www.qq.com/g" feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/diagnostics.js
 
+# luci - drop ethernet port status
+rm -f feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js
+
 # samba4 - bump version
 SAMBA4_VERSION=4.18.5
 SAMBA4_HASH=095256ac332e1d9fbf9b7ff7823f92a3233d3ed658ce7fc9b33905c2243f447f
