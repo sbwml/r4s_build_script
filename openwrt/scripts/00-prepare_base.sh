@@ -138,7 +138,7 @@ if [ "$version" = "rc" ]; then
     cp -a ../master/openwrt/package/network/services/dnsmasq package/network/services/dnsmasq
 fi
 
-# Patch FireWall - FullCone
+# Patch FireWall 4
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     # firewall4
     rm -rf package/network/config/firewall4
@@ -147,6 +147,8 @@ if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" =
     curl -s https://$mirror/openwrt/patch/firewall4/999-01-firewall4-add-fullcone-support.patch > package/network/config/firewall4/patches/999-01-firewall4-add-fullcone-support.patch
     # kernel version
     curl -s https://$mirror/openwrt/patch/firewall4/002-fix-fw4.uc-adept-kernel-version-type-of-x.x.patch > package/network/config/firewall4/patches/002-fix-fw4.uc-adept-kernel-version-type-of-x.x.patch
+    # fix flow offload
+    curl -s https://$mirror/openwrt/patch/firewall4/001-fix-fw4-flow-offload.patch > package/network/config/firewall4/patches/001-fix-fw4-flow-offload.patch
     # libnftnl
     rm -rf package/libs/libnftnl
     cp -a ../master/openwrt/package/libs/libnftnl package/libs/libnftnl
