@@ -153,6 +153,7 @@ elif [ "$1" = "rc" ]; then
 elif [ "$1" = "rc2" ]; then
     latest_version="$(curl -s https://$mirror/tags/v23)"
     [ "$platform" = "x86_64" ] && kenrel_vermagic=`curl -s https://$openwrt_release_mirror/"$latest_version"/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
+    [ "$platform" = "x86_64" ] && kenrel_version=`curl -s https://$openwrt_release_mirror/"$latest_version"/targets/x86/64/packages/Packages | grep "Depends: kernel" | head -1 | awk -F= '{print $2}' | awk -F\) '{print $1}'`
 fi
 echo $kenrel_vermagic > .vermagic
 sed -ie 's/^\(.\).*vermagic$/\1cp $(TOPDIR)\/.vermagic $(LINUX_DIR)\/.vermagic/' include/kernel-defaults.mk
@@ -212,6 +213,7 @@ rm -rf ../master
 # Load devices Config
 if [ "$platform" = "x86_64" ]; then
     curl -s https://$mirror/openwrt/22-config-musl-x86 > .config
+    ALL_KMODS=y
 elif [ "$platform" = "rk3568" ]; then
     curl -s https://$mirror/openwrt/22-config-musl-r5s > .config
     ALL_KMODS=y
@@ -292,6 +294,13 @@ if [ "$platform" = "x86_64" ]; then
     if [ -f bin/targets/x86/64*/*-ext4-combined-efi.img.gz ]; then
         echo -e "${GREEN_COLOR} Build success! ${RES}"
         echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
+        if [ "$ALL_KMODS" = y ]; then
+            cp -a bin/targets/x86/*/packages $kenrel_version
+            rm -f $kenrel_version/Packages*
+            bash kmod-sign $kenrel_version
+            tar zcf kmod-$kenrel_version.tar.gz $kenrel_version
+            rm -rf $kenrel_version
+        fi
         # OTA json
         if [ "$1" = "rc2" ]; then
             mkdir -p ota
