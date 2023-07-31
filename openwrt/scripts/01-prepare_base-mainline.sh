@@ -119,15 +119,14 @@ if [ "$version" = "rc" ]; then
     rm -rf package/firmware/linux-firmware
     git clone https://nanopi:nanopi@$gitea/sbwml/package_firmware_linux-firmware package/firmware/linux-firmware
 else
-    sed -i '$a\Package/rtw89-firmware = $(call Package/firmware-default,RealTek RTW89 firmware)\
-define Package/rtw89-firmware/install\
-\t$(INSTALL_DIR) $(1)/lib/firmware/rtw89\
-\t$(CP) \\\
-\t\t$(PKG_BUILD_DIR)/rtw89/* \\\
-\t\t$(1)/lib/firmware/rtw89\
-endef\
-$(eval $(call BuildPackage,rtw89-firmware))' package/firmware/linux-firmware/realtek.mk
+    # rtw89 /  rtl8723d / rtl8821c firmware
+    curl -s https://github.com/openwrt/openwrt/commit/145fc631e6205850a1c2f575abb3d15b0ce9995b.patch | patch -p1
+    curl -s https://github.com/openwrt/openwrt/commit/42bf7656730d5422e6022bae4d5df3ae2f6fa39b.patch | patch -p1
 fi
+
+# rtl8812au-ct - fix linux-6.1
+rm -rf package/kernel/rtl8812au-ct
+cp -a ../master/openwrt/package/kernel/rtl8812au-ct package/kernel/rtl8812au-ct
 
 # ath10k-ct - fix mac80211 6.1-rc
 if [ "$version" = "rc" ]; then
@@ -163,8 +162,15 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.1/500-world-regd-5GHz.patch > pa
 
 # mac80211 - fix linux 6.1
 rm -rf package/kernel/mac80211
-# git clone https://nanopi:nanopi@$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b 6.1
 cp -a ../master/openwrt/package/kernel/mac80211 package/kernel/mac80211
+
+# mac80211 - add rtw89
+curl -s https://github.com/openwrt/openwrt/commit/88e6100f21ef179466825c0a4e9e41a270527cbe.patch | patch -p1
+curl -s https://github.com/openwrt/openwrt/commit/06d383fa4f8d297654f3b566a779e7473262d76c.patch | patch -p1
+curl -s https://github.com/openwrt/openwrt/commit/b4e32778056db6342016b25d30e105cfddb3ef6e.patch | patch -p1
+curl -s https://github.com/openwrt/openwrt/commit/7a9758d5a5b9224aa4ecb7288611d42976193e95.patch | patch -p1
+curl -s https://github.com/openwrt/openwrt/commit/2dd03f5a2fe71baa2cb984bf5a17dc3cb13ed2bb.patch | patch -p1
+curl -s https://github.com/openwrt/openwrt/commit/d8a9ab8798388a3b9c9c9b703fee4735d0f18568.patch | patch -p1
 
 # kernel patch
 # 6.1

@@ -179,6 +179,11 @@ CONFIG_PACKAGE_openssl-util=y
 # CONFIG_LIBCURL_GNUTLS is not set
 # CONFIG_LIBCURL_NOSSL is not set
 
+### RTL8723D / RTL8821C / RTW89 firmware
+CONFIG_PACKAGE_rtl8723d-firmware=m
+CONFIG_PACKAGE_rtl8821c-firmware=m
+CONFIG_PACKAGE_rtw89-firmware=m
+
 ### Kernel Modules
 CONFIG_PACKAGE_kmod-fs-exfat=y
 CONFIG_PACKAGE_kmod-fs-f2fs=y

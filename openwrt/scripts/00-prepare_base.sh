@@ -44,14 +44,6 @@ git clone https://$gitea/sbwml/package_kernel_r8125 package/kernel/r8125
 mkdir -p package/network/config/netifd/patches
 curl -s https://$mirror/openwrt/patch/netifd/100-system-linux-fix-autoneg-for-2.5G-5G-10G.patch > package/network/config/netifd/patches/100-system-linux-fix-autoneg-for-2.5G-5G-10G.patch
 
-# Wireless Drivers
-rm -rf package/kernel/rtl8812au-ct
-git clone https://github.com/sbwml/openwrt-wireless-drivers package/kernel/wireless
-if [ "$version" = "rc" ]; then
-    # hostapd: make LAR-friendly AP mode for AX200/AX210
-    curl -s https://$mirror/openwrt/patch/hostapd-22.03/999-hostapd-2.10-lar.patch > package/network/services/hostapd/patches/999-hostapd-2.10-lar.patch
-fi
-
 # Optimization level -Ofast
 if [ "$platform" = "x86_64" ]; then
     curl -s https://$mirror/openwrt/patch/target-modify_for_x86_64.patch | patch -p1
