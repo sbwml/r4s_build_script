@@ -214,6 +214,42 @@ CONFIG_LRU_GEN_ENABLED=y
 EOF
 fi
 
+# LRNG v49 - linux-5.15
+curl -s https://$mirror/openwrt/patch/backport-5.15/config-lrng >> target/linux/generic/config-5.15
+pushd target/linux/generic/hack-5.15
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0001-LRNG-Entropy-Source-and-DRNG-Manager.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0002-LRNG-allocate-one-DRNG-instance-per-NUMA-node.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0003-LRNG-proc-interface.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0004-LRNG-add-switchable-DRNG-support.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0005-LRNG-add-common-generic-hash-support.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0006-crypto-DRBG-externalize-DRBG-functions-for-LRNG.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0007-LRNG-add-SP800-90A-DRBG-extension.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0008-LRNG-add-kernel-crypto-API-PRNG-extension.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0009-LRNG-add-atomic-DRNG-implementation.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0010-LRNG-add-common-timer-based-entropy-source-code.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0011-LRNG-add-interrupt-entropy-source.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0012-scheduler-add-entropy-sampling-hook.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0013-LRNG-add-scheduler-based-entropy-source.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0014-LRNG-add-SP800-90B-compliant-health-tests.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0015-LRNG-add-random.c-entropy-source-support.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0016-LRNG-CPU-entropy-source.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0017-crypto-move-Jitter-RNG-header-include-dir.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0018-LRNG-add-Jitter-RNG-fast-noise-source.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0019-LRNG-add-option-to-enable-runtime-entropy-rate-confi.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0020-LRNG-add-interface-for-gathering-of-raw-entropy.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0021-LRNG-add-power-on-and-runtime-self-tests.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0022-LRNG-sysctls-and-proc-interface.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0023-LRMG-add-drop-in-replacement-random-4-API.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0024-LRNG-add-kernel-crypto-API-interface.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0025-LRNG-add-dev-lrng-device-file-support.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/960-v49-0026-LRNG-add-hwrand-framework-interface.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/961-v49-05-sysctl.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/961-v49-07-add_random_ready_callbacks.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/961-v49-08-revert-arch_get_random_long.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/961-v49-09-revert-split-random_init.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/961-v49-10-revert_add_hwgenerator_randomness_update.patch
+popd
+
 # OpenSSL
 if [ ! "$platform" = "x86_64" ] && [ "$version" = "rc" ]; then
     sed -i "s/O3/Ofast/g" package/libs/openssl/Makefile
