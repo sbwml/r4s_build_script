@@ -1,7 +1,7 @@
-From 6881ea5ad94a60cfcd973cb1578f4ac3b1aa0d60 Mon Sep 17 00:00:00 2001
+From 0c64460f43b02c27ad8c0c31f3f33172be8e5a57 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
-Date: Sun, 9 Oct 2022 10:17:06 +0200
-Subject: [PATCH v48 16/26] LRNG - CPU entropy source
+Date: Mon, 20 Feb 2023 22:08:23 +0100
+Subject: [PATCH 16/25] LRNG - CPU entropy source
 
 Certain CPUs provide instructions giving access to an entropy source
 (e.g. RDSEED on Intel/AMD, DARN on POWER, etc.). The LRNG can utilize
@@ -17,15 +17,15 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 ---
  drivers/char/lrng/Kconfig       |  76 ++++-----
  drivers/char/lrng/Makefile      |   1 +
- drivers/char/lrng/lrng_es_cpu.c | 280 ++++++++++++++++++++++++++++++++
- 3 files changed, 319 insertions(+), 38 deletions(-)
+ drivers/char/lrng/lrng_es_cpu.c | 281 ++++++++++++++++++++++++++++++++
+ 3 files changed, 320 insertions(+), 38 deletions(-)
  create mode 100644 drivers/char/lrng/lrng_es_cpu.c
 
 diff --git a/drivers/char/lrng/Kconfig b/drivers/char/lrng/Kconfig
-index e978ffa6b426..33da26633028 100644
+index 01366d7c7..1c8da9c1c 100644
 --- a/drivers/char/lrng/Kconfig
 +++ b/drivers/char/lrng/Kconfig
-@@ -427,44 +427,44 @@ config LRNG_IRQ_ENTROPY_RATE
+@@ -439,44 +439,44 @@ config LRNG_IRQ_ENTROPY_RATE
  # 	  will provide 256 bits of data without being credited to contain
  # 	  entropy.
  #
@@ -109,7 +109,7 @@ index e978ffa6b426..33da26633028 100644
  
  config LRNG_SCHED
 diff --git a/drivers/char/lrng/Makefile b/drivers/char/lrng/Makefile
-index 811208f38005..101c323ea1f2 100644
+index 811208f38..101c323ea 100644
 --- a/drivers/char/lrng/Makefile
 +++ b/drivers/char/lrng/Makefile
 @@ -22,5 +22,6 @@ obj-$(CONFIG_LRNG_TIMER_COMMON)		+= lrng_es_timer_common.o
@@ -121,10 +121,10 @@ index 811208f38005..101c323ea1f2 100644
  obj-$(CONFIG_LRNG_HEALTH_TESTS)		+= lrng_health.o
 diff --git a/drivers/char/lrng/lrng_es_cpu.c b/drivers/char/lrng/lrng_es_cpu.c
 new file mode 100644
-index 000000000000..f982cc31df4e
+index 000000000..96a621c16
 --- /dev/null
 +++ b/drivers/char/lrng/lrng_es_cpu.c
-@@ -0,0 +1,280 @@
+@@ -0,0 +1,281 @@
 +// SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
 +/*
 + * LRNG Fast Entropy Source: CPU-based entropy source
@@ -138,6 +138,7 @@ index 000000000000..f982cc31df4e
 +#include <crypto/hash.h>
 +#include <linux/module.h>
 +#include <linux/random.h>
++#include <asm/archrandom.h>
 +
 +#include "lrng_definitions.h"
 +#include "lrng_es_aux.h"
@@ -169,12 +170,12 @@ index 000000000000..f982cc31df4e
 +	if (ret)
 +		return ret;
 +
-+	if (trust_cpu) {
++	if (trust_cpu)
 +		cpu_entropy = LRNG_ARCHRANDOM_TRUST_CPU_STRENGTH;
-+		lrng_es_add_entropy();
-+	} else {
++	else
 +		cpu_entropy = LRNG_ARCHRANDOM_DEFAULT_STRENGTH;
-+	}
++
++	lrng_force_fully_seeded();
 +
 +	return 0;
 +}
@@ -406,5 +407,5 @@ index 000000000000..f982cc31df4e
 +	.switch_hash		= lrng_cpu_switch_hash,
 +};
 -- 
-2.39.0
+2.30.2
 

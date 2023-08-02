@@ -1,7 +1,7 @@
-From 4f3d1a144dd50204a4efbd8736175a3cd4805652 Mon Sep 17 00:00:00 2001
+From 80b1719b8ecc4f3f0b2d9d54e0e5fd45869d9cac Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
-Date: Thu, 22 Dec 2022 16:45:35 +0100
-Subject: [PATCH v48 23/26] LRMG - add drop-in replacement random(4) API
+Date: Mon, 20 Feb 2023 22:12:04 +0100
+Subject: [PATCH 22/25] LRMG - add drop-in replacement random(4) API
 
 The LRNG is intended to be a full replacement of the existing random.c.
 This also includes the providing of a full API and ABI compliant drop-in
@@ -14,18 +14,18 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 ---
  drivers/char/Makefile                         |   3 +-
  drivers/char/lrng/Makefile                    |   5 +
- drivers/char/lrng/lrng_interface_aux.c        | 196 +++++++++++
+ drivers/char/lrng/lrng_interface_aux.c        | 209 ++++++++++++
  drivers/char/lrng/lrng_interface_dev_common.c | 315 ++++++++++++++++++
- .../char/lrng/lrng_interface_random_kernel.c  | 218 ++++++++++++
+ .../char/lrng/lrng_interface_random_kernel.c  | 248 ++++++++++++++
  .../char/lrng/lrng_interface_random_user.c    | 104 ++++++
- 6 files changed, 840 insertions(+), 1 deletion(-)
+ 6 files changed, 883 insertions(+), 1 deletion(-)
  create mode 100644 drivers/char/lrng/lrng_interface_aux.c
  create mode 100644 drivers/char/lrng/lrng_interface_dev_common.c
  create mode 100644 drivers/char/lrng/lrng_interface_random_kernel.c
  create mode 100644 drivers/char/lrng/lrng_interface_random_user.c
 
 diff --git a/drivers/char/Makefile b/drivers/char/Makefile
-index 3ee88288d1f8..0d56f0a24fcd 100644
+index 3ee88288d..0d56f0a24 100644
 --- a/drivers/char/Makefile
 +++ b/drivers/char/Makefile
 @@ -3,7 +3,8 @@
@@ -39,7 +39,7 @@ index 3ee88288d1f8..0d56f0a24fcd 100644
  obj-y				+= misc.o
  obj-$(CONFIG_ATARI_DSP56K)	+= dsp56k.o
 diff --git a/drivers/char/lrng/Makefile b/drivers/char/lrng/Makefile
-index 52b4625a0760..6242262d577e 100644
+index 52b4625a0..6242262d5 100644
 --- a/drivers/char/lrng/Makefile
 +++ b/drivers/char/lrng/Makefile
 @@ -29,3 +29,8 @@ obj-$(CONFIG_LRNG_JENT)			+= lrng_es_jent.o
@@ -53,10 +53,10 @@ index 52b4625a0760..6242262d577e 100644
 +					   lrng_interface_aux.o
 diff --git a/drivers/char/lrng/lrng_interface_aux.c b/drivers/char/lrng/lrng_interface_aux.c
 new file mode 100644
-index 000000000000..b4292830560c
+index 000000000..84f3ce38f
 --- /dev/null
 +++ b/drivers/char/lrng/lrng_interface_aux.c
-@@ -0,0 +1,196 @@
+@@ -0,0 +1,209 @@
 +// SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
 +/*
 + * LRNG auxiliary interfaces
@@ -194,6 +194,19 @@ index 000000000000..b4292830560c
 +}
 +EXPORT_SYMBOL(get_random_u8);
 +
++/* Taken directly from random.c */
++u32 __get_random_u32_below(u32 ceil)
++{
++	u64 mult = (u64)ceil * get_random_u32();
++	if (unlikely((u32)mult < ceil)) {
++		u32 bound = -ceil % ceil;
++		while (unlikely((u32)mult < bound))
++			mult = (u64)ceil * get_random_u32();
++	}
++	return mult >> 32;
++}
++EXPORT_SYMBOL(__get_random_u32_below);
++
 +#ifdef CONFIG_SMP
 +/*
 + * This function is called when the CPU is coming up, with entry
@@ -255,7 +268,7 @@ index 000000000000..b4292830560c
 +}
 diff --git a/drivers/char/lrng/lrng_interface_dev_common.c b/drivers/char/lrng/lrng_interface_dev_common.c
 new file mode 100644
-index 000000000000..09d0563074a4
+index 000000000..a2845e278
 --- /dev/null
 +++ b/drivers/char/lrng/lrng_interface_dev_common.c
 @@ -0,0 +1,315 @@
@@ -576,10 +589,10 @@ index 000000000000..09d0563074a4
 +}
 diff --git a/drivers/char/lrng/lrng_interface_random_kernel.c b/drivers/char/lrng/lrng_interface_random_kernel.c
 new file mode 100644
-index 000000000000..4c6c7a49096c
+index 000000000..fabf2109c
 --- /dev/null
 +++ b/drivers/char/lrng/lrng_interface_random_kernel.c
-@@ -0,0 +1,218 @@
+@@ -0,0 +1,248 @@
 +// SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
 +/*
 + * LRNG Kernel space interfaces API/ABI compliant to linux/random.h
@@ -600,6 +613,8 @@ index 000000000000..4c6c7a49096c
 +#include "lrng_es_mgr.h"
 +#include "lrng_interface_dev_common.h"
 +#include "lrng_interface_random_kernel.h"
++
++static ATOMIC_NOTIFIER_HEAD(random_ready_notifier);
 +
 +/********************************** Helper ***********************************/
 +
@@ -623,6 +638,33 @@ index 000000000000..4c6c7a49096c
 +	lrng_rand_initialize();
 +}
 +
++/*
++ * Add a callback function that will be invoked when the LRNG is initialised,
++ * or immediately if it already has been. Only use this is you are absolutely
++ * sure it is required. Most users should instead be able to test
++ * `rng_is_initialized()` on demand, or make use of `get_random_bytes_wait()`.
++ */
++int __cold execute_with_initialized_rng(struct notifier_block *nb)
++{
++	unsigned long flags;
++	int ret = 0;
++
++	spin_lock_irqsave(&random_ready_notifier.lock, flags);
++	if (rng_is_initialized())
++		nb->notifier_call(nb, 0, NULL);
++	else
++		ret = raw_notifier_chain_register(
++			(struct raw_notifier_head *)&random_ready_notifier.head,
++			nb);
++	spin_unlock_irqrestore(&random_ready_notifier.lock, flags);
++	return ret;
++}
++
++void lrng_kick_random_ready(void)
++{
++	atomic_notifier_call_chain(&random_ready_notifier, 0, NULL);
++}
++
 +/************************ LRNG kernel input interfaces ************************/
 +
 +/*
@@ -638,7 +680,7 @@ index 000000000000..4c6c7a49096c
 + * @entropy_bits: amount of entropy in buffer (value is in bits)
 + */
 +void add_hwgenerator_randomness(const void *buffer, size_t count,
-+				size_t entropy_bits)
++				size_t entropy_bits, bool sleep_after)
 +{
 +	/*
 +	 * Suspend writing if we are fully loaded with entropy or if caller
@@ -649,6 +691,7 @@ index 000000000000..4c6c7a49096c
 +	wait_event_interruptible(lrng_write_wait,
 +				(lrng_need_entropy() && entropy_bits) ||
 +				lrng_state_exseed_allow(lrng_noise_source_hw) ||
++				!sleep_after ||
 +				kthread_should_stop());
 +	lrng_state_exseed_set(lrng_noise_source_hw, false);
 +	lrng_pool_insert_aux(buffer, count, entropy_bits);
@@ -800,7 +843,7 @@ index 000000000000..4c6c7a49096c
 +EXPORT_SYMBOL(rng_is_initialized);
 diff --git a/drivers/char/lrng/lrng_interface_random_user.c b/drivers/char/lrng/lrng_interface_random_user.c
 new file mode 100644
-index 000000000000..d12e883804d9
+index 000000000..d12e88380
 --- /dev/null
 +++ b/drivers/char/lrng/lrng_interface_random_user.c
 @@ -0,0 +1,104 @@
@@ -909,5 +952,5 @@ index 000000000000..d12e883804d9
 +				      flags & GRND_RANDOM, buf, count);
 +}
 -- 
-2.39.0
+2.30.2
 

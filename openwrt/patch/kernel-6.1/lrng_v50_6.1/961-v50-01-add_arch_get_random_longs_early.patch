@@ -1,0 +1,18 @@
+diff --git a/drivers/char/lrng/lrng_es_mgr.c b/drivers/char/lrng/lrng_es_mgr.c
+index 9570a4a1b..b6a63172b 100644
+--- a/drivers/char/lrng/lrng_es_mgr.c
++++ b/drivers/char/lrng/lrng_es_mgr.c
+@@ -393,11 +393,11 @@ void __init lrng_rand_initialize_early(void)
+ 	unsigned int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(seed.data); i += longs) {
+-		longs = arch_get_random_seed_longs(seed.data + i,
++		longs = arch_get_random_seed_longs_early(seed.data + i,
+ 						   ARRAY_SIZE(seed.data) - i);
+ 		if (longs)
+ 			continue;
+-		longs = arch_get_random_longs(seed.data + i,
++		longs = arch_get_random_longs_early(seed.data + i,
+ 					      ARRAY_SIZE(seed.data) - i);
+ 		if (longs)
+ 			continue;

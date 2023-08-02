@@ -1,7 +1,7 @@
-From 5ad9d8aa6817d9eb37196c33e0085bc12e22fc01 Mon Sep 17 00:00:00 2001
+From bf6f3dcbec32d481dffa244150e760a4067d7bfd Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
-Date: Sun, 15 May 2022 16:09:02 +0200
-Subject: [PATCH v48 07/26] LRNG - add SP800-90A DRBG extension
+Date: Mon, 20 Feb 2023 22:22:25 +0100
+Subject: [PATCH 07/25] LRNG - add SP800-90A DRBG extension
 
 Using the LRNG switchable DRNG support, the SP800-90A DRBG extension is
 implemented.
@@ -22,17 +22,17 @@ provide random data produced by an SP800-90A DRBG.
 
 Signed-off-by: Stephan Mueller <smueller@chronox.de>
 ---
- drivers/char/lrng/Kconfig          |  76 ++++++------
+ drivers/char/lrng/Kconfig          |  78 ++++++-------
  drivers/char/lrng/Makefile         |   1 +
  drivers/char/lrng/lrng_drng_drbg.c | 179 +++++++++++++++++++++++++++++
- 3 files changed, 218 insertions(+), 38 deletions(-)
+ 3 files changed, 219 insertions(+), 39 deletions(-)
  create mode 100644 drivers/char/lrng/lrng_drng_drbg.c
 
 diff --git a/drivers/char/lrng/Kconfig b/drivers/char/lrng/Kconfig
-index 95e52c186ab2..f33a3de43645 100644
+index 6a05cf571..39dd411c9 100644
 --- a/drivers/char/lrng/Kconfig
 +++ b/drivers/char/lrng/Kconfig
-@@ -551,11 +551,11 @@ endmenu # "Specific DRNG seeding strategies"
+@@ -563,11 +563,11 @@ endmenu # "Specific DRNG seeding strategies"
  config LRNG_DRNG_CHACHA20
  	tristate
  
@@ -49,7 +49,7 @@ index 95e52c186ab2..f33a3de43645 100644
  # config LRNG_DRNG_KCAPI
  # 	tristate
  # 	depends on CRYPTO
-@@ -584,33 +584,33 @@ config LRNG_HASH_KCAPI
+@@ -596,33 +596,33 @@ config LRNG_HASH_KCAPI
  
  endif # LRNG_SWITCH_HASH
  
@@ -110,7 +110,7 @@ index 95e52c186ab2..f33a3de43645 100644
  # config LRNG_SWITCH_DRNG_KCAPI
  # 	tristate "Kernel Crypto API support for the LRNG"
  # 	depends on !LRNG_DFLT_DRNG_KCAPI
-@@ -622,8 +622,8 @@ endif # LRNG_SWITCH_HASH
+@@ -634,8 +634,8 @@ endif # LRNG_SWITCH_HASH
  # 	  LRNG. Once the module is loaded, output from /dev/random,
  # 	  /dev/urandom, getrandom(2), or get_random_bytes is
  # 	  provided by the selected kernel crypto API RNG.
@@ -121,23 +121,25 @@ index 95e52c186ab2..f33a3de43645 100644
  
  choice
  	prompt "LRNG Default DRNG"
-@@ -638,10 +638,10 @@ choice
+@@ -650,11 +650,11 @@ choice
  		bool "ChaCha20-based DRNG"
  		select LRNG_DRNG_CHACHA20
  
 -# 	config LRNG_DFLT_DRNG_DRBG
+-# 		depends on RANDOM_DEFAULT_IMPL
 -# 		bool "SP800-90A DRBG"
 -# 		select LRNG_DRBG
 -#
 +	config LRNG_DFLT_DRNG_DRBG
++		depends on RANDOM_DEFAULT_IMPL
 +		bool "SP800-90A DRBG"
 +		select LRNG_DRBG
 +
  # 	config LRNG_DFLT_DRNG_KCAPI
+ # 		depends on RANDOM_DEFAULT_IMPL
  # 		bool "Kernel Crypto API DRNG"
- # 		select LRNG_DRNG_KCAPI
 diff --git a/drivers/char/lrng/Makefile b/drivers/char/lrng/Makefile
-index b3326c9580eb..b59414316f1c 100644
+index b3326c958..b59414316 100644
 --- a/drivers/char/lrng/Makefile
 +++ b/drivers/char/lrng/Makefile
 @@ -14,3 +14,4 @@ obj-$(CONFIG_NUMA)			+= lrng_numa.o
@@ -147,7 +149,7 @@ index b3326c9580eb..b59414316f1c 100644
 +obj-$(CONFIG_LRNG_DRBG)			+= lrng_drng_drbg.o
 diff --git a/drivers/char/lrng/lrng_drng_drbg.c b/drivers/char/lrng/lrng_drng_drbg.c
 new file mode 100644
-index 000000000000..1feec2c095a5
+index 000000000..1feec2c09
 --- /dev/null
 +++ b/drivers/char/lrng/lrng_drng_drbg.c
 @@ -0,0 +1,179 @@
@@ -331,5 +333,5 @@ index 000000000000..1feec2c095a5
 +MODULE_DESCRIPTION("Entropy Source and DRNG Manager - SP800-90A DRBG backend");
 +#endif /* CONFIG_LRNG_DFLT_DRNG_DRBG */
 -- 
-2.39.0
+2.30.2
 

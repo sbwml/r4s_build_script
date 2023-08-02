@@ -1,7 +1,7 @@
-From e74841f5ca6381c1f23076ccf2d894b590149e21 Mon Sep 17 00:00:00 2001
+From 97658430607dc38cf02894543a92cc75938acd9f Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
-Date: Sun, 15 May 2022 17:07:49 +0200
-Subject: [PATCH v48 14/26] LRNG - add SP800-90B compliant health tests
+Date: Tue, 25 Apr 2023 23:13:30 +0200
+Subject: [PATCH 14/25] LRNG - add SP800-90B compliant health tests
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -112,17 +112,17 @@ regular operation.
 
 Signed-off-by: Stephan Mueller <smueller@chronox.de>
 ---
- drivers/char/lrng/Kconfig       | 124 +++++-----
+ drivers/char/lrng/Kconfig       | 140 +++++-----
  drivers/char/lrng/Makefile      |   2 +
- drivers/char/lrng/lrng_health.c | 420 ++++++++++++++++++++++++++++++++
- 3 files changed, 484 insertions(+), 62 deletions(-)
+ drivers/char/lrng/lrng_health.c | 447 ++++++++++++++++++++++++++++++++
+ 3 files changed, 519 insertions(+), 70 deletions(-)
  create mode 100644 drivers/char/lrng/lrng_health.c
 
 diff --git a/drivers/char/lrng/Kconfig b/drivers/char/lrng/Kconfig
-index 527488219551..3c4ef2704e5e 100644
+index d2454cba1..7e136ba39 100644
 --- a/drivers/char/lrng/Kconfig
 +++ b/drivers/char/lrng/Kconfig
-@@ -229,68 +229,68 @@ config LRNG_COLLECTION_SIZE
+@@ -229,80 +229,80 @@ config LRNG_COLLECTION_SIZE
  	default 4096 if LRNG_COLLECTION_SIZE_4096
  	default 8192 if LRNG_COLLECTION_SIZE_8192
  
@@ -177,17 +177,6 @@ index 527488219551..3c4ef2704e5e 100644
 -#
 -# 	  If unsure, say N.
 -#
--# # Default taken from SP800-90B sec 4.4.1 - significance level 2^-30
--# config LRNG_RCT_CUTOFF
--# 	int
--# 	default 31 if !LRNG_RCT_BROKEN
--# 	default 1 if LRNG_RCT_BROKEN
--#
--# # Default taken from SP800-90B sec 4.4.2 - significance level 2^-30
--# config LRNG_APT_CUTOFF
--# 	int
--# 	default 325 if !LRNG_APT_BROKEN
--# 	default 32 if LRNG_APT_BROKEN
 +config LRNG_HEALTH_TESTS
 +	bool "Enable internal entropy source online health tests"
 +	depends on LRNG_TIMER_COMMON
@@ -239,22 +228,53 @@ index 527488219551..3c4ef2704e5e 100644
 +
 +	  If unsure, say N.
 +
-+# Default taken from SP800-90B sec 4.4.1 - significance level 2^-30
+ # Default taken from SP800-90B sec 4.4.1 - significance level 2^-30
+-# config LRNG_RCT_CUTOFF
+-# 	int
+-# 	default 31 if !LRNG_RCT_BROKEN
+-# 	default 1 if LRNG_RCT_BROKEN
+-#
 +config LRNG_RCT_CUTOFF
 +	int
 +	default 31 if !LRNG_RCT_BROKEN
 +	default 1 if LRNG_RCT_BROKEN
 +
-+# Default taken from SP800-90B sec 4.4.2 - significance level 2^-30
+ # Default taken from SP800-90B sec 4.4.1 - significance level 2^-80
+-# config LRNG_RCT_CUTOFF_PERMANENT
+-# 	int
+-# 	default 81 if !LRNG_RCT_BROKEN
+-# 	default 2 if LRNG_RCT_BROKEN
+-#
++config LRNG_RCT_CUTOFF_PERMANENT
++	int
++	default 81 if !LRNG_RCT_BROKEN
++	default 2 if LRNG_RCT_BROKEN
++
+ # Default taken from SP800-90B sec 4.4.2 - significance level 2^-30
+-# config LRNG_APT_CUTOFF
+-# 	int
+-# 	default 325 if !LRNG_APT_BROKEN
+-# 	default 32 if LRNG_APT_BROKEN
+-#
 +config LRNG_APT_CUTOFF
 +	int
 +	default 325 if !LRNG_APT_BROKEN
 +	default 32 if LRNG_APT_BROKEN
++
+ # Default taken from SP800-90B sec 4.4.2 - significance level 2^-80
+-# config LRNG_APT_CUTOFF_PERMANENT
+-# 	int
+-# 	default 371 if !LRNG_APT_BROKEN
+-# 	default 33 if LRNG_APT_BROKEN
++config LRNG_APT_CUTOFF_PERMANENT
++	int
++	default 371 if !LRNG_APT_BROKEN
++	default 33 if LRNG_APT_BROKEN
  
  comment "Interrupt Entropy Source"
  
 diff --git a/drivers/char/lrng/Makefile b/drivers/char/lrng/Makefile
-index c14a056fea95..6dc38c1b70e9 100644
+index c14a056fe..6dc38c1b7 100644
 --- a/drivers/char/lrng/Makefile
 +++ b/drivers/char/lrng/Makefile
 @@ -21,3 +21,5 @@ obj-$(CONFIG_LRNG_DRNG_ATOMIC)		+= lrng_drng_atomic.o
@@ -265,15 +285,15 @@ index c14a056fea95..6dc38c1b70e9 100644
 +obj-$(CONFIG_LRNG_HEALTH_TESTS)		+= lrng_health.o
 diff --git a/drivers/char/lrng/lrng_health.c b/drivers/char/lrng/lrng_health.c
 new file mode 100644
-index 000000000000..a60c8378eea5
+index 000000000..2c884d1c1
 --- /dev/null
 +++ b/drivers/char/lrng/lrng_health.c
-@@ -0,0 +1,420 @@
+@@ -0,0 +1,447 @@
 +// SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
 +/*
 + * Entropy Source and DRNG Manager (LRNG) Health Testing
 + *
-+ * Copyright (C) 2022, Stephan Mueller <smueller@chronox.de>
++ * Copyright (C) 2022 - 2023, Stephan Mueller <smueller@chronox.de>
 + */
 +
 +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
@@ -281,6 +301,7 @@ index 000000000000..a60c8378eea5
 +#include <linux/fips.h>
 +#include <linux/module.h>
 +
++#include "lrng_definitions.h"
 +#include "lrng_es_mgr.h"
 +#include "lrng_health.h"
 +
@@ -412,6 +433,7 @@ index 000000000000..a60c8378eea5
 +{
 +	struct lrng_health_es_state *es_state = &health->es_state[es];
 +
++
 +	/* Reset of LRNG and its entropy - NOTE: we are in atomic context */
 +	lrng_reset();
 +
@@ -439,16 +461,40 @@ index 000000000000..a60c8378eea5
 +	es_state->sp80090b_startup_done = false;
 +}
 +
++static void lrng_rct_reset(struct lrng_rct *rct);
++static void lrng_apt_reset(struct lrng_apt *apt, unsigned int time_masked);
++static void lrng_apt_restart(struct lrng_apt *apt);
++static void lrng_sp80090b_permanent_failure(struct lrng_health *health,
++					    enum lrng_internal_es es)
++{
++	struct lrng_health_es_state *es_state = &health->es_state[es];
++	struct lrng_apt *apt = &es_state->apt;
++	struct lrng_rct *rct = &es_state->rct;
++
++	if (lrng_enforce_panic_on_permanent_health_failure()) {
++		panic("SP800-90B permanent health test failure for internal entropy source %u\n",
++		      es);
++	}
++
++	pr_err("SP800-90B permanent health test failure for internal entropy source %u - invalidating all existing entropy and initiate SP800-90B startup\n",
++	       es);
++	lrng_sp80090b_runtime_failure(health, es);
++
++	lrng_rct_reset(rct);
++	lrng_apt_reset(apt, 0);
++	lrng_apt_restart(apt);
++}
++
 +static void lrng_sp80090b_failure(struct lrng_health *health,
 +				  enum lrng_internal_es es)
 +{
 +	struct lrng_health_es_state *es_state = &health->es_state[es];
 +
 +	if (es_state->sp80090b_startup_done) {
-+		pr_err("SP800-90B runtime health test failure for internal entropy source %u - invalidating all existing entropy and initiate SP800-90B startup\n", es);
++		pr_warn("SP800-90B runtime health test failure for internal entropy source %u - invalidating all existing entropy and initiate SP800-90B startup\n", es);
 +		lrng_sp80090b_runtime_failure(health, es);
 +	} else {
-+		pr_err("SP800-90B startup test failure for internal entropy source %u - resetting\n", es);
++		pr_warn("SP800-90B startup test failure for internal entropy source %u - resetting\n", es);
 +		lrng_sp80090b_startup_failure(health, es);
 +	}
 +}
@@ -528,7 +574,9 @@ index 000000000000..a60c8378eea5
 +	if (now_time == (unsigned int)atomic_read(&apt->apt_base)) {
 +		u32 apt_val = (u32)atomic_inc_return_relaxed(&apt->apt_count);
 +
-+		if (apt_val >= CONFIG_LRNG_APT_CUTOFF)
++		if (apt_val >= CONFIG_LRNG_APT_CUTOFF_PERMANENT)
++			lrng_sp80090b_permanent_failure(health, es);
++		else if (apt_val >= CONFIG_LRNG_APT_CUTOFF)
 +			lrng_sp80090b_failure(health, es);
 +	}
 +
@@ -555,6 +603,12 @@ index 000000000000..a60c8378eea5
 + * that no data can be extracted from the entropy pool unless new entropy
 + * is received.
 + ***************************************************************************/
++
++static void lrng_rct_reset(struct lrng_rct *rct)
++{
++	/* Reset RCT */
++	atomic_set(&rct->rct_count, 0);
++}
 +
 +/*
 + * Hot code path - Insert data for Repetition Count Test
@@ -585,19 +639,12 @@ index 000000000000..a60c8378eea5
 +		 * Hence we need to subtract one from the cutoff value as
 +		 * calculated following SP800-90B.
 +		 */
-+		if (rct_count >= CONFIG_LRNG_RCT_CUTOFF) {
-+			atomic_set(&rct->rct_count, 0);
-+
-+			/*
-+			 * APT must start anew as we consider all previously
-+			 * recorded data to contain no entropy.
-+			 */
-+			lrng_apt_restart(&es_state->apt);
-+
++		if (rct_count >= CONFIG_LRNG_RCT_CUTOFF_PERMANENT)
++			lrng_sp80090b_permanent_failure(health, es);
++		else if (rct_count >= CONFIG_LRNG_RCT_CUTOFF)
 +			lrng_sp80090b_failure(health, es);
-+		}
 +	} else {
-+		atomic_set(&rct->rct_count, 0);
++		lrng_rct_reset(rct);
 +	}
 +}
 +
@@ -690,5 +737,5 @@ index 000000000000..a60c8378eea5
 +	return lrng_health_pass;
 +}
 -- 
-2.39.0
+2.30.2
 

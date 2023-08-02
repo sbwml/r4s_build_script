@@ -1,7 +1,7 @@
-From 489583ce775cc551a2d89bcfad89fd4cd899b4e8 Mon Sep 17 00:00:00 2001
+From 8e50efb371f5e0f2cb61e1bc588b764cd10a7f3f Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
-Date: Sun, 9 Oct 2022 10:15:35 +0200
-Subject: [PATCH v48 15/26] LRNG - add random.c entropy source support
+Date: Mon, 20 Feb 2023 22:07:27 +0100
+Subject: [PATCH 15/25] LRNG - add random.c entropy source support
 
 The random.c implementation can be used as an entropy source by the
 LRNG. This support can be enabled at compile time.
@@ -28,10 +28,10 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
  create mode 100644 drivers/char/lrng/lrng_es_krng.c
 
 diff --git a/drivers/char/lrng/Kconfig b/drivers/char/lrng/Kconfig
-index 3c4ef2704e5e..e978ffa6b426 100644
+index 7e136ba39..01366d7c7 100644
 --- a/drivers/char/lrng/Kconfig
 +++ b/drivers/char/lrng/Kconfig
-@@ -517,34 +517,34 @@ config LRNG_SCHED_ENTROPY_RATE
+@@ -529,34 +529,34 @@ config LRNG_SCHED_ENTROPY_RATE
  	  scheduler entropy source will still deliver data but without
  	  being credited with entropy.
  
@@ -95,7 +95,7 @@ index 3c4ef2704e5e..e978ffa6b426 100644
  endmenu # "Entropy Source Configuration"
  
 diff --git a/drivers/char/lrng/Makefile b/drivers/char/lrng/Makefile
-index 6dc38c1b70e9..811208f38005 100644
+index 6dc38c1b7..811208f38 100644
 --- a/drivers/char/lrng/Makefile
 +++ b/drivers/char/lrng/Makefile
 @@ -20,6 +20,7 @@ obj-$(CONFIG_LRNG_DRNG_ATOMIC)		+= lrng_drng_atomic.o
@@ -108,7 +108,7 @@ index 6dc38c1b70e9..811208f38005 100644
  obj-$(CONFIG_LRNG_HEALTH_TESTS)		+= lrng_health.o
 diff --git a/drivers/char/lrng/lrng_es_krng.c b/drivers/char/lrng/lrng_es_krng.c
 new file mode 100644
-index 000000000000..519ba640cc75
+index 000000000..519ba640c
 --- /dev/null
 +++ b/drivers/char/lrng/lrng_es_krng.c
 @@ -0,0 +1,100 @@
@@ -213,5 +213,5 @@ index 000000000000..519ba640cc75
 +	.switch_hash		= NULL,
 +};
 -- 
-2.39.0
+2.30.2
 

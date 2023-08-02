@@ -1,7 +1,7 @@
-From ae7e50dfbf31f8158b0562f4188ebae5f03ef706 Mon Sep 17 00:00:00 2001
+From 9ac229efebe89638f198886edfb1df650fea79eb Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Sun, 15 May 2022 16:01:44 +0200
-Subject: [PATCH v48 05/26] LRNG - add common generic hash support
+Subject: [PATCH 05/25] LRNG - add common generic hash support
 
 The LRNG switchable DRNG support also allows the replacement of the hash
 implementation used as conditioning component. The common generic hash
@@ -20,10 +20,10 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
  create mode 100644 drivers/char/lrng/lrng_hash_kcapi.c
 
 diff --git a/drivers/char/lrng/Kconfig b/drivers/char/lrng/Kconfig
-index a477b8cae623..95e52c186ab2 100644
+index 2818003e1..6a05cf571 100644
 --- a/drivers/char/lrng/Kconfig
 +++ b/drivers/char/lrng/Kconfig
-@@ -564,26 +564,26 @@ config LRNG_DRNG_CHACHA20
+@@ -576,26 +576,26 @@ config LRNG_DRNG_CHACHA20
  config LRNG_SWITCH
  	bool
  
@@ -71,7 +71,7 @@ index a477b8cae623..95e52c186ab2 100644
  # 	bool "Support DRNG runtime switching"
  # 	select LRNG_SWITCH
 diff --git a/drivers/char/lrng/Makefile b/drivers/char/lrng/Makefile
-index f89224d82d73..b3326c9580eb 100644
+index f89224d82..b3326c958 100644
 --- a/drivers/char/lrng/Makefile
 +++ b/drivers/char/lrng/Makefile
 @@ -12,4 +12,5 @@ obj-$(CONFIG_SYSCTL)			+= lrng_proc.o
@@ -82,7 +82,7 @@ index f89224d82d73..b3326c9580eb 100644
  obj-$(CONFIG_LRNG_DRNG_CHACHA20)	+= lrng_drng_chacha20.o
 diff --git a/drivers/char/lrng/lrng_hash_kcapi.c b/drivers/char/lrng/lrng_hash_kcapi.c
 new file mode 100644
-index 000000000000..13e62db9b6c8
+index 000000000..13e62db9b
 --- /dev/null
 +++ b/drivers/char/lrng/lrng_hash_kcapi.c
 @@ -0,0 +1,140 @@
@@ -227,5 +227,5 @@ index 000000000000..13e62db9b6c8
 +MODULE_AUTHOR("Stephan Mueller <smueller@chronox.de>");
 +MODULE_DESCRIPTION("Entropy Source and DRNG Manager - Kernel crypto API hash backend");
 -- 
-2.39.0
+2.30.2
 

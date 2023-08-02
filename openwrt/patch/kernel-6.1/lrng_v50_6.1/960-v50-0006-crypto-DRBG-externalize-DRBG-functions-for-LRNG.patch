@@ -1,7 +1,7 @@
-From 9a53eba19d467c6125c18cab74e9fcff7dfe553f Mon Sep 17 00:00:00 2001
+From 69af97adaabbfe4039a859f8eb54648b3f12aff5 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Tue, 15 Sep 2020 22:17:43 +0200
-Subject: [PATCH v48 06/26] crypto: DRBG - externalize DRBG functions for LRNG
+Subject: [PATCH 06/25] crypto: DRBG - externalize DRBG functions for LRNG
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -41,7 +41,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
  2 files changed, 17 insertions(+), 6 deletions(-)
 
 diff --git a/crypto/drbg.c b/crypto/drbg.c
-index 982d4ca4526d..af571948e80e 100644
+index ff4ebbc68..ed9c6d9e8 100644
 --- a/crypto/drbg.c
 +++ b/crypto/drbg.c
 @@ -115,7 +115,7 @@
@@ -129,7 +129,7 @@ index 982d4ca4526d..af571948e80e 100644
  static int drbg_kcapi_init(struct crypto_tfm *tfm)
  {
 diff --git a/include/crypto/drbg.h b/include/crypto/drbg.h
-index af5ad51d3eef..b12ae9bdebf4 100644
+index af5ad51d3..b12ae9bde 100644
 --- a/include/crypto/drbg.h
 +++ b/include/crypto/drbg.h
 @@ -283,4 +283,11 @@ enum drbg_prefixes {
@@ -145,5 +145,5 @@ index af5ad51d3eef..b12ae9bdebf4 100644
 +
  #endif /* _DRBG_H */
 -- 
-2.39.0
+2.30.2
 
