@@ -248,6 +248,7 @@ pushd target/linux/generic/hack-5.15
     curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/961-v49-08-revert-arch_get_random_long.patch
     curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/961-v49-09-revert-split-random_init.patch
     curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/961-v49-10-revert_add_hwgenerator_randomness_update.patch
+    curl -Os https://$mirror/openwrt/patch/backport-5.15/lrng_v49_5.15/961-v49-11-fix-compile-issue.patch
 popd
 
 # OpenSSL
