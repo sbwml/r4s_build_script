@@ -89,6 +89,7 @@ export platform=$2
 [ "$platform" = "nanopi-r4s" ] && export platform="rk3399" toolchain_arch="nanopi-r4s"
 [ "$platform" = "nanopi-r5s" ] && export platform="rk3568" toolchain_arch="nanopi-r5s"
 [ "$platform" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
+[ "$platform" = "x86_64" ] && [ "$(whoami)" = "runner" ] && EXTRA_IMAGE=y
 
 # use glibc - openwrt-22.03
 export USE_GLIBC=$USE_GLIBC
@@ -292,6 +293,21 @@ SEC=$((end_seconds-start_seconds));
 
 if [ "$platform" = "x86_64" ]; then
     if [ -f bin/targets/x86/64*/*-ext4-combined-efi.img.gz ]; then
+        if [ "$EXTRA_IMAGE" = y ]; then
+            echo -e "${GREEN_COLOR} Create virtual machine images ${RES}"
+            mkdir -p virtual_images
+            cp -a bin/targets/x86/*/*-generic-squashfs-combined-efi.img.gz virtual_images/
+            pushd virtual_images > /dev/null 2>&1
+                gzip -dq *-generic-squashfs-combined-efi.img.gz | true
+                image_name=$(basename -s .img *.img)
+                qemu-img convert -f raw -O qcow2 *.img $image_name.qcow2
+                qemu-img convert -f raw -O vpc *.img $image_name.vhd
+                qemu-img convert -f raw -O vmdk *.img $image_name.vmdk
+                rm -f *.img
+                sha256sum * > sha256sums.txt
+                echo "<center><h1>x86_64 虚拟机平台镜像</h1></center>" > README.md
+            popd > /dev/null 2>&1
+        fi
         echo -e "${GREEN_COLOR} Build success! ${RES}"
         echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
         if [ "$ALL_KMODS" = y ]; then
