@@ -22,6 +22,24 @@ sed -i '/stdout:bool/d;/stderr:bool/d' feeds/packages/net/frp/files/frpc.init
 sed -i '/stdout/d;/stderr/d' feeds/packages/net/frp/files/frpc.config
 sed -i '/Log stdout/d;/Log stderr/d' feeds/luci/applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js
 
+# samba4 - bump version
+SAMBA4_VERSION=4.18.5
+SAMBA4_HASH=095256ac332e1d9fbf9b7ff7823f92a3233d3ed658ce7fc9b33905c2243f447f
+rm -rf feeds/packages/net/samba4
+cp -a ../master/packages/net/samba4 feeds/packages/net/samba4
+sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$SAMBA4_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$SAMBA4_HASH/" feeds/packages/net/samba4/Makefile
+# enable multi-channel
+sed -i '/workgroup/a \\n\t## enable multi-channel' feeds/packages/net/samba4/files/smb.conf.template
+sed -i '/enable multi-channel/a \\tserver multi channel support = yes' feeds/packages/net/samba4/files/smb.conf.template
+# default config
+sed -i 's/invalid users = root/#invalid users = root/g' feeds/packages/net/samba4/files/smb.conf.template
+sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages/net/samba4/files/smb.conf.template
+sed -i 's/#create mask/create mask/g' feeds/packages/net/samba4/files/smb.conf.template
+sed -i 's/#directory mask/directory mask/g' feeds/packages/net/samba4/files/smb.conf.template
+sed -i 's/0666/0644/g;s/0744/0755/g;s/0777/0755/g' feeds/luci/applications/luci-app-samba4/htdocs/luci-static/resources/view/samba4.js
+sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/samba.config
+sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/smb.conf.template
+
 # autoCore
 [ "$version" = "rc" ] && git clone https://github.com/sbwml/autocore-arm -b openwrt-22.03 package/new/autocore
 [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && git clone https://github.com/sbwml/autocore-arm -b openwrt-23.05 package/new/autocore
@@ -85,8 +103,22 @@ git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
 # OpenAppFilter
 git clone https://github.com/sbwml/OpenAppFilter --depth=1 package/new/OpenAppFilter
 
-# iperf3 - 3.13
-sed -ri "s/(PKG_VERSION:=)[^\"]*/\13.13/;s/(PKG_HASH:=)[^\"]*/\1bee427aeb13d6a2ee22073f23261f63712d82befaa83ac8cb4db5da4c2bdc865/" feeds/packages/net/iperf3/Makefile
+# iperf3
+rm -rf feeds/packages/net/iperf3
+cp -a ../master/packages/net/iperf3 feeds/packages/net/iperf3
+sed -i "s/D_GNU_SOURCE/D_GNU_SOURCE -funroll-loops/g" feeds/packages/net/iperf3/Makefile
+
+# coreutils
+if [ "$version" = "rc" ]; then
+    rm -rf feeds/packages/utils/coreutils
+    cp -a ../master/packages/utils/coreutils feeds/packages/utils/coreutils
+fi
+
+# xfsprogs - 6.2.0
+if [ "$version" = "rc" ]; then
+    rm -rf feeds/packages/utils/xfsprogs
+    git clone https://github.com/sbwml/packages_utils_xfsprogs package/xfsprogs
+fi
 
 # 带宽监控
 sed -i 's/services/network/g' feeds/luci/applications/luci-app-nlbwmon/root/usr/share/luci/menu.d/luci-app-nlbwmon.json
@@ -109,6 +141,9 @@ sed -i 's,frp 客户端,FRP 客户端,g' feeds/luci/applications/luci-app-frpc/p
 # SQM Translation
 mkdir -p feeds/packages/net/sqm-scripts/patches
 curl -s https://$mirror/openwrt/patch/sqm/001-help-translation.patch > feeds/packages/net/sqm-scripts/patches/001-help-translation.patch
+
+# SQM - luci menu order
+sed "s/59/150/g" feeds/luci/applications/luci-app-sqm/root/usr/share/luci/menu.d/luci-app-sqm.json
 
 # mjpg-streamer init
 sed -i "s,option port '8080',option port '1024',g" feeds/packages/multimedia/mjpg-streamer/files/mjpg-streamer.config

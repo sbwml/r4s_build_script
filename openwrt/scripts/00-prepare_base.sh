@@ -381,24 +381,6 @@ sed -i "s/openwrt.org/www.qq.com/g" feeds/luci/modules/luci-mod-network/htdocs/l
 # luci - drop ethernet port status
 rm -f feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js
 
-# samba4 - bump version
-SAMBA4_VERSION=4.18.5
-SAMBA4_HASH=095256ac332e1d9fbf9b7ff7823f92a3233d3ed658ce7fc9b33905c2243f447f
-rm -rf feeds/packages/net/samba4
-cp -a ../master/packages/net/samba4 feeds/packages/net/samba4
-sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$SAMBA4_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$SAMBA4_HASH/" feeds/packages/net/samba4/Makefile
-# enable multi-channel
-sed -i '/workgroup/a \\n\t## enable multi-channel' feeds/packages/net/samba4/files/smb.conf.template
-sed -i '/enable multi-channel/a \\tserver multi channel support = yes' feeds/packages/net/samba4/files/smb.conf.template
-# default config
-sed -i 's/invalid users = root/#invalid users = root/g' feeds/packages/net/samba4/files/smb.conf.template
-sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages/net/samba4/files/smb.conf.template
-sed -i 's/#create mask/create mask/g' feeds/packages/net/samba4/files/smb.conf.template
-sed -i 's/#directory mask/directory mask/g' feeds/packages/net/samba4/files/smb.conf.template
-sed -i 's/0666/0644/g;s/0744/0755/g;s/0777/0755/g' feeds/luci/applications/luci-app-samba4/htdocs/luci-static/resources/view/samba4.js
-sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/samba.config
-sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/smb.conf.template
-
 # profile
 sed -i 's#\\u@\\h:\\w\\\$#\\[\\e[32;1m\\][\\u@\\h\\[\\e[0m\\] \\[\\033[01;34m\\]\\W\\[\\033[00m\\]\\[\\e[32;1m\\]]\\[\\e[0m\\]\\\$#g' package/base-files/files/etc/profile
 sed -ri 's/(export PATH=")[^"]*/\1%PATH%:\/opt\/bin:\/opt\/sbin:\/opt\/usr\/bin:\/opt\/usr\/sbin/' package/base-files/files/etc/profile
@@ -418,18 +400,6 @@ curl -so files/etc/hotplug.d/net/01-maximize_nic_rx_tx_buffers https://$mirror/o
 if [ ! "$version" = "rc" ]; then
     # fix E1187: Failed to source defaults.vim
     touch files/root/.vimrc
-fi
-
-# coreutils
-if [ "$version" = "rc" ]; then
-    rm -rf feeds/packages/utils/coreutils
-    cp -a ../master/packages/utils/coreutils feeds/packages/utils/coreutils
-fi
-
-# xfsprogs - 6.2.0
-if [ "$version" = "rc" ]; then
-    rm -rf feeds/packages/utils/xfsprogs
-    git clone https://github.com/sbwml/packages_utils_xfsprogs package/xfsprogs
 fi
 
 # NTP
