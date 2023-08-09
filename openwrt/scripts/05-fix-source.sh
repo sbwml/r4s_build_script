@@ -2,7 +2,7 @@
 
 # Chinese translation
 # luci-app-firewall
-curl -s https://raw.githubusercontent.com/openwrt/luci/master/applications/luci-app-firewall/po/zh_Hans/firewall.po > feeds/luci/applications/luci-app-firewall/po/zh_Hans/firewall.po
+curl -s https://raw.githubusercontent.com/openwrt/luci/openwrt-23.05/applications/luci-app-firewall/po/zh_Hans/firewall.po > feeds/luci/applications/luci-app-firewall/po/zh_Hans/firewall.po
 
 # drop antfs
 rm -rf feeds/packages/kernel/antfs feeds/packages/utils/antfs-mount
