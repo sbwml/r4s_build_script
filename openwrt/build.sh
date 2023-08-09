@@ -250,7 +250,7 @@ fi
 [ "$ENABLE_UHTTPD" = "y" ] && sed -i '/nginx/d' .config && echo 'CONFIG_PACKAGE_ariang=y' >> .config
 
 # Toolchain Cache
-if [ "$BUILD_FAST" = "y" ] && [ "$(whoami)" = "runner" ]; then
+if [ "$BUILD_FAST" = "y" ]; then
     [ "$USE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
     echo -e "\n${GREEN_COLOR}Download Toolchain ...${RES}"
     curl -L https://github.com/sbwml/toolchain-cache/releases/latest/download/toolchain_"$LIBC"_"$toolchain_arch".tar.gz -o toolchain.tar.gz $CURL_BAR
