@@ -178,6 +178,10 @@ curl -s https://$mirror/openwrt/patch/kernel-6.1/312-arm64-cpuinfo-Add-model-nam
 curl -s https://$mirror/openwrt/patch/kernel-6.1/952-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-6.1/952-net-conntrack-events-support-multiple-registrant.patch
 curl -s https://$mirror/openwrt/patch/kernel-6.1/998-hide-panfrost-logs.patch > target/linux/generic/hack-6.1/998-hide-panfrost-logs.patch
 
+# Shortcut-FE - linux-6.1
+curl -s https://$mirror/openwrt/patch/kernel-6.1/shortcut-fe/953-net-patch-linux-kernel-to-support-shortcut-fe.patch > target/linux/generic/hack-6.1/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
+curl -s https://$mirror/openwrt/patch/kernel-6.1/shortcut-fe/613-netfilter_optional_tcp_window_check.patch > target/linux/generic/pending-6.1/613-netfilter_optional_tcp_window_check.patch
+
 # feeds/packages/net/gensio - fix linux 6.1
 pushd feeds/packages
     [ "$version" = "rc" ] && curl -s https://github.com/openwrt/packages/commit/ea3ad6b0909b2f5d8a8dcbc4e866c9ed22f3fb10.patch | patch -p1

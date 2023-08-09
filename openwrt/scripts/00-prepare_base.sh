@@ -138,6 +138,11 @@ if [ "$version" = "rc" ]; then
     cp -a ../master/openwrt/package/network/services/dnsmasq package/network/services/dnsmasq
 fi
 
+# Shortcut Forwarding Engine
+if [ "$version" != "rc" ]; then
+    git clone https://$gitea/sbwml/shortcut-fe package/shortcut-fe
+fi
+
 # Patch FireWall 4
 if [ "$version" = "rc" ] || [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     # firewall4
@@ -173,11 +178,14 @@ elif [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     curl -s https://$mirror/openwrt/patch/kernel-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch
 fi
 
-# Patch FullCone Option 22
-curl -s https://$mirror/openwrt/patch/firewall4/luci-app-firewall_add_fullcone.patch | patch -p1
-
 # FullCone module
 git clone https://$gitea/sbwml/nft-fullcone package/new/nft-fullcone
+
+# Patch Luci add fullcone & shortcut-fe option
+pushd feeds/luci
+    curl -s https://$mirror/openwrt/patch/firewall4/luci-app-firewall_add_fullcone.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/firewall4/luci-app-firewall_add_shortcut-fe.patch | patch -p1
+popd
 
 # TCP performance optimizations backport from linux/net-next
 if [ "$version" = "rc" ]; then
@@ -258,6 +266,10 @@ pushd target/linux/generic/hack-5.15
     curl -Os https://$mirror/openwrt/patch/kernel-5.15/lrng_v49_5.15/961-v49-10-revert_add_hwgenerator_randomness_update.patch
     curl -Os https://$mirror/openwrt/patch/kernel-5.15/lrng_v49_5.15/961-v49-11-fix-compile-issue.patch
 popd
+
+# Shortcut-FE - linux-5.15
+curl -s https://$mirror/openwrt/patch/kernel-5.15/shortcut-fe/953-net-patch-linux-kernel-to-support-shortcut-fe.patch > target/linux/generic/hack-5.15/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
+curl -s https://$mirror/openwrt/patch/kernel-5.15/shortcut-fe/613-netfilter_optional_tcp_window_check.patch > target/linux/generic/pending-5.15/613-netfilter_optional_tcp_window_check.patch
 
 # OpenSSL
 if [ ! "$platform" = "x86_64" ] && [ "$version" = "rc" ]; then
