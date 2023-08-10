@@ -269,7 +269,6 @@ popd
 
 # Shortcut-FE - linux-5.15
 curl -s https://$mirror/openwrt/patch/kernel-5.15/shortcut-fe/953-net-patch-linux-kernel-to-support-shortcut-fe.patch > target/linux/generic/hack-5.15/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
-curl -s https://$mirror/openwrt/patch/kernel-5.15/shortcut-fe/613-netfilter_optional_tcp_window_check.patch > target/linux/generic/pending-5.15/613-netfilter_optional_tcp_window_check.patch
 
 # OpenSSL
 if [ ! "$platform" = "x86_64" ] && [ "$version" = "rc" ]; then

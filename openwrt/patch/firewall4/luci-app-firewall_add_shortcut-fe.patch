@@ -16,8 +16,8 @@ index 6e2e0f8..07406b8 100644
 +			o = s.option(form.ListValue, 'shortcut_fe_module',
 +			_('Connection Manager'),
 +			_('Set up the Shortcut-FE engine connection manager'));
-+			o.value('fast-classifier', _('fast-classifier'));
 +			o.value('shortcut-fe-cm', _('shortcut-fe-cm'));
++			o.value('fast-classifier', _('fast-classifier'));
 +			o.modalonly = true;
 +			o.depends('shortcut_fe', '1');
 +		}
