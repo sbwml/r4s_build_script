@@ -286,6 +286,12 @@ if [ ! "$platform" = "x86_64" ] && [ "$version" = "rc" ]; then
     fi
 fi
 
+# quictls
+if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
+    curl -s https://$mirror/openwrt/patch/openssl/quic/Makefile > package/libs/openssl/Makefile
+    curl -s https://$mirror/openwrt/patch/openssl/quic/999-hack-version.patch > package/libs/openssl/patches/999-hack-version.patch
+fi
+
 # Docker
 rm -rf feeds/luci/applications/luci-app-dockerman
 if [ "$version" = "rc" ]; then
@@ -347,7 +353,7 @@ fi
 
 # nginx - latest version
 rm -rf feeds/packages/net/nginx
-git clone https://github.com/sbwml/feeds_packages_net_nginx feeds/packages/net/nginx
+git clone https://github.com/sbwml/feeds_packages_net_nginx feeds/packages/net/nginx -b quic
 sed -i 's/procd_set_param stdout 1/procd_set_param stdout 0/g;s/procd_set_param stderr 1/procd_set_param stderr 0/g' feeds/packages/net/nginx/files/nginx.init
 
 # nginx - ubus
