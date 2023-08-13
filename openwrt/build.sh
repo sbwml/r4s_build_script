@@ -217,22 +217,22 @@ fi
 [ "$ENABLE_OTA" = "y" ] && [ "$version" = "rc2" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
 
 # bpf
-[ "$ENABLE_BPF" = "y" ] && curl -s https://$mirror/openwrt/config-bpf >> .config
+[ "$ENABLE_BPF" = "y" ] && curl -s https://$mirror/openwrt/generic/config-bpf >> .config
 
 # extra
-[ "$BUILD_EXTRA" = "y" ] && curl -s https://$mirror/openwrt/config-extra >> .config
+[ "$BUILD_EXTRA" = "y" ] && curl -s https://$mirror/openwrt/generic/config-extra >> .config
 
 # glibc
 if [ "$USE_GLIBC" = "y" ]; then
-    curl -s https://$mirror/openwrt/config-glibc >> .config
+    curl -s https://$mirror/openwrt/generic/config-glibc >> .config
 fi
 
 # sdk
-[ "$BUILD_SDK" = "y" ] && curl -s https://$mirror/openwrt/config-sdk >> .config
+[ "$BUILD_SDK" = "y" ] && curl -s https://$mirror/openwrt/generic/config-sdk >> .config
 
 # openwrt-23.05 gcc11
 if [ ! "$USE_GLIBC" = "y" ]; then
-    [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && curl -s https://$mirror/openwrt/config-gcc11 >> .config
+    curl -s https://$mirror/openwrt/generic/config-gcc11 >> .config
 fi
 
 # clean directory - github actions
