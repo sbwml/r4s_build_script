@@ -62,11 +62,6 @@ if [ "$1" = "dev" ]; then
     export branch=openwrt-23.05
     export version=snapshots-23.05
     export toolchain_version=openwrt-23.05
-elif [ "$1" = "rc" ]; then
-    latest_release="v$(curl -s https://$mirror/tags/v22)"
-    export branch=$latest_release
-    export version=rc
-    export toolchain_version=openwrt-22.03
 elif [ "$1" = "rc2" ]; then
     latest_release="v$(curl -s https://$mirror/tags/v23)"
     export branch=$latest_release
@@ -75,11 +70,11 @@ elif [ "$1" = "rc2" ]; then
 elif [ -z "$1" ]; then
     echo -e "\n${RED_COLOR}Building type not specified.${RES}\n"
     echo -e "Usage:\n"
-    echo -e "nanopi-r4s releases: ${GREEN_COLOR}bash build.sh rc nanopi-r4s${RES}"
+    echo -e "nanopi-r4s releases: ${GREEN_COLOR}bash build.sh rc2 nanopi-r4s${RES}"
     echo -e "nanopi-r4s snapshots: ${GREEN_COLOR}bash build.sh dev nanopi-r4s${RES}"
-    echo -e "nanopi-r5s releases: ${GREEN_COLOR}bash build.sh rc nanopi-r5s${RES}"
+    echo -e "nanopi-r5s releases: ${GREEN_COLOR}bash build.sh rc2 nanopi-r5s${RES}"
     echo -e "nanopi-r5s snapshots: ${GREEN_COLOR}bash build.sh dev nanopi-r5s${RES}"
-    echo -e "x86_64 releases: ${GREEN_COLOR}bash build.sh rc x86_64${RES}"
+    echo -e "x86_64 releases: ${GREEN_COLOR}bash build.sh rc2 x86_64${RES}"
     echo -e "x86_64 snapshots: ${GREEN_COLOR}bash build.sh dev x86_64${RES}\n"
     exit 1
 fi
@@ -90,7 +85,7 @@ export platform=$2
 [ "$platform" = "nanopi-r5s" ] && export platform="rk3568" toolchain_arch="nanopi-r5s"
 [ "$platform" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
 
-# use glibc - openwrt-22.03
+# use glibc
 export USE_GLIBC=$USE_GLIBC
 
 # print version
@@ -99,7 +94,7 @@ if [ "$platform" = "x86_64" ]; then
     echo -e "${GREEN_COLOR}Model: x86_64${RES}"
 elif [ "$platform" = "rk3568" ]; then
     echo -e "${GREEN_COLOR}Model: nanopi-r5s/r5c${RES}"
-    [ "$1" = "rc" ] || [ "$1" = "rc2" ] && model="nanopi-r5s"
+    [ "$1" = "rc2" ] && model="nanopi-r5s"
     curl -s https://$mirror/tags/kernel-6.1 > kernel.txt
     kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
     kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
@@ -107,7 +102,7 @@ elif [ "$platform" = "rk3568" ]; then
     rm -f kernel.txt
 else
     echo -e "${GREEN_COLOR}Model: nanopi-r4s${RES}"
-    [ "$1" = "rc" ] || [ "$1" = "rc2" ] && model="nanopi-r4s"
+    [ "$1" = "rc2" ] && model="nanopi-r4s"
     curl -s https://$mirror/tags/kernel-6.1 > kernel.txt
     kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
     kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
@@ -138,7 +133,7 @@ else
 fi
 
 # tags
-if [ "$1" = "rc" ] || [ "$1" = "rc2" ]; then
+if [ "$1" = "rc2" ]; then
     git describe --abbrev=0 --tags > version.txt
 else
     git branch | awk '{print $2}' > version.txt
@@ -147,9 +142,6 @@ fi
 # kenrel vermagic - https://downloads.openwrt.org/
 if [ "$1" = "dev" ]; then
     [ "$platform" = "x86_64" ] && kenrel_vermagic=`curl -s https://$openwrt_release_mirror/23.05-SNAPSHOT/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
-elif [ "$1" = "rc" ]; then
-    latest_version="$(curl -s https://$mirror/tags/v22)"
-    [ "$platform" = "x86_64" ] && kenrel_vermagic=`curl -s https://$openwrt_release_mirror/"$latest_version"/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
 elif [ "$1" = "rc2" ]; then
     latest_version="$(curl -s https://$mirror/tags/v23)"
     [ "$platform" = "x86_64" ] && kenrel_vermagic=`curl -s https://$openwrt_release_mirror/"$latest_version"/targets/x86/64/packages/Packages | awk -F'[- =)]+' '/^Depends: kernel/{for(i=3;i<=NF;i++){if(length($i)==32){print $i;exit}}}'`
@@ -159,7 +151,7 @@ echo $kenrel_vermagic > .vermagic
 sed -ie 's/^\(.\).*vermagic$/\1cp $(TOPDIR)\/.vermagic $(LINUX_DIR)\/.vermagic/' include/kernel-defaults.mk
 
 # feeds mirror
-if [ "$1" = "rc" ] || [ "$1" = "rc2" ]; then
+if [ "$1" = "rc2" ]; then
     packages="^$(grep packages feeds.conf.default | awk -F^ '{print $2}')"
     luci="^$(grep luci feeds.conf.default | awk -F^ '{print $2}')"
     routing="^$(grep routing feeds.conf.default | awk -F^ '{print $2}')"
@@ -212,13 +204,13 @@ rm -rf ../master
 
 # Load devices Config
 if [ "$platform" = "x86_64" ]; then
-    curl -s https://$mirror/openwrt/22-config-musl-x86 > .config
+    curl -s https://$mirror/openwrt/23-config-musl-x86 > .config
     ALL_KMODS=y
 elif [ "$platform" = "rk3568" ]; then
-    curl -s https://$mirror/openwrt/22-config-musl-r5s > .config
+    curl -s https://$mirror/openwrt/23-config-musl-r5s > .config
     ALL_KMODS=y
 else
-    curl -s https://$mirror/openwrt/22-config-musl-r4s > .config
+    curl -s https://$mirror/openwrt/23-config-musl-r4s > .config
 fi
 
 # ota
@@ -310,7 +302,7 @@ if [ "$platform" = "x86_64" ]; then
             jq ".\"x86_64\"[0].build_date=\"$CURRENT_DATE\"|.\"x86_64\"[0].sha256sum=\"$SHA256\"|.\"x86_64\"[0].url=\"http://gh.cooluc.com/https://github.com/sbwml/builder/releases/latest/download/openwrt-$VERSION-x86-64-generic-squashfs-combined-efi.img.gz\"" ota.json > ota/fw.json
         fi
         # Backup download cache
-        if [ "$isCN" = "CN" ] && [ "$1" = "rc" ] || [ "$1" = "rc2" ]; then
+        if [ "$isCN" = "CN" ] && [ "$1" = "rc2" ]; then
             rm -rf dl/geo* dl/go-mod-cache
             tar cf ../dl.gz dl
         fi
@@ -350,7 +342,7 @@ else
             fi
         fi
         # Backup download cache
-        if [ "$isCN" = "CN" ] && [ "$1" = "rc" ] || [ "$version" = "rc2" ]; then
+        if [ "$isCN" = "CN" ] && [ "$version" = "rc2" ]; then
             rm -rf dl/geo* dl/go-mod-cache
             tar -cf ../dl.gz dl
         fi

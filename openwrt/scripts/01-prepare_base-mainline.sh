@@ -19,7 +19,6 @@ rm -rf target_linux_generic
 # kernel modules
 rm -rf package/kernel/linux package/kernel/hwmon-gsc
 git checkout package/kernel/linux
-[ "$version" = "rc" ] && curl -s https://$mirror/openwrt/patch/openwrt-6.1/include_netfilter.patch | patch -p1
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/files/sysctl-tcp-bbr2.conf > package/kernel/linux/files/sysctl-tcp-bbr2.conf
 pushd package/kernel/linux/modules
     rm -f [a-z]*.mk
@@ -114,25 +113,15 @@ pushd target/linux/generic/hack-6.1
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v50_6.1/961-v50-02-revert_add_hwgenerator_randomness_update.patch
 popd
 
-# linux-firmware
-if [ "$version" = "rc" ]; then
-    rm -rf package/firmware/linux-firmware
-    git clone https://nanopi:nanopi@$gitea/sbwml/package_firmware_linux-firmware package/firmware/linux-firmware
-else
-    # rtw89 /  rtl8723d / rtl8821c firmware
-    curl -s https://github.com/openwrt/openwrt/commit/145fc631e6205850a1c2f575abb3d15b0ce9995b.patch | patch -p1
-    curl -s https://github.com/openwrt/openwrt/commit/42bf7656730d5422e6022bae4d5df3ae2f6fa39b.patch | patch -p1
-fi
+# linux-firmware: rtw89 / rtl8723d / rtl8821c firmware
+curl -s https://github.com/openwrt/openwrt/commit/145fc631e6205850a1c2f575abb3d15b0ce9995b.patch | patch -p1
+curl -s https://github.com/openwrt/openwrt/commit/42bf7656730d5422e6022bae4d5df3ae2f6fa39b.patch | patch -p1
 
 # rtl8812au-ct - fix linux-6.1
 rm -rf package/kernel/rtl8812au-ct
 cp -a ../master/openwrt/package/kernel/rtl8812au-ct package/kernel/rtl8812au-ct
 
 # ath10k-ct - fix mac80211 6.1-rc
-if [ "$version" = "rc" ]; then
-    rm -rf package/kernel/ath10k-ct
-    cp -a ../master/openwrt/package/kernel/ath10k-ct package/kernel/ath10k-ct
-fi
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/ath10k-ct.patch | patch -p1
 
 # mt76 - add mt7922 firmware
@@ -141,21 +130,11 @@ sed -i '/define Package\/mt76-test\/install/idefine KernelPackage\/mt7922-firmwa
 sed -i '/$(eval \$(call KernelPackage,mt7921-firmware))/a $(eval \$(call KernelPackage,mt7922-firmware))' package/kernel/mt76/Makefile
 
 # iwinfo: add mt7922 device id
-if [ "$version" = "rc" ]; then
-    rm -rf package/network/utils/iwinfo
-    cp -a ../master/openwrt/package/network/utils/iwinfo package/network/utils/iwinfo
-fi
 mkdir -p package/network/utils/iwinfo/patches
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/iwinfo/0001-devices-add-MediaTek-MT7922-device-id.patch > package/network/utils/iwinfo/patches/0001-devices-add-MediaTek-MT7922-device-id.patch
 
 # iwinfo: add rtl8812/14/21au devices
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/iwinfo/0004-add-rtl8812au-devices.patch > package/network/utils/iwinfo/patches/0004-add-rtl8812au-devices.patch
-
-# iw
-if [ "$version" = "rc" ]; then
-    rm -rf package/network/utils/iw
-    cp -a ../master/openwrt/package/network/utils/iw package/network/utils/iw
-fi
 
 # wireless-regdb
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/500-world-regd-5GHz.patch > package/firmware/wireless-regdb/patches/500-world-regd-5GHz.patch
@@ -181,16 +160,9 @@ curl -s https://$mirror/openwrt/patch/kernel-6.1/998-hide-panfrost-logs.patch > 
 # Shortcut-FE - linux-6.1
 curl -s https://$mirror/openwrt/patch/kernel-6.1/shortcut-fe/953-net-patch-linux-kernel-to-support-shortcut-fe.patch > target/linux/generic/hack-6.1/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
 
-# feeds/packages/net/gensio - fix linux 6.1
-pushd feeds/packages
-    [ "$version" = "rc" ] && curl -s https://github.com/openwrt/packages/commit/ea3ad6b0909b2f5d8a8dcbc4e866c9ed22f3fb10.patch | patch -p1
-popd
-
 # ubnt-ledbar - fix linux-6.1
-if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
-    rm -rf package/kernel/ubnt-ledbar
-    cp -a ../master/openwrt/package/kernel/ubnt-ledbar package/kernel/ubnt-ledbar
-fi
+rm -rf package/kernel/ubnt-ledbar
+cp -a ../master/openwrt/package/kernel/ubnt-ledbar package/kernel/ubnt-ledbar
 
 # RTC
 if [ "$platform" = "rk3399" ] || [ "$platform" = "rk3568" ]; then

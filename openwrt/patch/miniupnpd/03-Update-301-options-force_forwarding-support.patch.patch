@@ -1,14 +1,5 @@
-From 9a2da850b56b26c304b7ff33941e0e159f10f4cc Mon Sep 17 00:00:00 2001
-From: QiuSimons <45143996+QiuSimons@users.noreply.github.com>
-Date: Thu, 1 Sep 2022 14:37:54 +0800
-Subject: [PATCH] Update 301-options-force_forwarding-support.patch
-
----
- ...301-options-force_forwarding-support.patch | 69 ++++++-------------
- 1 file changed, 22 insertions(+), 47 deletions(-)
-
 diff --git a/net/miniupnpd/patches/301-options-force_forwarding-support.patch b/net/miniupnpd/patches/301-options-force_forwarding-support.patch
-index 927dad184aa8..0eb9d6bc91b8 100644
+index 927dad1..0eb9d6b 100644
 --- a/net/miniupnpd/patches/301-options-force_forwarding-support.patch
 +++ b/net/miniupnpd/patches/301-options-force_forwarding-support.patch
 @@ -21,20 +21,18 @@ Signed-off-by: Chen Minqiang <ptpt52@gmail.com>

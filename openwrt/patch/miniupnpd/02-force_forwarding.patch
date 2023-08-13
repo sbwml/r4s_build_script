@@ -1,4 +1,4 @@
-From d811cb47495f9bb1fceeab865ac5364fe3ddf4c9 Mon Sep 17 00:00:00 2001
+From 360235fcc0f5c821ad9d99ccbe5b0b465d9c85fa Mon Sep 17 00:00:00 2001
 From: Chen Minqiang <ptpt52@gmail.com>
 Date: Fri, 2 Jul 2021 17:59:05 +0800
 Subject: [PATCH] miniupnpd: add force_forwarding option support
@@ -25,10 +25,10 @@ Signed-off-by: Chen Minqiang <ptpt52@gmail.com>
  create mode 100644 net/miniupnpd/patches/301-options-force_forwarding-support.patch
 
 diff --git a/net/miniupnpd/files/miniupnpd.init b/net/miniupnpd/files/miniupnpd.init
-index cc13e0440741..04f4f7a5bc96 100644
+index c5a14ab..5a0696f 100644
 --- a/net/miniupnpd/files/miniupnpd.init
 +++ b/net/miniupnpd/files/miniupnpd.init
-@@ -62,6 +62,7 @@ upnpd() {
+@@ -63,6 +63,7 @@ upnpd() {
  	local use_stun stun_host stun_port uuid notify_interval presentation_url
  	local upnp_lease_file clean_ruleset_threshold clean_ruleset_interval
  	local ipv6_disable
@@ -36,7 +36,7 @@ index cc13e0440741..04f4f7a5bc96 100644
  
  	local enabled
  	config_get_bool enabled config enabled 1
-@@ -89,6 +90,7 @@ upnpd() {
+@@ -90,6 +91,7 @@ upnpd() {
  	config_get clean_ruleset_threshold config clean_ruleset_threshold
  	config_get clean_ruleset_interval config clean_ruleset_interval
  	config_get ipv6_disable config ipv6_disable 0
@@ -44,7 +44,7 @@ index cc13e0440741..04f4f7a5bc96 100644
  
  	local conf ifname ifname6
  
-@@ -141,6 +143,7 @@ upnpd() {
+@@ -142,6 +144,7 @@ upnpd() {
  		upnpd_write_bool igdv1 0 force_igd_desc_v1
  		upnpd_write_bool use_stun 0 ext_perform_stun
  		upnpd_write_bool ipv6_disable $ipv6_disable
@@ -53,7 +53,7 @@ index cc13e0440741..04f4f7a5bc96 100644
  		[ "$use_stun" -eq 0 ] || {
  			[ -n "$stun_host" ] && echo "ext_stun_host=$stun_host"
 diff --git a/net/miniupnpd/files/upnpd.config b/net/miniupnpd/files/upnpd.config
-index bd7c3ec4007d..b03d60a99fa8 100644
+index bd7c3ec..b03d60a 100644
 --- a/net/miniupnpd/files/upnpd.config
 +++ b/net/miniupnpd/files/upnpd.config
 @@ -2,6 +2,7 @@ config upnpd config
@@ -66,7 +66,7 @@ index bd7c3ec4007d..b03d60a99fa8 100644
  	option download		1024
 diff --git a/net/miniupnpd/patches/301-options-force_forwarding-support.patch b/net/miniupnpd/patches/301-options-force_forwarding-support.patch
 new file mode 100644
-index 000000000000..927dad184aa8
+index 0000000..927dad1
 --- /dev/null
 +++ b/net/miniupnpd/patches/301-options-force_forwarding-support.patch
 @@ -0,0 +1,209 @@
@@ -279,3 +279,6 @@ index 000000000000..927dad184aa8
 +-- 
 +2.17.1
 +
+-- 
+2.34.8
+

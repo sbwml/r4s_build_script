@@ -1,6 +1,6 @@
 --- a/package/system/fstools/Makefile
 +++ b/package/system/fstools/Makefile
-@@ -79,7 +79,7 @@ define Package/block-mount
+@@ -82,7 +82,7 @@ define Package/block-mount
    SECTION:=base
    CATEGORY:=Base system
    TITLE:=Block device mounting and checking

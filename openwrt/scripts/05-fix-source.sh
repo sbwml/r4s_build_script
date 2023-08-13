@@ -8,7 +8,7 @@ curl -s https://raw.githubusercontent.com/openwrt/luci/openwrt-23.05/application
 rm -rf feeds/packages/kernel/antfs feeds/packages/utils/antfs-mount
 
 # uqmi - fix gcc11
-[ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && sed -i '/dangling-pointer/d' package/network/utils/uqmi/Makefile
+sed -i '/dangling-pointer/d' package/network/utils/uqmi/Makefile
 
 # xdp-tools
 [ "$platform" != "x86_64" ] && sed -i '/TARGET_LDFLAGS +=/iTARGET_CFLAGS += -Wno-error=maybe-uninitialized\n' package/network/utils/xdp-tools/Makefile
@@ -36,6 +36,6 @@ sed -i 's/command -v clang/command -v clang clang-15/g' include/bpf.mk
 #### glibc #####
 
 # uqmi
-if [ "$version" != "rc" ] && [ "$USE_GLIBC" = "y" ]; then
+if [ "$USE_GLIBC" = "y" ]; then
     sed -i 's/-Wno-error=maybe-uninitialized/-Wno-error=maybe-uninitialized \\\n\t-Wno-error=dangling-pointer/g' package/network/utils/uqmi/Makefile
 fi

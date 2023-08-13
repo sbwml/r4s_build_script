@@ -11,10 +11,6 @@ git clone https://github.com/sbwml/default-settings package/new/default-settings
 sed -i '/boot()/,+2d' feeds/packages/net/ddns-scripts/files/etc/init.d/ddns
 
 # FRPC
-if [ "$version" = "rc" ]; then
-    rm -rf feeds/packages/net/frp
-    cp -a ../master/packages/net/frp feeds/packages/net/frp
-fi
 sed -i 's/procd_set_param stdout $stdout/procd_set_param stdout 0/g' feeds/packages/net/frp/files/frpc.init
 sed -i 's/procd_set_param stderr $stderr/procd_set_param stderr 0/g' feeds/packages/net/frp/files/frpc.init
 sed -i 's/stdout stderr //g' feeds/packages/net/frp/files/frpc.init
@@ -41,8 +37,7 @@ sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/samba.confi
 sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/smb.conf.template
 
 # autoCore
-[ "$version" = "rc" ] && git clone https://github.com/sbwml/autocore-arm -b openwrt-22.03 package/new/autocore
-[ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ] && git clone https://github.com/sbwml/autocore-arm -b openwrt-23.05 package/new/autocore
+git clone https://github.com/sbwml/autocore-arm -b openwrt-23.05 package/new/autocore
 
 # Aria2 & ariaNG
 rm -rf feeds/packages/net/ariang
@@ -59,15 +54,13 @@ git clone https://github.com/sbwml/openwrt_helloworld package/helloworld -b v5
 git clone https://github.com/sbwml/luci-app-daed package/daed
 
 # immortalwrt packages
-if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
-    # homeproxy
-    git clone https://github.com/immortalwrt/homeproxy package/homeproxy/homeproxy
-    sed -i "s/ImmortalWrt/OpenWrt/g" package/homeproxy/homeproxy/po/zh_Hans/homeproxy.po
-    sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" package/homeproxy/homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
-    # sing-box
-    cp -a ../master/immortalwrt_packages/net/sing-box package/homeproxy/sing-box
-    sed -i 's#../../lang/golang/golang-package.mk#$(TOPDIR)/feeds/packages/lang/golang/golang-package.mk#g' package/homeproxy/sing-box/Makefile
-fi
+# homeproxy
+git clone https://github.com/immortalwrt/homeproxy package/homeproxy/homeproxy
+sed -i "s/ImmortalWrt/OpenWrt/g" package/homeproxy/homeproxy/po/zh_Hans/homeproxy.po
+sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" package/homeproxy/homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
+# sing-box
+cp -a ../master/immortalwrt_packages/net/sing-box package/homeproxy/sing-box
+sed -i 's#../../lang/golang/golang-package.mk#$(TOPDIR)/feeds/packages/lang/golang/golang-package.mk#g' package/homeproxy/sing-box/Makefile
 
 # alist
 git clone https://github.com/sbwml/openwrt-alist package/alist
@@ -107,18 +100,6 @@ git clone https://github.com/sbwml/OpenAppFilter --depth=1 package/new/OpenAppFi
 rm -rf feeds/packages/net/iperf3
 cp -a ../master/packages/net/iperf3 feeds/packages/net/iperf3
 sed -i "s/D_GNU_SOURCE/D_GNU_SOURCE -funroll-loops/g" feeds/packages/net/iperf3/Makefile
-
-# coreutils
-if [ "$version" = "rc" ]; then
-    rm -rf feeds/packages/utils/coreutils
-    cp -a ../master/packages/utils/coreutils feeds/packages/utils/coreutils
-fi
-
-# xfsprogs - 6.2.0
-if [ "$version" = "rc" ]; then
-    rm -rf feeds/packages/utils/xfsprogs
-    git clone https://github.com/sbwml/packages_utils_xfsprogs package/xfsprogs
-fi
 
 # 带宽监控
 sed -i 's/services/network/g' feeds/luci/applications/luci-app-nlbwmon/root/usr/share/luci/menu.d/luci-app-nlbwmon.json
