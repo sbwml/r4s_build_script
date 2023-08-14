@@ -197,9 +197,10 @@ popd
 curl -s https://$mirror/openwrt/patch/kernel-5.15/shortcut-fe/953-net-patch-linux-kernel-to-support-shortcut-fe.patch > target/linux/generic/hack-5.15/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
 
 # quictls
-if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
-    curl -s https://$mirror/openwrt/patch/openssl/Makefile_quic > package/libs/openssl/Makefile
-    curl -s https://$mirror/openwrt/patch/openssl/999-hack-version.patch > package/libs/openssl/patches/999-hack-version.patch
+curl -s https://$mirror/openwrt/patch/openssl/Makefile_quic > package/libs/openssl/Makefile
+curl -s https://$mirror/openwrt/patch/openssl/999-hack-version.patch > package/libs/openssl/patches/999-hack-version.patch
+if [ "$platform" = "rk3399" ] || [ "$platform" = "rk3568" ]; then
+    sed -i "/-openwrt/iOPENSSL_OPTIONS += '-DDEVRANDOM=\"\\\\\"/dev/hwrng\\\\\"\"\'\n" package/libs/openssl/Makefile
 fi
 
 # Docker
