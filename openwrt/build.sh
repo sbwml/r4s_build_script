@@ -244,8 +244,9 @@ fi
 # Toolchain Cache
 if [ "$BUILD_FAST" = "y" ]; then
     [ "$USE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
+    [ "$isCN" = "CN" ] && github_proxy="http://gh.cooluc.com/" || github_proxy=""
     echo -e "\n${GREEN_COLOR}Download Toolchain ...${RES}"
-    curl -L https://github.com/sbwml/toolchain-cache/releases/latest/download/toolchain_"$LIBC"_"$toolchain_arch".tar.gz -o toolchain.tar.gz $CURL_BAR
+    curl -L "$github_proxy"https://github.com/sbwml/toolchain-cache/releases/latest/download/toolchain_"$LIBC"_"$toolchain_arch".tar.gz -o toolchain.tar.gz $CURL_BAR
     echo -e "\n${GREEN_COLOR}Process Toolchain ...${RES}"
     tar -zxf toolchain.tar.gz && rm -f toolchain.tar.gz
     mkdir bin
