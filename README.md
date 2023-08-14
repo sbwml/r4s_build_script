@@ -229,7 +229,8 @@ jobs:
 
     - name: Compile Openwrt
       run: |
-        bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) ${{ matrix.tag.type }} ${{ matrix.model }}
+        [ "${{ matrix.model }}" = "nanopi-r5s" ] && export BUILD_SDK=y
+        BUILD_FAST=y ENABLE_BPF=y bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) ${{ matrix.tag.type }} ${{ matrix.model }}
         cd openwrt
         tags=$(git describe --abbrev=0 --tags)
         echo "latest_release=$tags" >>$GITHUB_ENV
