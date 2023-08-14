@@ -194,6 +194,10 @@ jobs:
         free -h
         uname -a
 
+    - name: Set workdir env
+      run: |
+        echo WORKDIR="/home/runner" >> "$GITHUB_ENV"
+
     - name: Free disk space
       run: |
         sudo rm -rf /etc/apt/sources.list.d
@@ -256,7 +260,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: ${{ matrix.model }}-${{ matrix.tag.version }}
-        path: rom/*.gz
+        path: ${{ env.WORKDIR }}/rom/*.gz
 
     - name: Create release
       uses: ncipollo/release-action@v1.11.1
@@ -267,6 +271,6 @@ jobs:
         commit: main  # 这里必须更改为你仓库的实际分支名称否则固件编译后无法发布到 releases，如：main、master
         replacesArtifacts: true
         token: ${{ secrets.workflow_token }}
-        artifacts: rom/*
+        artifacts: ${{ env.WORKDIR }}/rom/*
 
 ```
