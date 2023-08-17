@@ -144,11 +144,26 @@ bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_scri
 
 ### 一、Fork 本仓库到自己 GitHub 上（不要更改仓库名称）
 
-### 二、通过仓库设置 添加 Actions 令牌
+### 二、修改构建脚本文件：`openwrt/build.sh`
+
+将 init.cooluc.com 补丁默认连接替换为你的 github raw 连接（不带 https://），像这样 `raw.githubusercontent.com/你的用户名/r4s_build_script/master`
+
+```diff
+ # script url
+ if [ "$isCN" = "CN" ]; then
+-    export mirror=init.cooluc.com
++    export mirror=raw.githubusercontent.com/你的用户名/r4s_build_script/master
+ else
+-    export mirror=init2.cooluc.com
++    export mirror=raw.githubusercontent.com/你的用户名/r4s_build_script/master
+ fi
+```
+
+### 三、通过仓库设置 添加 Actions 令牌
 
  - Name: `workflow_token`
  - Secret：`你的 GitHub Token`
 
   <img src="https://github.com/sbwml/builder/assets/16485166/70e92cdb-80dd-46d6-8593-a76e3dbb176b" height = "350" alt="token" />
 
-### 三、点击仓库右上角的 ⭐Star 既可触发构建
+### 四、点击仓库右上角的 ⭐Star 既可触发构建
