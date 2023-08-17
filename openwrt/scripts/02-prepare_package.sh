@@ -18,6 +18,14 @@ sed -i '/stdout:bool/d;/stderr:bool/d' feeds/packages/net/frp/files/frpc.init
 sed -i '/stdout/d;/stderr/d' feeds/packages/net/frp/files/frpc.config
 sed -i '/Log stdout/d;/Log stderr/d' feeds/luci/applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js
 
+# haproxy - bump version
+rm -rf feeds/packages/net/haproxy
+cp -a ../master/packages/net/haproxy feeds/packages/net/haproxy
+
+# curl - bump version
+rm -rf feeds/packages/net/curl
+cp -a ../master/packages/net/curl feeds/packages/net/curl
+
 # samba4 - bump version
 SAMBA4_VERSION=4.18.5
 SAMBA4_HASH=095256ac332e1d9fbf9b7ff7823f92a3233d3ed658ce7fc9b33905c2243f447f
@@ -133,3 +141,7 @@ sed -i "s,option fps '5',option fps '25',g" feeds/packages/multimedia/mjpg-strea
 # luci-app-mjpg-streamer
 rm -rf feeds/luci/applications/luci-app-mjpg-streamer
 git clone https://github.com/sbwml/luci-app-mjpg-streamer feeds/luci/applications/luci-app-mjpg-streamer
+
+# unzip
+rm -rf feeds/packages/utils/unzip
+git clone https://$gitea/sbwml/unzip feeds/packages/utils/unzip
