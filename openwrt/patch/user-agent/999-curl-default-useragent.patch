@@ -1,0 +1,11 @@
+--- a/src/tool_paramhlp.c
++++ b/src/tool_paramhlp.c
+@@ -605,7 +605,7 @@ long delegation(struct OperationConfig *config, const char *str)
+  */
+ static char *my_useragent(void)
+ {
+-  return strdup(CURL_NAME "/" CURL_VERSION);
++  return strdup("SmartDrive/31618725 CFNetwork/1335.0.3 Darwin/21.6.0");
+ }
+ 
+ #define isheadersep(x) ((((x)==':') || ((x)==';')))
