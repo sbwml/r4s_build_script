@@ -22,15 +22,6 @@ sed -i '/Log stdout/d;/Log stderr/d' feeds/luci/applications/luci-app-frpc/htdoc
 rm -rf feeds/packages/net/haproxy
 cp -a ../master/packages/net/haproxy feeds/packages/net/haproxy
 
-# curl - bump version
-rm -rf feeds/packages/net/curl
-cp -a ../master/packages/net/curl feeds/packages/net/curl
-# curl - user-agent
-curl -s https://$mirror/openwrt/patch/user-agent/999-curl-default-useragent.patch > feeds/packages/net/curl/patches/999-curl-default-useragent.patch
-
-# wget - user-agent
-curl -s https://$mirror/openwrt/patch/user-agent/999-wget-default-useragent.patch > feeds/packages/net/wget/patches/999-wget-default-useragent.patch
-
 # samba4 - bump version
 SAMBA4_VERSION=4.18.5
 SAMBA4_HASH=095256ac332e1d9fbf9b7ff7823f92a3233d3ed658ce7fc9b33905c2243f447f

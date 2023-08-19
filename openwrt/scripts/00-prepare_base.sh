@@ -196,12 +196,31 @@ popd
 # Shortcut-FE - linux-5.15
 curl -s https://$mirror/openwrt/patch/kernel-5.15/shortcut-fe/953-net-patch-linux-kernel-to-support-shortcut-fe.patch > target/linux/generic/hack-5.15/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
 
-# quictls
-curl -s https://$mirror/openwrt/patch/openssl/Makefile_quic > package/libs/openssl/Makefile
-curl -s https://$mirror/openwrt/patch/openssl/999-hack-version.patch > package/libs/openssl/patches/999-hack-version.patch
+# openssl -> quictls
+rm -rf package/libs/openssl
+git clone https://github.com/sbwml/package_libs_openssl package/libs/openssl
+# openssl hwrng
 if [ "$platform" = "rk3399" ] || [ "$platform" = "rk3568" ]; then
     sed -i "/-openwrt/iOPENSSL_OPTIONS += '-DDEVRANDOM=\"\\\\\"/dev/hwrng\\\\\"\"\'\n" package/libs/openssl/Makefile
 fi
+# openssl -Ofast
+sed -i "s/-O3/-Ofast/g" package/libs/openssl/Makefile
+
+# nghttp3
+git clone https://github.com/sbwml/package_libs_nghttp3 package/libs/nghttp3
+
+# ngtcp2
+git clone https://github.com/sbwml/package_libs_ngtcp2 package/libs/ngtcp2
+
+# curl - http3/quic
+rm -rf feeds/packages/net/curl
+git clone https://github.com/sbwml/feeds_packages_net_curl feeds/packages/net/curl
+
+# curl - SmartDrive user-agent
+curl -s https://$mirror/openwrt/patch/user-agent/999-curl-default-useragent.patch > feeds/packages/net/curl/patches/999-curl-default-useragent.patch
+
+# wget - SmartDrive user-agent
+curl -s https://$mirror/openwrt/patch/user-agent/999-wget-default-useragent.patch > feeds/packages/net/wget/patches/999-wget-default-useragent.patch
 
 # Docker
 rm -rf feeds/luci/applications/luci-app-dockerman
