@@ -30,8 +30,8 @@ rm -rf package/kernel/ksmbd
 
 #### bpf #####
 
-# add clang-15 support
-sed -i 's/command -v clang/command -v clang clang-15/g' include/bpf.mk
+# add clang-15/17 support
+sed -i 's/command -v clang/command -v clang clang-17 clang-15/g' include/bpf.mk
 
 #### glibc #####
 
