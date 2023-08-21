@@ -8,7 +8,7 @@ git clone https://github.com/sbwml/arm-trusted-firmware-rockchip package/boot/ar
 # BTF: fix failed to validate module
 if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     # config/Config-kernel.in patch
-    curl -s https://github.com/openwrt/openwrt/commit/c07038da27cefa5a93e433909b9aca594386ddc1.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/0001-kernel-add-MODULE_ALLOW_BTF_MISMATCH-option.patch | patch -p1
     # linux-5.15
     curl -s https://$mirror/openwrt/patch/backport-5.15/051-v5.18-bpf-Add-config-to-allow-loading-modules-with-BTF-mismatch.patch > target/linux/generic/backport-5.15/051-v5.18-bpf-Add-config-to-allow-loading-modules-with-BTF-mismatch.patch
 fi
