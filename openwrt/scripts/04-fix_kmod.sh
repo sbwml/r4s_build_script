@@ -6,13 +6,12 @@
 rm -rf feeds/packages/net/siit
 cp -a ../master/packages/net/siit feeds/packages/net/siit
 
+# libpfring
+rm -rf feeds/packages/libs/libpfring
+cp -a ../master/packages/libs/libpfring feeds/packages/libs/libpfring
+
 # packages
 pushd feeds/packages
-  # libpfring - 8.2.0
-  rm -rf libs/libpfring/patches/*.patch
-  curl -s https://$mirror/openwrt/patch/openwrt-6.1/libpfring/Makefile > libs/libpfring/Makefile
-  curl -s https://$mirror/openwrt/patch/openwrt-6.1/libpfring/patches/0001-fix-cross-compiling.patch > libs/libpfring/patches/0001-fix-cross-compiling.patch
-  curl -s https://$mirror/openwrt/patch/openwrt-6.1/libpfring/patches/0002-fixups-for-kernel-5.18.x.patch > libs/libpfring/patches/0002-fixups-for-kernel-5.18.x.patch
   # xr_usb_serial_common
   curl -s https://github.com/openwrt/packages/commit/23a3ea2d6b3779cd48d318b95a3c72cad9433d50.patch | patch -p1
   # coova-chilli
