@@ -200,7 +200,9 @@ rm -rf package/libs/openssl
 git clone https://github.com/sbwml/package_libs_openssl package/libs/openssl
 # openssl hwrng
 if [ "$platform" = "rk3399" ] || [ "$platform" = "rk3568" ]; then
-    sed -i "/-openwrt/iOPENSSL_OPTIONS += '-DDEVRANDOM=\"\\\\\"/dev/hwrng\\\\\"\"\'\n" package/libs/openssl/Makefile
+    sed -i "/-openwrt/iOPENSSL_OPTIONS += enable-ktls '-DDEVRANDOM=\"\\\\\"/dev/hwrng\\\\\"\"\'\n" package/libs/openssl/Makefile
+else
+    sed -i "/-openwrt/iOPENSSL_OPTIONS += enable-ktls '-DDEVRANDOM=\"\\\\\"/dev/urandom\\\\\"\"\'\n" package/libs/openssl/Makefile
 fi
 # openssl -Ofast
 sed -i "s/-O3/-Ofast/g" package/libs/openssl/Makefile
