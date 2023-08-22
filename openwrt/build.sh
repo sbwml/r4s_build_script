@@ -205,7 +205,7 @@ rm -rf ../master
 # Load devices Config
 if [ "$platform" = "x86_64" ]; then
     curl -s https://$mirror/openwrt/23-config-musl-x86 > .config
-    [ "$version" = "dev" ] && ENABLE_BPF=n
+    [ "$version" = "snapshots-23.05" ] && ENABLE_BPF=n
     ALL_KMODS=y
 elif [ "$platform" = "rk3568" ]; then
     curl -s https://$mirror/openwrt/23-config-musl-r5s > .config
