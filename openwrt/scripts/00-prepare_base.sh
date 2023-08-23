@@ -243,9 +243,10 @@ popd
 pushd feeds/packages
     curl -s https://$mirror/openwrt/patch/cgroupfs-mount/0001-fix-cgroupfs-mount.patch | patch -p1
 popd
-# cgroupfs v2
+# mount cgroup v2 hierarchy to /sys/fs/cgroup/cgroup2
 mkdir -p feeds/packages/utils/cgroupfs-mount/patches
-curl -s https://$mirror/openwrt/patch/cgroupfs-mount/900-add-cgroupfs2.patch > feeds/packages/utils/cgroupfs-mount/patches/900-add-cgroupfs2.patch
+curl -s https://$mirror/openwrt/patch/cgroupfs-mount/900-mount-cgroup-v2-hierarchy-to-sys-fs-cgroup-cgroup2.patch > feeds/packages/utils/cgroupfs-mount/patches/900-mount-cgroup-v2-hierarchy-to-sys-fs-cgroup-cgroup2.patch
+curl -s https://$mirror/openwrt/patch/cgroupfs-mount/901-fix-cgroupfs-umount.patch > feeds/packages/utils/cgroupfs-mount/patches/901-fix-cgroupfs-umount.patch
 
 # procps-ng - top
 sed -i 's/enable-skill/enable-skill --disable-modern-top/g' feeds/packages/utils/procps-ng/Makefile
