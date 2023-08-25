@@ -16,6 +16,24 @@ V4L2_MEM2MEM_DIR=platform
 # Video Display
 #
 
+define KernelPackage/acpi-video
+  SUBMENU:=$(VIDEO_MENU)
+  TITLE:=ACPI Extensions For Display Adapters
+  DEPENDS:=@TARGET_x86 +kmod-backlight
+  HIDDEN:=1
+  KCONFIG:=CONFIG_ACPI_VIDEO \
+	CONFIG_ACPI_WMI
+  FILES:=$(LINUX_DIR)/drivers/acpi/video.ko \
+	$(LINUX_DIR)/drivers/platform/x86/wmi.ko
+  AUTOLOAD:=$(call AutoProbe,wmi video)
+endef
+
+define KernelPackage/acpi-video/description
+  Kernel support for integrated graphics devices.
+endef
+
+$(eval $(call KernelPackage,acpi-video))
+
 define KernelPackage/backlight
 	SUBMENU:=$(VIDEO_MENU)
 	TITLE:=Backlight support
@@ -353,7 +371,9 @@ define KernelPackage/drm-amdgpu
   SUBMENU:=$(VIDEO_MENU)
   TITLE:=AMDGPU DRM support
   DEPENDS:=@TARGET_x86 @DISPLAY_SUPPORT +kmod-backlight +kmod-drm-ttm \
-	+kmod-drm-ttm-helper +kmod-drm-kms-helper +kmod-i2c-algo-bit +amdgpu-firmware
+	+kmod-drm-ttm-helper +kmod-drm-kms-helper +kmod-i2c-algo-bit +amdgpu-firmware \
+	+LINUX_6_1:kmod-drm-display-helper +LINUX_6_1:kmod-drm-buddy \
+	+LINUX_6_1:kmod-acpi-video
   KCONFIG:=CONFIG_DRM_AMDGPU \
 	CONFIG_DRM_AMDGPU_SI=y \
 	CONFIG_DRM_AMDGPU_CIK=y \
@@ -490,7 +510,8 @@ define KernelPackage/drm-radeon
   SUBMENU:=$(VIDEO_MENU)
   TITLE:=Radeon DRM support
   DEPENDS:=@TARGET_x86 @DISPLAY_SUPPORT +kmod-backlight +kmod-drm-kms-helper \
-	+kmod-drm-ttm +kmod-drm-ttm-helper +kmod-i2c-algo-bit +radeon-firmware
+	+kmod-drm-ttm +kmod-drm-ttm-helper +kmod-i2c-algo-bit +radeon-firmware \
+	+LINUX_6_1:kmod-drm-display-helper +LINUX_6_1:kmod-acpi-video
   KCONFIG:=CONFIG_DRM_RADEON
   FILES:=$(LINUX_DIR)/drivers/gpu/drm/radeon/radeon.ko
   AUTOLOAD:=$(call AutoProbe,radeon)

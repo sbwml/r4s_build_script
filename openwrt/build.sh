@@ -85,6 +85,9 @@ export platform=$2
 [ "$platform" = "nanopi-r5s" ] && export platform="rk3568" toolchain_arch="nanopi-r5s"
 [ "$platform" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
 
+# x86_64 linux-6.1 by default
+[ -z "$KERNEL_TESTING" ] && export KERNEL_TESTING=y
+
 # use glibc
 export USE_GLIBC=$USE_GLIBC
 
@@ -92,6 +95,13 @@ export USE_GLIBC=$USE_GLIBC
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
 if [ "$platform" = "x86_64" ]; then
     echo -e "${GREEN_COLOR}Model: x86_64${RES}"
+    if [ "$KERNEL_TESTING" = "y" ]; then
+        curl -s https://$mirror/tags/kernel-6.1 > kernel.txt
+        kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
+        kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
+        echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
+        rm -f kernel.txt
+    fi
 elif [ "$platform" = "rk3568" ]; then
     echo -e "${GREEN_COLOR}Model: nanopi-r5s/r5c${RES}"
     [ "$1" = "rc2" ] && model="nanopi-r5s"
@@ -195,7 +205,7 @@ bash 00-prepare_base.sh
 bash 02-prepare_package.sh
 bash 03-convert_translation.sh
 bash 05-fix-source.sh
-if [ "$platform" = "rk3568" ] || [ "$platform" = "rk3399" ]; then
+if [ "$platform" = "rk3568" ] || [ "$platform" = "rk3399" ] || [ "$KERNEL_TESTING" = "y" ]; then
     bash 01-prepare_base-mainline.sh
     bash 04-fix_kmod.sh
 fi
@@ -205,6 +215,7 @@ rm -rf ../master
 # Load devices Config
 if [ "$platform" = "x86_64" ]; then
     curl -s https://$mirror/openwrt/23-config-musl-x86 > .config
+    [ "$KERNEL_TESTING" = "y" ] && echo CONFIG_TESTING_KERNEL=y >> .config
     [ "$version" = "snapshots-23.05" ] && ENABLE_BPF=n
     ALL_KMODS=y
 elif [ "$platform" = "rk3568" ]; then
@@ -293,7 +304,7 @@ if [ "$platform" = "x86_64" ]; then
             cp -a bin/targets/x86/*/packages $kenrel_version
             rm -f $kenrel_version/Packages*
             bash kmod-sign $kenrel_version
-            tar zcf kmod-$kenrel_version.tar.gz $kenrel_version
+            tar zcf x86_64-$kenrel_version.tar.gz $kenrel_version
             rm -rf $kenrel_version
         fi
         # OTA json
@@ -325,7 +336,7 @@ else
             # driver firmware
             cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
             bash kmod-sign $kmodpkg_name
-            tar zcf kmod-$kmodpkg_name.tar.gz $kmodpkg_name
+            tar zcf aarch64-$kmodpkg_name.tar.gz $kmodpkg_name
             rm -rf $kmodpkg_name
         fi
         echo -e "${GREEN_COLOR} Build success! ${RES}"
