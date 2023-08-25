@@ -301,6 +301,7 @@ if [ "$platform" = "x86_64" ]; then
         echo -e "${GREEN_COLOR} Build success! ${RES}"
         echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
         if [ "$ALL_KMODS" = y ]; then
+            [ "$KERNEL_TESTING" = "y" ] && kenrel_version=$kmodpkg_name
             cp -a bin/targets/x86/*/packages $kenrel_version
             rm -f $kenrel_version/Packages*
             bash kmod-sign $kenrel_version
