@@ -214,6 +214,9 @@ else
     curl -s https://$mirror/openwrt/23-config-musl-r4s > .config
 fi
 
+# config-common
+curl -s https://$mirror/openwrt/23-config-common >> .config
+
 # ota
 [ "$ENABLE_OTA" = "y" ] && [ "$version" = "rc2" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
 
@@ -224,9 +227,7 @@ fi
 [ "$BUILD_EXTRA" = "y" ] && curl -s https://$mirror/openwrt/generic/config-extra >> .config
 
 # glibc
-if [ "$USE_GLIBC" = "y" ]; then
-    curl -s https://$mirror/openwrt/generic/config-glibc >> .config
-fi
+[ "$USE_GLIBC" = "y" ] && curl -s https://$mirror/openwrt/generic/config-glibc >> .config
 
 # sdk
 [ "$BUILD_SDK" = "y" ] && curl -s https://$mirror/openwrt/generic/config-sdk >> .config
