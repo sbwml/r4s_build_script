@@ -4,10 +4,10 @@
 
 ---------------
 
-## 安装编译环境（根据 debian 11 / ubuntu 22）
+## 本地编译环境安装（根据 debian 11 / ubuntu 22）
 ```shell
 sudo apt-get update
-sudo apt-get install -y build-essential flex bison g++ gawk gcc-multilib g++-multilib gettext git libfuse-dev libncurses5-dev libssl-dev python3 python3-pip python3-ply python3-distutils python3-pyelftools rsync unzip zlib1g-dev file wget subversion patch upx-ucl autoconf automake curl asciidoc binutils bzip2 lib32gcc-s1 libc6-dev-i386 uglifyjs msmtp texinfo libreadline-dev libglib2.0-dev xmlto libelf-dev libtool autopoint antlr3 gperf ccache swig coreutils haveged scons libpython3-dev
+sudo apt-get install -y build-essential flex bison g++ gawk gcc-multilib g++-multilib gettext git libfuse-dev libncurses5-dev libssl-dev python3 python3-pip python3-ply python3-distutils python3-pyelftools rsync unzip zlib1g-dev file wget subversion patch upx-ucl autoconf automake curl asciidoc binutils bzip2 lib32gcc-s1 libc6-dev-i386 uglifyjs msmtp texinfo libreadline-dev libglib2.0-dev xmlto libelf-dev libtool autopoint antlr3 gperf ccache swig coreutils haveged scons libpython3-dev jq
 ```
 
 ##### 安装 clang-15 - 启用 BPF 支持时需要
@@ -24,6 +24,10 @@ sudo apt-get install -y clang-15
 sudo sh -c 'echo "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main" >> /etc/apt/sources.list'
 sudo sh -c 'echo "deb-src http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main" >> /etc/apt/sources.list'
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install -y clang-15
+
+# debian 12 or latest & ubuntu 22 or latest
 sudo apt-get update
 sudo apt-get install -y clang-15
 ```
@@ -50,12 +54,18 @@ export ENABLE_BPF=y
 ##### 只需在构建固件前执行以下命令即可启用快速构建
 
 ```
+export BUILD_FAST=y
+```
+
+*对于 nanopi-r5s 需要额外添加 `BUILD_SDK=y` 即*
+
+```
 export BUILD_FAST=y BUILD_SDK=y
 ```
 
 ---------------
 
-## 构建 OpenWrt 23.05 候选版（RC）
+## 构建 OpenWrt 23.05 最新 Releases
 
 ### nanopi-r4s
 ```shell
@@ -75,7 +85,7 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 nanopi-r5s
 bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 x86_64
 ```
 
-## 构建 OpenWrt 23.05 开发版
+## 构建 OpenWrt 23.05 开发版（23.05-SNAPSHOT）
 
 ### nanopi-r4s
 ```shell
@@ -162,7 +172,7 @@ bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_scri
 ### 三、通过仓库设置 添加 Actions 令牌
 
  - Name: `workflow_token`
- - Secret：`你的 GitHub Token`
+ - Secret：`你的 GitHub Token`  [创建 New personal access token (classic)](https://github.com/settings/tokens/new) （所需权限：`repo` 和 `workflow`）
 
   <img src="https://github.com/sbwml/builder/assets/16485166/70e92cdb-80dd-46d6-8593-a76e3dbb176b" height = "350" alt="token" />
 
