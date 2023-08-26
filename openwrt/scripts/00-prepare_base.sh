@@ -13,6 +13,12 @@ if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     curl -s https://$mirror/openwrt/patch/backport-5.15/051-v5.18-bpf-Add-config-to-allow-loading-modules-with-BTF-mismatch.patch > target/linux/generic/backport-5.15/051-v5.18-bpf-Add-config-to-allow-loading-modules-with-BTF-mismatch.patch
 fi
 
+# Fix BPF Type Format - Linux-5.15 GCC11
+if [ "$ENABLE_BPF" = "y" ]; then
+    sed -i "s/CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT=y/# CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT is not set/g" target/linux/generic/config-5.15
+    sed -i "s/# CONFIG_DEBUG_INFO_DWARF4 is not set/CONFIG_DEBUG_INFO_DWARF4=y/g" target/linux/generic/config-5.15
+fi
+
 # Fix x86 - CONFIG_ALL_KMODS
 if [ "$platform" = "x86_64" ]; then
     sed -i 's/hwmon, +PACKAGE_kmod-thermal:kmod-thermal/hwmon/g' package/kernel/linux/modules/hwmon.mk
