@@ -1,13 +1,27 @@
-From d528cf6baf2624032edb21774109dc9a9c3d46e3 Mon Sep 17 00:00:00 2001
+From d89c21e554215ba1ef040781406951da0244c15f Mon Sep 17 00:00:00 2001
 From: zhaoya <marywangran@126.com>
 Date: Tue, 15 Nov 2022 11:39:04 +0800
 Subject: [PATCH] net-tcp_bbr: v2: refine cruise control and initialization
  logic
 
 ---
- net/ipv4/tcp_bbr2.c | 37 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 36 insertions(+), 1 deletion(-)
+ include/net/inet_connection_sock.h |  2 +-
+ net/ipv4/tcp_bbr2.c                | 37 +++++++++++++++++++++++++++++-
+ 2 files changed, 37 insertions(+), 2 deletions(-)
 
+diff --git a/include/net/inet_connection_sock.h b/include/net/inet_connection_sock.h
+index 30cc3b859..d7c54e258 100644
+--- a/include/net/inet_connection_sock.h
++++ b/include/net/inet_connection_sock.h
+@@ -136,7 +136,7 @@ struct inet_connection_sock {
+ 	u32			  icsk_user_timeout;
+ 
+ /* XXX inflated by temporary internal debugging info */
+-#define ICSK_CA_PRIV_SIZE      (224)
++#define ICSK_CA_PRIV_SIZE      (232)
+ 	u64			  icsk_ca_priv[ICSK_CA_PRIV_SIZE / sizeof(u64)];
+ };
+ 
 diff --git a/net/ipv4/tcp_bbr2.c b/net/ipv4/tcp_bbr2.c
 index 09319695d..f1aca8fcd 100644
 --- a/net/ipv4/tcp_bbr2.c
