@@ -88,6 +88,7 @@ pushd target/linux/generic/backport-6.1
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0025-net-tcp_bbr-v2-Fix-missing-ECT-markings-on-retransmi.patch
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0026-net-tcp_bbr-v2-add-support-for-PLB-in-TCP-and-BBRv2.patch
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0027-net-test-tcp-plb-Add-PLB-tests.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0028-net-tcp_bbr-v2-refine-cruise-control-and-initializat.patch
 popd
 
 # LRNG v50 - linux-6.1
