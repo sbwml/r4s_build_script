@@ -216,7 +216,6 @@ rm -rf ../master
 if [ "$platform" = "x86_64" ]; then
     curl -s https://$mirror/openwrt/23-config-musl-x86 > .config
     [ "$KERNEL_TESTING" = "y" ] && echo CONFIG_TESTING_KERNEL=y >> .config
-    [ "$version" = "snapshots-23.05" ] && ENABLE_BPF=n
     ALL_KMODS=y
 elif [ "$platform" = "rk3568" ]; then
     curl -s https://$mirror/openwrt/23-config-musl-r5s > .config
