@@ -8,6 +8,7 @@ git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip-6.x target/li
 
 # x86_64 - target
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/x86/64/config-6.1 > target/linux/x86/64/config-6.1
+[ "$platform" = "x86_64" ] && echo "CONFIG_PREEMPT_DYNAMIC=y" >> target/linux/x86/64/config-6.1
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/x86/config-6.1 > target/linux/x86/config-6.1
 mkdir -p target/linux/x86/patches-6.1
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/x86/patches-6.1/100-fix_cs5535_clockevt.patch > target/linux/x86/patches-6.1/100-fix_cs5535_clockevt.patch
