@@ -164,9 +164,11 @@ curl -s https://github.com/openwrt/openwrt/commit/2dd03f5a2fe71baa2cb984bf5a17dc
 curl -s https://github.com/openwrt/openwrt/commit/d8a9ab8798388a3b9c9c9b703fee4735d0f18568.patch | patch -p1
 
 # kernel patch
-# 6.1
+# cpu model
 curl -s https://$mirror/openwrt/patch/kernel-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch > target/linux/generic/pending-6.1/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch
+# fullcone
 curl -s https://$mirror/openwrt/patch/kernel-6.1/952-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-6.1/952-net-conntrack-events-support-multiple-registrant.patch
+# logs
 curl -s https://$mirror/openwrt/patch/kernel-6.1/998-hide-panfrost-logs.patch > target/linux/generic/hack-6.1/998-hide-panfrost-logs.patch
 
 # Shortcut-FE - linux-6.1

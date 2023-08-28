@@ -8,7 +8,7 @@ jobs:
   build:
     if: github.event.repository.owner.id == github.event.sender.id
     name: Build ${{ matrix.model }}-${{ matrix.tag.version }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     defaults:
       run:
         shell: bash
@@ -73,7 +73,6 @@ jobs:
 
     - name: Compile OpenWrt
       run: |
-        [ "${{ matrix.model }}" = "nanopi-r5s" ] && export BUILD_SDK=y
         BUILD_FAST=y ENABLE_BPF=y bash <(curl -sS https://raw.githubusercontent.com/${{ github.actor }}/r4s_build_script/master/openwrt/build.sh) ${{ matrix.tag.type }} ${{ matrix.model }}
         cd openwrt
         tags=$(git describe --abbrev=0 --tags)

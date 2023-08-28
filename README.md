@@ -50,17 +50,11 @@ export ENABLE_BPF=y
 ```
 
 ### 快速构建（仅限 Github Actions）
-##### 脚本会使用 toolchain 缓存代替源码构建，与常规构建相比能节省大约 60 分钟的编译耗时，仅适用于 Github Actions `ubuntu-20.04` 环境
+##### 脚本会使用 toolchain 缓存代替源码构建，与常规构建相比能节省大约 60 分钟的编译耗时，仅适用于 Github Actions `ubuntu-22.04` 环境
 ##### 只需在构建固件前执行以下命令即可启用快速构建
 
 ```
 export BUILD_FAST=y
-```
-
-*对于 nanopi-r5s 需要额外添加 `BUILD_SDK=y` 即*
-
-```
-export BUILD_FAST=y BUILD_SDK=y
 ```
 
 ---------------
@@ -81,7 +75,7 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 nanopi-r5s
 
 ### x86_64
 ```shell
-# linux-5.15 (follow upstream)
+# linux-6.1
 bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 x86_64
 ```
 
@@ -101,7 +95,7 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) dev nanopi-r5s
 
 ### x86_64
 ```shell
-# linux-5.15 (follow upstream)
+# linux-6.1
 bash <(curl -sS https://init2.cooluc.com/build.sh) dev x86_64
 ```
 
@@ -144,7 +138,7 @@ bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_scri
 
 #### x86_64 openwrt-23.05
 ```shell
-# linux-5.10 (follow upstream)
+# linux-6.1
 bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc2 x86_64
 ```
 
