@@ -35,7 +35,7 @@ sudo apt-get install -y clang-15
 ---------------
 
 ### 启用 glibc （测试）
-##### 脚本支持使用 glibc 库进行构建，当启用 glibc 进行构建时，构建的固件将会同时兼容 musl/glibc 的所有程序，仅适用于 NanoPI R4S/R5S/R5C
+##### 脚本支持使用 glibc 库进行构建，当启用 glibc 进行构建时，构建的固件将会同时兼容 musl/glibc 的预构建二进制程序
 ##### 只需在构建固件前执行以下命令即可启用 glibc 构建
 
 ```

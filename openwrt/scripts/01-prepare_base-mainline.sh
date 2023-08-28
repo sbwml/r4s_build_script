@@ -17,6 +17,9 @@ sed -i '/KERNEL_PATCHVER/a\KERNEL_TESTING_PATCHVER:=6.1' target/linux/x86/Makefi
 
 # kernel - 6.x
 curl -s https://$mirror/tags/kernel-6.1 > include/kernel-6.1
+
+# kenrel Vermagic
+sed -ie 's/^\(.\).*vermagic$/\1cp $(TOPDIR)\/.vermagic $(LINUX_DIR)\/.vermagic/' include/kernel-defaults.mk
 grep HASH include/kernel-6.1 | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}' > .vermagic
 
 # kernel generic patches
