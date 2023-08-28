@@ -23,8 +23,8 @@ rm -rf feeds/packages/net/haproxy
 cp -a ../master/packages/net/haproxy feeds/packages/net/haproxy
 
 # samba4 - bump version
-SAMBA4_VERSION=4.18.5
-SAMBA4_HASH=095256ac332e1d9fbf9b7ff7823f92a3233d3ed658ce7fc9b33905c2243f447f
+SAMBA4_VERSION=4.18.6
+SAMBA4_HASH=284c8a994ce989c87cd6808c390fcb9d00c36b21a0dc1a8a75474b67c9e715e7
 rm -rf feeds/packages/net/samba4
 cp -a ../master/packages/net/samba4 feeds/packages/net/samba4
 sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$SAMBA4_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$SAMBA4_HASH/" feeds/packages/net/samba4/Makefile
@@ -111,11 +111,7 @@ sed -i 's/services/network/g' feeds/luci/applications/luci-app-nlbwmon/htdocs/lu
 
 #### 磁盘分区 / 清理内存 / 打印机 / 定时重启 / 数据监控 / KMS / 访问控制（互联网时间）/ ADG luci / IP 限速 / 文件管理器 / CPU / 迅雷快鸟
 rm -rf feeds/packages/utils/coremark
-if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
-    git clone https://github.com/sbwml/openwrt_pkgs package/openwrt_pkgs --depth=1
-else
-    git clone https://github.com/sbwml/openwrt_pkgs package/openwrt_pkgs -b 22.03 --depth=1
-fi
+git clone https://github.com/sbwml/openwrt_pkgs package/openwrt_pkgs --depth=1
 rm -rf package/openwrt_pkgs/ddns-scripts-dnspod
 
 # 翻译

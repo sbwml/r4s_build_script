@@ -1,4 +1,0 @@
-
-# Build SDK
-CONFIG_DEVEL=y
-CONFIG_SDK=y

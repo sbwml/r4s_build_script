@@ -234,14 +234,8 @@ curl -s https://$mirror/openwrt/23-config-common >> .config
 export ENABLE_BPF=$ENABLE_BPF
 [ "$ENABLE_BPF" = "y" ] && curl -s https://$mirror/openwrt/generic/config-bpf >> .config
 
-# extra
-[ "$BUILD_EXTRA" = "y" ] && curl -s https://$mirror/openwrt/generic/config-extra >> .config
-
 # glibc
 [ "$USE_GLIBC" = "y" ] && curl -s https://$mirror/openwrt/generic/config-glibc >> .config
-
-# sdk
-[ "$BUILD_SDK" = "y" ] && curl -s https://$mirror/openwrt/generic/config-sdk >> .config
 
 # openwrt-23.05 gcc11
 if [ ! "$USE_GLIBC" = "y" ]; then
