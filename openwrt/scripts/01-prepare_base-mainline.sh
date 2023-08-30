@@ -96,6 +96,11 @@ popd
 
 # LRNG v50 - linux-6.1
 curl -s https://$mirror/openwrt/patch/kernel-6.1/config-lrng >> target/linux/generic/config-6.1
+if [ "$platform" = "rk3399" ] || [ "$platform" = "rk3568" ]; then
+    echo 'CONFIG_LRNG_HWRAND_IF=y' >> target/linux/generic/config-6.1
+else
+    echo '# CONFIG_LRNG_HWRAND_IF is not set' >> target/linux/generic/config-6.1
+fi
 pushd target/linux/generic/hack-6.1
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v50_6.1/960-v50-0001-LRNG-Entropy-Source-and-DRNG-Manager.patch
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v50_6.1/960-v50-0002-LRNG-allocate-one-DRNG-instance-per-NUMA-node.patch
