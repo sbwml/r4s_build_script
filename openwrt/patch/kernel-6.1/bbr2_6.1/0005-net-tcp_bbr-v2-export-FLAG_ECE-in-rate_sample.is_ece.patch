@@ -1,7 +1,7 @@
-From 48c6bc09a6028e11a74c694dd993b080a09abf75 Mon Sep 17 00:00:00 2001
+From 8ba37eb217d1eed258d9d2ae78483501a3c627c8 Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Mon, 19 Nov 2018 13:48:36 -0500
-Subject: [PATCH 05/27] net-tcp_bbr: v2: export FLAG_ECE in rate_sample.is_ece
+Subject: [PATCH 05/28] net-tcp_bbr: v2: export FLAG_ECE in rate_sample.is_ece
 
 For understanding the relationship between inflight and ECN signals,
 to try to find the highest inflight value that has acceptable levels
@@ -16,10 +16,10 @@ Change-Id: I3a964e04cee83e11649a54507043d2dfe769a3b3
  2 files changed, 2 insertions(+)
 
 diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 9c5d7575e659..7072b785839f 100644
+index 98b188a29..381503b42 100644
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -1074,6 +1074,7 @@ struct rate_sample {
+@@ -1075,6 +1075,7 @@ struct rate_sample {
  	bool is_app_limited;	/* is sample from packet with bubble in pipe? */
  	bool is_retrans;	/* is sample from retransmission? */
  	bool is_ack_delayed;	/* is this (likely) a delayed ACK? */
@@ -28,10 +28,10 @@ index 9c5d7575e659..7072b785839f 100644
  
  struct tcp_congestion_ops {
 diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 1a308993c371..b089111bbe62 100644
+index 230c3fb9c..d8a23112d 100644
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
-@@ -3911,6 +3911,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
+@@ -3917,6 +3917,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
  	delivered = tcp_newly_delivered(sk, delivered, flag);
  	lost = tp->lost - lost;			/* freshly marked lost */
  	rs.is_ack_delayed = !!(flag & FLAG_ACK_MAYBE_DELAYED);

@@ -1,7 +1,7 @@
-From 59c67beb45a1d4d4684d06400b90109bbdb6320e Mon Sep 17 00:00:00 2001
+From dee2bb6f5724596848ce8cce6770bdc0913076e7 Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Wed, 29 Aug 2018 10:27:59 -0400
-Subject: [PATCH 17/27] net-test: scripts for testing bbr2 with upstream Linux
+Subject: [PATCH 17/28] net-test: scripts for testing bbr2 with upstream Linux
  kernels
 
 - runs a small set of simple tests
@@ -32,7 +32,7 @@ Change-Id: I38662f554b3c905aa79947a2c52a2ecfe3943f8c
 
 diff --git a/gtests/net/tcp/bbr/nsperf/graph_tests.sh b/gtests/net/tcp/bbr/nsperf/graph_tests.sh
 new file mode 100755
-index 000000000000..6277c4ffa1cc
+index 000000000..6277c4ffa
 --- /dev/null
 +++ b/gtests/net/tcp/bbr/nsperf/graph_tests.sh
 @@ -0,0 +1,306 @@
@@ -344,7 +344,7 @@ index 000000000000..6277c4ffa1cc
 +echo "done graphing all tests: $tests"
 diff --git a/gtests/net/tcp/bbr/nsperf/median.py b/gtests/net/tcp/bbr/nsperf/median.py
 new file mode 100755
-index 000000000000..f09ae072e0fd
+index 000000000..f09ae072e
 --- /dev/null
 +++ b/gtests/net/tcp/bbr/nsperf/median.py
 @@ -0,0 +1,43 @@
@@ -393,7 +393,7 @@ index 000000000000..f09ae072e0fd
 +    sys.exit(main())
 diff --git a/gtests/net/tcp/bbr/nsperf/nsperf.py b/gtests/net/tcp/bbr/nsperf/nsperf.py
 new file mode 100755
-index 000000000000..c8b5f697f0a8
+index 000000000..c8b5f697f
 --- /dev/null
 +++ b/gtests/net/tcp/bbr/nsperf/nsperf.py
 @@ -0,0 +1,540 @@
@@ -939,7 +939,7 @@ index 000000000000..c8b5f697f0a8
 +    sys.exit(main())
 diff --git a/gtests/net/tcp/bbr/nsperf/run_tests.sh b/gtests/net/tcp/bbr/nsperf/run_tests.sh
 new file mode 100755
-index 000000000000..31fd028d1319
+index 000000000..31fd028d1
 --- /dev/null
 +++ b/gtests/net/tcp/bbr/nsperf/run_tests.sh
 @@ -0,0 +1,201 @@
@@ -1146,7 +1146,7 @@ index 000000000000..31fd028d1319
 +echo "done running all tests: $tests"
 diff --git a/gtests/net/tcp/bbr/nsperf/ss_log_parser.py b/gtests/net/tcp/bbr/nsperf/ss_log_parser.py
 new file mode 100755
-index 000000000000..3717a9fc7c23
+index 000000000..3717a9fc7
 --- /dev/null
 +++ b/gtests/net/tcp/bbr/nsperf/ss_log_parser.py
 @@ -0,0 +1,193 @@

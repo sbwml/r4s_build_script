@@ -1,7 +1,7 @@
-From 1ebc5cc0a0055ee0ec5fb9b0ceef5d4fbed36d77 Mon Sep 17 00:00:00 2001
+From 0a55073982a175d7b16c782547f15e128b767792 Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Thu, 21 Nov 2019 15:28:01 -0500
-Subject: [PATCH 19/27] net-tcp_bbr: v2: remove unnecessary rs.delivered_ce
+Subject: [PATCH 19/28] net-tcp_bbr: v2: remove unnecessary rs.delivered_ce
  logic upon loss
 
 There is no reason to compute rs.delivered_ce upon loss.
@@ -34,7 +34,7 @@ Change-Id: I37f83f418a259ec31d8f82de986db071b364b76a
  1 file changed, 1 deletion(-)
 
 diff --git a/net/ipv4/tcp_bbr2.c b/net/ipv4/tcp_bbr2.c
-index a6959b70e51d..e00b47850dce 100644
+index a6959b70e..e00b47850 100644
 --- a/net/ipv4/tcp_bbr2.c
 +++ b/net/ipv4/tcp_bbr2.c
 @@ -2508,7 +2508,6 @@ static void bbr2_skb_marked_lost(struct sock *sk, const struct sk_buff *skb)

@@ -1,7 +1,7 @@
-From ddc77e8fe5229a7cbd52d4af7edde7fa2734a0e1 Mon Sep 17 00:00:00 2001
+From 361d61278d13390dfa45835a9c32033e01065a5a Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Tue, 7 May 2019 22:36:36 -0400
-Subject: [PATCH 07/27] net-tcp_bbr: v2: factor out tx.in_flight setting into
+Subject: [PATCH 07/28] net-tcp_bbr: v2: factor out tx.in_flight setting into
  tcp_set_tx_in_flight()
 
 Factor out the code to set an skb's tx.in_flight field into its own
@@ -21,10 +21,10 @@ Change-Id: I4fbd4a6e18a51ab06d50ab1c9ad820ce5bea89af
  2 files changed, 20 insertions(+), 13 deletions(-)
 
 diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 49c925270337..1ab6b2753236 100644
+index 8db53fbb6..4cb7c13b8 100644
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -1184,6 +1184,7 @@ static inline void tcp_ca_event(struct sock *sk, const enum tcp_ca_event event)
+@@ -1185,6 +1185,7 @@ static inline void tcp_ca_event(struct sock *sk, const enum tcp_ca_event event)
  void tcp_set_ca_state(struct sock *sk, const u8 ca_state);
  
  /* From tcp_rate.c */
@@ -33,7 +33,7 @@ index 49c925270337..1ab6b2753236 100644
  void tcp_rate_skb_delivered(struct sock *sk, struct sk_buff *skb,
  			    struct rate_sample *rs);
 diff --git a/net/ipv4/tcp_rate.c b/net/ipv4/tcp_rate.c
-index e985026fc037..a8b4c9504570 100644
+index e985026fc..a8b4c9504 100644
 --- a/net/ipv4/tcp_rate.c
 +++ b/net/ipv4/tcp_rate.c
 @@ -34,13 +34,30 @@

@@ -1,7 +1,7 @@
-From 416700eb80d584802cfe40c4199f914485832fa0 Mon Sep 17 00:00:00 2001
+From cb70dee87367a88a852eaeada84ade5112d649cd Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Mon, 17 Aug 2020 19:10:21 -0400
-Subject: [PATCH 22/27] net-tcp_bbr: v2: remove cycle_rand parameter that is
+Subject: [PATCH 22/28] net-tcp_bbr: v2: remove cycle_rand parameter that is
  unused in BBRv2
 
 Change-Id: Iee1df7e41e42de199068d7c89131ed3d228327c0
@@ -10,7 +10,7 @@ Change-Id: Iee1df7e41e42de199068d7c89131ed3d228327c0
  1 file changed, 3 deletions(-)
 
 diff --git a/net/ipv4/tcp_bbr2.c b/net/ipv4/tcp_bbr2.c
-index 6121cd46f81a..57b4abebb275 100644
+index 6121cd46f..57b4abebb 100644
 --- a/net/ipv4/tcp_bbr2.c
 +++ b/net/ipv4/tcp_bbr2.c
 @@ -303,8 +303,6 @@ static int bbr_pacing_gain[] = {

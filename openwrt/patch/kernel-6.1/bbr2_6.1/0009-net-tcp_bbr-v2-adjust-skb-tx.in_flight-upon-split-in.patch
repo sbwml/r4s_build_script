@@ -1,7 +1,7 @@
-From 8d8c4a58577e23dfb57406d36f71da10d9c5f1bb Mon Sep 17 00:00:00 2001
+From 97ffe6d7a696f36eea9aa7cfd7060cbcbe191b42 Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Wed, 1 May 2019 20:16:25 -0400
-Subject: [PATCH 09/27] net-tcp_bbr: v2: adjust skb tx.in_flight upon split in
+Subject: [PATCH 09/28] net-tcp_bbr: v2: adjust skb tx.in_flight upon split in
  tcp_fragment()
 
 When we fragment an skb that has already been sent, we need to update
@@ -26,7 +26,7 @@ Change-Id: I617f8cab4e9be7a0b8e8d30b047bf8645393354d
  1 file changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index c69f4d966024..82465a0cf921 100644
+index 26bd039f9..5b89bca66 100644
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
 @@ -1533,7 +1533,7 @@ int tcp_fragment(struct sock *sk, enum tcp_queue tcp_queue,

@@ -1,7 +1,7 @@
-From 52dd9fd01e87674a3c57dbd8d2e10febc58130e6 Mon Sep 17 00:00:00 2001
+From 425096a829c537dc16b8359dc985ff702b4a44a6 Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Wed, 1 May 2019 20:16:33 -0400
-Subject: [PATCH 08/27] net-tcp_bbr: v2: adjust skb tx.in_flight upon merge in
+Subject: [PATCH 08/28] net-tcp_bbr: v2: adjust skb tx.in_flight upon merge in
  tcp_shifted_skb()
 
 When tcp_shifted_skb() updates state as adjacent SACKed skbs are
@@ -39,7 +39,7 @@ Change-Id: I1b0b75c27519953430c7db51c6f358f104c7af55
  1 file changed, 11 insertions(+)
 
 diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 8f76bdea1bd9..394633fc9fa6 100644
+index 7435114e3..a32fc4a1a 100644
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
 @@ -1465,6 +1465,17 @@ static bool tcp_shifted_skb(struct sock *sk, struct sk_buff *prev,

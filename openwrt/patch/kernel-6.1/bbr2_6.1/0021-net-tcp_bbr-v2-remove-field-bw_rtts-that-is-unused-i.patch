@@ -1,7 +1,7 @@
-From aa5718aaea0df59629a98736cdbf5e4c16c27e8a Mon Sep 17 00:00:00 2001
+From 98fd10cd065027d03f4ce20ea3071b414c43636e Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Mon, 17 Aug 2020 19:08:41 -0400
-Subject: [PATCH 21/27] net-tcp_bbr: v2: remove field bw_rtts that is unused in
+Subject: [PATCH 21/28] net-tcp_bbr: v2: remove field bw_rtts that is unused in
  BBRv2
 
 Change-Id: I58e3346c707748a6f316f3ed060d2da84c32a79b
@@ -10,7 +10,7 @@ Change-Id: I58e3346c707748a6f316f3ed060d2da84c32a79b
  1 file changed, 1 insertion(+), 6 deletions(-)
 
 diff --git a/net/ipv4/tcp_bbr2.c b/net/ipv4/tcp_bbr2.c
-index e00b47850dce..6121cd46f81a 100644
+index e00b47850..6121cd46f 100644
 --- a/net/ipv4/tcp_bbr2.c
 +++ b/net/ipv4/tcp_bbr2.c
 @@ -179,9 +179,8 @@ struct bbr {

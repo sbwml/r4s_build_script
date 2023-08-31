@@ -1,7 +1,7 @@
-From 04fe6a14db3068391b7b8599e6edf3a47a0b2294 Mon Sep 17 00:00:00 2001
+From 7d85483efd59bc552be91f7b6342686561dfa043 Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Mon, 22 Jul 2019 23:18:56 -0400
-Subject: [PATCH 18/27] net-tcp_bbr: v2: add a README.md for TCP BBR v2 alpha
+Subject: [PATCH 18/28] net-tcp_bbr: v2: add a README.md for TCP BBR v2 alpha
  release
 
 Change-Id: I35a8c984e299d2af6e78c3d4b3aade5627678306
@@ -12,7 +12,7 @@ Change-Id: I35a8c984e299d2af6e78c3d4b3aade5627678306
 
 diff --git a/README.md b/README.md
 new file mode 100644
-index 000000000000..340d7c472bca
+index 000000000..340d7c472
 --- /dev/null
 +++ b/README.md
 @@ -0,0 +1,169 @@

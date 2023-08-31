@@ -1,7 +1,7 @@
-From 5a337e11773eae0a4eeb855751d1af54f78ac370 Mon Sep 17 00:00:00 2001
+From b8d556c7541acae503463134aa1c105c29f5dc72 Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Thu, 12 Oct 2017 23:44:27 -0400
-Subject: [PATCH 04/27] net-tcp_bbr: v2: count packets lost over TCP rate
+Subject: [PATCH 04/28] net-tcp_bbr: v2: count packets lost over TCP rate
  sampling interval
 
 For understanding the relationship between inflight and packet loss
@@ -17,10 +17,10 @@ Change-Id: I594c2500868d9c530770e7ddd68ffc87c57f4fd5
  2 files changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 21709e740fe2..9c5d7575e659 100644
+index 6f2b07d1e..98b188a29 100644
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -910,6 +910,7 @@ struct tcp_skb_cb {
+@@ -911,6 +911,7 @@ struct tcp_skb_cb {
  #define TCPCB_IN_FLIGHT_MAX ((1U << TCPCB_IN_FLIGHT_BITS) - 1)
  			u32 in_flight:20,   /* packets in flight at transmit */
  			    unused2:12;
@@ -28,7 +28,7 @@ index 21709e740fe2..9c5d7575e659 100644
  		} tx;   /* only used for outgoing skbs */
  		union {
  			struct inet_skb_parm	h4;
-@@ -1055,11 +1056,13 @@ struct ack_sample {
+@@ -1056,11 +1057,13 @@ struct ack_sample {
   */
  struct rate_sample {
  	u64  prior_mstamp; /* starting timestamp for interval */
@@ -44,7 +44,7 @@ index 21709e740fe2..9c5d7575e659 100644
  	u32 snd_interval_us;	/* snd interval for delivered packets */
  	u32 rcv_interval_us;	/* rcv interval for delivered packets */
 diff --git a/net/ipv4/tcp_rate.c b/net/ipv4/tcp_rate.c
-index 782f44b4ee70..e985026fc037 100644
+index 782f44b4e..e985026fc 100644
 --- a/net/ipv4/tcp_rate.c
 +++ b/net/ipv4/tcp_rate.c
 @@ -67,6 +67,7 @@ void tcp_rate_skb_sent(struct sock *sk, struct sk_buff *skb)

@@ -1,7 +1,7 @@
-From 8418f129970ad19ed9eb1dd5e4cd2ef50634a5a3 Mon Sep 17 00:00:00 2001
+From 80670e4564a31d39b90a0343fe0b0f7e0de0a818 Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Tue, 7 May 2019 22:37:19 -0400
-Subject: [PATCH 10/27] net-tcp_bbr: v2: set tx.in_flight for skbs in repair
+Subject: [PATCH 10/28] net-tcp_bbr: v2: set tx.in_flight for skbs in repair
  write queue
 
 Syzkaller was able to use TCP_REPAIR to reproduce the new warning
@@ -29,7 +29,7 @@ Change-Id: I0bc4a790f040fd4239620e1eedd5dc64666c6f05
  1 file changed, 1 insertion(+)
 
 diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index 82465a0cf921..95816a1a5858 100644
+index 5b89bca66..5949fc233 100644
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
 @@ -2644,6 +2644,7 @@ static bool tcp_write_xmit(struct sock *sk, unsigned int mss_now, int nonagle,

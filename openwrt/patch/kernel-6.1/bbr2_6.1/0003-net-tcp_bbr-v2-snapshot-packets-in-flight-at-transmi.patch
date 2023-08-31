@@ -1,7 +1,7 @@
-From a9db2da3c0026dddcdf6dab05c5c30d67fbeb32f Mon Sep 17 00:00:00 2001
+From 401ce0bb52bcc1649930c6d1d2ec1bb0891f31c8 Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Sat, 5 Aug 2017 11:49:50 -0400
-Subject: [PATCH 03/27] net-tcp_bbr: v2: snapshot packets in flight at transmit
+Subject: [PATCH 03/28] net-tcp_bbr: v2: snapshot packets in flight at transmit
  time and pass in rate_sample
 
 For understanding the relationship between inflight and losses or ECN
@@ -17,10 +17,10 @@ Change-Id: I7314047d0ff14dd261a04b1969a46dc658c8836a
  2 files changed, 19 insertions(+)
 
 diff --git a/include/net/tcp.h b/include/net/tcp.h
-index b4c0f5bed5dc..21709e740fe2 100644
+index 490c11f17..6f2b07d1e 100644
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -906,6 +906,10 @@ struct tcp_skb_cb {
+@@ -907,6 +907,10 @@ struct tcp_skb_cb {
  			u32 first_tx_mstamp;
  			/* when we reached the "delivered" count */
  			u32 delivered_mstamp;
@@ -31,7 +31,7 @@ index b4c0f5bed5dc..21709e740fe2 100644
  		} tx;   /* only used for outgoing skbs */
  		union {
  			struct inet_skb_parm	h4;
-@@ -1053,6 +1057,7 @@ struct rate_sample {
+@@ -1054,6 +1058,7 @@ struct rate_sample {
  	u64  prior_mstamp; /* starting timestamp for interval */
  	u32  prior_delivered;	/* tp->delivered at "prior_mstamp" */
  	u32  prior_delivered_ce;/* tp->delivered_ce at "prior_mstamp" */
@@ -40,7 +40,7 @@ index b4c0f5bed5dc..21709e740fe2 100644
  	s32  delivered_ce;	/* number of packets delivered w/ CE marks*/
  	long interval_us;	/* time for tp->delivered to incr "delivered" */
 diff --git a/net/ipv4/tcp_rate.c b/net/ipv4/tcp_rate.c
-index 763362159fe9..782f44b4ee70 100644
+index 763362159..782f44b4e 100644
 --- a/net/ipv4/tcp_rate.c
 +++ b/net/ipv4/tcp_rate.c
 @@ -40,6 +40,7 @@

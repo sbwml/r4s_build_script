@@ -1,7 +1,7 @@
-From 2955af01a0000c8e29e3202d401acadc0b6e6409 Mon Sep 17 00:00:00 2001
+From 58dbe27d58786ada5c52e929db74d1124b0aa105 Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Mon, 28 Dec 2020 19:23:09 -0500
-Subject: [PATCH 24/27] net-tcp_bbr: v2: don't assume prior_cwnd was set
+Subject: [PATCH 24/28] net-tcp_bbr: v2: don't assume prior_cwnd was set
  entering CA_Loss
 
 Fix WARN_ON_ONCE() warnings that were firing and pointing to a
@@ -33,7 +33,7 @@ Change-Id: I575dce871c2f20e91e3e9449e1706f42a07b8118
  1 file changed, 2 insertions(+), 5 deletions(-)
 
 diff --git a/net/ipv4/tcp_bbr2.c b/net/ipv4/tcp_bbr2.c
-index 57b4abebb275..5510adc92bbb 100644
+index 57b4abebb..5510adc92 100644
 --- a/net/ipv4/tcp_bbr2.c
 +++ b/net/ipv4/tcp_bbr2.c
 @@ -2617,15 +2617,12 @@ static void bbr2_set_state(struct sock *sk, u8 new_state)

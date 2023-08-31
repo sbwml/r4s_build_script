@@ -1,7 +1,7 @@
-From 2867ba805abf8e11292f5287188684e2679bdf80 Mon Sep 17 00:00:00 2001
+From bd682ecb8b9187540fb7d888d81a3bc450d5faae Mon Sep 17 00:00:00 2001
 From: Soheil Hassas Yeganeh <soheil@google.com>
 Date: Sat, 23 Jan 2016 20:54:46 -0500
-Subject: [PATCH 16/27] net-test: adds a gce-install.sh script to build and
+Subject: [PATCH 16/28] net-test: adds a gce-install.sh script to build and
  install kernel on GCE machine
 
 This commit adds a script to build an upstream Linux kernel and
@@ -24,7 +24,7 @@ Change-Id: I149233b802202335af93183728050aadb52cca2c
  create mode 100755 gce-install.sh
 
 diff --git a/.gitignore b/.gitignore
-index 5da004814678..f09d026f4820 100644
+index 5da004814..f09d026f4 100644
 --- a/.gitignore
 +++ b/.gitignore
 @@ -154,6 +154,9 @@ x509.genkey
@@ -39,7 +39,7 @@ index 5da004814678..f09d026f4820 100644
  
 diff --git a/gce-install.sh b/gce-install.sh
 new file mode 100755
-index 000000000000..1d84fe1d313e
+index 000000000..1d84fe1d3
 --- /dev/null
 +++ b/gce-install.sh
 @@ -0,0 +1,89 @@

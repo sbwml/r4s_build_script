@@ -1,7 +1,7 @@
-From cffd0b97c891dd51ce52c95d2738e4628d6d217c Mon Sep 17 00:00:00 2001
+From 325425d10c90f4f6b9dcbde0ac1d726d78be2098 Mon Sep 17 00:00:00 2001
 From: Yousuk Seung <ysseung@google.com>
 Date: Wed, 23 May 2018 17:55:54 -0700
-Subject: [PATCH 11/27] net-tcp: add new ca opts flag TCP_CONG_WANTS_CE_EVENTS
+Subject: [PATCH 11/28] net-tcp: add new ca opts flag TCP_CONG_WANTS_CE_EVENTS
 
 Add a a new ca opts flag TCP_CONG_WANTS_CE_EVENTS that allows a
 congestion control module to receive CE events.
@@ -21,10 +21,10 @@ Change-Id: I2255506985242f376d910c6fd37daabaf4744f24
  2 files changed, 15 insertions(+), 3 deletions(-)
 
 diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 1ab6b2753236..989aaedc2e4a 100644
+index 4cb7c13b8..a112cfe71 100644
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -1036,7 +1036,11 @@ enum tcp_ca_ack_event_flags {
+@@ -1037,7 +1037,11 @@ enum tcp_ca_ack_event_flags {
  #define TCP_CONG_NON_RESTRICTED 0x1
  /* Requires ECN/ECT set on all packets */
  #define TCP_CONG_NEEDS_ECN	0x2
@@ -37,7 +37,7 @@ index 1ab6b2753236..989aaedc2e4a 100644
  
  union tcp_cc_info;
  
-@@ -1165,6 +1169,14 @@ static inline char *tcp_ca_get_name_by_key(u32 key, char *buffer)
+@@ -1166,6 +1170,14 @@ static inline char *tcp_ca_get_name_by_key(u32 key, char *buffer)
  }
  #endif
  
@@ -53,7 +53,7 @@ index 1ab6b2753236..989aaedc2e4a 100644
  {
  	const struct inet_connection_sock *icsk = inet_csk(sk);
 diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 394633fc9fa6..82a68b768be4 100644
+index a32fc4a1a..a913e55d9 100644
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
 @@ -349,7 +349,7 @@ static void __tcp_ecn_check_ce(struct sock *sk, const struct sk_buff *skb)

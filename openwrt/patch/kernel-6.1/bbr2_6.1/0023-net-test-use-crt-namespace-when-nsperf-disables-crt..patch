@@ -1,7 +1,7 @@
-From 2547331871679f48054cd712131b519792d7cef6 Mon Sep 17 00:00:00 2001
+From 2b7d4a8a00e033c90f2fde30fcffb50f5e9369cd Mon Sep 17 00:00:00 2001
 From: Jason Xing <kerneljasonxing@gmail.com>
 Date: Thu, 10 Sep 2020 09:02:18 -0400
-Subject: [PATCH 23/27] net-test: use crt namespace when nsperf disables crt.l
+Subject: [PATCH 23/28] net-test: use crt namespace when nsperf disables crt.l
  TSO/GSO/GRO
 
 Changing the 'srt' to 'crt' is the right way to disable the features of
@@ -13,7 +13,7 @@ Signed-off-by: Jason Xing <kerneljasonxing@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/gtests/net/tcp/bbr/nsperf/nsperf.py b/gtests/net/tcp/bbr/nsperf/nsperf.py
-index c8b5f697f0a8..ed107c2fa245 100755
+index c8b5f697f..ed107c2fa 100755
 --- a/gtests/net/tcp/bbr/nsperf/nsperf.py
 +++ b/gtests/net/tcp/bbr/nsperf/nsperf.py
 @@ -134,7 +134,7 @@ def setup_veth():

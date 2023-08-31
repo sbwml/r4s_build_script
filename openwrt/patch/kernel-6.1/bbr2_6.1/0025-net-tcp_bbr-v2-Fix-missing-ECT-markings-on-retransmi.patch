@@ -1,7 +1,7 @@
-From 81f6b1d79f9bccdfb2c10cea7930ccf6e18ce30f Mon Sep 17 00:00:00 2001
+From d4a30ea31b588bae6b41b032c49aa918f61aa7eb Mon Sep 17 00:00:00 2001
 From: Adithya Abraham Philip <abrahamphilip@google.com>
 Date: Fri, 11 Jun 2021 21:56:10 +0000
-Subject: [PATCH 25/27] net-tcp_bbr: v2: Fix missing ECT markings on
+Subject: [PATCH 25/28] net-tcp_bbr: v2: Fix missing ECT markings on
  retransmits for BBRv2
 
 Adds a new flag TCP_ECN_ECT_PERMANENT that is used by CCAs to
@@ -21,7 +21,7 @@ Signed-off-by: Neal Cardwell <ncardwell@google.com>
  3 files changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/include/net/tcp.h b/include/net/tcp.h
-index b65268d3a3c2..a8868e515e13 100644
+index 7de6df6b3..df8f9ee0f 100644
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
 @@ -375,6 +375,7 @@ static inline void tcp_dec_quickack_mode(struct sock *sk,
@@ -33,7 +33,7 @@ index b65268d3a3c2..a8868e515e13 100644
  enum tcp_tw_status {
  	TCP_TW_SUCCESS = 0,
 diff --git a/net/ipv4/tcp_bbr2.c b/net/ipv4/tcp_bbr2.c
-index 5510adc92bbb..fa49e17c47ca 100644
+index 5510adc92..fa49e17c4 100644
 --- a/net/ipv4/tcp_bbr2.c
 +++ b/net/ipv4/tcp_bbr2.c
 @@ -2471,6 +2471,9 @@ static void bbr2_init(struct sock *sk)
@@ -47,7 +47,7 @@ index 5510adc92bbb..fa49e17c47ca 100644
  
  /* Core TCP stack informs us that the given skb was just marked lost. */
 diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index 5284249f4689..a9ceec2702b2 100644
+index d0330bda7..935c0ce08 100644
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
 @@ -375,7 +375,8 @@ static void tcp_ecn_send(struct sock *sk, struct sk_buff *skb,

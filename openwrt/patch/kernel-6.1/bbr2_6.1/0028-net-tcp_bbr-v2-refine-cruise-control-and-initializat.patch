@@ -1,8 +1,8 @@
-From d89c21e554215ba1ef040781406951da0244c15f Mon Sep 17 00:00:00 2001
+From 7f0c4dfd42bf961d7b37aac65f05e016bce0967d Mon Sep 17 00:00:00 2001
 From: zhaoya <marywangran@126.com>
 Date: Tue, 15 Nov 2022 11:39:04 +0800
-Subject: [PATCH] net-tcp_bbr: v2: refine cruise control and initialization
- logic
+Subject: [PATCH 28/28] net-tcp_bbr: v2: refine cruise control and
+ initialization logic
 
 ---
  include/net/inet_connection_sock.h |  2 +-
@@ -131,5 +131,5 @@ index 09319695d..f1aca8fcd 100644
  
  	/* After cruising, when it's time to probe, we first "refill": we send
 -- 
-2.25.1
+2.34.1
 

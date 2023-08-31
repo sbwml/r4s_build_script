@@ -1,7 +1,7 @@
-From 0a65dddf457f76a09570a284f260eda9eb6504de Mon Sep 17 00:00:00 2001
+From cfe2947ebd164d02f7eafd52802659226991e470 Mon Sep 17 00:00:00 2001
 From: Soheil Hassas Yeganeh <soheil@google.com>
 Date: Sat, 23 Jan 2016 20:51:41 -0500
-Subject: [PATCH 15/27] net-test: add .config for kernel circa v5.10, with many
+Subject: [PATCH 15/28] net-test: add .config for kernel circa v5.10, with many
  TCP CC modules enabled
 
 This commit provides a kernel config file for GCE. It builds most
@@ -18,7 +18,7 @@ Change-Id: Ibc4dfdc119c804f1ad2853b3ee2c1c503bca01a9
 
 diff --git a/config.gce b/config.gce
 new file mode 100644
-index 000000000000..1538acf6818b
+index 000000000..1538acf68
 --- /dev/null
 +++ b/config.gce
 @@ -0,0 +1,3807 @@
