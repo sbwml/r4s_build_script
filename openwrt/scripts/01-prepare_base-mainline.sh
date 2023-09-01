@@ -31,7 +31,6 @@ rm -rf target_linux_generic
 # kernel modules
 rm -rf package/kernel/linux package/kernel/hwmon-gsc
 git checkout package/kernel/linux
-curl -s https://$mirror/openwrt/patch/openwrt-6.1/files/sysctl-tcp-bbr2.conf > package/kernel/linux/files/sysctl-tcp-bbr2.conf
 pushd package/kernel/linux/modules
     rm -f [a-z]*.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/block.mk
@@ -62,36 +61,30 @@ pushd package/kernel/linux/modules
     curl -Os https://$mirror/openwrt/patch/openwrt-6.1/modules/wpan.mk
 popd
 
-# BBRv2 - linux-6.1
+# BBRv3 - linux-6.1
 pushd target/linux/generic/backport-6.1
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0001-net-tcp_bbr-broaden-app-limited-rate-sample-detectio.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0002-net-tcp_bbr-v2-shrink-delivered_mstamp-first_tx_msta.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0003-net-tcp_bbr-v2-snapshot-packets-in-flight-at-transmi.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0004-net-tcp_bbr-v2-count-packets-lost-over-TCP-rate-samp.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0005-net-tcp_bbr-v2-export-FLAG_ECE-in-rate_sample.is_ece.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0006-net-tcp_bbr-v2-introduce-ca_ops-skb_marked_lost-CC-m.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0007-net-tcp_bbr-v2-factor-out-tx.in_flight-setting-into-.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0008-net-tcp_bbr-v2-adjust-skb-tx.in_flight-upon-merge-in.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0009-net-tcp_bbr-v2-adjust-skb-tx.in_flight-upon-split-in.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0010-net-tcp_bbr-v2-set-tx.in_flight-for-skbs-in-repair-w.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0011-net-tcp-add-new-ca-opts-flag-TCP_CONG_WANTS_CE_EVENT.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0012-net-tcp-re-generalize-TSO-sizing-in-TCP-CC-module-AP.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0013-net-tcp-add-fast_ack_mode-1-skip-rwin-check-in-tcp_f.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0014-net-tcp_bbr-v2-BBRv2-bbr2-congestion-control-for-Lin.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0015-net-test-add-.config-for-kernel-circa-v5.10-with-man.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0016-net-test-adds-a-gce-install.sh-script-to-build-and-i.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0017-net-test-scripts-for-testing-bbr2-with-upstream-Linu.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0018-net-tcp_bbr-v2-add-a-README.md-for-TCP-BBR-v2-alpha-.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0019-net-tcp_bbr-v2-remove-unnecessary-rs.delivered_ce-lo.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0020-net-gbuild-add-Gconfig.bbr2-to-gbuild-kernel-with-CO.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0021-net-tcp_bbr-v2-remove-field-bw_rtts-that-is-unused-i.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0022-net-tcp_bbr-v2-remove-cycle_rand-parameter-that-is-u.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0023-net-test-use-crt-namespace-when-nsperf-disables-crt..patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0024-net-tcp_bbr-v2-don-t-assume-prior_cwnd-was-set-enter.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0025-net-tcp_bbr-v2-Fix-missing-ECT-markings-on-retransmi.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0026-net-tcp_bbr-v2-add-support-for-PLB-in-TCP-and-BBRv2.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0027-net-test-tcp-plb-Add-PLB-tests.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr2_6.1/0028-net-tcp_bbr-v2-refine-cruise-control-and-initializat.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0001-net-tcp_bbr-broaden-app-limited-rate-sample-detectio.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0002-net-tcp_bbr-v2-shrink-delivered_mstamp-first_tx_msta.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0003-net-tcp_bbr-v2-snapshot-packets-in-flight-at-transmi.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0004-net-tcp_bbr-v2-count-packets-lost-over-TCP-rate-samp.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0005-net-tcp_bbr-v2-export-FLAG_ECE-in-rate_sample.is_ece.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0006-net-tcp_bbr-v2-introduce-ca_ops-skb_marked_lost-CC-m.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0007-net-tcp_bbr-v2-adjust-skb-tx.in_flight-upon-merge-in.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0008-net-tcp_bbr-v2-adjust-skb-tx.in_flight-upon-split-in.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0009-net-tcp-add-new-ca-opts-flag-TCP_CONG_WANTS_CE_EVENT.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0010-net-tcp-re-generalize-TSO-sizing-in-TCP-CC-module-AP.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0011-net-tcp-add-fast_ack_mode-1-skip-rwin-check-in-tcp_f.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0012-net-tcp_bbr-v2-record-app-limited-status-of-TLP-repa.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0013-net-tcp_bbr-v2-inform-CC-module-of-losses-repaired-b.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0014-net-tcp_bbr-v2-introduce-is_acking_tlp_retrans_seq-i.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0015-tcp-introduce-per-route-feature-RTAX_FEATURE_ECN_LOW.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0016-tcp-Add-a-sysctl-to-skip-tcp-collapse-processing-whe.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0017-tcp-Add-a-sysctl-to-allow-TCP-window-shrinking-in-or.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0018-tcp-add-sysctls-for-TCP-PLB-parameters.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0019-tcp-add-PLB-functionality-for-TCP.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0020-net-tcp_bbr-v3-update-TCP-bbr-congestion-control-mod.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0021-net-tcp_bbr-v3-ensure-ECN-enabled-BBR-flows-set-ECT-.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0022-tcp-export-TCPI_OPT_ECN_LOW-in-tcp_info-tcpi_options.patch
 popd
 
 # LRNG v50 - linux-6.1
