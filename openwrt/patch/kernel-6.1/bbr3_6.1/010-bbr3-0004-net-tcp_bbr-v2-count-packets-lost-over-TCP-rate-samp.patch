@@ -1,7 +1,7 @@
-From 46a9f460bce6917f9df9c4507d9799d2afe3e0cd Mon Sep 17 00:00:00 2001
+From 29ff3313b86298890816f9db0ab9f75787e326fc Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Thu, 12 Oct 2017 23:44:27 -0400
-Subject: [PATCH 04/22] net-tcp_bbr: v2: count packets lost over TCP rate
+Subject: [PATCH 04/20] net-tcp_bbr: v2: count packets lost over TCP rate
  sampling interval
 
 For understanding the relationship between inflight and packet loss

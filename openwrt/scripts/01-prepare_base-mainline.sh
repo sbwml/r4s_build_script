@@ -78,13 +78,11 @@ pushd target/linux/generic/backport-6.1
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0013-net-tcp_bbr-v2-inform-CC-module-of-losses-repaired-b.patch
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0014-net-tcp_bbr-v2-introduce-is_acking_tlp_retrans_seq-i.patch
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0015-tcp-introduce-per-route-feature-RTAX_FEATURE_ECN_LOW.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0016-tcp-Add-a-sysctl-to-skip-tcp-collapse-processing-whe.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0017-tcp-Add-a-sysctl-to-allow-TCP-window-shrinking-in-or.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0018-tcp-add-sysctls-for-TCP-PLB-parameters.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0019-tcp-add-PLB-functionality-for-TCP.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0020-net-tcp_bbr-v3-update-TCP-bbr-congestion-control-mod.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0021-net-tcp_bbr-v3-ensure-ECN-enabled-BBR-flows-set-ECT-.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0022-tcp-export-TCPI_OPT_ECN_LOW-in-tcp_info-tcpi_options.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0016-tcp-add-sysctls-for-TCP-PLB-parameters.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0017-tcp-add-PLB-functionality-for-TCP.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0018-net-tcp_bbr-v3-update-TCP-bbr-congestion-control-mod.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0019-net-tcp_bbr-v3-ensure-ECN-enabled-BBR-flows-set-ECT-.patch
+    curl -Os https://$mirror/openwrt/patch/kernel-6.1/bbr3_6.1/010-bbr3-0020-tcp-export-TCPI_OPT_ECN_LOW-in-tcp_info-tcpi_options.patch
 popd
 
 # LRNG v50 - linux-6.1

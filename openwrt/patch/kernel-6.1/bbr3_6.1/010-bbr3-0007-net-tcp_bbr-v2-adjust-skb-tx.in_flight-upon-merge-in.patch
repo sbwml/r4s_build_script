@@ -1,7 +1,7 @@
-From 4a71c008c104d55714f5d592cd4d51734503ecac Mon Sep 17 00:00:00 2001
+From ae99d6192d04c44ae27c7a382d20a589eed8f27f Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Wed, 1 May 2019 20:16:33 -0400
-Subject: [PATCH 07/22] net-tcp_bbr: v2: adjust skb tx.in_flight upon merge in
+Subject: [PATCH 07/20] net-tcp_bbr: v2: adjust skb tx.in_flight upon merge in
  tcp_shifted_skb()
 
 When tcp_shifted_skb() updates state as adjacent SACKed skbs are

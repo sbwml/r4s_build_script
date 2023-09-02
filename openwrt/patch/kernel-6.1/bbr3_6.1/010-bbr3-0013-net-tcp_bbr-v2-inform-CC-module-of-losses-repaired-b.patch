@@ -1,7 +1,7 @@
-From 822c40fb5d820088521931dba6436d4a4f57e143 Mon Sep 17 00:00:00 2001
+From 7947c5068bf452016f862bd017a438433a257141 Mon Sep 17 00:00:00 2001
 From: Jianfeng Wang <jfwang@google.com>
 Date: Tue, 16 Jun 2020 17:41:19 +0000
-Subject: [PATCH 13/22] net-tcp_bbr: v2: inform CC module of losses repaired by
+Subject: [PATCH 13/20] net-tcp_bbr: v2: inform CC module of losses repaired by
  TLP probe
 
 Before this commit, when there is a packet loss that creates a sequence

@@ -1,7 +1,7 @@
-From a9253bb280a57cc917a50fffbed814f77ab51b49 Mon Sep 17 00:00:00 2001
+From ae0bf694fd7ffa62094ca72ee0cd49d474be1954 Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Fri, 27 Sep 2019 17:10:26 -0400
-Subject: [PATCH 10/22] net-tcp: re-generalize TSO sizing in TCP CC module API
+Subject: [PATCH 10/20] net-tcp: re-generalize TSO sizing in TCP CC module API
 
 Reorganize the API for CC modules so that the CC module once again
 gets complete control of the TSO sizing decision. This is how the API

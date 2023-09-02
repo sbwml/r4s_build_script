@@ -1,7 +1,7 @@
-From aa79f023f9118d9a9f66d29ef0de456abe69f4e0 Mon Sep 17 00:00:00 2001
+From a388e2d7352dd97d1621c5a84ea9277a651cfd39 Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Tue, 11 Jun 2019 12:26:55 -0400
-Subject: [PATCH 01/22] net-tcp_bbr: broaden app-limited rate sample detection
+Subject: [PATCH 01/20] net-tcp_bbr: broaden app-limited rate sample detection
 
 This commit is a bug fix for the Linux TCP app-limited
 (application-limited) logic that is used for collecting rate

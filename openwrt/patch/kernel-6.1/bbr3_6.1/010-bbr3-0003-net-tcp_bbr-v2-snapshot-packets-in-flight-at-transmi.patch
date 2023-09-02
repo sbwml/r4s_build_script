@@ -1,7 +1,7 @@
-From 702da44c56c95a5a8270135d17344ea5094773cd Mon Sep 17 00:00:00 2001
+From 730dcf21588602629508e8c1f10776204f5034b1 Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Sat, 5 Aug 2017 11:49:50 -0400
-Subject: [PATCH 03/22] net-tcp_bbr: v2: snapshot packets in flight at transmit
+Subject: [PATCH 03/20] net-tcp_bbr: v2: snapshot packets in flight at transmit
  time and pass in rate_sample
 
 CC algorithms may want to snapshot the number of packets in flight at

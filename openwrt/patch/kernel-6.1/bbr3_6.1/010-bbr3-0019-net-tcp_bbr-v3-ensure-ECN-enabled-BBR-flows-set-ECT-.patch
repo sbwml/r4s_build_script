@@ -1,7 +1,7 @@
-From 06696161e460cc53e74e603669bf88ef398b3811 Mon Sep 17 00:00:00 2001
+From 67e9f4d5a29f89ead84e2daab5143521c83b1c3b Mon Sep 17 00:00:00 2001
 From: Adithya Abraham Philip <abrahamphilip@google.com>
 Date: Fri, 11 Jun 2021 21:56:10 +0000
-Subject: [PATCH 21/22] net-tcp_bbr: v3: ensure ECN-enabled BBR flows set ECT
+Subject: [PATCH 19/20] net-tcp_bbr: v3: ensure ECN-enabled BBR flows set ECT
  on retransmits
 
 Adds a new flag TCP_ECN_ECT_PERMANENT that is used by CCAs to
@@ -50,10 +50,10 @@ index 1ce016437..ff3bfff15 100644
  
  /* BBR marks the current round trip as a loss round. */
 diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index 0b404e881..ae253a018 100644
+index e302c8e0f..88d1ea03a 100644
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -381,7 +381,8 @@ static void tcp_ecn_send(struct sock *sk, struct sk_buff *skb,
+@@ -377,7 +377,8 @@ static void tcp_ecn_send(struct sock *sk, struct sk_buff *skb,
  				th->cwr = 1;
  				skb_shinfo(skb)->gso_type |= SKB_GSO_TCP_ECN;
  			}

@@ -1,7 +1,7 @@
-From 36ce1b1fde5f31709794437ab0be59a858086da7 Mon Sep 17 00:00:00 2001
+From 5a0cb01be3b8190023d6cd912a44086f528fa66b Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Wed, 1 May 2019 20:16:25 -0400
-Subject: [PATCH 08/22] net-tcp_bbr: v2: adjust skb tx.in_flight upon split in
+Subject: [PATCH 08/20] net-tcp_bbr: v2: adjust skb tx.in_flight upon split in
  tcp_fragment()
 
 When we fragment an skb that has already been sent, we need to update

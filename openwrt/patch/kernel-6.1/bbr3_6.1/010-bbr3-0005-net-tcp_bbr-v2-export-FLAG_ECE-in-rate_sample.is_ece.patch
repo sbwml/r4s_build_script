@@ -1,7 +1,7 @@
-From 882a2bfdca15407a806d8d8e832c256cd1ef3900 Mon Sep 17 00:00:00 2001
+From 2e5a2ca5b2fceb78eb5b4f3480a01ce0c5e5dd95 Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Mon, 19 Nov 2018 13:48:36 -0500
-Subject: [PATCH 05/22] net-tcp_bbr: v2: export FLAG_ECE in rate_sample.is_ece
+Subject: [PATCH 05/20] net-tcp_bbr: v2: export FLAG_ECE in rate_sample.is_ece
 
 For understanding the relationship between inflight and ECN signals,
 to try to find the highest inflight value that has acceptable levels

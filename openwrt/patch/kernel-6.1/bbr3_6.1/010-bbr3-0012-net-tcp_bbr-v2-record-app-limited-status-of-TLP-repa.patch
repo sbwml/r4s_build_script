@@ -1,7 +1,7 @@
-From 95bbd252010825566344fb3f6baac95fa9a3f0a1 Mon Sep 17 00:00:00 2001
+From d7c8ac8358203eb530b9f31c4bea9f959f2c96f9 Mon Sep 17 00:00:00 2001
 From: Jianfeng Wang <jfwang@google.com>
 Date: Fri, 19 Jun 2020 17:33:45 +0000
-Subject: [PATCH 12/22] net-tcp_bbr: v2: record app-limited status of
+Subject: [PATCH 12/20] net-tcp_bbr: v2: record app-limited status of
  TLP-repaired flight
 
 When sending a TLP retransmit, record whether the outstanding flight

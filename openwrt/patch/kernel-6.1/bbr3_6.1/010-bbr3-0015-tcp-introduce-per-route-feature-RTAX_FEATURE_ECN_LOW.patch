@@ -1,7 +1,7 @@
-From 7815f818f31a8df37fbb2303402299b1ce4309fb Mon Sep 17 00:00:00 2001
+From 8eab18f14d084ed7fbddd5dabaad9b55424a2581 Mon Sep 17 00:00:00 2001
 From: David Morley <morleyd@google.com>
 Date: Fri, 14 Jul 2023 11:07:56 -0400
-Subject: [PATCH 15/22] tcp: introduce per-route feature RTAX_FEATURE_ECN_LOW
+Subject: [PATCH 15/20] tcp: introduce per-route feature RTAX_FEATURE_ECN_LOW
 
 Define and implement a new per-route feature, RTAX_FEATURE_ECN_LOW.
 
