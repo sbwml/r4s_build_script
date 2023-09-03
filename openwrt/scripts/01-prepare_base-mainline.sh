@@ -154,12 +154,12 @@ rm -rf package/kernel/mac80211
 cp -a ../master/openwrt/package/kernel/mac80211 package/kernel/mac80211
 
 # mac80211 - add rtw89
-curl -s https://github.com/openwrt/openwrt/commit/88e6100f21ef179466825c0a4e9e41a270527cbe.patch | patch -p1
-curl -s https://github.com/openwrt/openwrt/commit/06d383fa4f8d297654f3b566a779e7473262d76c.patch | patch -p1
-curl -s https://github.com/openwrt/openwrt/commit/b4e32778056db6342016b25d30e105cfddb3ef6e.patch | patch -p1
-curl -s https://github.com/openwrt/openwrt/commit/7a9758d5a5b9224aa4ecb7288611d42976193e95.patch | patch -p1
-curl -s https://github.com/openwrt/openwrt/commit/2dd03f5a2fe71baa2cb984bf5a17dc3cb13ed2bb.patch | patch -p1
-curl -s https://github.com/openwrt/openwrt/commit/d8a9ab8798388a3b9c9c9b703fee4735d0f18568.patch | patch -p1
+curl -s https://github.com/openwrt/openwrt/commit/11003cfd1a80fc63d354433d2449ee41879c7748.patch | patch -p1
+curl -s https://github.com/openwrt/openwrt/commit/c7323f2dc9449ed38446400535e3212fdf777439.patch | patch -p1
+curl -s https://github.com/openwrt/openwrt/commit/775802f81bdf98ba270583010a34f45b9ecf1ef7.patch | patch -p1
+curl -s https://github.com/openwrt/openwrt/commit/c6a2f99275adeb57226504b5de6f68082aca7c93.patch | patch -p1
+curl -s https://github.com/openwrt/openwrt/commit/390a2ff20f9af9e22a48cd9ebde513d616bea840.patch | patch -p1
+curl -s https://github.com/openwrt/openwrt/commit/1c726bfea3d2f0ffbc90c486e5dffc45020c101e.patch | patch -p1
 
 # kernel patch
 # cpu model
