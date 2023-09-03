@@ -1,9 +1,14 @@
 #!/bin/bash -e
 
-# Rockchip - rkbin & u-boot 2023.07
+# Rockchip - rkbin & u-boot
 rm -rf package/boot/uboot-rockchip package/boot/arm-trusted-firmware-rockchip
-git clone https://github.com/sbwml/package_boot_uboot-rockchip package/boot/uboot-rockchip
-git clone https://github.com/sbwml/arm-trusted-firmware-rockchip package/boot/arm-trusted-firmware-rockchip
+if [ "$platform" = "rk3568" ]; then
+    git clone https://github.com/sbwml/package_boot_uboot-rockchip package/boot/uboot-rockchip
+    git clone https://github.com/sbwml/arm-trusted-firmware-rockchip package/boot/arm-trusted-firmware-rockchip
+else
+    git clone https://github.com/sbwml/package_boot_uboot-rockchip package/boot/uboot-rockchip -b v2023.04
+    git clone https://github.com/sbwml/arm-trusted-firmware-rockchip package/boot/arm-trusted-firmware-rockchip -b 0419
+fi
 
 # BTF: fix failed to validate module
 # config/Config-kernel.in patch
