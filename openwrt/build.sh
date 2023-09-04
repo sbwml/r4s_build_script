@@ -281,7 +281,7 @@ if [ "$platform" = "x86_64" ]; then
             cp -a bin/targets/x86/*/packages $kmodpkg_name
             rm -f $kmodpkg_name/Packages*
             # driver firmware
-            cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
+            cp -a bin/packages/x86_64/base/*firmware*.ipk $kmodpkg_name/
             bash kmod-sign $kmodpkg_name
             tar zcf x86_64-$kmodpkg_name.tar.gz $kmodpkg_name
             rm -rf $kmodpkg_name
