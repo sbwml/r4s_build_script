@@ -1,5 +1,3 @@
-diff --git a/drivers/char/lrng/lrng_interface_random_kernel.c b/drivers/char/lrng/lrng_interface_random_kernel.c
-index fabf2109c..033257bd1 100644
 --- a/drivers/char/lrng/lrng_interface_random_kernel.c
 +++ b/drivers/char/lrng/lrng_interface_random_kernel.c
 @@ -85,7 +85,7 @@ void lrng_kick_random_ready(void)
@@ -11,7 +9,7 @@ index fabf2109c..033257bd1 100644
  {
  	/*
  	 * Suspend writing if we are fully loaded with entropy or if caller
-@@ -96,7 +96,6 @@ void add_hwgenerator_randomness(const void *buffer, size_t count,
+@@ -96,7 +96,6 @@ void add_hwgenerator_randomness(const vo
  	wait_event_interruptible(lrng_write_wait,
  				(lrng_need_entropy() && entropy_bits) ||
  				lrng_state_exseed_allow(lrng_noise_source_hw) ||

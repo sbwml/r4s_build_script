@@ -1,8 +1,6 @@
-diff --git a/drivers/char/lrng/lrng_es_mgr.c b/drivers/char/lrng/lrng_es_mgr.c
-index 9570a4a1b..edb7713dd 100644
 --- a/drivers/char/lrng/lrng_es_mgr.c
 +++ b/drivers/char/lrng/lrng_es_mgr.c
-@@ -381,6 +381,9 @@ void lrng_init_ops(struct entropy_buf *eb)
+@@ -381,6 +381,9 @@ void lrng_init_ops(struct entropy_buf *e
  	}
  }
  
@@ -12,7 +10,7 @@ index 9570a4a1b..edb7713dd 100644
  void __init lrng_rand_initialize_early(void)
  {
  	struct seed {
-@@ -393,11 +396,11 @@ void __init lrng_rand_initialize_early(void)
+@@ -393,11 +396,11 @@ void __init lrng_rand_initialize_early(v
  	unsigned int i;
  
  	for (i = 0; i < ARRAY_SIZE(seed.data); i += longs) {
@@ -44,7 +42,7 @@ index 9570a4a1b..edb7713dd 100644
  static int __init lrng_rand_initialize_call(void)
  {
  	lrng_rand_initialize_early();
-@@ -437,6 +451,17 @@ static int __init lrng_rand_initialize_call(void)
+@@ -437,6 +451,17 @@ static int __init lrng_rand_initialize_c
  }
  
  early_initcall(lrng_rand_initialize_call);

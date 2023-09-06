@@ -29,11 +29,9 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  net/ipv4/tcp_output.c | 26 +++++++++++++++++++++++++-
  2 files changed, 40 insertions(+), 1 deletion(-)
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 4cb7c13b8..04813bf38 100644
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -1198,6 +1198,21 @@ static inline bool tcp_skb_sent_after(u64 t1, u64 t2, u32 seq1, u32 seq2)
+@@ -1198,6 +1198,21 @@ static inline bool tcp_skb_sent_after(u6
  	return t1 > t2 || (t1 == t2 && after(seq1, seq2));
  }
  
@@ -55,11 +53,9 @@ index 4cb7c13b8..04813bf38 100644
  /* These functions determine how the current flow behaves in respect of SACK
   * handling. SACK is negotiated with the peer, and therefore it can vary
   * between different flows.
-diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index a7a7e9fbc..0818709ec 100644
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -1533,7 +1533,7 @@ int tcp_fragment(struct sock *sk, enum tcp_queue tcp_queue,
+@@ -1533,7 +1533,7 @@ int tcp_fragment(struct sock *sk, enum t
  {
  	struct tcp_sock *tp = tcp_sk(sk);
  	struct sk_buff *buff;
@@ -68,7 +64,7 @@ index a7a7e9fbc..0818709ec 100644
  	long limit;
  	int nlen;
  	u8 flags;
-@@ -1610,6 +1610,30 @@ int tcp_fragment(struct sock *sk, enum tcp_queue tcp_queue,
+@@ -1610,6 +1610,30 @@ int tcp_fragment(struct sock *sk, enum t
  
  		if (diff)
  			tcp_adjust_pcount(sk, skb, diff);
@@ -99,6 +95,3 @@ index a7a7e9fbc..0818709ec 100644
  	}
  
  	/* Link BUFF into the send queue. */
--- 
-2.39.3
-

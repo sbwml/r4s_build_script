@@ -31,11 +31,9 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  net/ipv4/tcp_output.c          |  6 ++++--
  4 files changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 8ea074553..3d762a2c7 100644
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -375,6 +375,7 @@ static inline void tcp_dec_quickack_mode(struct sock *sk,
+@@ -375,6 +375,7 @@ static inline void tcp_dec_quickack_mode
  #define	TCP_ECN_QUEUE_CWR	2
  #define	TCP_ECN_DEMAND_CWR	4
  #define	TCP_ECN_SEEN		8
@@ -43,7 +41,7 @@ index 8ea074553..3d762a2c7 100644
  
  enum tcp_tw_status {
  	TCP_TW_SUCCESS = 0,
-@@ -728,6 +729,15 @@ static inline void tcp_fast_path_check(struct sock *sk)
+@@ -728,6 +729,15 @@ static inline void tcp_fast_path_check(s
  		tcp_fast_path_on(tp);
  }
  
@@ -59,8 +57,6 @@ index 8ea074553..3d762a2c7 100644
  /* Compute the actual rto_min value */
  static inline u32 tcp_rto_min(struct sock *sk)
  {
-diff --git a/include/uapi/linux/rtnetlink.h b/include/uapi/linux/rtnetlink.h
-index 51c13cf9c..de8dcba26 100644
 --- a/include/uapi/linux/rtnetlink.h
 +++ b/include/uapi/linux/rtnetlink.h
 @@ -506,9 +506,11 @@ enum {
@@ -76,11 +72,9 @@ index 51c13cf9c..de8dcba26 100644
  
  struct rta_session {
  	__u8	proto;
-diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
-index 42844d20d..e153569ef 100644
 --- a/net/ipv4/tcp_minisocks.c
 +++ b/net/ipv4/tcp_minisocks.c
-@@ -423,6 +423,8 @@ void tcp_ca_openreq_child(struct sock *sk, const struct dst_entry *dst)
+@@ -423,6 +423,8 @@ void tcp_ca_openreq_child(struct sock *s
  	u32 ca_key = dst_metric(dst, RTAX_CC_ALGO);
  	bool ca_got_dst = false;
  
@@ -89,11 +83,9 @@ index 42844d20d..e153569ef 100644
  	if (ca_key != TCP_CA_UNSPEC) {
  		const struct tcp_congestion_ops *ca;
  
-diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index 96bf72970..e302c8e0f 100644
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -323,10 +323,9 @@ static void tcp_ecn_send_syn(struct sock *sk, struct sk_buff *skb)
+@@ -323,10 +323,9 @@ static void tcp_ecn_send_syn(struct sock
  	bool bpf_needs_ecn = tcp_bpf_ca_needs_ecn(sk);
  	bool use_ecn = READ_ONCE(sock_net(sk)->ipv4.sysctl_tcp_ecn) == 1 ||
  		tcp_ca_needs_ecn(sk) || bpf_needs_ecn;
@@ -105,7 +97,7 @@ index 96bf72970..e302c8e0f 100644
  		if (dst && dst_feature(dst, RTAX_FEATURE_ECN))
  			use_ecn = true;
  	}
-@@ -338,6 +337,9 @@ static void tcp_ecn_send_syn(struct sock *sk, struct sk_buff *skb)
+@@ -338,6 +337,9 @@ static void tcp_ecn_send_syn(struct sock
  		tp->ecn_flags = TCP_ECN_OK;
  		if (tcp_ca_needs_ecn(sk) || bpf_needs_ecn)
  			INET_ECN_xmit(sk);
@@ -115,6 +107,3 @@ index 96bf72970..e302c8e0f 100644
  	}
  }
  
--- 
-2.39.3
-

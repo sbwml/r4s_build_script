@@ -23,11 +23,9 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  net/ipv4/tcp_output.c | 3 ++-
  3 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 0c717d468..09f52c135 100644
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -376,6 +376,7 @@ static inline void tcp_dec_quickack_mode(struct sock *sk,
+@@ -376,6 +376,7 @@ static inline void tcp_dec_quickack_mode
  #define	TCP_ECN_DEMAND_CWR	4
  #define	TCP_ECN_SEEN		8
  #define	TCP_ECN_LOW		16
@@ -35,8 +33,6 @@ index 0c717d468..09f52c135 100644
  
  enum tcp_tw_status {
  	TCP_TW_SUCCESS = 0,
-diff --git a/net/ipv4/tcp_bbr.c b/net/ipv4/tcp_bbr.c
-index 1ce016437..ff3bfff15 100644
 --- a/net/ipv4/tcp_bbr.c
 +++ b/net/ipv4/tcp_bbr.c
 @@ -2151,6 +2151,9 @@ static void bbr_init(struct sock *sk)
@@ -49,11 +45,9 @@ index 1ce016437..ff3bfff15 100644
  }
  
  /* BBR marks the current round trip as a loss round. */
-diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index e302c8e0f..88d1ea03a 100644
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -377,7 +377,8 @@ static void tcp_ecn_send(struct sock *sk, struct sk_buff *skb,
+@@ -377,7 +377,8 @@ static void tcp_ecn_send(struct sock *sk
  				th->cwr = 1;
  				skb_shinfo(skb)->gso_type |= SKB_GSO_TCP_ECN;
  			}
@@ -63,6 +57,3 @@ index e302c8e0f..88d1ea03a 100644
  			/* ACK or retransmitted segment: clear ECT|CE */
  			INET_ECN_dontxmit(sk);
  		}
--- 
-2.39.3
-

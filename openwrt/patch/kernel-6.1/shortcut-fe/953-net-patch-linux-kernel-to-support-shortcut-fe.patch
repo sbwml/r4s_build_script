@@ -1,8 +1,6 @@
-diff --git a/include/linux/if_bridge.h b/include/linux/if_bridge.h
-index 8e4865432..cbe16c40b 100644
 --- a/include/linux/if_bridge.h
 +++ b/include/linux/if_bridge.h
-@@ -70,6 +70,9 @@ void brioctl_set(int (*hook)(struct net *net, struct net_bridge *br,
+@@ -70,6 +70,9 @@ void brioctl_set(int (*hook)(struct net
  int br_ioctl_call(struct net *net, struct net_bridge *br, unsigned int cmd,
  		  struct ifreq *ifr, void __user *uarg);
  
@@ -12,8 +10,6 @@ index 8e4865432..cbe16c40b 100644
  #if IS_ENABLED(CONFIG_BRIDGE) && IS_ENABLED(CONFIG_BRIDGE_IGMP_SNOOPING)
  int br_multicast_list_adjacent(struct net_device *dev,
  			       struct list_head *br_ip_list);
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 28105d1ce..be9594214 100644
 --- a/include/linux/skbuff.h
 +++ b/include/linux/skbuff.h
 @@ -987,6 +987,10 @@ struct sk_buff {
@@ -27,8 +23,6 @@ index 28105d1ce..be9594214 100644
  #ifdef CONFIG_NET_SCHED
  	__u16			tc_index;	/* traffic control index */
  #endif
-diff --git a/include/linux/timer.h b/include/linux/timer.h
-index 648f00105..6b74c3404 100644
 --- a/include/linux/timer.h
 +++ b/include/linux/timer.h
 @@ -18,6 +18,10 @@ struct timer_list {
@@ -42,8 +36,6 @@ index 648f00105..6b74c3404 100644
  #ifdef CONFIG_LOCKDEP
  	struct lockdep_map	lockdep_map;
  #endif
-diff --git a/include/net/netfilter/nf_conntrack_ecache.h b/include/net/netfilter/nf_conntrack_ecache.h
-index 4dae73709..9153e3197 100644
 --- a/include/net/netfilter/nf_conntrack_ecache.h
 +++ b/include/net/netfilter/nf_conntrack_ecache.h
 @@ -68,6 +68,8 @@ struct nf_ct_event_notifier {
@@ -55,8 +47,6 @@ index 4dae73709..9153e3197 100644
  #else
  int nf_conntrack_register_notifier(struct net *net,
  				   const struct nf_ct_event_notifier *nb);
-diff --git a/net/Kconfig b/net/Kconfig
-index 604b251da..8a77af9d6 100644
 --- a/net/Kconfig
 +++ b/net/Kconfig
 @@ -467,6 +467,9 @@ config FAILOVER
@@ -69,11 +59,9 @@ index 604b251da..8a77af9d6 100644
  config ETHTOOL_NETLINK
  	bool "Netlink interface for ethtool"
  	default y
-diff --git a/net/bridge/br_if.c b/net/bridge/br_if.c
-index 0989074f3..b5c1f50fd 100644
 --- a/net/bridge/br_if.c
 +++ b/net/bridge/br_if.c
-@@ -764,6 +764,26 @@ void br_port_flags_change(struct net_bridge_port *p, unsigned long mask)
+@@ -764,6 +764,26 @@ void br_port_flags_change(struct net_bri
  		br_recalculate_neigh_suppress_enabled(br);
  }
  
@@ -100,11 +88,9 @@ index 0989074f3..b5c1f50fd 100644
  bool br_port_flag_is_set(const struct net_device *dev, unsigned long flag)
  {
  	struct net_bridge_port *p;
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 0564ca117..6610d15e2 100644
 --- a/net/core/dev.c
 +++ b/net/core/dev.c
-@@ -3586,9 +3586,17 @@ static int xmit_one(struct sk_buff *skb, struct net_device *dev,
+@@ -3586,9 +3586,17 @@ static int xmit_one(struct sk_buff *skb,
  {
  	unsigned int len;
  	int rc;
@@ -123,7 +109,7 @@ index 0564ca117..6610d15e2 100644
  
  #ifdef CONFIG_ETHERNET_PACKET_MANGLE
  	if (dev->eth_mangle_tx && !(skb = dev->eth_mangle_tx(dev, skb)))
-@@ -5249,6 +5257,11 @@ void netdev_rx_handler_unregister(struct net_device *dev)
+@@ -5249,6 +5257,11 @@ void netdev_rx_handler_unregister(struct
  }
  EXPORT_SYMBOL_GPL(netdev_rx_handler_unregister);
  
@@ -135,7 +121,7 @@ index 0564ca117..6610d15e2 100644
  /*
   * Limit the use of PFMEMALLOC reserves to those protocols that implement
   * the special handling of PFMEMALLOC skbs.
-@@ -5297,6 +5310,10 @@ static int __netif_receive_skb_core(struct sk_buff **pskb, bool pfmemalloc,
+@@ -5297,6 +5310,10 @@ static int __netif_receive_skb_core(stru
  	int ret = NET_RX_DROP;
  	__be16 type;
  
@@ -146,7 +132,7 @@ index 0564ca117..6610d15e2 100644
  	net_timestamp_check(!READ_ONCE(netdev_tstamp_prequeue), skb);
  
  	trace_netif_receive_skb(skb);
-@@ -5334,6 +5351,15 @@ static int __netif_receive_skb_core(struct sk_buff **pskb, bool pfmemalloc,
+@@ -5334,6 +5351,15 @@ another_round:
  			goto out;
  	}
  
@@ -162,11 +148,9 @@ index 0564ca117..6610d15e2 100644
  	if (skb_skip_tc_classify(skb))
  		goto skip_classify;
  
-diff --git a/net/netfilter/nf_conntrack_ecache.c b/net/netfilter/nf_conntrack_ecache.c
-index 93a293c5e..4f05da78f 100644
 --- a/net/netfilter/nf_conntrack_ecache.c
 +++ b/net/netfilter/nf_conntrack_ecache.c
-@@ -143,12 +143,23 @@ static int __nf_conntrack_eventmask_report(struct nf_conntrack_ecache *e,
+@@ -143,12 +143,23 @@ static int __nf_conntrack_eventmask_repo
  	rcu_read_lock();
  
  	notify = rcu_dereference(net->ct.nf_conntrack_event_cb);
@@ -192,7 +176,7 @@ index 93a293c5e..4f05da78f 100644
  	rcu_read_unlock();
  
  	if (likely(ret >= 0 && missed == 0))
-@@ -339,6 +350,11 @@ int nf_conntrack_register_notifier(struct net *net,
+@@ -339,6 +350,11 @@ int nf_conntrack_register_notifier(struc
  {
  	return atomic_notifier_chain_register(&net->ct.nf_conntrack_chain, nb);
  }
@@ -204,7 +188,7 @@ index 93a293c5e..4f05da78f 100644
  #else
  int nf_conntrack_register_notifier(struct net *net,
  				    const struct nf_ct_event_notifier *new)
-@@ -369,6 +385,11 @@ int nf_conntrack_unregister_notifier(struct net *net, struct notifier_block *nb)
+@@ -369,6 +385,11 @@ int nf_conntrack_unregister_notifier(str
  {
  	return atomic_notifier_chain_unregister(&net->ct.nf_conntrack_chain, nb);
  }

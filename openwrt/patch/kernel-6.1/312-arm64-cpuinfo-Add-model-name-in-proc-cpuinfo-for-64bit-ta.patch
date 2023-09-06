@@ -16,11 +16,9 @@ Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
  arch/arm64/kernel/cpuinfo.c | 5 ++---
  1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
-index 28d4f442b..2f9ac1952 100644
 --- a/arch/arm64/kernel/cpuinfo.c
 +++ b/arch/arm64/kernel/cpuinfo.c
-@@ -170,9 +170,8 @@ static int c_show(struct seq_file *m, void *v)
+@@ -170,9 +170,8 @@ static int c_show(struct seq_file *m, vo
  		 * "processor".  Give glibc what it expects.
  		 */
  		seq_printf(m, "processor\t: %d\n", i);
@@ -32,6 +30,3 @@ index 28d4f442b..2f9ac1952 100644
  
  		seq_printf(m, "BogoMIPS\t: %lu.%02lu\n",
  			   loops_per_jiffy / (500000UL/HZ),
--- 
-2.34.1
-
