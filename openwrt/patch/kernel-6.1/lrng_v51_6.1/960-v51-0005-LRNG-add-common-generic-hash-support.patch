@@ -1,4 +1,4 @@
-From 9ac229efebe89638f198886edfb1df650fea79eb Mon Sep 17 00:00:00 2001
+From ed3a1463494a698b2f2ff25f93784f159f8c7b5a Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Sun, 15 May 2022 16:01:44 +0200
 Subject: [PATCH 05/25] LRNG - add common generic hash support
@@ -21,7 +21,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 
 --- a/drivers/char/lrng/Kconfig
 +++ b/drivers/char/lrng/Kconfig
-@@ -576,26 +576,26 @@ config LRNG_DRNG_CHACHA20
+@@ -633,26 +633,26 @@ config LRNG_DRNG_CHACHA20
  config LRNG_SWITCH
  	bool
  

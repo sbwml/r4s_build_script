@@ -1,4 +1,4 @@
-From 03006e4361d43ff6b1a17ceff3335966fa9da6f8 Mon Sep 17 00:00:00 2001
+From c3c54c69b8bfdbd020053ac10e00994175955ae0 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Sun, 18 Dec 2022 21:22:36 +0100
 Subject: [PATCH 19/25] LRNG - add interface for gathering of raw entropy
@@ -79,7 +79,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 
 --- a/drivers/char/lrng/Kconfig
 +++ b/drivers/char/lrng/Kconfig
-@@ -661,273 +661,273 @@ choice
+@@ -718,273 +718,273 @@ choice
  		select LRNG_DRNG_KCAPI
  endchoice
  

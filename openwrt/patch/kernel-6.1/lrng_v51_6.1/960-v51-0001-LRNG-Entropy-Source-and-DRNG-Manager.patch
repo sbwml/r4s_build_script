@@ -1,4 +1,4 @@
-From 394b7ce6e95fe38affa37ed405a5305835dd1bf4 Mon Sep 17 00:00:00 2001
+From 7c6da5296aab090710cc4ff0a60b243ca2d03330 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Tue, 25 Apr 2023 22:22:44 +0200
 Subject: [PATCH 01/25] LRNG: Entropy Source and DRNG Manager
@@ -138,38 +138,38 @@ settings will be folded to noops.
 
 Signed-off-by: Stephan Mueller <smueller@chronox.de>
 ---
- drivers/char/Kconfig                          |   2 +
- drivers/char/Makefile                         |   2 +
- drivers/char/lrng/Kconfig                     | 960 ++++++++++++++++++
- drivers/char/lrng/Makefile                    |  11 +
- drivers/char/lrng/lrng_definitions.h          | 163 +++
- drivers/char/lrng/lrng_drng_atomic.h          |  23 +
- drivers/char/lrng/lrng_drng_chacha20.c        | 195 ++++
- drivers/char/lrng/lrng_drng_chacha20.h        |  42 +
- drivers/char/lrng/lrng_drng_drbg.h            |  13 +
- drivers/char/lrng/lrng_drng_kcapi.h           |  13 +
- drivers/char/lrng/lrng_drng_mgr.c             | 742 ++++++++++++++
- drivers/char/lrng/lrng_drng_mgr.h             |  86 ++
- drivers/char/lrng/lrng_es_aux.c               | 335 ++++++
- drivers/char/lrng/lrng_es_aux.h               |  44 +
- drivers/char/lrng/lrng_es_cpu.h               |  17 +
- drivers/char/lrng/lrng_es_irq.h               |  24 +
- drivers/char/lrng/lrng_es_jent.h              |  17 +
- drivers/char/lrng/lrng_es_krng.h              |  17 +
- drivers/char/lrng/lrng_es_mgr.c               | 506 +++++++++
- drivers/char/lrng/lrng_es_mgr.h               |  56 +
- drivers/char/lrng/lrng_es_mgr_cb.h            |  87 ++
- drivers/char/lrng/lrng_es_sched.h             |  20 +
- drivers/char/lrng/lrng_es_timer_common.h      |  83 ++
- drivers/char/lrng/lrng_interface_dev_common.h |  51 +
- .../char/lrng/lrng_interface_random_kernel.h  |  17 +
- drivers/char/lrng/lrng_numa.h                 |  11 +
- drivers/char/lrng/lrng_sha.h                  |  14 +
- drivers/char/lrng/lrng_sha1.c                 |  88 ++
- drivers/char/lrng/lrng_sha256.c               |  72 ++
- drivers/char/lrng/lrng_sysctl.h               |  15 +
- include/linux/lrng.h                          | 251 +++++
- 31 files changed, 3977 insertions(+)
+ drivers/char/Kconfig                          |    2 +
+ drivers/char/Makefile                         |    2 +
+ drivers/char/lrng/Kconfig                     | 1017 +++++++++++++++++
+ drivers/char/lrng/Makefile                    |   11 +
+ drivers/char/lrng/lrng_definitions.h          |  163 +++
+ drivers/char/lrng/lrng_drng_atomic.h          |   23 +
+ drivers/char/lrng/lrng_drng_chacha20.c        |  195 ++++
+ drivers/char/lrng/lrng_drng_chacha20.h        |   42 +
+ drivers/char/lrng/lrng_drng_drbg.h            |   13 +
+ drivers/char/lrng/lrng_drng_kcapi.h           |   13 +
+ drivers/char/lrng/lrng_drng_mgr.c             |  742 ++++++++++++
+ drivers/char/lrng/lrng_drng_mgr.h             |   86 ++
+ drivers/char/lrng/lrng_es_aux.c               |  335 ++++++
+ drivers/char/lrng/lrng_es_aux.h               |   44 +
+ drivers/char/lrng/lrng_es_cpu.h               |   17 +
+ drivers/char/lrng/lrng_es_irq.h               |   24 +
+ drivers/char/lrng/lrng_es_jent.h              |   17 +
+ drivers/char/lrng/lrng_es_krng.h              |   17 +
+ drivers/char/lrng/lrng_es_mgr.c               |  506 ++++++++
+ drivers/char/lrng/lrng_es_mgr.h               |   56 +
+ drivers/char/lrng/lrng_es_mgr_cb.h            |   87 ++
+ drivers/char/lrng/lrng_es_sched.h             |   20 +
+ drivers/char/lrng/lrng_es_timer_common.h      |   83 ++
+ drivers/char/lrng/lrng_interface_dev_common.h |   51 +
+ .../char/lrng/lrng_interface_random_kernel.h  |   17 +
+ drivers/char/lrng/lrng_numa.h                 |   11 +
+ drivers/char/lrng/lrng_sha.h                  |   14 +
+ drivers/char/lrng/lrng_sha1.c                 |   88 ++
+ drivers/char/lrng/lrng_sha256.c               |   72 ++
+ drivers/char/lrng/lrng_sysctl.h               |   15 +
+ include/linux/lrng.h                          |  251 ++++
+ 31 files changed, 4034 insertions(+)
  create mode 100644 drivers/char/lrng/Kconfig
  create mode 100644 drivers/char/lrng/Makefile
  create mode 100644 drivers/char/lrng/lrng_definitions.h
@@ -219,7 +219,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 +obj-$(CONFIG_LRNG)		+= lrng/
 --- /dev/null
 +++ b/drivers/char/lrng/Kconfig
-@@ -0,0 +1,960 @@
+@@ -0,0 +1,1017 @@
 +# SPDX-License-Identifier: GPL-2.0
 +#
 +# Linux Random Number Generator configuration
@@ -645,6 +645,63 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 +# 	  by the Jitter RNG. This entropy level can be changed at boot
 +# 	  time or at runtime with the lrng_base.jitterrng configuration
 +# 	  variable.
++#
++#choice
++#	prompt "Jitter RNG Async Block Number"
++#	default LRNG_JENT_ENTROPY_BLOCKS_NO_128
++#	depends on LRNG_JENT
++#	help
++#	  Select the number of Jitter RNG entropy blocks the asynchronous
++#	  collection operation will fill. A caller for Jitter RNG entropy
++#	  will be given data from the pre-filled blocks if available to
++#	  prevent the Jitter RNG from utilizing the CPU too much in a
++#	  possible hot code path.
++#
++#	  The number specifies the number of 256/384 bit blocks that will
++#	  be held in memory and asynchronously filled with Jitter RNG data.
++#
++#	  The asynchronous entropy collection can also be disabled at
++#	  kernel startup time when setting the command line option of
++#	  lrng_es_jent.jent_async_enabled=0. Also, setting this option at
++#	  runtime is allowed via the corresponding SysFS interface. This
++#	  option is only available with the options SysFS and
++#	  CONFIG_LRNG_RUNTIME_ES_CONFIG enabled.
++#
++#	config LRNG_JENT_ENTROPY_BLOCKS_DISABLED
++#		bool "Async collection disabled"
++#
++#	# Any block number is allowed, provided it is a power of 2 and
++#	# equal or larger than 4 (4 is due to the division in
++#	# lrng_jent_async_get when deciding to wake up the monitor).
++#	config LRNG_JENT_ENTROPY_BLOCKS_NO_32
++#		bool "32 blocks"
++#
++#	config LRNG_JENT_ENTROPY_BLOCKS_NO_64
++#		bool "64 blocks"
++#
++#	config LRNG_JENT_ENTROPY_BLOCKS_NO_128
++#		bool "128 blocks (default)"
++#
++#	config LRNG_JENT_ENTROPY_BLOCKS_NO_256
++#		bool "256 blocks"
++#
++#	config LRNG_JENT_ENTROPY_BLOCKS_NO_512
++#		bool "512 blocks"
++#
++#	config LRNG_JENT_ENTROPY_BLOCKS_NO_1024
++#		bool "1024 blocks"
++#
++#endchoice
++#
++#config LRNG_JENT_ENTROPY_BLOCKS
++#	int
++#	default 0 if LRNG_JENT_ENTROPY_BLOCKS_DISABLED
++#	default 32 if LRNG_JENT_ENTROPY_BLOCKS_NO_32
++#	default 64 if LRNG_JENT_ENTROPY_BLOCKS_NO_64
++#	default 128 if LRNG_JENT_ENTROPY_BLOCKS_NO_128
++#	default 256 if LRNG_JENT_ENTROPY_BLOCKS_NO_256
++#	default 512 if LRNG_JENT_ENTROPY_BLOCKS_NO_512
++#	default 1024 if LRNG_JENT_ENTROPY_BLOCKS_NO_1024
 +#
 +# config LRNG_JENT_ENTROPY_RATE
 +# 	int "Jitter RNG Entropy Source Entropy Rate"
@@ -1755,7 +1812,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 +#ifdef CONFIG_LRNG_RUNTIME_FORCE_SEEDING_DISABLE
 +module_param(force_seeding, bool, 0444);
 +MODULE_PARM_DESC(force_seeding,
-+		 "Allow disabling of the forced seeding when insufficient entropy is availabe\n");
++		 "Allow disabling of the forced seeding when insufficient entropy is available\n");
 +#endif
 +
 +/* Wait queue to wait until the LRNG is initialized - can freely be used */
@@ -3206,7 +3263,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 +
 +		for_each_lrng_es(i) {
 +			result += (eb ? eb->e_bits[i] :
-+				        lrng_es[i]->curr_entropy(ent_thresh)) >=
++					lrng_es[i]->curr_entropy(ent_thresh)) >=
 +				  LRNG_AIS2031_NPTRNG_MIN_ENTROPY;
 +		}
 +
@@ -3734,7 +3791,6 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 +}
 +
 +#endif /* _LRNG_ES_TIMER_COMMON_H */
-\ No newline at end of file
 --- /dev/null
 +++ b/drivers/char/lrng/lrng_interface_dev_common.h
 @@ -0,0 +1,51 @@

@@ -1,4 +1,4 @@
-From 80b1719b8ecc4f3f0b2d9d54e0e5fd45869d9cac Mon Sep 17 00:00:00 2001
+From 6613d162ac81dbb33af8c4a02474c46b6afeaaff Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Mon, 20 Feb 2023 22:12:04 +0100
 Subject: [PATCH 22/25] LRMG - add drop-in replacement random(4) API
@@ -14,11 +14,11 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 ---
  drivers/char/Makefile                         |   3 +-
  drivers/char/lrng/Makefile                    |   5 +
- drivers/char/lrng/lrng_interface_aux.c        | 209 ++++++++++++
+ drivers/char/lrng/lrng_interface_aux.c        | 210 ++++++++++++
  drivers/char/lrng/lrng_interface_dev_common.c | 315 ++++++++++++++++++
  .../char/lrng/lrng_interface_random_kernel.c  | 248 ++++++++++++++
  .../char/lrng/lrng_interface_random_user.c    | 104 ++++++
- 6 files changed, 883 insertions(+), 1 deletion(-)
+ 6 files changed, 884 insertions(+), 1 deletion(-)
  create mode 100644 drivers/char/lrng/lrng_interface_aux.c
  create mode 100644 drivers/char/lrng/lrng_interface_dev_common.c
  create mode 100644 drivers/char/lrng/lrng_interface_random_kernel.c
@@ -49,7 +49,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 +					   lrng_interface_aux.o
 --- /dev/null
 +++ b/drivers/char/lrng/lrng_interface_aux.c
-@@ -0,0 +1,209 @@
+@@ -0,0 +1,210 @@
 +// SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
 +/*
 + * LRNG auxiliary interfaces
@@ -191,6 +191,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 +u32 __get_random_u32_below(u32 ceil)
 +{
 +	u64 mult = (u64)ceil * get_random_u32();
++
 +	if (unlikely((u32)mult < ceil)) {
 +		u32 bound = -ceil % ceil;
 +		while (unlikely((u32)mult < bound))
@@ -220,7 +221,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 +
 +int random_online_cpu(unsigned int cpu)
 +{
-+        return 0;
++	return 0;
 +}
 +#endif
 +
@@ -350,11 +351,11 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 +
 +	memset(t, 0, sizeof(t));
 +	ret = lrng_get_seed(t, min_t(size_t, nbytes, sizeof(t)), flags);
-+	if (ret == -EMSGSIZE && copy_to_user(buf, t, sizeof(u64))) {
++	if (ret == -EMSGSIZE && copy_to_user(buf, t, sizeof(u64)))
 +		ret = -EFAULT;
-+	} else if (ret > 0 && copy_to_user(buf, t, ret)) {
++	else if (ret > 0 && copy_to_user(buf, t, ret))
 +		ret = -EFAULT;
-+	}
++
 +	memzero_explicit(t, sizeof(t));
 +
 +	return ret;

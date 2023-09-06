@@ -1,4 +1,4 @@
-From 410236ddb3d217b30e749b6416de129595385b4d Mon Sep 17 00:00:00 2001
+From f816b55545e238b08944f5cebcee83dc945f3158 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Mon, 20 Feb 2023 22:23:59 +0100
 Subject: [PATCH 08/25] LRNG - add kernel crypto API PRNG extension
@@ -26,7 +26,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 
 --- a/drivers/char/lrng/Kconfig
 +++ b/drivers/char/lrng/Kconfig
-@@ -568,10 +568,10 @@ config LRNG_DRBG
+@@ -625,10 +625,10 @@ config LRNG_DRBG
  	depends on CRYPTO
  	select CRYPTO_DRBG_MENU
  
@@ -41,7 +41,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
  
  config LRNG_SWITCH
  	bool
-@@ -623,17 +623,17 @@ config LRNG_SWITCH_DRBG
+@@ -680,17 +680,17 @@ config LRNG_SWITCH_DRBG
  	  module is loaded, output from /dev/random, /dev/urandom,
  	  getrandom(2), or get_random_bytes_full is provided by a DRBG.
  
@@ -70,7 +70,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
  
  endif # LRNG_SWITCH_DRNG
  
-@@ -655,10 +655,10 @@ choice
+@@ -712,10 +712,10 @@ choice
  		bool "SP800-90A DRBG"
  		select LRNG_DRBG
  

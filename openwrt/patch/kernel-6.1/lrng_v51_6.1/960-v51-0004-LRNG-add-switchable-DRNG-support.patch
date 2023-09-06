@@ -1,4 +1,4 @@
-From 3a4768e89662cf5bff556653111e04ba3fca27dc Mon Sep 17 00:00:00 2001
+From 04259eb299aed3aaf7e53d0675b96345d624c664 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Mon, 20 Feb 2023 22:02:06 +0100
 Subject: [PATCH 04/25] LRNG - add switchable DRNG support
@@ -49,7 +49,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 
 --- a/drivers/char/lrng/Kconfig
 +++ b/drivers/char/lrng/Kconfig
-@@ -572,10 +572,10 @@ config LRNG_DRNG_CHACHA20
+@@ -629,10 +629,10 @@ config LRNG_DRNG_CHACHA20
  # 	tristate
  # 	depends on CRYPTO
  # 	select CRYPTO_RNG
@@ -236,8 +236,8 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 + * callbacks. The caller must hold the lrng_crypto_cb_update lock.
 + */
 +static int lrng_switch(const void *cb,
-+		       int(*switcher)(struct lrng_drng *drng_store,
-+				      const void *cb, int node))
++		       int (*switcher)(struct lrng_drng *drng_store,
++				       const void *cb, int node))
 +{
 +	struct lrng_drng **lrng_drng = lrng_drng_instances();
 +	struct lrng_drng *lrng_drng_init = lrng_drng_init_instance();

@@ -1,4 +1,4 @@
-From bf6f3dcbec32d481dffa244150e760a4067d7bfd Mon Sep 17 00:00:00 2001
+From b0a4da16a123811c855d524aa56dbb2f0741c2af Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Mon, 20 Feb 2023 22:22:25 +0100
 Subject: [PATCH 07/25] LRNG - add SP800-90A DRBG extension
@@ -30,7 +30,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 
 --- a/drivers/char/lrng/Kconfig
 +++ b/drivers/char/lrng/Kconfig
-@@ -563,11 +563,11 @@ endmenu # "Specific DRNG seeding strateg
+@@ -620,11 +620,11 @@ endmenu # "Specific DRNG seeding strateg
  config LRNG_DRNG_CHACHA20
  	tristate
  
@@ -47,7 +47,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
  # config LRNG_DRNG_KCAPI
  # 	tristate
  # 	depends on CRYPTO
-@@ -596,33 +596,33 @@ config LRNG_HASH_KCAPI
+@@ -653,33 +653,33 @@ config LRNG_HASH_KCAPI
  
  endif # LRNG_SWITCH_HASH
  
@@ -108,7 +108,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
  # config LRNG_SWITCH_DRNG_KCAPI
  # 	tristate "Kernel Crypto API support for the LRNG"
  # 	depends on !LRNG_DFLT_DRNG_KCAPI
-@@ -634,8 +634,8 @@ endif # LRNG_SWITCH_HASH
+@@ -691,8 +691,8 @@ endif # LRNG_SWITCH_HASH
  # 	  LRNG. Once the module is loaded, output from /dev/random,
  # 	  /dev/urandom, getrandom(2), or get_random_bytes is
  # 	  provided by the selected kernel crypto API RNG.
@@ -119,7 +119,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
  
  choice
  	prompt "LRNG Default DRNG"
-@@ -650,11 +650,11 @@ choice
+@@ -707,11 +707,11 @@ choice
  		bool "ChaCha20-based DRNG"
  		select LRNG_DRNG_CHACHA20
  

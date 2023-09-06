@@ -1,4 +1,4 @@
-From 09a9cba40baf72aff1fc26345692ef24b1620892 Mon Sep 17 00:00:00 2001
+From 9c122caa5bbd9ee9b9cee6ca0d2a9fd24f28e9e2 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Sun, 15 May 2022 18:43:30 +0200
 Subject: [PATCH 25/25] LRNG - add hwrand framework interface

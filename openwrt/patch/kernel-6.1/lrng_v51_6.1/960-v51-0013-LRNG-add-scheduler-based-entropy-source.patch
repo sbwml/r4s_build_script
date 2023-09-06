@@ -1,4 +1,4 @@
-From db5ea007be5c64e1009370381d50421fd9993e86 Mon Sep 17 00:00:00 2001
+From 99842736b30a032d5e275d5b13c924dcd9bc051a Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Wed, 22 Feb 2023 07:05:59 +0100
 Subject: [PATCH 13/25] LRNG - add scheduler-based entropy source
@@ -92,7 +92,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
  endchoice
  
  choice
-@@ -477,58 +477,58 @@ config LRNG_IRQ_ENTROPY_RATE
+@@ -534,58 +534,58 @@ config LRNG_IRQ_ENTROPY_RATE
  # 	  Note, this option is overwritten when the option
  # 	  CONFIG_RANDOM_TRUST_CPU is set.
  #

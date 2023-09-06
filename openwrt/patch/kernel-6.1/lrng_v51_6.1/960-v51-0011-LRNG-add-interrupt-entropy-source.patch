@@ -1,4 +1,4 @@
-From b3871f30a5e087ddb47b24865d9068bab908df5d Mon Sep 17 00:00:00 2001
+From 9a624edb26b18ac2397c869951da9548b63609a2 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Tue, 25 Apr 2023 23:03:39 +0200
 Subject: [PATCH 11/25] LRNG - add interrupt entropy source
@@ -465,7 +465,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
  # comment "Jitter RNG Entropy Source"
  #
  # config LRNG_JENT
-@@ -557,8 +557,8 @@ config LRNG_TIMER_COMMON
+@@ -614,8 +614,8 @@ config LRNG_TIMER_COMMON
  # 	  kernel in FIPS mode (with fips=1 kernel command line option).
  # 	  This is due to the fact that random.c is not SP800-90B
  # 	  compliant.
@@ -1208,7 +1208,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 +}
 +
 +struct lrng_es_cb lrng_es_irq = {
-+	.name 			= "IRQ",
++	.name			= "IRQ",
 +	.get_ent		= lrng_irq_pool_hash,
 +	.curr_entropy		= lrng_irq_avail_entropy,
 +	.max_entropy		= lrng_irq_avail_pool_size,
