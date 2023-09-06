@@ -120,7 +120,6 @@ pushd target/linux/generic/hack-6.1
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v50_6.1/960-v50-0025-LRNG-add-hwrand-framework-interface.patch
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v50_6.1/961-v50-01-add_arch_get_random_longs_early.patch
     curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v50_6.1/961-v50-02-revert_add_hwgenerator_randomness_update.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.1/lrng_v50_6.1/961-v50-03-remove-arch_get_random_seed_longs_early.patch
 popd
 
 # linux-firmware: rtw89 / rtl8723d / rtl8821c firmware
