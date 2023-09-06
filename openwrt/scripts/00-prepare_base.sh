@@ -102,11 +102,6 @@ else
     curl -s https://$mirror/openwrt/patch/fstools/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch > package/system/fstools/patches/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch
 fi
 
-# QEMU for aarch64
-pushd feeds/packages
-    curl -s https://$mirror/openwrt/patch/qemu/qemu-aarch64_23.05.patch | patch -p1
-popd
-
 # Shortcut Forwarding Engine
 git clone https://$gitea/sbwml/shortcut-fe package/shortcut-fe
 
