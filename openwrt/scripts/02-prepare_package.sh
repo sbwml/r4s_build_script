@@ -23,11 +23,8 @@ rm -rf feeds/packages/net/haproxy
 cp -a ../master/packages/net/haproxy feeds/packages/net/haproxy
 
 # samba4 - bump version
-SAMBA4_VERSION=4.18.6
-SAMBA4_HASH=284c8a994ce989c87cd6808c390fcb9d00c36b21a0dc1a8a75474b67c9e715e7
 rm -rf feeds/packages/net/samba4
-cp -a ../master/packages/net/samba4 feeds/packages/net/samba4
-sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$SAMBA4_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$SAMBA4_HASH/" feeds/packages/net/samba4/Makefile
+git clone https://github.com/sbwml/feeds_packages_net_samba4 feeds/packages/net/samba4
 # enable multi-channel
 sed -i '/workgroup/a \\n\t## enable multi-channel' feeds/packages/net/samba4/files/smb.conf.template
 sed -i '/enable multi-channel/a \\tserver multi channel support = yes' feeds/packages/net/samba4/files/smb.conf.template
