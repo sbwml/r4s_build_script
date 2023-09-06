@@ -49,6 +49,9 @@ CONFIG_PACKAGE_kmod-video-pwc=y
 CONFIG_PACKAGE_kmod-video-uvc=y
 CONFIG_PACKAGE_kmod-video-videobuf2=y
 
+### Utilities
+CONFIG_PACKAGE_qemu-ga=y
+
 ### Virtualization
 CONFIG_PACKAGE_kmod-kvm-amd=y
 CONFIG_PACKAGE_kmod-kvm-intel=y
