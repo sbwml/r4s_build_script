@@ -60,8 +60,8 @@ git clone https://github.com/immortalwrt/homeproxy package/homeproxy/homeproxy
 sed -i "s/ImmortalWrt/OpenWrt/g" package/homeproxy/homeproxy/po/zh_Hans/homeproxy.po
 sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" package/homeproxy/homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
 # sing-box
-cp -a ../master/immortalwrt_packages/net/sing-box package/homeproxy/sing-box
-sed -i 's#../../lang/golang/golang-package.mk#$(TOPDIR)/feeds/packages/lang/golang/golang-package.mk#g' package/homeproxy/sing-box/Makefile
+#cp -a ../master/immortalwrt_packages/net/sing-box package/homeproxy/sing-box
+#sed -i 's#../../lang/golang/golang-package.mk#$(TOPDIR)/feeds/packages/lang/golang/golang-package.mk#g' package/homeproxy/sing-box/Makefile
 
 # alist
 git clone https://github.com/sbwml/openwrt-alist package/alist
