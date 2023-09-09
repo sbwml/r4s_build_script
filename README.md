@@ -101,7 +101,7 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) dev x86_64
 
 -----------------
 
-# 基于本仓库进行自定义构建
+# 基于本仓库进行自定义构建 - 本地编译
 
 #### 如果你有自定义的需求，建议不要变更内核版本号，这样构建出来的固件可以直接使用 `opkg install kmod-xxxx`
 
@@ -122,7 +122,7 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) dev x86_64
  fi
 ```
 
-### 三、在服务器上执行基于你自己仓库的构建脚本，即可编译所需固件
+### 三、在本地 Linux 执行基于你自己仓库的构建脚本，即可编译所需固件
 
 #### nanopi-r4s openwrt-23.05
 ```shell
@@ -148,26 +148,11 @@ bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_scri
 
 ### 一、Fork 本仓库到自己 GitHub 上（不要更改仓库名称）
 
-### 二、修改构建脚本文件：`openwrt/build.sh`
-
-将 init.cooluc.com 补丁默认连接替换为你的 github raw 连接（不带 https://），像这样 `raw.githubusercontent.com/你的用户名/r4s_build_script/master`
-
-```diff
- # script url
- if [ "$isCN" = "CN" ]; then
--    export mirror=init.cooluc.com
-+    export mirror=raw.githubusercontent.com/你的用户名/r4s_build_script/master
- else
--    export mirror=init2.cooluc.com
-+    export mirror=raw.githubusercontent.com/你的用户名/r4s_build_script/master
- fi
-```
-
-### 三、通过仓库设置 添加 Actions 令牌
+### 二、通过仓库设置 添加 Actions 令牌
 
  - Name: `workflow_token`
  - Secret：`你的 GitHub Token`  [创建 New personal access token (classic)](https://github.com/settings/tokens/new) （所需权限：`repo` 和 `workflow`）
 
   <img src="https://github.com/sbwml/builder/assets/16485166/70e92cdb-80dd-46d6-8593-a76e3dbb176b" height = "350" alt="token" />
 
-### 四、点击仓库右上角的 ⭐Star 既可触发构建
+### 三、点击仓库右上角的 ⭐Star 既可触发构建
