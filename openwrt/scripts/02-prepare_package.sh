@@ -48,7 +48,7 @@ rm -rf feeds/packages/net/aria2
 git clone https://github.com/sbwml/feeds_packages_net_aria2 -b 22.03 feeds/packages/net/aria2
 
 # SSRP & Passwall
-rm -rf feeds/packages/net/{xray-core,v2ray-core}
+rm -rf feeds/packages/net/{xray-core,v2ray-core,sing-box}
 git clone https://github.com/sbwml/openwrt_helloworld package/helloworld -b v5
 
 # DAED
