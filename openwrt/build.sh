@@ -27,9 +27,9 @@ export gitea=git.cooluc.com
 
 # github mirror
 if [ "$isCN" = "CN" ]; then
-    export github_mirror="https://github.com"
-else
-    export github_mirror="https://github.com"
+    export github_mirror="raw.githubusercontent.com/eeriecl/r4s_build_script/master"
+else 
+    export github_mirror="raw.githubusercontent.com/eeriecl/r4s_build_script/master"
 fi
 
 # Check root
