@@ -27,9 +27,9 @@ export gitea=git.cooluc.com
 
 # github mirror
 if [ "$isCN" = "CN" ]; then
-    export github_mirror="raw.githubusercontent.com/eeriecl/r4s_build_script/master"
+    export github_mirror=raw.githubusercontent.com/eeriecl/r4s_build_script/eeriecl-package
 else 
-    export github_mirror="raw.githubusercontent.com/eeriecl/r4s_build_script/master"
+    export github_mirror=raw.githubusercontent.com/eeriecl/r4s_build_script/eeriecl-package
 fi
 
 # Check root
