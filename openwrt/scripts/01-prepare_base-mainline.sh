@@ -131,6 +131,9 @@ curl -s https://github.com/openwrt/openwrt/commit/42bf7656730d5422e6022bae4d5df3
 rm -rf package/kernel/rtl8812au-ct
 cp -a ../master/openwrt/package/kernel/rtl8812au-ct package/kernel/rtl8812au-ct
 
+# add rtl8812au-ac
+cp -a ../master/mj22226_openwrt/package/kernel/rtl8812au-ac package/kernel/rtl8812au-ac
+
 # ath10k-ct - fix mac80211 6.1-rc
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/kmod-patches/ath10k-ct.patch | patch -p1
 
@@ -149,17 +152,9 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.1/iwinfo/0004-add-rtl8812au-devi
 # wireless-regdb
 curl -s https://$mirror/openwrt/patch/openwrt-6.1/500-world-regd-5GHz.patch > package/firmware/wireless-regdb/patches/500-world-regd-5GHz.patch
 
-# mac80211 - fix linux 6.1
+# mac80211 - fix linux 6.1 & add rtw89
 rm -rf package/kernel/mac80211
-cp -a ../master/openwrt/package/kernel/mac80211 package/kernel/mac80211
-
-# mac80211 - add rtw89
-curl -s https://github.com/openwrt/openwrt/commit/11003cfd1a80fc63d354433d2449ee41879c7748.patch | patch -p1
-curl -s https://github.com/openwrt/openwrt/commit/c7323f2dc9449ed38446400535e3212fdf777439.patch | patch -p1
-curl -s https://github.com/openwrt/openwrt/commit/775802f81bdf98ba270583010a34f45b9ecf1ef7.patch | patch -p1
-curl -s https://github.com/openwrt/openwrt/commit/c6a2f99275adeb57226504b5de6f68082aca7c93.patch | patch -p1
-curl -s https://github.com/openwrt/openwrt/commit/390a2ff20f9af9e22a48cd9ebde513d616bea840.patch | patch -p1
-curl -s https://github.com/openwrt/openwrt/commit/1c726bfea3d2f0ffbc90c486e5dffc45020c101e.patch | patch -p1
+cp -a ../master/mj22226_openwrt/package/kernel/mac80211 package/kernel/mac80211
 
 # kernel patch
 # cpu model

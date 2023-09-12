@@ -124,6 +124,8 @@ git clone $github_mirror/openwrt/luci master/luci --depth=1
 git clone $github_mirror/openwrt/routing master/routing --depth=1
 # immortalwrt master
 git clone $github_mirror/immortalwrt/packages master/immortalwrt_packages --depth=1
+# mj22226 openwrt
+git clone $github_mirror/mj22226/openwrt -b linux-6.1 master/mj22226_openwrt --depth=1
 
 if [ -d openwrt ]; then
     cd openwrt
