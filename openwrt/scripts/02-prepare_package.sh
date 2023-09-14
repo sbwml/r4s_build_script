@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
-# golang 1.20
+# golang 1.21
 rm -rf feeds/packages/lang/golang
-git clone https://github.com/sbwml/packages_lang_golang -b 20.x feeds/packages/lang/golang
+git clone https://github.com/sbwml/packages_lang_golang -b 21.x feeds/packages/lang/golang
 
 # Default settings
 git clone https://github.com/sbwml/default-settings package/new/default-settings
@@ -11,6 +11,8 @@ git clone https://github.com/sbwml/default-settings package/new/default-settings
 sed -i '/boot()/,+2d' feeds/packages/net/ddns-scripts/files/etc/init.d/ddns
 
 # FRPC
+rm -rf feeds/packages/net/frp
+cp -a ../master/packages/net/frp feeds/packages/net/frp
 sed -i 's/procd_set_param stdout $stdout/procd_set_param stdout 0/g' feeds/packages/net/frp/files/frpc.init
 sed -i 's/procd_set_param stderr $stderr/procd_set_param stderr 0/g' feeds/packages/net/frp/files/frpc.init
 sed -i 's/stdout stderr //g' feeds/packages/net/frp/files/frpc.init
