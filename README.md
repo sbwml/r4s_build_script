@@ -57,6 +57,14 @@ export ENABLE_BPF=y
 export BUILD_FAST=y
 ```
 
+### 构建 Minimal 版本
+##### 不包含第三方插件，接近官方 OpenWrt 固件
+##### 只需在构建固件前执行以下命令即可构建 Minimal 版本
+
+```
+export MINIMAL_BUILD=y
+```
+
 ---------------
 
 ## 构建 OpenWrt 23.05 最新 Releases

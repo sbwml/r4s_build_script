@@ -1,0 +1,128 @@
+
+### Curl
+CONFIG_PACKAGE_curl=y
+CONFIG_PACKAGE_libcurl=y
+CONFIG_LIBCURL_NGHTTP3=y
+CONFIG_LIBCURL_NGTCP2=y
+CONFIG_LIBCURL_OPENSSL=y
+# CONFIG_LIBCURL_GNUTLS is not set
+# CONFIG_LIBCURL_MBEDTLS is not set
+# CONFIG_LIBCURL_NOSSL is not set
+# CONFIG_LIBCURL_WOLFSSL is not set
+
+### Firewall
+CONFIG_PACKAGE_ip6tables-nft=y
+CONFIG_PACKAGE_iptables-mod-conntrack-extra=y
+CONFIG_PACKAGE_iptables-mod-iprange=y
+CONFIG_PACKAGE_iptables-mod-nat-extra=y
+CONFIG_PACKAGE_iptables-mod-socket=y
+CONFIG_PACKAGE_iptables-mod-tproxy=y
+CONFIG_PACKAGE_iptables-nft=y
+CONFIG_PACKAGE_xtables-nft=y
+# CONFIG_PACKAGE_iptables-legacy is not set
+
+# SFE
+CONFIG_PACKAGE_kmod-fast-classifier=y
+CONFIG_PACKAGE_kmod-shortcut-fe-cm=y
+
+### Zram
+CONFIG_PACKAGE_zram-swap=y
+CONFIG_PACKAGE_kmod-lib-lz4=y
+CONFIG_PACKAGE_kmod-lib-lzo=y
+CONFIG_PACKAGE_kmod-lib-zstd=y
+
+### Busybox
+CONFIG_BUSYBOX_CUSTOM=y
+CONFIG_BUSYBOX_CONFIG_FEATURE_EDITING_HISTORY=1024
+CONFIG_BUSYBOX_CONFIG_FEATURE_EDITING_SAVEHISTORY=y
+CONFIG_BUSYBOX_CONFIG_FEATURE_PREFER_IPV4_ADDRESS=y
+CONFIG_BUSYBOX_CONFIG_FEATURE_SH_HISTFILESIZE=y
+CONFIG_BUSYBOX_CONFIG_FEATURE_SYSLOG_INFO=y
+
+### Dnsmasq
+CONFIG_PACKAGE_dnsmasq-full=y
+CONFIG_PACKAGE_dnsmasq_full_ipset=y
+# CONFIG_PACKAGE_dnsmasq_full_broken_rtc is not set
+# CONFIG_PACKAGE_dnsmasq is not set
+
+### Luci
+CONFIG_PACKAGE_luci=y
+CONFIG_PACKAGE_luci-lib-base=y
+CONFIG_PACKAGE_luci-lib-ip=y
+CONFIG_PACKAGE_luci-lib-ipkg=y
+CONFIG_PACKAGE_luci-lib-jsonc=y
+CONFIG_PACKAGE_luci-lib-nixio=y
+CONFIG_PACKAGE_luci-nginx=y
+CONFIG_PACKAGE_nginx-all-module=y
+CONFIG_LUCI_LANG_zh_Hans=y
+# CONFIG_LUCI_CSSTIDY is not set
+# CONFIG_LUCI_JSMIN is not set
+
+### APPS
+CONFIG_PACKAGE_luci-app-autoreboot=y
+CONFIG_PACKAGE_luci-app-cpufreq=y
+CONFIG_PACKAGE_luci-app-diskman=y
+CONFIG_PACKAGE_luci-app-ramfree=y
+CONFIG_PACKAGE_luci-app-ttyd=y
+CONFIG_PACKAGE_luci-app-upnp=y
+
+### DDNS Scripts
+CONFIG_PACKAGE_ddns-scripts=y
+CONFIG_PACKAGE_ddns-scripts-aliyun=y
+CONFIG_PACKAGE_ddns-scripts-dnspod=y
+
+### OpenSSL
+CONFIG_OPENSSL_ENGINE=y
+CONFIG_OPENSSL_OPTIMIZE_SPEED=y
+CONFIG_OPENSSL_WITH_ASM=y
+CONFIG_PACKAGE_libopenssl-afalg=y
+CONFIG_PACKAGE_libopenssl-conf=y
+CONFIG_PACKAGE_libopenssl-devcrypto=y
+CONFIG_PACKAGE_libopenssl-padlock=y
+CONFIG_PACKAGE_openssl-util=y
+# CONFIG_OPENSSL_WITH_ERROR_MESSAGES is not set
+
+### Share Network
+CONFIG_PACKAGE_usbmuxd=y
+CONFIG_PACKAGE_kmod-usb-net-rndis=y
+CONFIG_PACKAGE_kmod-usb-net-ipheth=y
+
+### Kernel Modules
+CONFIG_PACKAGE_kmod-fs-exfat=y
+CONFIG_PACKAGE_kmod-fs-f2fs=y
+CONFIG_PACKAGE_kmod-fs-ntfs3=y
+CONFIG_PACKAGE_kmod-fs-vfat=y
+CONFIG_PACKAGE_kmod-fs-xfs=y
+CONFIG_PACKAGE_kmod-hwmon-pwmfan=y
+CONFIG_PACKAGE_kmod-ikconfig=y
+CONFIG_PACKAGE_kmod-inet-diag=y
+CONFIG_PACKAGE_kmod-ipsec4=y
+CONFIG_PACKAGE_kmod-ipsec6=y
+CONFIG_PACKAGE_kmod-ipt-nat6=y
+CONFIG_PACKAGE_kmod-ipt-tproxy=y
+CONFIG_PACKAGE_kmod-iptunnel6=y
+CONFIG_PACKAGE_kmod-nf-socket=y
+CONFIG_PACKAGE_kmod-nft-fullcone=y
+CONFIG_PACKAGE_kmod-nft-offload=y
+CONFIG_PACKAGE_kmod-nft-socket=y
+CONFIG_PACKAGE_kmod-nft-tproxy=y
+CONFIG_PACKAGE_kmod-sched=y
+CONFIG_PACKAGE_kmod-tcp-bbr3=y
+CONFIG_PACKAGE_kmod-tls=y
+CONFIG_PACKAGE_kmod-tun=y
+CONFIG_PACKAGE_kmod-usb2-pci=y
+CONFIG_PACKAGE_kmod-usb2=y
+CONFIG_PACKAGE_kmod-usb3=y
+
+### Kernel Modules - out-of-tree driver
+CONFIG_PACKAGE_kmod-usb-net-rtl8152-vendor=y
+
+### Utilities
+CONFIG_PACKAGE_bash=y
+CONFIG_PACKAGE_taskset=y
+CONFIG_PACKAGE_wget-ssl=y
+
+# Version
+CONFIG_IMAGEOPT=y
+CONFIG_VERSIONOPT=y
+CONFIG_VERSION_FILENAMES=y

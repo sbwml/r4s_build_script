@@ -206,7 +206,12 @@ else
 fi
 
 # config-common
-curl -s https://$mirror/openwrt/23-config-common >> .config
+if [ "$MINIMAL_BUILD" = "y" ]; then
+    curl -s https://$mirror/openwrt/23-config-minimal-common >> .config
+    echo 'VERSION_TYPE="minimal"' >> package/base-files/files/usr/lib/os-release
+else
+    curl -s https://$mirror/openwrt/23-config-common >> .config
+fi
 
 # ota
 [ "$ENABLE_OTA" = "y" ] && [ "$version" = "rc2" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
