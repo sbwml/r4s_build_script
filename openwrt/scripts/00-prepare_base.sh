@@ -46,8 +46,10 @@ git clone https://github.com/sbwml/package_kernel_r8101 package/kernel/r8101
 git clone https://$gitea/sbwml/package_kernel_r8125 package/kernel/r8125
 
 # netifd - fix auto-negotiate by upstream
-mkdir -p package/network/config/netifd/patches
-curl -s https://$mirror/openwrt/patch/netifd/100-system-linux-fix-autoneg-for-2.5G-5G-10G.patch > package/network/config/netifd/patches/100-system-linux-fix-autoneg-for-2.5G-5G-10G.patch
+if [ "$version" = "rc2" ]; then
+    rm -rf package/network/config/netifd
+    cp -a ../master/openwrt-25.05/package/network/config/netifd package/network/config/netifd
+fi
 
 # Optimization level -Ofast
 if [ "$platform" = "x86_64" ]; then
