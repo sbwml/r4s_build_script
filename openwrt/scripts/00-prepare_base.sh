@@ -48,7 +48,7 @@ git clone https://$gitea/sbwml/package_kernel_r8125 package/kernel/r8125
 # netifd - fix auto-negotiate by upstream
 if [ "$version" = "rc2" ]; then
     rm -rf package/network/config/netifd
-    cp -a ../master/openwrt-25.05/package/network/config/netifd package/network/config/netifd
+    cp -a ../master/openwrt-23.05/package/network/config/netifd package/network/config/netifd
 fi
 
 # Optimization level -Ofast

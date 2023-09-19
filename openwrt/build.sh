@@ -123,7 +123,7 @@ git clone $github_mirror/openwrt/packages master/packages --depth=1
 git clone $github_mirror/openwrt/luci master/luci --depth=1
 git clone $github_mirror/openwrt/routing master/routing --depth=1
 # openwrt-23.05
-[ "$1" = "rc2" ] && git clone $github_mirror/openwrt/openwrt master/openwrt master/openwrt-25.05 --depth=1
+[ "$1" = "rc2" ] && git clone $github_mirror/openwrt/openwrt -b openwrt-23.05 master/openwrt-23.05 --depth=1
 # immortalwrt master
 git clone $github_mirror/immortalwrt/packages master/immortalwrt_packages --depth=1
 # mj22226 openwrt
