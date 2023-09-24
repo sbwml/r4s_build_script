@@ -167,7 +167,7 @@ rm -rf feeds/packages/net/curl
 git clone https://github.com/sbwml/feeds_packages_net_curl feeds/packages/net/curl
 
 # curl - SmartDrive user-agent
-curl -s https://$mirror/openwrt/patch/user-agent/999-curl-default-useragent.patch > feeds/packages/net/curl/patches/999-curl-default-useragent.patch
+#curl -s https://$mirror/openwrt/patch/user-agent/999-curl-default-useragent.patch > feeds/packages/net/curl/patches/999-curl-default-useragent.patch
 
 # wget - SmartDrive user-agent
 curl -s https://$mirror/openwrt/patch/user-agent/999-wget-default-useragent.patch > feeds/packages/net/wget/patches/999-wget-default-useragent.patch
