@@ -162,12 +162,12 @@ git clone https://github.com/sbwml/package_libs_nghttp3 package/libs/nghttp3
 # ngtcp2
 git clone https://github.com/sbwml/package_libs_ngtcp2 package/libs/ngtcp2
 
-# curl - http3/quic
+# curl - http3/quic patches
 rm -rf feeds/packages/net/curl
-git clone https://github.com/sbwml/feeds_packages_net_curl feeds/packages/net/curl
-
-# curl - SmartDrive user-agent
-#curl -s https://$mirror/openwrt/patch/user-agent/999-curl-default-useragent.patch > feeds/packages/net/curl/patches/999-curl-default-useragent.patch
+cp -a ../master/packages/net/curl feeds/packages/net/curl
+pushd feeds/packages/net/curl
+    curl -sL https://github.com/sbwml/feeds_packages_net_curl/commit/4dfc05b.patch | patch -p1
+popd
 
 # wget - SmartDrive user-agent
 curl -s https://$mirror/openwrt/patch/user-agent/999-wget-default-useragent.patch > feeds/packages/net/wget/patches/999-wget-default-useragent.patch
