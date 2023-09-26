@@ -146,7 +146,7 @@ popd
 
 # openssl -> quictls
 rm -rf package/libs/openssl
-git clone https://github.com/sbwml/package_libs_openssl package/libs/openssl
+git clone https://github.com/sbwml/package_libs_openssl -b dev package/libs/openssl
 # openssl hwrng
 if [ "$platform" = "rk3399" ] || [ "$platform" = "rk3568" ]; then
     sed -i "/-openwrt/iOPENSSL_OPTIONS += enable-ktls '-DDEVRANDOM=\"\\\\\"/dev/hwrng\\\\\"\"\'\n" package/libs/openssl/Makefile
