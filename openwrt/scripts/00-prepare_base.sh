@@ -269,6 +269,10 @@ sed -i "s/openwrt.org/www.qq.com/g" feeds/luci/modules/luci-mod-network/htdocs/l
 # luci - drop ethernet port status
 rm -f feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js
 
+# ppp - 2.5.0
+rm -rf package/network/services/ppp
+git clone https://github.com/sbwml/package_network_services_ppp package/network/services/ppp
+
 # urngd - 2020-01-21
 rm -rf package/system/urngd
 git clone https://github.com/sbwml/package_system_urngd package/system/urngd
