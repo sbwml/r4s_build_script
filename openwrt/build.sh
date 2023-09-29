@@ -223,7 +223,10 @@ export ENABLE_BPF=$ENABLE_BPF
 [ "$ENABLE_BPF" = "y" ] && curl -s https://$mirror/openwrt/generic/config-bpf >> .config
 
 # glibc
-[ "$USE_GLIBC" = "y" ] && curl -s https://$mirror/openwrt/generic/config-glibc >> .config
+[ "$USE_GLIBC" = "y" ] && {
+    curl -s https://$mirror/openwrt/generic/config-glibc >> .config
+    sed -i '/NaiveProxy/d' .config
+}
 
 # openwrt-23.05 gcc11
 if [ ! "$USE_GLIBC" = "y" ]; then
