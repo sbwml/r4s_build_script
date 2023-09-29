@@ -1,8 +1,9 @@
 #!/bin/bash
 
-# Chinese translation
-# luci-app-firewall
-curl -s https://raw.githubusercontent.com/openwrt/luci/openwrt-23.05/applications/luci-app-firewall/po/zh_Hans/firewall.po > feeds/luci/applications/luci-app-firewall/po/zh_Hans/firewall.po
+# openwrt-23.05.0-rc4 fix warning
+# `bmx6` has been removed - https://github.com/openwrt/routing/commit/828e764250f9fbf128e2bfc5747f7076c988ebdc
+sed -i '/define Package\/prometheus-node-exporter-lua-bmx6/,+9d' feeds/packages/utils/prometheus-node-exporter-lua/Makefile
+sed -i '/\$(eval \$(call BuildPackage,prometheus-node-exporter-lua-bmx6))/d' feeds/packages/utils/prometheus-node-exporter-lua/Makefile
 
 # drop antfs
 rm -rf feeds/packages/kernel/antfs feeds/packages/utils/antfs-mount
