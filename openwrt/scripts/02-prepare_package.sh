@@ -10,6 +10,9 @@ git clone https://github.com/sbwml/default-settings package/new/default-settings
 # DDNS
 sed -i '/boot()/,+2d' feeds/packages/net/ddns-scripts/files/etc/init.d/ddns
 
+# nlbwmon - disable syslog
+sed -i 's/stderr 1/stderr 0/g' feeds/packages/net/nlbwmon/files/nlbwmon.init
+
 # FRPC
 rm -rf feeds/packages/net/frp
 cp -a ../master/packages/net/frp feeds/packages/net/frp
@@ -61,14 +64,10 @@ git clone https://github.com/sbwml/openwrt_helloworld package/helloworld -b v5
 # DAED
 git clone https://github.com/sbwml/luci-app-daed package/daed
 
-# immortalwrt packages
-# homeproxy
+# immortalwrt homeproxy
 git clone https://github.com/immortalwrt/homeproxy package/homeproxy/homeproxy
 sed -i "s/ImmortalWrt/OpenWrt/g" package/homeproxy/homeproxy/po/zh_Hans/homeproxy.po
 sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" package/homeproxy/homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
-# sing-box
-#cp -a ../master/immortalwrt_packages/net/sing-box package/homeproxy/sing-box
-#sed -i 's#../../lang/golang/golang-package.mk#$(TOPDIR)/feeds/packages/lang/golang/golang-package.mk#g' package/homeproxy/sing-box/Makefile
 
 # alist
 git clone https://github.com/sbwml/openwrt-alist package/alist
@@ -137,4 +136,4 @@ git clone https://github.com/sbwml/luci-app-mjpg-streamer feeds/luci/application
 
 # unzip
 rm -rf feeds/packages/utils/unzip
-git clone https://$gitea/sbwml/unzip feeds/packages/utils/unzip
+git clone https://github.com/sbwml/feeds_packages_utils_unzip feeds/packages/utils/unzip

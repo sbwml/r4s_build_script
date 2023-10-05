@@ -5,9 +5,6 @@
 sed -i '/define Package\/prometheus-node-exporter-lua-bmx6/,+9d' feeds/packages/utils/prometheus-node-exporter-lua/Makefile
 sed -i '/\$(eval \$(call BuildPackage,prometheus-node-exporter-lua-bmx6))/d' feeds/packages/utils/prometheus-node-exporter-lua/Makefile
 
-# drop antfs
-rm -rf feeds/packages/kernel/antfs feeds/packages/utils/antfs-mount
-
 # uqmi - fix gcc11
 if [ "$USE_GLIBC" != "y" ]; then
     sed -i '/dangling-pointer/d' package/network/utils/uqmi/Makefile
@@ -28,10 +25,10 @@ cp -a ../master/packages/net/ksmbd-tools feeds/packages/net/ksmbd-tools
 sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/ksmbd-tools/files/ksmbd.config.example
 sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages/net/ksmbd-tools/files/ksmbd.conf.template
 
-# drop ksmbd - use kernel ksmdb
-rm -rf package/kernel/ksmbd
+# vim - fix E1187: Failed to source defaults.vim
+pushd feeds/packages
+    curl -s https://github.com/openwrt/packages/commit/699d3fb.patch | patch -p1
+popd
 
-#### bpf #####
-
-# add clang-15/17 support
+# bpf - add host clang-15/17 support
 sed -i 's/command -v clang/command -v clang clang-17 clang-15/g' include/bpf.mk

@@ -17,10 +17,10 @@ pushd feeds/packages
   # coova-chilli
   curl -s https://github.com/openwrt/packages/commit/9975e855adcfc24939080a5e0279e0a90553347b.patch | patch -p1
   curl -s https://github.com/openwrt/packages/commit/c0683d3f012096fc7b2fbe8b8dc81ea424945e9b.patch | patch -p1
-  # xtables-addons
-  rm -rf net/xtables-addons
-  git clone https://github.com/sbwml/feeds_packages_net_xtables-addons net/xtables-addons
 popd
+# xtables-addons
+rm -rf feeds/packages/net/xtables-addons
+cp -a ../master/packages/net/xtables-addons feeds/packages/net/xtables-addons
 
 # telephony
 pushd feeds/telephony

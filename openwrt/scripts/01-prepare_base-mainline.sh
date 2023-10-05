@@ -30,7 +30,7 @@ mv target_linux_generic/target/linux/generic/* target/linux/generic/
 rm -rf target_linux_generic
 
 # kernel modules
-rm -rf package/kernel/linux package/kernel/hwmon-gsc
+rm -rf package/kernel/linux
 git checkout package/kernel/linux
 pushd package/kernel/linux/modules
     rm -f [a-z]*.mk
