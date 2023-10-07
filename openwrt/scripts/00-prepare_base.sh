@@ -170,6 +170,7 @@ pushd feeds/packages/net/curl
 popd
 
 # wget - SmartDrive user-agent
+mkdir -p feeds/packages/net/wget/patches
 curl -s https://$mirror/openwrt/patch/user-agent/999-wget-default-useragent.patch > feeds/packages/net/wget/patches/999-wget-default-useragent.patch
 
 # Docker
