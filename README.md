@@ -113,11 +113,11 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) dev x86_64
 
 #### 如果你有自定义的需求，建议不要变更内核版本号，这样构建出来的固件可以直接使用 `opkg install kmod-xxxx`
 
-### 一、Fork 本仓库到自己 GitHub 上（不要更改仓库名称）
+### 一、Fork 本仓库到自己 GitHub 存储库
 
-### 二、修改构建脚本文件：`openwrt/build.sh`
+### 二、修改构建脚本文件：`openwrt/build.sh`（使用 Github Actions 构建时无需更改）
 
-将 init.cooluc.com 补丁默认连接替换为你的 github raw 连接（不带 https://），像这样 `raw.githubusercontent.com/你的用户名/r4s_build_script/master`
+将 init.cooluc.com 脚本默认连接替换为你的 github raw 连接（不带 https://），像这样 `raw.githubusercontent.com/你的用户名/r4s_build_script/master`
 
 ```diff
  # script url
@@ -154,7 +154,7 @@ bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_scri
 
 # 使用 Github Actions 构建
 
-### 一、Fork 本仓库到自己 GitHub 上（不要更改仓库名称）
+### 一、Fork 本仓库到自己 GitHub 存储库
 
 ### 二、通过仓库设置 添加 Actions 令牌
 

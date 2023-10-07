@@ -22,9 +22,9 @@ else
     export mirror=init2.cooluc.com
 fi
 
-# github actions - automatically retrieve `github raw`` links
-if [ "$(whoami)" = "runner" ] && [ -n "$GITHUB_USERNAME" ]; then
-    export mirror=raw.githubusercontent.com/$GITHUB_USERNAME/r4s_build_script/master
+# github actions - automatically retrieve `github raw` links
+if [ "$(whoami)" = "runner" ] && [ -n "$GITHUB_REPO" ]; then
+    export mirror=raw.githubusercontent.com/$GITHUB_REPO/master
 fi
 
 # private gitea
