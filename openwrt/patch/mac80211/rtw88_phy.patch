@@ -1,0 +1,15 @@
+diff --git a/drivers/net/wireless/realtek/rtw88/phy.c b/drivers/net/wireless/realtek/rtw88/phy.c
+index 128e75a..087c937 100644
+--- a/drivers/net/wireless/realtek/rtw88/phy.c
++++ b/drivers/net/wireless/realtek/rtw88/phy.c
+@@ -764,8 +764,8 @@ void rtw_phy_dynamic_mechanism(struct rtw_dev *rtwdev)
+ {
+ 	/* for further calculation */
+ 	rtw_phy_statistics(rtwdev);
+-	rtw_phy_dig(rtwdev);
+-	rtw_phy_cck_pd(rtwdev);
++//	rtw_phy_dig(rtwdev);
++//	rtw_phy_cck_pd(rtwdev);
+ 	rtw_phy_ra_track(rtwdev);
+ 	rtw_phy_tx_path_diversity(rtwdev);
+ 	rtw_phy_cfo_track(rtwdev);

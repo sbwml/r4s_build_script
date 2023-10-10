@@ -155,6 +155,9 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.1/500-world-regd-5GHz.patch > pa
 # mac80211 - fix linux 6.1 & add rtw89
 rm -rf package/kernel/mac80211
 cp -a ../master/mj22226_openwrt/package/kernel/mac80211 package/kernel/mac80211
+# rtw88 - https://github.com/lwfinger/rtw88/issues/77#issuecomment-1264617163
+mkdir -p package/kernel/mac80211/patches/rtl
+curl -s https://$mirror/openwrt/patch/mac80211/rtw88_phy.patch > package/kernel/mac80211/patches/rtl/900-rtw88_phy.patch
 
 # kernel patch
 # cpu model
@@ -175,10 +178,4 @@ cp -a ../master/openwrt/package/kernel/ubnt-ledbar package/kernel/ubnt-ledbar
 if [ "$platform" = "rk3399" ] || [ "$platform" = "rk3568" ]; then
     curl -s https://$mirror/openwrt/patch/rtc/sysfixtime > package/base-files/files/etc/init.d/sysfixtime
     chmod 755 package/base-files/files/etc/init.d/sysfixtime
-fi
-
-# Fix BPF Type Format - Linux-6.1 GCC11
-if [ "$ENABLE_BPF" = "y" ]; then
-    sed -i "s/CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT=y/# CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT is not set/g" target/linux/generic/config-6.1
-    sed -i "s/# CONFIG_DEBUG_INFO_DWARF4 is not set/CONFIG_DEBUG_INFO_DWARF4=y/g" target/linux/generic/config-6.1
 fi

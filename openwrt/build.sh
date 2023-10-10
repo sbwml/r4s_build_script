@@ -298,10 +298,10 @@ if [ "$platform" = "x86_64" ]; then
         if [ "$1" = "rc2" ]; then
             mkdir -p ota
             if [ "$MINIMAL_BUILD" = "y" ]; then
-                curl -Lso ota.json https://us.cooluc.com/openwrt_minimal/fw.json || exit 0
+                curl -Lso ota.json https://us.cooluc.com/openwrt/minimal/fw.json || exit 0
                 BUILD_TYPE=minimal
             else
-                curl -Lso ota.json https://us.cooluc.com/openwrt_ota/fw.json || exit 0
+                curl -Lso ota.json https://us.cooluc.com/openwrt/common/fw.json || exit 0
                 BUILD_TYPE=releases
             fi
             VERSION=$(sed 's/v//g' version.txt)
@@ -337,10 +337,10 @@ else
         if [ "$1" = "rc2" ]; then
             mkdir -p ota
             if [ "$MINIMAL_BUILD" = "y" ]; then
-                curl -Lso ota.json https://us.cooluc.com/openwrt_minimal/fw.json || exit 0
+                curl -Lso ota.json https://us.cooluc.com/openwrt/minimal/fw.json || exit 0
                 BUILD_TYPE=minimal
             else
-                curl -Lso ota.json https://us.cooluc.com/openwrt_ota/fw.json || exit 0
+                curl -Lso ota.json https://us.cooluc.com/openwrt/common/fw.json || exit 0
                 BUILD_TYPE=releases
             fi
             VERSION=$(sed 's/v//g' version.txt)
