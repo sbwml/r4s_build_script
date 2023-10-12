@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# openwrt-23.05.0-rc4 fix warning
-# `bmx6` has been removed - https://github.com/openwrt/routing/commit/828e764250f9fbf128e2bfc5747f7076c988ebdc
-sed -i '/define Package\/prometheus-node-exporter-lua-bmx6/,+9d' feeds/packages/utils/prometheus-node-exporter-lua/Makefile
-sed -i '/\$(eval \$(call BuildPackage,prometheus-node-exporter-lua-bmx6))/d' feeds/packages/utils/prometheus-node-exporter-lua/Makefile
-
 # uqmi - fix gcc11
 if [ "$USE_GLIBC" != "y" ]; then
     sed -i '/dangling-pointer/d' package/network/utils/uqmi/Makefile
