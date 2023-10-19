@@ -137,6 +137,3 @@ git clone https://github.com/sbwml/luci-app-mjpg-streamer feeds/luci/application
 # unzip
 rm -rf feeds/packages/utils/unzip
 git clone https://github.com/sbwml/feeds_packages_utils_unzip feeds/packages/utils/unzip
-
-# rtl88x2bu
-git clone https://$gitea/sbwml/package_kernel_rtl88x2bu package/kernel/rtl88x2bu

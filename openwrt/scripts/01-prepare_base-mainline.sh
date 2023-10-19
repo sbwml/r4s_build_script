@@ -155,9 +155,14 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.1/500-world-regd-5GHz.patch > pa
 # mac80211 - fix linux 6.1 & add rtw89
 rm -rf package/kernel/mac80211
 cp -a ../master/mj22226_openwrt/package/kernel/mac80211 package/kernel/mac80211
-# rtw88 - https://github.com/lwfinger/rtw88/issues/77#issuecomment-1264617163
+
+# mac80211/patches/rtl - rtw88
 mkdir -p package/kernel/mac80211/patches/rtl
-curl -s https://$mirror/openwrt/patch/mac80211/rtw88_phy.patch > package/kernel/mac80211/patches/rtl/900-rtw88_phy.patch
+curl -s https://$mirror/openwrt/patch/mac80211/900-hack-rtw88-phy.patch > package/kernel/mac80211/patches/rtl/900-hack-rtw88-phy.patch
+curl -s https://$mirror/openwrt/patch/mac80211/901-wifi-rtw88-8822b-disable-call-trace-when-write-RF-mo.patch > package/kernel/mac80211/patches/rtl/901-wifi-rtw88-8822b-disable-call-trace-when-write-RF-mo.patch
+curl -s https://$mirror/openwrt/patch/mac80211/903-wifi-rtw88-Remove-duplicate-NULL-check-before-callin.patch > package/kernel/mac80211/patches/rtl/903-wifi-rtw88-Remove-duplicate-NULL-check-before-callin.patch
+curl -s https://$mirror/openwrt/patch/mac80211/904-wifi-rtw88-usb-kill-and-free-rx-urbs-on-probe-failur.patch > package/kernel/mac80211/patches/rtl/904-wifi-rtw88-usb-kill-and-free-rx-urbs-on-probe-failur.patch
+curl -s https://$mirror/openwrt/patch/mac80211/905-wifi-rtw88-add-missing-call-to-cancel_work_sync.patch > package/kernel/mac80211/patches/rtl/905-wifi-rtw88-add-missing-call-to-cancel_work_sync.patch
 
 # kernel patch
 # cpu model
