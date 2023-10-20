@@ -34,7 +34,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -2217,6 +2217,34 @@ extern void tcp_rack_advance(struct tcp_
+@@ -2218,6 +2218,34 @@ extern void tcp_rack_advance(struct tcp_
  extern void tcp_rack_reo_timeout(struct sock *sk);
  extern void tcp_rack_update_reo_wnd(struct sock *sk, struct rate_sample *rs);
  

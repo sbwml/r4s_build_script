@@ -31,7 +31,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 
 --- a/Documentation/networking/ip-sysctl.rst
 +++ b/Documentation/networking/ip-sysctl.rst
-@@ -1071,6 +1071,81 @@ tcp_child_ehash_entries - INTEGER
+@@ -1086,6 +1086,81 @@ tcp_child_ehash_entries - INTEGER
  
  	Default: 0
  
@@ -115,7 +115,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  
 --- a/include/net/netns/ipv4.h
 +++ b/include/net/netns/ipv4.h
-@@ -183,6 +183,11 @@ struct netns_ipv4 {
+@@ -184,6 +184,11 @@ struct netns_ipv4 {
  	unsigned long tfo_active_disable_stamp;
  	u32 tcp_challenge_timestamp;
  	u32 tcp_challenge_count;
@@ -138,9 +138,9 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  
  /* obsolete */
  static int sysctl_tcp_low_latency __read_mostly;
-@@ -1387,6 +1389,47 @@ static struct ctl_table ipv4_net_table[]
+@@ -1396,6 +1398,47 @@ static struct ctl_table ipv4_net_table[]
  		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_TWO,
+ 		.extra2		= SYSCTL_ONE,
  	},
 +	{
 +		.procname       = "tcp_plb_enabled",
