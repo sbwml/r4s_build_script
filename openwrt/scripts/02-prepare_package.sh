@@ -4,6 +4,10 @@
 rm -rf feeds/packages/lang/golang
 git clone https://github.com/sbwml/packages_lang_golang -b 21.x feeds/packages/lang/golang
 
+# node - prebuilt
+rm -rf feeds/packages/lang/node
+git clone https://github.com/sbwml/feeds_packages_lang_node-prebuilt feeds/packages/lang/node
+
 # Default settings
 git clone https://github.com/sbwml/default-settings package/new/default-settings
 
@@ -63,6 +67,7 @@ git clone https://github.com/sbwml/openwrt_helloworld package/helloworld -b v5
 
 # DAED
 git clone https://github.com/sbwml/luci-app-daed package/daed
+git clone https://github.com/sbwml/luci-app-daed-next package/daed-next
 
 # immortalwrt homeproxy
 git clone https://github.com/immortalwrt/homeproxy package/homeproxy/homeproxy
@@ -85,7 +90,7 @@ git clone https://github.com/sbwml/luci-app-qbittorrent package/qbittorrent
 
 # 解除网易云音乐播放限制
 git clone https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic package/new/luci-app-unblockneteasemusic
-sed -i 's/解除网易云音乐播放限制/解锁网易云音乐/g' package/new/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
+sed -i 's/解除网易云音乐播放限制/网易云音乐解锁/g' package/new/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
 
 # xunlei
 git clone https://github.com/sbwml/luci-app-xunlei package/xunlei
