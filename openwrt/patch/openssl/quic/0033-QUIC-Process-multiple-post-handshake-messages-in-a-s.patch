@@ -1,0 +1,76 @@
+From d286825de6b6243fab9b5ad6c7d522067c4d0e3a Mon Sep 17 00:00:00 2001
+From: Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+Date: Sat, 13 Mar 2021 05:37:34 +0900
+Subject: [PATCH 33/43] QUIC: Process multiple post-handshake messages in a
+ single call
+
+---
+ ssl/ssl_quic.c    | 27 +++++++++++++--------------
+ test/sslapitest.c |  6 ++----
+ 2 files changed, 15 insertions(+), 18 deletions(-)
+
+diff --git a/ssl/ssl_quic.c b/ssl/ssl_quic.c
+index 49a4f3ab..6cbd47ad 100644
+--- a/ssl/ssl_quic.c
++++ b/ssl/ssl_quic.c
+@@ -334,20 +334,19 @@ int SSL_process_quic_post_handshake(SSL *ssl)
+     }
+ 
+     /* if there is no data, return success as BoringSSL */
+-    if (ssl->quic_input_data_head == NULL)
+-        return 1;
+-    
+-    /*
+-     * This is always safe (we are sure to be at a record boundary) because
+-     * SSL_read()/SSL_write() are never used for QUIC connections -- the
+-     * application data is handled at the QUIC layer instead.
+-     */
+-    ossl_statem_set_in_init(ssl, 1);
+-    ret = ssl->handshake_func(ssl);
+-    ossl_statem_set_in_init(ssl, 0);
+-
+-    if (ret <= 0)
+-        return 0;
++    while (ssl->quic_input_data_head != NULL) {
++        /*
++         * This is always safe (we are sure to be at a record boundary) because
++         * SSL_read()/SSL_write() are never used for QUIC connections -- the
++         * application data is handled at the QUIC layer instead.
++         */
++        ossl_statem_set_in_init(ssl, 1);
++        ret = ssl->handshake_func(ssl);
++        ossl_statem_set_in_init(ssl, 0);
++
++        if (ret <= 0)
++            return 0;
++    }
+     return 1;
+ }
+ 
+diff --git a/test/sslapitest.c b/test/sslapitest.c
+index f0c658b2..c4d94106 100644
+--- a/test/sslapitest.c
++++ b/test/sslapitest.c
+@@ -10522,8 +10522,7 @@ static int test_quic_api_version(int clnt, int srvr)
+         goto end;
+ 
+     /* Deal with two NewSessionTickets */
+-    if (!TEST_true(SSL_process_quic_post_handshake(clientssl))
+-            || !TEST_true(SSL_process_quic_post_handshake(clientssl)))
++    if (!TEST_true(SSL_process_quic_post_handshake(clientssl)))
+         goto end;
+ 
+     /* Dummy handshake call should succeed */
+@@ -10710,8 +10709,7 @@ static int quic_setupearly_data_test(SSL_CTX **cctx, SSL_CTX **sctx,
+         return 0;
+ 
+     /* Deal with two NewSessionTickets */
+-    if (!TEST_true(SSL_process_quic_post_handshake(*clientssl))
+-            || !TEST_true(SSL_process_quic_post_handshake(*clientssl)))
++    if (!TEST_true(SSL_process_quic_post_handshake(*clientssl)))
+         return 0;
+ 
+     *sess = SSL_get1_session(*clientssl);
+-- 
+2.42.0
+
