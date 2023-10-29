@@ -147,7 +147,7 @@ pushd feeds/luci
 popd
 
 # openssl - quictls
-sed -i '/Configure/i\\t\t\$\(SED\) \"s\/BUILD_METADATA=\/BUILD_METADATA=quic\/g\"\ VERSION.dat\; \\' package/libs/openssl/Makefile
+sed -i '/\.\/Configure/i\\t\t\$\(SED\) \"s\/BUILD_METADATA=\/BUILD_METADATA=quic\/g\"\ VERSION.dat\; \\' package/libs/openssl/Makefile
 pushd package/libs/openssl/patches
     curl -sO https://$mirror/openwrt/patch/openssl/quic/0001-QUIC-Add-support-for-BoringSSL-QUIC-APIs.patch
     curl -sO https://$mirror/openwrt/patch/openssl/quic/0002-QUIC-New-method-to-get-QUIC-secret-length.patch
