@@ -205,11 +205,11 @@ sed -i "s/-O3/-Ofast/g" package/libs/openssl/Makefile
 
 # nghttp3
 rm -rf feeds/packages/libs/nghttp3
-git clone https://github.com/sbwml/package_libs_nghttp3 feeds/packages/libs/nghttp3
+git clone https://github.com/sbwml/package_libs_nghttp3 package/libs/nghttp3
 
 # ngtcp2
 rm -rf feeds/packages/libs/ngtcp2
-git clone https://github.com/sbwml/package_libs_ngtcp2 feeds/packages/libs/ngtcp2
+git clone https://github.com/sbwml/package_libs_ngtcp2 package/libs/ngtcp2
 
 # curl - http3/quic patches
 rm -rf feeds/packages/net/curl
