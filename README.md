@@ -156,11 +156,4 @@ bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_scri
 
 ### 一、Fork 本仓库到自己 GitHub 存储库
 
-### 二、通过仓库设置 添加 Actions 令牌
-
- - Name: `workflow_token`
- - Secret：`你的 GitHub Token`  [创建 New personal access token (classic)](https://github.com/settings/tokens/new) （所需权限：`repo` 和 `workflow`）
-
-  <img src="https://github.com/sbwml/builder/assets/16485166/70e92cdb-80dd-46d6-8593-a76e3dbb176b" height = "350" alt="token" />
-
-### 三、点击仓库右上角的 ⭐Star 既可触发构建
+### 二、点击仓库右上角的 ⭐Star 既可触发构建
