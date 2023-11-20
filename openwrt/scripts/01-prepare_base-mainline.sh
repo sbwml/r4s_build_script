@@ -124,8 +124,8 @@ pushd target/linux/generic/hack-6.1
 popd
 
 # linux-firmware: rtw89 / rtl8723d / rtl8821c firmware
-curl -s https://github.com/openwrt/openwrt/commit/145fc631e6205850a1c2f575abb3d15b0ce9995b.patch | patch -p1
-curl -s https://github.com/openwrt/openwrt/commit/42bf7656730d5422e6022bae4d5df3ae2f6fa39b.patch | patch -p1
+rm -rf package/firmware/linux-firmware
+cp -a ../master/mj22226_openwrt/package/firmware/linux-firmware package/firmware/linux-firmware
 
 # rtl8812au-ct - fix linux-6.1
 rm -rf package/kernel/rtl8812au-ct

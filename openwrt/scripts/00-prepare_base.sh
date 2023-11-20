@@ -43,7 +43,7 @@ fi
 git clone https://github.com/sbwml/package_kernel_r8168 package/kernel/r8168
 git clone https://github.com/sbwml/package_kernel_r8152 package/kernel/r8152
 git clone https://github.com/sbwml/package_kernel_r8101 package/kernel/r8101
-git clone https://$gitea/sbwml/package_kernel_r8125 package/kernel/r8125
+git clone https://github.com/sbwml/package_kernel_r8125 package/kernel/r8125
 
 # netifd - fix auto-negotiate by upstream
 if [ "$version" = "rc2" ]; then

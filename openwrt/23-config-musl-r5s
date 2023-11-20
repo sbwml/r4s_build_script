@@ -25,9 +25,12 @@ CONFIG_PACKAGE_kmod-drm-rockchip=y
 CONFIG_PACKAGE_kmod-drm-panfrost=y
 
 ### RTL8723D / RTL8821C / RTW89 firmware
-CONFIG_PACKAGE_rtl8723d-firmware=m
-CONFIG_PACKAGE_rtl8821c-firmware=m
-CONFIG_PACKAGE_rtw89-firmware=m
+CONFIG_PACKAGE_rtl8723de-firmware=m
+CONFIG_PACKAGE_rtl8821ce-firmware=m
+CONFIG_PACKAGE_rtl8851be-firmware=m
+CONFIG_PACKAGE_rtl8852ae-firmware=m
+CONFIG_PACKAGE_rtl8852be-firmware=m
+CONFIG_PACKAGE_rtl8852ce-firmware=m
 
 ### RTW88 / rtl8822be-firmware
 CONFIG_PACKAGE_kmod-rtw88=y
