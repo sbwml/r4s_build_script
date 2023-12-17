@@ -1,4 +1,4 @@
-From bc79e9c6c539f0ecfa00787fae369b6427bc4dfe Mon Sep 17 00:00:00 2001
+From 713c89fe7f3f2ef8498cf14da865511ad0c338aa Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Mon, 20 Feb 2023 22:07:27 +0100
 Subject: [PATCH 15/25] LRNG - add random.c entropy source support

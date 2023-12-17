@@ -1,4 +1,4 @@
-From 04259eb299aed3aaf7e53d0675b96345d624c664 Mon Sep 17 00:00:00 2001
+From 20d9fb724ed397633ac9e0bdc77e91102be4e0fa Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Mon, 20 Feb 2023 22:02:06 +0100
 Subject: [PATCH 04/25] LRNG - add switchable DRNG support

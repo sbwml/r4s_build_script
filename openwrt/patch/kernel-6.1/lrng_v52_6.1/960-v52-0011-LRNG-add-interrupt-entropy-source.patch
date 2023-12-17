@@ -1,4 +1,4 @@
-From 9a624edb26b18ac2397c869951da9548b63609a2 Mon Sep 17 00:00:00 2001
+From 83a0c5d59059184037e38c236e0e34fba0ce7985 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Tue, 25 Apr 2023 23:03:39 +0200
 Subject: [PATCH 11/25] LRNG - add interrupt entropy source

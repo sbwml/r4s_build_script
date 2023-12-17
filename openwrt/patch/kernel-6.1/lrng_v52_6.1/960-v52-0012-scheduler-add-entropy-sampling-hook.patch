@@ -1,4 +1,4 @@
-From be44c0a46a3f4e5e46c2053c0919e821a77887c1 Mon Sep 17 00:00:00 2001
+From 58889b1c993c8b08732bf9cb87e91467c352c1ff Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Sun, 15 May 2022 16:39:02 +0200
 Subject: [PATCH 12/25] scheduler - add entropy sampling hook
@@ -24,7 +24,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
  #include <linux/highmem.h>
  #include <linux/hrtimer_api.h>
  #include <linux/ktime_api.h>
-@@ -3600,6 +3601,8 @@ ttwu_stat(struct task_struct *p, int cpu
+@@ -3604,6 +3605,8 @@ ttwu_stat(struct task_struct *p, int cpu
  {
  	struct rq *rq;
  

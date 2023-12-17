@@ -1,4 +1,4 @@
-From 8505bb757e4cd2dc5ab0bb71ac3325dd1f4ae734 Mon Sep 17 00:00:00 2001
+From 28f142b7c0113d66f3bea2f8b0e82cdac6693462 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Sun, 15 May 2022 18:13:56 +0200
 Subject: [PATCH 20/25] LRNG - add power-on and runtime self-tests

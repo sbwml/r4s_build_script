@@ -1,4 +1,4 @@
-From ed3a1463494a698b2f2ff25f93784f159f8c7b5a Mon Sep 17 00:00:00 2001
+From 7eef5de1838581ed0937a12d9523fc04c20581f4 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Sun, 15 May 2022 16:01:44 +0200
 Subject: [PATCH 05/25] LRNG - add common generic hash support
