@@ -33,7 +33,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -376,6 +376,7 @@ static inline void tcp_dec_quickack_mode
+@@ -379,6 +379,7 @@ static inline void tcp_dec_quickack_mode
  #define	TCP_ECN_QUEUE_CWR	2
  #define	TCP_ECN_DEMAND_CWR	4
  #define	TCP_ECN_SEEN		8
@@ -41,7 +41,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  
  enum tcp_tw_status {
  	TCP_TW_SUCCESS = 0,
-@@ -729,6 +730,15 @@ static inline void tcp_fast_path_check(s
+@@ -732,6 +733,15 @@ static inline void tcp_fast_path_check(s
  		tcp_fast_path_on(tp);
  }
  

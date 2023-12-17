@@ -21,7 +21,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -1080,6 +1080,7 @@ struct rate_sample {
+@@ -1083,6 +1083,7 @@ struct rate_sample {
  	u32  last_end_seq;	/* end_seq of most recently ACKed packet */
  	bool is_app_limited;	/* is sample from packet with bubble in pipe? */
  	bool is_retrans;	/* is sample from retransmission? */
@@ -31,7 +31,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  };
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
-@@ -3715,7 +3715,8 @@ static void tcp_replace_ts_recent(struct
+@@ -3716,7 +3716,8 @@ static void tcp_replace_ts_recent(struct
  /* This routine deals with acks during a TLP episode and ends an episode by
   * resetting tlp_high_seq. Ref: TLP algorithm in draft-ietf-tcpm-rack
   */
@@ -41,7 +41,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  {
  	struct tcp_sock *tp = tcp_sk(sk);
  
-@@ -3743,6 +3744,11 @@ static void tcp_process_tlp_ack(struct s
+@@ -3744,6 +3745,11 @@ static void tcp_process_tlp_ack(struct s
  			     FLAG_NOT_DUP | FLAG_DATA_SACKED))) {
  		/* Pure dupack: original and TLP probe arrived; no loss */
  		tp->tlp_high_seq = 0;
@@ -53,7 +53,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	}
  }
  
-@@ -3922,7 +3928,7 @@ static int tcp_ack(struct sock *sk, cons
+@@ -3927,7 +3933,7 @@ static int tcp_ack(struct sock *sk, cons
  	tcp_rack_update_reo_wnd(sk, &rs);
  
  	if (tp->tlp_high_seq)
@@ -62,7 +62,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  
  	if (tcp_ack_is_dubious(sk, flag)) {
  		if (!(flag & (FLAG_SND_UNA_ADVANCED |
-@@ -3966,7 +3972,7 @@ no_queue:
+@@ -3971,7 +3977,7 @@ no_queue:
  	tcp_ack_probe(sk);
  
  	if (tp->tlp_high_seq)

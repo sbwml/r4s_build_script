@@ -25,7 +25,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -377,6 +377,7 @@ static inline void tcp_dec_quickack_mode
+@@ -380,6 +380,7 @@ static inline void tcp_dec_quickack_mode
  #define	TCP_ECN_DEMAND_CWR	4
  #define	TCP_ECN_SEEN		8
  #define	TCP_ECN_LOW		16
