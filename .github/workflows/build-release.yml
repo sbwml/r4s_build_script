@@ -12,7 +12,6 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: /home/runner
     strategy:
       fail-fast: false
       matrix:
@@ -40,7 +39,9 @@ jobs:
 
     - name: Set release env
       run: |
-        echo WORKDIR="/home/runner" >> "$GITHUB_ENV"
+        sudo mkdir -p /builder
+        sudo chown -R runner.runner /builder
+        echo WORKDIR="/builder" >> "$GITHUB_ENV"
 
     - name: Free disk space
       run: |
@@ -72,6 +73,7 @@ jobs:
         df -Th
 
     - name: Compile OpenWrt
+      working-directory: /builder
       id: compile
       continue-on-error: true
       run: |
@@ -82,12 +84,14 @@ jobs:
         echo "latest_release=$tags" >>$GITHUB_ENV
 
     - name: Extensive logs after a failed compilation
+      working-directory: /builder
       if: steps.compile.outcome == 'failure'
       run: |
         cd openwrt
         make V=s
 
     - name: Prepare Firmware Files
+      working-directory: /builder
       run: |
         mkdir -p rom info
         if [ "${{ matrix.model }}" = "nanopi-r4s" ]; then
