@@ -1,0 +1,13 @@
+--- a/package/kernel/gpio-nct5104d/src/gpio-nct5104d.c
++++ b/package/kernel/gpio-nct5104d/src/gpio-nct5104d.c
+@@ -18,6 +18,10 @@
+ #include <linux/dmi.h>
+ #include <linux/string.h>
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,6,0)
++#include <linux/gpio/driver.h>
++#endif
++
+ #define DRVNAME "gpio-nct5104d"
+ 
+ /*

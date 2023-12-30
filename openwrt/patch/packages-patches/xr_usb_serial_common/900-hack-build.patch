@@ -1,0 +1,13 @@
+diff --git a/xr_usb_serial_common-1a/Makefile b/xr_usb_serial_common-1a/Makefile
+index 1a323a6..719d587 100644
+--- a/xr_usb_serial_common-1a/Makefile
++++ b/xr_usb_serial_common-1a/Makefile
+@@ -1,5 +1,8 @@
+ obj-m := xr_usb_serial_common.o
+ 
++# product
++ccflags-y += -Wno-incompatible-pointer-types
++
+ KERNELDIR ?= /lib/modules/$(shell uname -r)/build
+ PWD       := $(shell pwd)
+ 

@@ -1,0 +1,56 @@
+From 95b3011f1ba7719ec9348163f986ead8c57ad997 Mon Sep 17 00:00:00 2001
+From: Antonio Quartulli <antonio@openvpn.net>
+Date: Sat, 21 Jan 2023 00:25:40 +0100
+Subject: [PATCH] ovpn-dco: adapt pre/post_doit CBs to new signature
+
+With linux-6.2.0 the signature of pre/post_doit CBs in the netlink
+family structure has been changed.
+
+Adapt the functions to reflect the new signature.
+
+Fixes: https://github.com/OpenVPN/ovpn-dco/issues/12
+Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
+---
+ drivers/net/ovpn-dco/netlink.c | 4 ++--
+ linux-compat.h                 | 6 ++++++
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ovpn-dco/netlink.c b/drivers/net/ovpn-dco/netlink.c
+index 1a2932f..e3eb012 100644
+--- a/drivers/net/ovpn-dco/netlink.c
++++ b/drivers/net/ovpn-dco/netlink.c
+@@ -148,7 +148,7 @@ ovpn_get_dev_from_attrs(struct net *net, struct nlattr **attrs)
+  *
+  * Return: 0 on success or negative error number in case of failure
+  */
+-static int ovpn_pre_doit(const struct genl_ops *ops, struct sk_buff *skb,
++static int ovpn_pre_doit(const struct genl_split_ops *ops, struct sk_buff *skb,
+ 			 struct genl_info *info)
+ {
+ 	struct net *net = genl_info_net(info);
+@@ -169,7 +169,7 @@ static int ovpn_pre_doit(const struct genl_ops *ops, struct sk_buff *skb,
+  * @skb: Netlink message with request data
+  * @info: receiver information
+  */
+-static void ovpn_post_doit(const struct genl_ops *ops, struct sk_buff *skb,
++static void ovpn_post_doit(const struct genl_split_ops *ops, struct sk_buff *skb,
+ 			   struct genl_info *info)
+ {
+ 	struct ovpn_struct *ovpn;
+diff --git a/linux-compat.h b/linux-compat.h
+index 8aa53f4..c0ee963 100644
+--- a/linux-compat.h
++++ b/linux-compat.h
+@@ -22,6 +22,12 @@
+ #endif
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 2, 0)
++
++#define genl_split_ops genl_ops
++
++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(6, 2, 0) */
++
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 19, 0)
+ 
+ /**

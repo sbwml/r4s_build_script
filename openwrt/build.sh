@@ -88,7 +88,7 @@ export USE_GLIBC=$USE_GLIBC
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
 if [ "$platform" = "x86_64" ]; then
     echo -e "${GREEN_COLOR}Model: x86_64${RES}"
-    curl -s https://$mirror/tags/kernel-6.1 > kernel.txt
+    curl -s https://$mirror/tags/kernel-6.6 > kernel.txt
     kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
     kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
     echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
@@ -96,7 +96,7 @@ if [ "$platform" = "x86_64" ]; then
 elif [ "$platform" = "rk3568" ]; then
     echo -e "${GREEN_COLOR}Model: nanopi-r5s/r5c${RES}"
     [ "$1" = "rc2" ] && model="nanopi-r5s"
-    curl -s https://$mirror/tags/kernel-6.1 > kernel.txt
+    curl -s https://$mirror/tags/kernel-6.6 > kernel.txt
     kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
     kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
     echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
@@ -104,7 +104,7 @@ elif [ "$platform" = "rk3568" ]; then
 else
     echo -e "${GREEN_COLOR}Model: nanopi-r4s${RES}"
     [ "$1" = "rc2" ] && model="nanopi-r4s"
-    curl -s https://$mirror/tags/kernel-6.1 > kernel.txt
+    curl -s https://$mirror/tags/kernel-6.6 > kernel.txt
     kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
     kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
     echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
@@ -127,7 +127,7 @@ git clone $github_mirror/openwrt/routing master/routing --depth=1
 # immortalwrt master
 git clone $github_mirror/immortalwrt/packages master/immortalwrt_packages --depth=1
 # mj22226 openwrt
-git clone $github_mirror/mj22226/openwrt -b linux-6.1 master/mj22226_openwrt --depth=1
+git clone $github_mirror/mj22226/openwrt -b linux-6.6 master/mj22226_openwrt --depth=1
 
 if [ -d openwrt ]; then
     cd openwrt

@@ -1,0 +1,13 @@
+diff --git a/dmx_usb.c b/dmx_usb.c
+index 4e3372d..7dfb814 100644
+--- a/dmx_usb.c
++++ b/dmx_usb.c
+@@ -97,7 +97,7 @@ struct dmx_usb_device {
+ 
+ 
+ /* prevent races between open() and disconnect() */
+-	static DEFINE_SEMAPHORE(disconnect_sem);
++	static DEFINE_SEMAPHORE(disconnect_sem, 1);
+ 
+ /* local function prototypes */
+ static ssize_t dmx_usb_write	(struct file *file, const char *buffer, size_t count, loff_t *ppos);

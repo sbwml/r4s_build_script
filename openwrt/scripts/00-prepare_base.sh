@@ -106,9 +106,6 @@ else
     curl -s https://$mirror/openwrt/patch/fstools/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch > package/system/fstools/patches/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch
 fi
 
-# Shortcut Forwarding Engine
-git clone https://$gitea/sbwml/shortcut-fe package/shortcut-fe
-
 # Patch FireWall 4
 if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     # firewall4
@@ -140,10 +137,9 @@ fi
 # FullCone module
 git clone https://$gitea/sbwml/nft-fullcone package/new/nft-fullcone
 
-# Patch Luci add fullcone & shortcut-fe option
+# Patch Luci add fullcone
 pushd feeds/luci
     curl -s https://$mirror/openwrt/patch/firewall4/luci-app-firewall_add_fullcone.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/firewall4/luci-app-firewall_add_shortcut-fe.patch | patch -p1
 popd
 
 # openssl - quictls

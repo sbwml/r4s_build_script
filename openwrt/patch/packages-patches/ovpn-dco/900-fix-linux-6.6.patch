@@ -1,0 +1,15 @@
+diff --git a/drivers/net/ovpn-dco/ovpn.c b/drivers/net/ovpn-dco/ovpn.c
+index 66c0191..6cc426a 100644
+--- a/drivers/net/ovpn-dco/ovpn.c
++++ b/drivers/net/ovpn-dco/ovpn.c
+@@ -21,6 +21,10 @@
+ #include "tcp.h"
+ #include "udp.h"
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,4,10)
++#include <net/gso.h>
++#endif
++
+ #include <linux/workqueue.h>
+ #include <uapi/linux/if_ether.h>
+ 
