@@ -4,6 +4,18 @@
 
 ---------------
 
+## Based on Linux 6.6 LTS Firmware:
+
+NanoPi R4S: https://r4s.cooluc.com
+
+NanoPi R5S/R5C: https://r5s.cooluc.com
+
+X86_64: https://x86.cooluc.com
+
+repo: https://github.com/sbwml/builder
+
+---------------
+
 ## 本地编译环境安装（根据 debian 11 / ubuntu 22）
 ```shell
 sudo apt-get update
@@ -71,19 +83,19 @@ export MINIMAL_BUILD=y
 
 ### nanopi-r4s
 ```shell
-# linux-6.1
+# linux-6.6
 bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 nanopi-r4s
 ```
 
 ### nanopi-r5s/r5c
 ```shell
-# linux-6.1
+# linux-6.6
 bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 nanopi-r5s
 ```
 
 ### x86_64
 ```shell
-# linux-6.1
+# linux-6.6
 bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 x86_64
 ```
 
@@ -91,19 +103,19 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 x86_64
 
 ### nanopi-r4s
 ```shell
-# linux-6.1
+# linux-6.6
 bash <(curl -sS https://init2.cooluc.com/build.sh) dev nanopi-r4s
 ```
 
 ### nanopi-r5s/r5c
 ```shell
-# linux-6.1
+# linux-6.6
 bash <(curl -sS https://init2.cooluc.com/build.sh) dev nanopi-r5s
 ```
 
 ### x86_64
 ```shell
-# linux-6.1
+# linux-6.6
 bash <(curl -sS https://init2.cooluc.com/build.sh) dev x86_64
 ```
 
@@ -134,19 +146,19 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) dev x86_64
 
 #### nanopi-r4s openwrt-23.05
 ```shell
-# linux-6.1
+# linux-6.6
 bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc2 nanopi-r4s
 ```
 
 #### nanopi-r5s/r5c openwrt-23.05
 ```shell
-# linux-6.1
+# linux-6.6
 bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc2 nanopi-r5s
 ```
 
 #### x86_64 openwrt-23.05
 ```shell
-# linux-6.1
+# linux-6.6
 bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc2 x86_64
 ```
 
