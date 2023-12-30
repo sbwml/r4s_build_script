@@ -298,15 +298,23 @@ if [ "$platform" = "x86_64" ]; then
         if [ "$1" = "rc2" ]; then
             mkdir -p ota
             if [ "$MINIMAL_BUILD" = "y" ]; then
-                curl -Lso ota.json https://us.cooluc.com/openwrt/minimal/fw.json || exit 0
                 BUILD_TYPE=minimal
             else
-                curl -Lso ota.json https://us.cooluc.com/openwrt/common/fw.json || exit 0
                 BUILD_TYPE=releases
             fi
             VERSION=$(sed 's/v//g' version.txt)
             SHA256=$(sha256sum bin/targets/x86/64/*-generic-squashfs-combined-efi.img.gz | awk '{print $1}')
-            jq ".\"x86_64\"[0].build_date=\"$CURRENT_DATE\"|.\"x86_64\"[0].sha256sum=\"$SHA256\"|.\"x86_64\"[0].url=\"https://x86.cooluc.com/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-x86-64-generic-squashfs-combined-efi.img.gz\"" ota.json > ota/fw.json
+            cat > ota/fw.json <<EOF
+            {
+              "x86_64": [
+                {
+                  "build_date": "$CURRENT_DATE",
+                  "sha256sum": "$SHA256",
+                  "url": "https://x86.cooluc.com/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-x86-64-generic-squashfs-combined-efi.img.gz"
+                }
+              ]
+            }
+EOF
         fi
         # Backup download cache
         if [ "$isCN" = "CN" ] && [ "$1" = "rc2" ]; then
@@ -337,20 +345,45 @@ else
         if [ "$1" = "rc2" ]; then
             mkdir -p ota
             if [ "$MINIMAL_BUILD" = "y" ]; then
-                curl -Lso ota.json https://us.cooluc.com/openwrt/minimal/fw.json || exit 0
                 BUILD_TYPE=minimal
             else
-                curl -Lso ota.json https://us.cooluc.com/openwrt/common/fw.json || exit 0
                 BUILD_TYPE=releases
             fi
             VERSION=$(sed 's/v//g' version.txt)
             if [ "$model" = "nanopi-r4s" ]; then
                 SHA256=$(sha256sum bin/targets/rockchip/armv8*/*-squashfs-sysupgrade.img.gz | awk '{print $1}')
-                jq ".\"friendlyarm,nanopi-r4s\"[0].build_date=\"$CURRENT_DATE\"|.\"friendlyarm,nanopi-r4s\"[0].sha256sum=\"$SHA256\"|.\"friendlyarm,nanopi-r4s\"[0].url=\"https://r4s.cooluc.com/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz\"" ota.json > ota/fw.json
+                cat > ota/fw.json <<EOF
+                {
+                  "friendlyarm,nanopi-r4s": [
+                    {
+                      "build_date": "$CURRENT_DATE",
+                      "sha256sum": "$SHA256",
+                      "url": "https://r4s.cooluc.com/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz"
+                    }
+                  ]
+                }
+EOF
             elif [ "$model" = "nanopi-r5s" ]; then
                 SHA256_R5C=$(sha256sum bin/targets/rockchip/armv8*/*-r5c-squashfs-sysupgrade.img.gz | awk '{print $1}')
                 SHA256_R5S=$(sha256sum bin/targets/rockchip/armv8*/*-r5s-squashfs-sysupgrade.img.gz | awk '{print $1}')
-                jq ".\"friendlyarm,nanopi-r5s\"[0].build_date=\"$CURRENT_DATE\"|.\"friendlyarm,nanopi-r5s\"[0].sha256sum=\"$SHA256_R5S\"|.\"friendlyarm,nanopi-r5s\"[0].url=\"https://r5s.cooluc.com/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5s-squashfs-sysupgrade.img.gz\"|.\"friendlyarm,nanopi-r5c\"[0].build_date=\"$CURRENT_DATE\"|.\"friendlyarm,nanopi-r5c\"[0].sha256sum=\"$SHA256_R5C\"|.\"friendlyarm,nanopi-r5c\"[0].url=\"https://r5s.cooluc.com/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5c-squashfs-sysupgrade.img.gz\"" ota.json > ota/fw.json
+                cat > ota/fw.json <<EOF
+                {
+                  "friendlyarm,nanopi-r5c": [
+                    {
+                      "build_date": "$CURRENT_DATE",
+                      "sha256sum": "$SHA256_R5C",
+                      "url": "https://r5s.cooluc.com/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5c-squashfs-sysupgrade.img.gz"
+                    }
+                  ],
+                  "friendlyarm,nanopi-r5s": [
+                    {
+                      "build_date": "$CURRENT_DATE",
+                      "sha256sum": "$SHA256_R5S",
+                      "url": "https://r5s.cooluc.com/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5s-squashfs-sysupgrade.img.gz"
+                    }
+                  ]
+                }
+EOF
             fi
         fi
         # Backup download cache
