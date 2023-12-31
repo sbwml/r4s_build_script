@@ -37,11 +37,9 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  net/ipv4/tcp_input.c | 11 +++++++++++
  1 file changed, 11 insertions(+)
 
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index ed6047774..44ce8945f 100644
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
-@@ -1482,6 +1482,17 @@ static bool tcp_shifted_skb(struct sock *sk, struct sk_buff *prev,
+@@ -1482,6 +1482,17 @@ static bool tcp_shifted_skb(struct sock
  	WARN_ON_ONCE(tcp_skb_pcount(skb) < pcount);
  	tcp_skb_pcount_add(skb, -pcount);
  
@@ -59,6 +57,3 @@ index ed6047774..44ce8945f 100644
  	/* When we're adding to gso_segs == 1, gso_size will be zero,
  	 * in theory this shouldn't be necessary but as long as DSACK
  	 * code can come after this skb later on it's better to keep
--- 
-2.42.0
-

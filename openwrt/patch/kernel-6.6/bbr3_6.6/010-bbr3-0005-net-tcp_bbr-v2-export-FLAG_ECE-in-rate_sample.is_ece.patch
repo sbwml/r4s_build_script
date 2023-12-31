@@ -16,8 +16,6 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  net/ipv4/tcp_input.c | 1 +
  2 files changed, 2 insertions(+)
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 6fed2bb4e..eac61b3e3 100644
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
 @@ -1070,6 +1070,7 @@ struct rate_sample {
@@ -28,11 +26,9 @@ index 6fed2bb4e..eac61b3e3 100644
  };
  
  struct tcp_congestion_ops {
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index fccd35861..e4b878dfc 100644
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
-@@ -3936,6 +3936,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
+@@ -3940,6 +3940,7 @@ static int tcp_ack(struct sock *sk, cons
  	delivered = tcp_newly_delivered(sk, delivered, flag);
  	lost = tp->lost - lost;			/* freshly marked lost */
  	rs.is_ack_delayed = !!(flag & FLAG_ACK_MAYBE_DELAYED);
@@ -40,6 +36,3 @@ index fccd35861..e4b878dfc 100644
  	tcp_rate_gen(sk, delivered, lost, is_sack_reneg, sack_state.rate);
  	tcp_cong_control(sk, ack, delivered, flag, sack_state.rate);
  	tcp_xmit_recovery(sk, rexmit);
--- 
-2.42.0
-

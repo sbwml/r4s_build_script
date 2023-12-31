@@ -25,8 +25,6 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  net/ipv4/tcp_output.c | 11 +++++------
  3 files changed, 33 insertions(+), 19 deletions(-)
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 7f359306a..b4971ba18 100644
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
 @@ -1098,8 +1098,8 @@ struct tcp_congestion_ops {
@@ -40,11 +38,9 @@ index 7f359306a..b4971ba18 100644
  
  	/* react to a specific lost skb (optional) */
  	void (*skb_marked_lost)(struct sock *sk, const struct sk_buff *skb);
-diff --git a/net/ipv4/tcp_bbr.c b/net/ipv4/tcp_bbr.c
-index 146792cd2..cd31cd8cd 100644
 --- a/net/ipv4/tcp_bbr.c
 +++ b/net/ipv4/tcp_bbr.c
-@@ -300,20 +300,35 @@ __bpf_kfunc static u32 bbr_min_tso_segs(struct sock *sk)
+@@ -300,20 +300,35 @@ __bpf_kfunc static u32 bbr_min_tso_segs(
  	return sk->sk_pacing_rate < (bbr_min_tso_rate >> 3) ? 1 : 2;
  }
  
@@ -90,7 +86,7 @@ index 146792cd2..cd31cd8cd 100644
  }
  
  /* Save "last known good" cwnd so we can restore it after losses or PROBE_RTT */
-@@ -1149,7 +1164,7 @@ static struct tcp_congestion_ops tcp_bbr_cong_ops __read_mostly = {
+@@ -1149,7 +1164,7 @@ static struct tcp_congestion_ops tcp_bbr
  	.undo_cwnd	= bbr_undo_cwnd,
  	.cwnd_event	= bbr_cwnd_event,
  	.ssthresh	= bbr_ssthresh,
@@ -99,11 +95,9 @@ index 146792cd2..cd31cd8cd 100644
  	.get_info	= bbr_get_info,
  	.set_state	= bbr_set_state,
  };
-diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index 468ddc84d..739d3e4c5 100644
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -2020,13 +2020,12 @@ static u32 tcp_tso_autosize(const struct sock *sk, unsigned int mss_now,
+@@ -2020,13 +2020,12 @@ static u32 tcp_tso_autosize(const struct
  static u32 tcp_tso_segs(struct sock *sk, unsigned int mss_now)
  {
  	const struct tcp_congestion_ops *ca_ops = inet_csk(sk)->icsk_ca_ops;
@@ -122,6 +116,3 @@ index 468ddc84d..739d3e4c5 100644
  	return min_t(u32, tso_segs, sk->sk_gso_max_segs);
  }
  
--- 
-2.42.0
-

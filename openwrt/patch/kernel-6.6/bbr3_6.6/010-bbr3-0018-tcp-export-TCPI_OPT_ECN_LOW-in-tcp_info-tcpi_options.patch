@@ -15,8 +15,6 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  net/ipv4/tcp.c           | 2 ++
  2 files changed, 3 insertions(+)
 
-diff --git a/include/uapi/linux/tcp.h b/include/uapi/linux/tcp.h
-index 879eeb0a0..77270053a 100644
 --- a/include/uapi/linux/tcp.h
 +++ b/include/uapi/linux/tcp.h
 @@ -170,6 +170,7 @@ enum tcp_fastopen_client_fail {
@@ -27,11 +25,9 @@ index 879eeb0a0..77270053a 100644
  
  /*
   * Sender's congestion state indicating normal or abnormal situations
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index 3678793e6..f9c1ca064 100644
 --- a/net/ipv4/tcp.c
 +++ b/net/ipv4/tcp.c
-@@ -3755,6 +3755,8 @@ void tcp_get_info(struct sock *sk, struct tcp_info *info)
+@@ -3771,6 +3771,8 @@ void tcp_get_info(struct sock *sk, struc
  		info->tcpi_options |= TCPI_OPT_ECN;
  	if (tp->ecn_flags & TCP_ECN_SEEN)
  		info->tcpi_options |= TCPI_OPT_ECN_SEEN;
@@ -40,6 +36,3 @@ index 3678793e6..f9c1ca064 100644
  	if (tp->syn_data_acked)
  		info->tcpi_options |= TCPI_OPT_SYN_DATA;
  
--- 
-2.42.0
-

@@ -21,8 +21,6 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  net/ipv4/tcp_output.c | 1 +
  2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/tcp.h b/include/linux/tcp.h
-index a0f4015da..a0d4afd22 100644
 --- a/include/linux/tcp.h
 +++ b/include/linux/tcp.h
 @@ -258,7 +258,8 @@ struct tcp_sock {
@@ -35,11 +33,9 @@ index a0f4015da..a0d4afd22 100644
  	u32	chrono_start;	/* Start time in jiffies of a TCP chrono */
  	u32	chrono_stat[3];	/* Time in jiffies for chrono_stat stats */
  	u8	chrono_type:2,	/* current chronograph type */
-diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index 739d3e4c5..03b7bed1b 100644
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -2938,6 +2938,7 @@ void tcp_send_loss_probe(struct sock *sk)
+@@ -2938,6 +2938,7 @@ void tcp_send_loss_probe(struct sock *sk
  	if (WARN_ON(!skb || !tcp_skb_pcount(skb)))
  		goto rearm_timer;
  
@@ -47,6 +43,3 @@ index 739d3e4c5..03b7bed1b 100644
  	if (__tcp_retransmit_skb(sk, skb, 1))
  		goto rearm_timer;
  
--- 
-2.42.0
-

@@ -19,8 +19,6 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  net/ipv4/tcp_input.c | 12 +++++++++---
  2 files changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index f78a8ae84..cc24f4072 100644
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
 @@ -1074,6 +1074,7 @@ struct rate_sample {
@@ -31,11 +29,9 @@ index f78a8ae84..cc24f4072 100644
  	bool is_ack_delayed;	/* is this (likely) a delayed ACK? */
  	bool is_ece;		/* did this ACK have ECN marked? */
  };
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index e2152997d..d64d0672b 100644
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
-@@ -3722,7 +3722,8 @@ static void tcp_replace_ts_recent(struct tcp_sock *tp, u32 seq)
+@@ -3722,7 +3722,8 @@ static void tcp_replace_ts_recent(struct
  /* This routine deals with acks during a TLP episode and ends an episode by
   * resetting tlp_high_seq. Ref: TLP algorithm in draft-ietf-tcpm-rack
   */
@@ -45,7 +41,7 @@ index e2152997d..d64d0672b 100644
  {
  	struct tcp_sock *tp = tcp_sk(sk);
  
-@@ -3750,6 +3751,11 @@ static void tcp_process_tlp_ack(struct sock *sk, u32 ack, int flag)
+@@ -3750,6 +3751,11 @@ static void tcp_process_tlp_ack(struct s
  			     FLAG_NOT_DUP | FLAG_DATA_SACKED))) {
  		/* Pure dupack: original and TLP probe arrived; no loss */
  		tp->tlp_high_seq = 0;
@@ -57,7 +53,7 @@ index e2152997d..d64d0672b 100644
  	}
  }
  
-@@ -3929,7 +3935,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
+@@ -3933,7 +3939,7 @@ static int tcp_ack(struct sock *sk, cons
  	tcp_rack_update_reo_wnd(sk, &rs);
  
  	if (tp->tlp_high_seq)
@@ -66,7 +62,7 @@ index e2152997d..d64d0672b 100644
  
  	if (tcp_ack_is_dubious(sk, flag)) {
  		if (!(flag & (FLAG_SND_UNA_ADVANCED |
-@@ -3973,7 +3979,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
+@@ -3977,7 +3983,7 @@ no_queue:
  	tcp_ack_probe(sk);
  
  	if (tp->tlp_high_seq)
@@ -75,6 +71,3 @@ index e2152997d..d64d0672b 100644
  	return 1;
  
  old_ack:
--- 
-2.42.0
-

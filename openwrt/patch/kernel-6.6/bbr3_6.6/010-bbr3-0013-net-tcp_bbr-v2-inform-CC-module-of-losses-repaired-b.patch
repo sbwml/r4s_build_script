@@ -23,8 +23,6 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  net/ipv4/tcp_input.c | 1 +
  2 files changed, 2 insertions(+)
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index b4971ba18..f78a8ae84 100644
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
 @@ -1010,6 +1010,7 @@ enum tcp_ca_event {
@@ -35,11 +33,9 @@ index b4971ba18..f78a8ae84 100644
  };
  
  /* Information about inbound ACK, passed to cong_ops->in_ack_event() */
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 74e69589a..e2152997d 100644
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
-@@ -3739,6 +3739,7 @@ static void tcp_process_tlp_ack(struct sock *sk, u32 ack, int flag)
+@@ -3739,6 +3739,7 @@ static void tcp_process_tlp_ack(struct s
  		/* ACK advances: there was a loss, so reduce cwnd. Reset
  		 * tlp_high_seq in tcp_init_cwnd_reduction()
  		 */
@@ -47,6 +43,3 @@ index 74e69589a..e2152997d 100644
  		tcp_init_cwnd_reduction(sk);
  		tcp_set_ca_state(sk, TCP_CA_CWR);
  		tcp_end_cwnd_reduction(sk);
--- 
-2.42.0
-
