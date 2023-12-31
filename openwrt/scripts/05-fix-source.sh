@@ -27,3 +27,7 @@ popd
 
 # bpf - add host clang-15/17 support
 sed -i 's/command -v clang/command -v clang clang-17 clang-15/g' include/bpf.mk
+
+# perf
+curl -s https://$mirror/openwrt/patch/openwrt-6.x/musl/990-add-typedefs-for-Elf64_Relr-and-Elf32_Relr.patch > toolchain/musl/patches/990-add-typedefs-for-Elf64_Relr-and-Elf32_Relr.patch
+curl -s https://$mirror/openwrt/patch/openwrt-6.x/perf/Makefile > package/devel/perf/Makefile

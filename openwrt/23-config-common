@@ -252,7 +252,6 @@ CONFIG_PACKAGE_xz-utils=y
 CONFIG_PACKAGE_xz=y
 CONFIG_PACKAGE_zip=y
 CONFIG_PACKAGE_zoneinfo-asia=y
-# CONFIG_PACKAGE_perf is not set
 
 ### Shadow Utilities
 CONFIG_PACKAGE_shadow-groupadd=y
