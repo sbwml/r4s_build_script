@@ -1,6 +1,6 @@
 --- a/feeds/luci/applications/luci-app-ksmbd/htdocs/luci-static/resources/view/ksmbd.js
 +++ b/feeds/luci/applications/luci-app-ksmbd/htdocs/luci-static/resources/view/ksmbd.js
-@@ -10,7 +10,7 @@ return view.extend({
+@@ -11,7 +11,7 @@ return view.extend({
  			L.resolveDefault(fs.stat('/sbin/block'), null),
  			L.resolveDefault(fs.stat('/etc/config/fstab'), null),
  			L.resolveDefault(fs.exec('/usr/sbin/ksmbd.mountd', ['-V']), {}).then(function(res) { return L.toArray((res.stdout || '').match(/version : (\S+)/))[1] }),
