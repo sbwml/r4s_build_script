@@ -1,7 +1,7 @@
-From 9710f04645c641c16cab60be0e4720ecebc4b1a6 Mon Sep 17 00:00:00 2001
+From 986b513b5cc049e9a5f10c35b76f037dde8b8c3e Mon Sep 17 00:00:00 2001
 From: Zhi Chen <zhichen@codeaurora.org>
 Date: Tue, 13 Jan 2015 14:28:18 -0800
-Subject: [PATCH 2/2] net: conntrack events, support multiple registrant
+Subject: [PATCH 1/2] net: conntrack events, support multiple registrant
 
 Merging this patch from kernel 3.4:
 This was supported by old (.28) kernel versions but removed
@@ -363,5 +363,5 @@ index 334db2219..708c7f71b 100644
  
  static struct pernet_operations ctnetlink_net_ops = {
 -- 
-2.42.0
+2.39.3
 

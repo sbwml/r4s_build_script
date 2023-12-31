@@ -1,8 +1,17 @@
 diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-index 6e2e0f8..07406b8 100644
+index 9d0dce8dfb..904db78007 100644
 --- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 +++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-@@ -95,6 +95,21 @@ return view.extend({
+@@ -86,7 +86,7 @@ return view.extend({
+ 			o = s.option(form.Flag, 'flow_offloading',
+ 				_('Software flow offloading'),
+ 				_('Software based offloading for routing/NAT'));
+-			o.optional = true;
++			o.optional = false;
+ 
+ 			o = s.option(form.Flag, 'flow_offloading_hw',
+ 				_('Hardware flow offloading'),
+@@ -95,6 +95,22 @@ return view.extend({
  			o.depends('flow_offloading', '1');
  		}
  
@@ -12,6 +21,7 @@ index 6e2e0f8..07406b8 100644
 +			_('Shortcut-FE flow offloading'),
 +			_('Shortcut-FE based offloading for routing/NAT'));
 +			o.optional = true;
++			o.depends('flow_offloading', '0');
 +
 +			o = s.option(form.ListValue, 'shortcut_fe_module',
 +			_('Connection Manager'),
