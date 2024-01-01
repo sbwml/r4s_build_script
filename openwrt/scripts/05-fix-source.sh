@@ -1,12 +1,16 @@
 #!/bin/bash
 
+# libsodium - fix build with lto (GNU BUG - 89147)
+sed -i "/CONFIGURE_ARGS/i\TARGET_CFLAGS += -ffat-lto-objects\n" feeds/packages/libs/libsodium/Makefile
+
 # uqmi - fix gcc11
 if [ "$USE_GLIBC" != "y" ]; then
     sed -i '/dangling-pointer/d' package/network/utils/uqmi/Makefile
 fi
 
 # xdp-tools
-[ "$platform" != "x86_64" ] && sed -i '/TARGET_LDFLAGS +=/iTARGET_CFLAGS += -Wno-error=maybe-uninitialized\n' package/network/utils/xdp-tools/Makefile
+[ "$platform" != "x86_64" ] && sed -i '/TARGET_LDFLAGS +=/iTARGET_CFLAGS += -Wno-error=maybe-uninitialized -ffat-lto-objects\n' package/network/utils/xdp-tools/Makefile
+[ "$platform" = "x86_64" ] && sed -i '/TARGET_LDFLAGS +=/iTARGET_CFLAGS += -ffat-lto-objects\n' package/network/utils/xdp-tools/Makefile
 
 # ksmbd luci
 rm -rf feeds/luci/applications/luci-app-ksmbd

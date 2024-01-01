@@ -1,0 +1,4 @@
+
+# Link time optimization
+CONFIG_USE_GC_SECTIONS=y
+CONFIG_USE_LTO=y
