@@ -3,6 +3,9 @@
 # libsodium - fix build with lto (GNU BUG - 89147)
 sed -i "/CONFIGURE_ARGS/i\TARGET_CFLAGS += -ffat-lto-objects\n" feeds/packages/libs/libsodium/Makefile
 
+# grub2 -  disable `gc-sections` flag
+sed -i '/PKG_BUILD_FLAGS/ s/$/ no-gc-sections/' package/boot/grub2/Makefile
+
 # uqmi - fix gcc11
 if [ "$USE_GLIBC" != "y" ]; then
     sed -i '/dangling-pointer/d' package/network/utils/uqmi/Makefile
