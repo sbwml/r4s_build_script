@@ -203,6 +203,12 @@ fi
 # openssl -Ofast
 sed -i "s/-O3/-Ofast/g" package/libs/openssl/Makefile
 
+# openssl - lto
+if [ "$ENABLE_LTO" = "y" ]; then
+    sed -i "s/ no-lto//g" package/libs/openssl/Makefile
+    sed -i "/TARGET_CFLAGS +=/ s/\$/ -ffat-lto-objects/" package/libs/openssl/Makefile
+fi
+
 # nghttp3
 rm -rf feeds/packages/libs/nghttp3
 git clone https://github.com/sbwml/package_libs_nghttp3 package/libs/nghttp3
