@@ -9,7 +9,7 @@ index f07df06..6e2e0f8 100644
 +		if (L.hasSystemFeature('fullcone')) {
 +			o = s.option(form.Flag, 'fullcone', _('Enable FullCone NAT'));
 +			o = s.option(form.Flag, 'fullcone6', _('Enable FullCone NAT6'));
-+		}
++		};
  
  		var p = [
  			s.option(form.ListValue, 'input', _('Input')),

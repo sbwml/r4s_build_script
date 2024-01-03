@@ -140,10 +140,14 @@ fi
 # FullCone module
 git clone https://$gitea/sbwml/nft-fullcone package/new/nft-fullcone
 
-# Patch Luci add fullcone & shortcut-fe option
+# IPv6 NAT
+git clone https://nanopi:nanopi@$gitea/sbwml/nat6 package/new/nat6
+
+# Patch Luci add fullcone & shortcut-fe & ipv6-nat option
 pushd feeds/luci
-    curl -s https://$mirror/openwrt/patch/firewall4/luci-app-firewall_add_fullcone.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/firewall4/luci-app-firewall_add_shortcut-fe.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/firewall4/01-luci-app-firewall_add_fullcone.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/firewall4/02-luci-app-firewall_add_shortcut-fe.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/firewall4/03-luci-app-firewall_add_ipv6-nat.patch | patch -p1
 popd
 
 # openssl - quictls
