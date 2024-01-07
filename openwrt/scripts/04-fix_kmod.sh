@@ -27,10 +27,6 @@ curl -s https://$mirror/openwrt/patch/packages-patches/jool/Makefile > feeds/pac
 mkdir -p feeds/packages/kernel/mdio-netlink/patches
 curl -s https://$mirror/openwrt/patch/packages-patches/mdio-netlink/001-mdio-netlink-rework-C45-to-work-with-net-next.patch > feeds/packages/kernel/mdio-netlink/patches/001-mdio-netlink-rework-C45-to-work-with-net-next.patch
 
-# mt76
-mkdir -p package/kernel/mt76/patches
-curl -s https://$mirror/openwrt/patch/packages-patches/mt76/900-fix-page-pool.patch > package/kernel/mt76/patches/900-fix-page-pool.patch
-
 # ovpn-dco
 mkdir -p feeds/packages/kernel/ovpn-dco/patches
 curl -s https://$mirror/openwrt/patch/packages-patches/ovpn-dco/100-ovpn-dco-adapt-pre-post_doit-CBs-to-new-signature.patch > feeds/packages/kernel/ovpn-dco/patches/100-ovpn-dco-adapt-pre-post_doit-CBs-to-new-signature.patch

@@ -132,10 +132,9 @@ cp -a ../master/mj22226_openwrt/package/kernel/rtl8812au-ac package/kernel/rtl88
 # ath10k-ct - fix mac80211 6.1-rc
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/kmod-patches/ath10k-ct.patch | patch -p1
 
-# mt76 - add mt7922 firmware
-sed -i '/define KernelPackage\/mt7921-common/idefine KernelPackage\/mt7922-firmware\n  $(KernelPackage\/mt76-default)\n  DEPENDS+=+kmod-mt7921-common\n  TITLE:=MediaTek MT7922 firmware\nendef\n' package/kernel/mt76/Makefile
-sed -i '/define Package\/mt76-test\/install/idefine KernelPackage\/mt7922-firmware\/install\n\t$(INSTALL_DIR) $(1)\/lib\/firmware\/mediatek\n\tcp \\\n\t\t$(PKG_BUILD_DIR)\/firmware\/WIFI_MT7922_patch_mcu_1_1_hdr.bin \\\n\t\t$(PKG_BUILD_DIR)\/firmware\/WIFI_RAM_CODE_MT7922_1.bin \\\n\t\t$(1)\/lib\/firmware\/mediatek\nendef\n' package/kernel/mt76/Makefile
-sed -i '/$(eval \$(call KernelPackage,mt7921-firmware))/a $(eval \$(call KernelPackage,mt7922-firmware))' package/kernel/mt76/Makefile
+# mt76 - update to 2023-12-18
+rm -rf package/kernel/mt76
+git clone https://github.com/sbwml/package_kernel_mt76 package/kernel/mt76
 
 # iwinfo: add mt7922 device id
 mkdir -p package/network/utils/iwinfo/patches
