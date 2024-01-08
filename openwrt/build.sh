@@ -17,14 +17,14 @@ export isCN=`echo $ip_info | grep -Po 'country_code\":"\K[^"]+'`;
 
 # script url
 if [ "$isCN" = "CN" ]; then
-    export mirror=init.cooluc.com
+    export mirror=https://init.cooluc.com
 else
-    export mirror=init2.cooluc.com
+    export mirror=https://init2.cooluc.com
 fi
 
 # github actions - automatically retrieve `github raw` links
-if [ "$(whoami)" = "runner" ] && [ -n "$GITHUB_REPO" ]; then
-    export mirror=raw.githubusercontent.com/$GITHUB_REPO/master
+if [ "$(whoami)" = "runner" ] && [ -n "$GITHUB_WORKSPACE" ]; then
+    export mirror=file://$GITHUB_WORKSPACE
 fi
 
 # private gitea
@@ -59,7 +59,7 @@ if [ "$1" = "dev" ]; then
     export version=snapshots-23.05
     export toolchain_version=openwrt-23.05
 elif [ "$1" = "rc2" ]; then
-    latest_release="v$(curl -s https://$mirror/tags/v23)"
+    latest_release="v$(curl -s $mirror/tags/v23)"
     export branch=$latest_release
     export version=rc2
     export toolchain_version=openwrt-23.05
@@ -88,7 +88,7 @@ export USE_GLIBC=$USE_GLIBC
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
 if [ "$platform" = "x86_64" ]; then
     echo -e "${GREEN_COLOR}Model: x86_64${RES}"
-    curl -s https://$mirror/tags/kernel-6.6 > kernel.txt
+    curl -s $mirror/tags/kernel-6.6 > kernel.txt
     kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
     kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
     echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
@@ -96,7 +96,7 @@ if [ "$platform" = "x86_64" ]; then
 elif [ "$platform" = "rk3568" ]; then
     echo -e "${GREEN_COLOR}Model: nanopi-r5s/r5c${RES}"
     [ "$1" = "rc2" ] && model="nanopi-r5s"
-    curl -s https://$mirror/tags/kernel-6.6 > kernel.txt
+    curl -s $mirror/tags/kernel-6.6 > kernel.txt
     kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
     kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
     echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
@@ -104,7 +104,7 @@ elif [ "$platform" = "rk3568" ]; then
 else
     echo -e "${GREEN_COLOR}Model: nanopi-r4s${RES}"
     [ "$1" = "rc2" ] && model="nanopi-r4s"
-    curl -s https://$mirror/tags/kernel-6.6 > kernel.txt
+    curl -s $mirror/tags/kernel-6.6 > kernel.txt
     kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
     kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
     echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
@@ -131,7 +131,7 @@ git clone $github_mirror/mj22226/openwrt -b linux-6.6 master/mj22226_openwrt --d
 
 if [ -d openwrt ]; then
     cd openwrt
-    curl -Os https://$mirror/openwrt/patch/key.tar.gz && tar zxf key.tar.gz && rm -f key.tar.gz
+    curl -Os $mirror/openwrt/patch/key.tar.gz && tar zxf key.tar.gz && rm -f key.tar.gz
 else
     echo -e "${RED_COLOR}Failed to download source code${RES}"
     exit 1
@@ -177,13 +177,13 @@ fi
 echo -e "\n${GREEN_COLOR}Patching ...${RES}\n"
 
 # scripts
-curl -sO https://$mirror/openwrt/scripts/00-prepare_base.sh
-curl -sO https://$mirror/openwrt/scripts/01-prepare_base-mainline.sh
-curl -sO https://$mirror/openwrt/scripts/02-prepare_package.sh
-curl -sO https://$mirror/openwrt/scripts/03-convert_translation.sh
-curl -sO https://$mirror/openwrt/scripts/04-fix_kmod.sh
-curl -sO https://$mirror/openwrt/scripts/05-fix-source.sh
-curl -sO https://$mirror/openwrt/scripts/99_clean_build_cache.sh
+curl -sO $mirror/openwrt/scripts/00-prepare_base.sh
+curl -sO $mirror/openwrt/scripts/01-prepare_base-mainline.sh
+curl -sO $mirror/openwrt/scripts/02-prepare_package.sh
+curl -sO $mirror/openwrt/scripts/03-convert_translation.sh
+curl -sO $mirror/openwrt/scripts/04-fix_kmod.sh
+curl -sO $mirror/openwrt/scripts/05-fix-source.sh
+curl -sO $mirror/openwrt/scripts/99_clean_build_cache.sh
 chmod 0755 *sh
 bash 00-prepare_base.sh
 bash 02-prepare_package.sh
@@ -198,21 +198,21 @@ rm -rf ../master
 
 # Load devices Config
 if [ "$platform" = "x86_64" ]; then
-    curl -s https://$mirror/openwrt/23-config-musl-x86 > .config
+    curl -s $mirror/openwrt/23-config-musl-x86 > .config
     ALL_KMODS=y
 elif [ "$platform" = "rk3568" ]; then
-    curl -s https://$mirror/openwrt/23-config-musl-r5s > .config
+    curl -s $mirror/openwrt/23-config-musl-r5s > .config
     ALL_KMODS=y
 else
-    curl -s https://$mirror/openwrt/23-config-musl-r4s > .config
+    curl -s $mirror/openwrt/23-config-musl-r4s > .config
 fi
 
 # config-common
 if [ "$MINIMAL_BUILD" = "y" ]; then
-    curl -s https://$mirror/openwrt/23-config-minimal-common >> .config
+    curl -s $mirror/openwrt/23-config-minimal-common >> .config
     echo 'VERSION_TYPE="minimal"' >> package/base-files/files/usr/lib/os-release
 else
-    curl -s https://$mirror/openwrt/23-config-common >> .config
+    curl -s $mirror/openwrt/23-config-common >> .config
 fi
 
 # ota
@@ -220,21 +220,21 @@ fi
 
 # bpf
 export ENABLE_BPF=$ENABLE_BPF
-[ "$ENABLE_BPF" = "y" ] && curl -s https://$mirror/openwrt/generic/config-bpf >> .config
+[ "$ENABLE_BPF" = "y" ] && curl -s $mirror/openwrt/generic/config-bpf >> .config
 
 # LTO
 export ENABLE_LTO=$ENABLE_LTO
-[ "$ENABLE_LTO" = "y" ] && curl -s https://$mirror/openwrt/generic/config-lto >> .config
+[ "$ENABLE_LTO" = "y" ] && curl -s $mirror/openwrt/generic/config-lto >> .config
 
 # glibc
 [ "$USE_GLIBC" = "y" ] && {
-    curl -s https://$mirror/openwrt/generic/config-glibc >> .config
+    curl -s $mirror/openwrt/generic/config-glibc >> .config
     sed -i '/NaiveProxy/d' .config
 }
 
 # openwrt-23.05 gcc11
 if [ ! "$USE_GLIBC" = "y" ]; then
-    curl -s https://$mirror/openwrt/generic/config-gcc11 >> .config
+    curl -s $mirror/openwrt/generic/config-gcc11 >> .config
 fi
 
 # clean directory - github actions

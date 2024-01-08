@@ -12,7 +12,7 @@ fi
 
 # BTF: fix failed to validate module
 # config/Config-kernel.in patch
-curl -s https://$mirror/openwrt/patch/generic/0001-kernel-add-MODULE_ALLOW_BTF_MISMATCH-option.patch | patch -p1
+curl -s $mirror/openwrt/patch/generic/0001-kernel-add-MODULE_ALLOW_BTF_MISMATCH-option.patch | patch -p1
 
 # Fix x86 - CONFIG_ALL_KMODS
 if [ "$platform" = "x86_64" ]; then
@@ -53,9 +53,9 @@ fi
 
 # Optimization level -Ofast
 if [ "$platform" = "x86_64" ]; then
-    curl -s https://$mirror/openwrt/patch/target-modify_for_x86_64.patch | patch -p1
+    curl -s $mirror/openwrt/patch/target-modify_for_x86_64.patch | patch -p1
 else
-    curl -s https://$mirror/openwrt/patch/target-modify_for_rockchip.patch | patch -p1
+    curl -s $mirror/openwrt/patch/target-modify_for_rockchip.patch | patch -p1
 fi
 
 # IF USE GLIBC
@@ -66,7 +66,7 @@ if [ "$USE_GLIBC" = "y" ]; then
     rm -rf package/system/fstools
     cp -a ../master/openwrt/package/system/fstools package/system/fstools
     # glibc-common
-    curl -s https://$mirror/openwrt/patch/glibc/glibc-common.patch | patch -p1
+    curl -s $mirror/openwrt/patch/glibc/glibc-common.patch | patch -p1
     # glibc-common - locale data
     mkdir -p package/libs/toolchain/glibc-locale
     curl -Lso package/libs/toolchain/glibc-locale/locale-archive https://github.com/sbwml/r4s_build_script/releases/download/locale/locale-archive
@@ -82,28 +82,28 @@ fi
 if [ ! "$platform" = "x86_64" ]; then
     rm -rf package/libs/mbedtls
     cp -a ../master/openwrt/package/libs/mbedtls package/libs/mbedtls
-    curl -s https://$mirror/openwrt/patch/mbedtls-23.05/200-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch > package/libs/mbedtls/patches/200-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
-    curl -s https://$mirror/openwrt/patch/mbedtls-23.05/mbedtls.patch | patch -p1
+    curl -s $mirror/openwrt/patch/mbedtls-23.05/200-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch > package/libs/mbedtls/patches/200-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
+    curl -s $mirror/openwrt/patch/mbedtls-23.05/mbedtls.patch | patch -p1
 fi
 
 # NTFS3
 mkdir -p package/system/fstools/patches
-curl -s https://$mirror/openwrt/patch/fstools/ntfs3.patch > package/system/fstools/patches/ntfs3.patch
-curl -s https://$mirror/openwrt/patch/util-linux/util-linux_ntfs3.patch > package/utils/util-linux/patches/util-linux_ntfs3.patch
+curl -s $mirror/openwrt/patch/fstools/ntfs3.patch > package/system/fstools/patches/ntfs3.patch
+curl -s $mirror/openwrt/patch/util-linux/util-linux_ntfs3.patch > package/utils/util-linux/patches/util-linux_ntfs3.patch
 
 # fstools - enable any device with non-MTD rootfs_data volume
-curl -s https://$mirror/openwrt/patch/fstools/block-mount-add-fstools-depends.patch | patch -p1
+curl -s $mirror/openwrt/patch/fstools/block-mount-add-fstools-depends.patch | patch -p1
 if [ "$USE_GLIBC" = "y" ]; then
-    curl -s https://$mirror/openwrt/patch/fstools/fstools-set-ntfs3-utf8-new.patch > package/system/fstools/patches/ntfs3-utf8.patch
-    curl -s https://$mirror/openwrt/patch/fstools/glibc/0001-libblkid-tiny-add-support-for-XFS-superblock.patch > package/system/fstools/patches/0001-libblkid-tiny-add-support-for-XFS-superblock.patch
-    curl -s https://$mirror/openwrt/patch/fstools/glibc/0003-block-add-xfsck-support.patch > package/system/fstools/patches/0003-block-add-xfsck-support.patch
+    curl -s $mirror/openwrt/patch/fstools/fstools-set-ntfs3-utf8-new.patch > package/system/fstools/patches/ntfs3-utf8.patch
+    curl -s $mirror/openwrt/patch/fstools/glibc/0001-libblkid-tiny-add-support-for-XFS-superblock.patch > package/system/fstools/patches/0001-libblkid-tiny-add-support-for-XFS-superblock.patch
+    curl -s $mirror/openwrt/patch/fstools/glibc/0003-block-add-xfsck-support.patch > package/system/fstools/patches/0003-block-add-xfsck-support.patch
 else
-    curl -s https://$mirror/openwrt/patch/fstools/fstools-set-ntfs3-utf8-new.patch > package/system/fstools/patches/ntfs3-utf8.patch
+    curl -s $mirror/openwrt/patch/fstools/fstools-set-ntfs3-utf8-new.patch > package/system/fstools/patches/ntfs3-utf8.patch
 fi
 if [ "$USE_GLIBC" = "y" ]; then
-    curl -s https://$mirror/openwrt/patch/fstools/22-fstools-support-extroot-for-non-MTD-rootfs_data-new-version.patch > package/system/fstools/patches/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch
+    curl -s $mirror/openwrt/patch/fstools/22-fstools-support-extroot-for-non-MTD-rootfs_data-new-version.patch > package/system/fstools/patches/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch
 else
-    curl -s https://$mirror/openwrt/patch/fstools/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch > package/system/fstools/patches/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch
+    curl -s $mirror/openwrt/patch/fstools/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch > package/system/fstools/patches/22-fstools-support-extroot-for-non-MTD-rootfs_data.patch
 fi
 
 # Shortcut Forwarding Engine
@@ -115,25 +115,25 @@ if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     rm -rf package/network/config/firewall4
     cp -a ../master/openwrt/package/network/config/firewall4 package/network/config/firewall4
     mkdir -p package/network/config/firewall4/patches
-    curl -s https://$mirror/openwrt/patch/firewall4/999-01-firewall4-add-fullcone-support.patch > package/network/config/firewall4/patches/999-01-firewall4-add-fullcone-support.patch
+    curl -s $mirror/openwrt/patch/firewall4/999-01-firewall4-add-fullcone-support.patch > package/network/config/firewall4/patches/999-01-firewall4-add-fullcone-support.patch
     # kernel version
-    curl -s https://$mirror/openwrt/patch/firewall4/002-fix-fw4.uc-adept-kernel-version-type-of-x.x.patch > package/network/config/firewall4/patches/002-fix-fw4.uc-adept-kernel-version-type-of-x.x.patch
+    curl -s $mirror/openwrt/patch/firewall4/002-fix-fw4.uc-adept-kernel-version-type-of-x.x.patch > package/network/config/firewall4/patches/002-fix-fw4.uc-adept-kernel-version-type-of-x.x.patch
     # fix flow offload
-    curl -s https://$mirror/openwrt/patch/firewall4/001-fix-fw4-flow-offload.patch > package/network/config/firewall4/patches/001-fix-fw4-flow-offload.patch
+    curl -s $mirror/openwrt/patch/firewall4/001-fix-fw4-flow-offload.patch > package/network/config/firewall4/patches/001-fix-fw4-flow-offload.patch
     # libnftnl
     rm -rf package/libs/libnftnl
     cp -a ../master/openwrt/package/libs/libnftnl package/libs/libnftnl
     mkdir -p package/libs/libnftnl/patches
-    curl -s https://$mirror/openwrt/patch/firewall4/libnftnl/001-libnftnl-add-fullcone-expression-support.patch > package/libs/libnftnl/patches/001-libnftnl-add-fullcone-expression-support.patch
+    curl -s $mirror/openwrt/patch/firewall4/libnftnl/001-libnftnl-add-fullcone-expression-support.patch > package/libs/libnftnl/patches/001-libnftnl-add-fullcone-expression-support.patch
     sed -i '/PKG_INSTALL:=1/iPKG_FIXUP:=autoreconf' package/libs/libnftnl/Makefile
     # nftables
     rm -rf package/network/utils/nftables
     cp -a ../master/openwrt/package/network/utils/nftables package/network/utils/nftables
     mkdir -p package/network/utils/nftables/patches
-    curl -s https://$mirror/openwrt/patch/firewall4/nftables/002-nftables-add-fullcone-expression-support.patch > package/network/utils/nftables/patches/002-nftables-add-fullcone-expression-support.patch
+    curl -s $mirror/openwrt/patch/firewall4/nftables/002-nftables-add-fullcone-expression-support.patch > package/network/utils/nftables/patches/002-nftables-add-fullcone-expression-support.patch
     # hide nftables warning message
     pushd feeds/luci
-        curl -s https://$mirror/openwrt/patch/luci/luci-nftables.patch | patch -p1
+        curl -s $mirror/openwrt/patch/luci/luci-nftables.patch | patch -p1
     popd
 fi
 
@@ -145,57 +145,57 @@ git clone https://nanopi:nanopi@$gitea/sbwml/nat6 package/new/nat6
 
 # Patch Luci add fullcone & shortcut-fe & ipv6-nat option
 pushd feeds/luci
-    curl -s https://$mirror/openwrt/patch/firewall4/01-luci-app-firewall_add_fullcone.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/firewall4/02-luci-app-firewall_add_shortcut-fe.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/firewall4/03-luci-app-firewall_add_ipv6-nat.patch | patch -p1
+    curl -s $mirror/openwrt/patch/firewall4/01-luci-app-firewall_add_fullcone.patch | patch -p1
+    curl -s $mirror/openwrt/patch/firewall4/02-luci-app-firewall_add_shortcut-fe.patch | patch -p1
+    curl -s $mirror/openwrt/patch/firewall4/03-luci-app-firewall_add_ipv6-nat.patch | patch -p1
 popd
 
 # openssl - quictls
 pushd package/libs/openssl/patches
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0001-QUIC-Add-support-for-BoringSSL-QUIC-APIs.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0002-QUIC-New-method-to-get-QUIC-secret-length.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0003-QUIC-Make-temp-secret-names-less-confusing.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0004-QUIC-Move-QUIC-transport-params-to-encrypted-extensi.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0005-QUIC-Use-proper-secrets-for-handshake.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0006-QUIC-Handle-partial-handshake-messages.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0007-QUIC-Fix-quic_transport-constructors-parsers.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0008-QUIC-Reset-init-state-in-SSL_process_quic_post_hands.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0009-QUIC-Don-t-process-an-incomplete-message.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0010-QUIC-Quick-fix-s2c-to-c2s-for-early-secret.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0011-QUIC-Add-client-early-traffic-secret-storage.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0012-QUIC-Add-OPENSSL_NO_QUIC-wrapper.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0013-QUIC-Correctly-disable-middlebox-compat.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0014-QUIC-Move-QUIC-code-out-of-tls13_change_cipher_state.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0015-QUIC-Tweeks-to-quic_change_cipher_state.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0016-QUIC-Add-support-for-more-secrets.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0017-QUIC-Fix-resumption-secret.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0018-QUIC-Handle-EndOfEarlyData-and-MaxEarlyData.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0019-QUIC-Fall-through-for-0RTT.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0020-QUIC-Some-cleanup-for-the-main-QUIC-changes.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0021-QUIC-Prevent-KeyUpdate-for-QUIC.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0022-QUIC-Test-KeyUpdate-rejection.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0023-QUIC-Buffer-all-provided-quic-data.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0024-QUIC-Enforce-consistent-encryption-level-for-handsha.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0025-QUIC-add-v1-quic_transport_parameters.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0026-QUIC-return-success-when-no-post-handshake-data.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0027-QUIC-__owur-makes-no-sense-for-void-return-values.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0028-QUIC-remove-SSL_R_BAD_DATA_LENGTH-unused.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0029-QUIC-SSLerr-ERR_raise-ERR_LIB_SSL.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0030-QUIC-Add-compile-run-time-checking-for-QUIC.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0031-QUIC-Add-early-data-support.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0032-QUIC-Make-SSL_provide_quic_data-accept-0-length-data.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0033-QUIC-Process-multiple-post-handshake-messages-in-a-s.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0034-QUIC-Fix-CI.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0035-QUIC-Break-up-header-body-processing.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0036-QUIC-Don-t-muck-with-FIPS-checksums.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0037-QUIC-Update-RFC-references.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0038-QUIC-revert-white-space-change.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0039-QUIC-use-SSL_IS_QUIC-in-more-places.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0040-QUIC-Error-when-non-empty-session_id-in-CH.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0041-QUIC-Update-SSL_clear-to-clear-quic-data.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0042-QUIC-Better-SSL_clear.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0043-QUIC-Fix-extension-test.patch
-    curl -sO https://$mirror/openwrt/patch/openssl/quic/0044-QUIC-Update-metadata-version.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0001-QUIC-Add-support-for-BoringSSL-QUIC-APIs.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0002-QUIC-New-method-to-get-QUIC-secret-length.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0003-QUIC-Make-temp-secret-names-less-confusing.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0004-QUIC-Move-QUIC-transport-params-to-encrypted-extensi.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0005-QUIC-Use-proper-secrets-for-handshake.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0006-QUIC-Handle-partial-handshake-messages.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0007-QUIC-Fix-quic_transport-constructors-parsers.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0008-QUIC-Reset-init-state-in-SSL_process_quic_post_hands.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0009-QUIC-Don-t-process-an-incomplete-message.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0010-QUIC-Quick-fix-s2c-to-c2s-for-early-secret.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0011-QUIC-Add-client-early-traffic-secret-storage.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0012-QUIC-Add-OPENSSL_NO_QUIC-wrapper.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0013-QUIC-Correctly-disable-middlebox-compat.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0014-QUIC-Move-QUIC-code-out-of-tls13_change_cipher_state.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0015-QUIC-Tweeks-to-quic_change_cipher_state.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0016-QUIC-Add-support-for-more-secrets.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0017-QUIC-Fix-resumption-secret.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0018-QUIC-Handle-EndOfEarlyData-and-MaxEarlyData.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0019-QUIC-Fall-through-for-0RTT.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0020-QUIC-Some-cleanup-for-the-main-QUIC-changes.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0021-QUIC-Prevent-KeyUpdate-for-QUIC.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0022-QUIC-Test-KeyUpdate-rejection.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0023-QUIC-Buffer-all-provided-quic-data.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0024-QUIC-Enforce-consistent-encryption-level-for-handsha.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0025-QUIC-add-v1-quic_transport_parameters.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0026-QUIC-return-success-when-no-post-handshake-data.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0027-QUIC-__owur-makes-no-sense-for-void-return-values.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0028-QUIC-remove-SSL_R_BAD_DATA_LENGTH-unused.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0029-QUIC-SSLerr-ERR_raise-ERR_LIB_SSL.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0030-QUIC-Add-compile-run-time-checking-for-QUIC.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0031-QUIC-Add-early-data-support.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0032-QUIC-Make-SSL_provide_quic_data-accept-0-length-data.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0033-QUIC-Process-multiple-post-handshake-messages-in-a-s.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0034-QUIC-Fix-CI.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0035-QUIC-Break-up-header-body-processing.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0036-QUIC-Don-t-muck-with-FIPS-checksums.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0037-QUIC-Update-RFC-references.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0038-QUIC-revert-white-space-change.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0039-QUIC-use-SSL_IS_QUIC-in-more-places.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0040-QUIC-Error-when-non-empty-session_id-in-CH.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0041-QUIC-Update-SSL_clear-to-clear-quic-data.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0042-QUIC-Better-SSL_clear.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0043-QUIC-Fix-extension-test.patch
+    curl -sO $mirror/openwrt/patch/openssl/quic/0044-QUIC-Update-metadata-version.patch
 popd
 
 # openssl hwrng
@@ -227,7 +227,7 @@ cp -a ../master/packages/net/curl feeds/packages/net/curl
 
 # wget - SmartDrive user-agent
 mkdir -p feeds/packages/net/wget/patches
-curl -s https://$mirror/openwrt/patch/user-agent/999-wget-default-useragent.patch > feeds/packages/net/wget/patches/999-wget-default-useragent.patch
+curl -s $mirror/openwrt/patch/user-agent/999-wget-default-useragent.patch > feeds/packages/net/wget/patches/999-wget-default-useragent.patch
 
 # Docker
 rm -rf feeds/luci/applications/luci-app-dockerman
@@ -241,20 +241,20 @@ if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
 fi
 sed -i '/sysctl.d/d' feeds/packages/utils/dockerd/Makefile
 pushd feeds/packages
-    curl -s https://$mirror/openwrt/patch/docker/dockerd-fix-bridge-network.patch | patch -p1
+    curl -s $mirror/openwrt/patch/docker/dockerd-fix-bridge-network.patch | patch -p1
 popd
 
 # cgroupfs-mount
 # fix unmount hierarchical mount
 pushd feeds/packages
-    curl -s https://$mirror/openwrt/patch/cgroupfs-mount/0001-fix-cgroupfs-mount.patch | patch -p1
+    curl -s $mirror/openwrt/patch/cgroupfs-mount/0001-fix-cgroupfs-mount.patch | patch -p1
 popd
 # mount cgroup v2 hierarchy to /sys/fs/cgroup/cgroup2
 mkdir -p feeds/packages/utils/cgroupfs-mount/patches
-curl -s https://$mirror/openwrt/patch/cgroupfs-mount/900-mount-cgroup-v2-hierarchy-to-sys-fs-cgroup-cgroup2.patch > feeds/packages/utils/cgroupfs-mount/patches/900-mount-cgroup-v2-hierarchy-to-sys-fs-cgroup-cgroup2.patch
-curl -s https://$mirror/openwrt/patch/cgroupfs-mount/901-fix-cgroupfs-umount.patch > feeds/packages/utils/cgroupfs-mount/patches/901-fix-cgroupfs-umount.patch
+curl -s $mirror/openwrt/patch/cgroupfs-mount/900-mount-cgroup-v2-hierarchy-to-sys-fs-cgroup-cgroup2.patch > feeds/packages/utils/cgroupfs-mount/patches/900-mount-cgroup-v2-hierarchy-to-sys-fs-cgroup-cgroup2.patch
+curl -s $mirror/openwrt/patch/cgroupfs-mount/901-fix-cgroupfs-umount.patch > feeds/packages/utils/cgroupfs-mount/patches/901-fix-cgroupfs-umount.patch
 # docker systemd support
-curl -s https://$mirror/openwrt/patch/cgroupfs-mount/902-mount-sys-fs-cgroup-systemd-for-docker-systemd-suppo.patch > feeds/packages/utils/cgroupfs-mount/patches/902-mount-sys-fs-cgroup-systemd-for-docker-systemd-suppo.patch
+curl -s $mirror/openwrt/patch/cgroupfs-mount/902-mount-sys-fs-cgroup-systemd-for-docker-systemd-suppo.patch > feeds/packages/utils/cgroupfs-mount/patches/902-mount-sys-fs-cgroup-systemd-for-docker-systemd-suppo.patch
 
 # procps-ng - top
 sed -i 's/enable-skill/enable-skill --disable-modern-top/g' feeds/packages/utils/procps-ng/Makefile
@@ -271,10 +271,10 @@ git clone https://$gitea/sbwml/miniupnpd feeds/packages/net/miniupnpd
 rm -rf feeds/luci/applications/luci-app-upnp
 git clone https://$gitea/sbwml/luci-app-upnp feeds/luci/applications/luci-app-upnp
 pushd feeds/packages
-    curl -s https://$mirror/openwrt/patch/miniupnpd/01-set-presentation_url.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/miniupnpd/02-force_forwarding.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/miniupnpd/03-Update-301-options-force_forwarding-support.patch.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/miniupnpd/04-enable-force_forwarding-by-default.patch | patch -p1
+    curl -s $mirror/openwrt/patch/miniupnpd/01-set-presentation_url.patch | patch -p1
+    curl -s $mirror/openwrt/patch/miniupnpd/02-force_forwarding.patch | patch -p1
+    curl -s $mirror/openwrt/patch/miniupnpd/03-Update-301-options-force_forwarding-support.patch.patch | patch -p1
+    curl -s $mirror/openwrt/patch/miniupnpd/04-enable-force_forwarding-by-default.patch | patch -p1
 popd
 
 # UPnP - Move to network
@@ -290,8 +290,8 @@ sed -i 's/ubus_parallel_req 2/ubus_parallel_req 6/g' feeds/packages/net/nginx/fi
 sed -i '/ubus_parallel_req/a\        ubus_script_timeout 600;' feeds/packages/net/nginx/files-luci-support/60_nginx-luci-support
 
 # nginx - uwsgi timeout & enable brotli
-curl -s https://$mirror/openwrt/nginx/luci.locations > feeds/packages/net/nginx/files-luci-support/luci.locations
-curl -s https://$mirror/openwrt/nginx/uci.conf.template > feeds/packages/net/nginx-util/files/uci.conf.template
+curl -s $mirror/openwrt/nginx/luci.locations > feeds/packages/net/nginx/files-luci-support/luci.locations
+curl -s $mirror/openwrt/nginx/uci.conf.template > feeds/packages/net/nginx-util/files/uci.conf.template
 
 # uwsgi - bump version
 if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
@@ -316,8 +316,8 @@ sed -i 's#20) \* 1000#60) \* 1000#g' feeds/luci/modules/luci-base/htdocs/luci-st
 
 # luci - 20_memory & refresh interval
 pushd feeds/luci
-    curl -s https://$mirror/openwrt/patch/luci/20_memory.js.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/luci/luci-refresh-interval.patch | patch -p1
+    curl -s $mirror/openwrt/patch/luci/20_memory.js.patch | patch -p1
+    curl -s $mirror/openwrt/patch/luci/luci-refresh-interval.patch | patch -p1
 popd
 
 # Luci diagnostics.js
@@ -347,12 +347,12 @@ sed -ri 's/(export PATH=")[^"]*/\1%PATH%:\/opt\/bin:\/opt\/sbin:\/opt\/usr\/bin:
 sed -i 's#ash#bash#g' package/base-files/files/etc/passwd
 sed -i '\#export ENV=/etc/shinit#a export HISTCONTROL=ignoredups' package/base-files/files/etc/profile
 mkdir -p files/root
-curl -so files/root/.bash_profile https://$mirror/openwrt/files/root/.bash_profile
-curl -so files/root/.bashrc https://$mirror/openwrt/files/root/.bashrc
+curl -so files/root/.bash_profile $mirror/openwrt/files/root/.bash_profile
+curl -so files/root/.bashrc $mirror/openwrt/files/root/.bashrc
 
 # rootfs files
 mkdir -p files/etc/sysctl.d
-curl -so files/etc/sysctl.d/15-vm-swappiness.conf https://$mirror/openwrt/files/etc/sysctl.d/15-vm-swappiness.conf
+curl -so files/etc/sysctl.d/15-vm-swappiness.conf $mirror/openwrt/files/etc/sysctl.d/15-vm-swappiness.conf
 
 # NTP
 sed -i 's/0.openwrt.pool.ntp.org/ntp1.aliyun.com/g' package/base-files/files/bin/config_generate
