@@ -176,6 +176,18 @@ endef
 $(eval $(call KernelPackage,mdio-gpio))
 
 
+define KernelPackage/mtk_t7xx
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  TITLE:=MediaTek PCIe 5G WWAN modem T7xx device support
+  DEPENDS:=@PCI_SUPPORT +kmod-wwan
+  KCONFIG:=CONFIG_MTK_T7XX
+  FILES:=$(LINUX_DIR)/drivers/net/wwan/t7xx/mtk_t7xx.ko
+  AUTOLOAD:=$(call AutoProbe,mtk_t7xx)
+endef
+
+$(eval $(call KernelPackage,mtk_t7xx))
+
+
 define KernelPackage/et131x
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Agere ET131x Gigabit Ethernet driver
