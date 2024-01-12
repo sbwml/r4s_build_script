@@ -141,7 +141,7 @@ fi
 git clone https://$gitea/sbwml/nft-fullcone package/new/nft-fullcone
 
 # IPv6 NAT
-git clone https://nanopi:nanopi@$gitea/sbwml/nat6 package/new/nat6
+git clone https://github.com/sbwml/packages_new_nat6 package/new/nat6
 
 # Patch Luci add fullcone & shortcut-fe & ipv6-nat option
 pushd feeds/luci
@@ -279,6 +279,12 @@ popd
 
 # UPnP - Move to network
 sed -i 's/services/network/g' feeds/luci/applications/luci-app-upnp/root/usr/share/luci/menu.d/luci-app-upnp.json
+
+# nginx-util - fix gcc13
+pushd feeds/packages
+    curl -s https://$mirror/openwrt/nginx/nginx-util/0001-nginx-util-fix-compilation-with-GCC13.patch | patch -p1
+    curl -s https://$mirror/openwrt/nginx/nginx-util/0002-nginx-util-move-to-pcre2.patch | patch -p1
+popd
 
 # nginx - latest version
 rm -rf feeds/packages/net/nginx

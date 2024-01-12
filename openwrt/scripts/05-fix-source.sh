@@ -6,9 +6,15 @@ sed -i "/CONFIGURE_ARGS/i\TARGET_CFLAGS += -ffat-lto-objects\n" feeds/packages/l
 # grub2 -  disable `gc-sections` flag
 sed -i '/PKG_BUILD_FLAGS/ s/$/ no-gc-sections/' package/boot/grub2/Makefile
 
-# uqmi - fix gcc11
-if [ "$USE_GLIBC" != "y" ]; then
-    sed -i '/dangling-pointer/d' package/network/utils/uqmi/Makefile
+# fix gcc13
+if [ "$USE_GCC13" = "y" ]; then
+    # libwebsockets
+    mkdir feeds/packages/libs/libwebsockets/patches
+    pushd feeds/packages/libs/libwebsockets/patches
+        curl -sLO https://raw.githubusercontent.com/openwrt/packages/bcd970fb4ff6029fbf612dccf6d8c2902a65e20e/libs/libwebsockets/patches/010-fix-enum-int-mismatch-openssl.patch
+        curl -sLO https://raw.githubusercontent.com/openwrt/packages/bcd970fb4ff6029fbf612dccf6d8c2902a65e20e/libs/libwebsockets/patches/011-fix-enum-int-mismatch-mbedtls.patch
+        curl -sLO https://raw.githubusercontent.com/openwrt/packages/94bd1ca8bad053a772a3ea8cb06ce59241fb9a57/libs/libwebsockets/patches/100-fix-uninitialized-variable-usage.patch
+    popd
 fi
 
 # xdp-tools
