@@ -15,8 +15,6 @@ if [ "$USE_GCC13" = "y" ]; then
         curl -sLO https://raw.githubusercontent.com/openwrt/packages/bcd970fb4ff6029fbf612dccf6d8c2902a65e20e/libs/libwebsockets/patches/011-fix-enum-int-mismatch-mbedtls.patch
         curl -sLO https://raw.githubusercontent.com/openwrt/packages/94bd1ca8bad053a772a3ea8cb06ce59241fb9a57/libs/libwebsockets/patches/100-fix-uninitialized-variable-usage.patch
     popd
-    # uqmi
-    [ "$platform" = "x86_64" ] && sed -i '/dangling-pointer/d' package/network/utils/uqmi/Makefile
 fi
 
 # xdp-tools
