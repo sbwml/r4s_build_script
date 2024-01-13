@@ -162,6 +162,8 @@ curl -s https://$mirror/openwrt/patch/mac80211/904-wifi-rtw88-usb-kill-and-free-
 curl -s https://$mirror/openwrt/patch/mac80211/905-wifi-rtw88-add-missing-call-to-cancel_work_sync.patch > package/kernel/mac80211/patches/rtl/905-wifi-rtw88-add-missing-call-to-cancel_work_sync.patch
 
 # kernel patch
+# btf: silence btf module warning messages
+curl -s https://$mirror/openwrt/patch/kernel-6.6/btf/990-btf-silence-btf-module-warning-messages.patch > target/linux/generic/hack-6.6/990-btf-silence-btf-module-warning-messages.patch
 # cpu model
 curl -s https://$mirror/openwrt/patch/kernel-6.6/arm64/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch > target/linux/generic/pending-6.6/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch
 # fullcone
