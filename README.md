@@ -4,7 +4,7 @@
 
 ---------------
 
-## Based on Linux 6.6 LTS Firmware:
+## 基于 Linux 6.6 LTS 固件下载:
 
 NanoPi R4S: https://r4s.cooluc.com
 
@@ -12,7 +12,7 @@ NanoPi R5S/R5C: https://r5s.cooluc.com
 
 X86_64: https://x86.cooluc.com
 
-repo: https://github.com/sbwml/builder
+构建来源: https://github.com/sbwml/builder
 
 ---------------
 
@@ -46,7 +46,7 @@ sudo apt-get install -y clang-15
 
 ---------------
 
-### 启用 glibc （测试）
+### 启用 [glibc](https://www.gnu.org/software/libc/) （测试）
 ##### 脚本支持使用 glibc 库进行构建，当启用 glibc 进行构建时，构建的固件将会同时兼容 musl/glibc 的预构建二进制程序
 ##### 只需在构建固件前执行以下命令即可启用 glibc 构建
 
@@ -54,22 +54,36 @@ sudo apt-get install -y clang-15
 export USE_GLIBC=y
 ```
 
-### 启用 BPF 支持
-##### 只需在构建固件前执行以下命令即可启用 BPF 支持
+### 启用 [GCC13](https://gcc.gnu.org/gcc-13/) 工具链编译
+##### 只需在构建固件前执行以下命令即可启用 GCC13 工具链
+
+```
+export USE_GCC13=y
+```
+
+### 启用 [eBPF](https://docs.kernel.org/bpf/) 支持
+##### 只需在构建固件前执行以下命令即可启用 eBPF 支持
 
 ```
 export ENABLE_BPF=y
 ```
 
-### 启用 LTO 优化
+### 启用 [LTO](https://gcc.gnu.org/onlinedocs/gccint/LTO-Overview.html) 优化
 ##### 只需在构建固件前执行以下命令即可启用编译器 LTO 优化
 
 ```
 export ENABLE_LTO=y
 ```
 
+### 启用 [LRNG](https://github.com/smuellerDD/lrng)
+##### 只需在构建固件前执行以下命令即可启用 LRNG 内核随机数支持
+
+```
+export ENABLE_LRNG=y
+```
+
 ### 快速构建（仅限 Github Actions）
-##### 脚本会使用 toolchain 缓存代替源码构建，与常规构建相比能节省大约 60 分钟的编译耗时，仅适用于 Github Actions `ubuntu-22.04` 环境
+##### 脚本会使用 [toolchain](https://github.com/sbwml/toolchain-cache) 缓存代替源码构建，与常规构建相比能节省大约 60 分钟的编译耗时，仅适用于 Github Actions `ubuntu-22.04` 环境
 ##### 只需在构建固件前执行以下命令即可启用快速构建
 
 ```
