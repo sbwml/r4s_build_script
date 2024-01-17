@@ -78,6 +78,20 @@ if [ "$USE_GLIBC" = "y" ]; then
     sed -i "/disable-profile/d" toolchain/glibc/common.mk
 fi
 
+# mold
+if [ "$USE_MOLD" = "y" ]; then
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0001-build-add-support-to-use-the-mold-linker-for-package.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0002-treewide-opt-out-of-tree-wide-mold-usage.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0003-toolchain-add-mold-as-additional-linker.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0004-tools-add-mold-a-modern-linker.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0005-build-replace-SSTRIP_ARGS-with-SSTRIP_DISCARD_TRAILI.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0006-config-add-a-knob-to-use-the-mold-linker-for-package.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0007-rules-prepare-to-use-different-linkers.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0008-tools-mold-update-to-2.4.0.patch | patch -p1
+    # no-mold
+    sed -i '/PKG_BUILD_PARALLEL/aPKG_BUILD_FLAGS:=no-mold' feeds/packages/utils/attr/Makefile
+fi
+
 # Mbedtls AES & GCM Crypto Extensions
 if [ ! "$platform" = "x86_64" ]; then
     rm -rf package/libs/mbedtls

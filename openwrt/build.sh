@@ -84,10 +84,13 @@ export platform=$2
 [ "$platform" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
 
 # gcc 13
-export USE_GCC13=$USE_GCC13
+USE_GCC13=y
 
 # use glibc
 export USE_GLIBC=$USE_GLIBC
+
+# use mold
+USE_MOLD=y
 
 # lrng
 export ENABLE_LRNG=$ENABLE_LRNG
@@ -122,6 +125,7 @@ fi
 echo -e "${GREEN_COLOR}Date: $CURRENT_DATE${RES}\r\n"
 
 [ "$USE_GCC13" = "y" ] && echo -e "${GREEN_COLOR}GCC VERSION: 13${RES}" || echo -e "${GREEN_COLOR}GCC VERSION: 11${RES}"
+[ "$USE_MOLD" = "y" ] && echo -e "${GREEN_COLOR}USE_MOLD: true${RES}" || echo -e "${GREEN_COLOR}USE_MOLD: false${RES}"
 [ "$ENABLE_OTA" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_OTA: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_OTA: false${RES}"
 [ "$ENABLE_BPF" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_BPF: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_BPF: false${RES}"
 [ "$ENABLE_LTO" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_LTO: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_LTO: false${RES}"
@@ -248,6 +252,9 @@ export ENABLE_LTO=$ENABLE_LTO
     curl -s https://$mirror/openwrt/generic/config-glibc >> .config
     sed -i '/NaiveProxy/d' .config
 }
+
+# mold
+[ "$USE_MOLD" = "y" ] && echo 'CONFIG_USE_MOLD=y' >> .config
 
 # openwrt-23.05 gcc11/13
 if [ "$USE_GCC13" = "y" ]; then

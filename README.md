@@ -54,13 +54,6 @@ sudo apt-get install -y clang-15
 export USE_GLIBC=y
 ```
 
-### 启用 [GCC13](https://gcc.gnu.org/gcc-13/) 工具链编译
-##### 只需在构建固件前执行以下命令即可启用 GCC13 工具链
-
-```
-export USE_GCC13=y
-```
-
 ### 启用 [eBPF](https://docs.kernel.org/bpf/) 支持
 ##### 只需在构建固件前执行以下命令即可启用 eBPF 支持
 
