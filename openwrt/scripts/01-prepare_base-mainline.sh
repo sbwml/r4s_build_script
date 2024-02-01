@@ -5,11 +5,11 @@
 # Rockchip - target - r4s/r5s only
 rm -rf target/linux/rockchip
 git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip-6.x target/linux/rockchip -b linux-6.6
-[ "$platform" = "rk3568" ] && sed -i 's/CONFIG_PREEMPT=y/CONFIG_PREEMPT_DYNAMIC=y/g' target/linux/rockchip/armv8/config-6.6
+[ "$platform" = "rk3568" ] && sed -i 's/CONFIG_PREEMPT=y/CONFIG_PREEMPT_RT=y/g' target/linux/rockchip/armv8/config-6.6
 
 # x86_64 - target
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/64/config-6.6 > target/linux/x86/64/config-6.6
-[ "$platform" = "x86_64" ] && echo "CONFIG_PREEMPT_DYNAMIC=y" >> target/linux/x86/64/config-6.6
+[ "$platform" = "x86_64" ] && echo "CONFIG_PREEMPT_RT=y" >> target/linux/x86/64/config-6.6
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/config-6.6 > target/linux/x86/config-6.6
 mkdir -p target/linux/x86/patches-6.6
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/patches-6.6/100-fix_cs5535_clockevt.patch > target/linux/x86/patches-6.6/100-fix_cs5535_clockevt.patch
@@ -27,6 +27,11 @@ git clone https://github.com/sbwml/target_linux_generic -b linux-6.6
 rm -rf target/linux/generic/*-6.6 target/linux/generic/files
 mv target_linux_generic/target/linux/generic/* target/linux/generic/
 rm -rf target_linux_generic
+
+# kernel patches - linux-6.6-rt21
+if [ "$platform" = "rk3568" ] || [ "$platform" = "x86_64" ]; then
+    curl -s https://$mirror/tags/rt/patch-6.6.14-rt21.patch > target/linux/generic/backport-6.6/000-kernel-patch-6.6.14-rt21.patch
+fi
 
 # kernel modules
 rm -rf package/kernel/linux
