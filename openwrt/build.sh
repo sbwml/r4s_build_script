@@ -83,14 +83,15 @@ export platform=$2
 [ "$platform" = "nanopi-r5s" ] && export platform="rk3568" toolchain_arch="nanopi-r5s"
 [ "$platform" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
 
-# gcc 13
-USE_GCC13=y
+# gcc13
+if [ "$USE_GCC13" = y ]; then
+    export USE_GCC13=y
+    # use mold
+    [ "$USE_MOLD" = y ] && USE_MOLD=y
+fi
 
 # use glibc
 export USE_GLIBC=$USE_GLIBC
-
-# use mold
-USE_MOLD=y
 
 # lrng
 export ENABLE_LRNG=$ENABLE_LRNG
