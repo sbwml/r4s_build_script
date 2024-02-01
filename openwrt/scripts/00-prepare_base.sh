@@ -24,6 +24,9 @@ mv openwrt-dpdk/packages/* package/new/
 rm -rf openwrt-dpdk
 # numactl - no-mold
 sed -i '/PKG_BUILD_PARALLEL/aPKG_BUILD_FLAGS:=no-lto no-mold' package/new/numactl/Makefile
+# irqbalance: disable build with numa
+curl -s https://$mirror/openwrt/patch/irqbalance/011-meson-numa.patch > feeds/packages/utils/irqbalance/patches/011-meson-numa.patch
+sed -i '/-Dcapng=disabled/i\\t-Dnuma=disabled \\' feeds/packages/utils/irqbalance/Makefile
 
 # Fix x86 - CONFIG_ALL_KMODS
 if [ "$platform" = "x86_64" ]; then
