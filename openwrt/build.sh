@@ -275,10 +275,17 @@ if [ "$BUILD_FAST" = "y" ]; then
     [ "$USE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
     [ "$isCN" = "CN" ] && github_proxy="http://gh.cooluc.com/" || github_proxy=""
     echo -e "\n${GREEN_COLOR}Download Toolchain ...${RES}"
-    if [ "$USE_GCC13" = "y" ]; then
-        curl -L "$github_proxy"https://github.com/sbwml/toolchain-cache/releases/latest/download/toolchain_"$LIBC"_"$toolchain_arch"_13.tar.gz -o toolchain.tar.gz $CURL_BAR
+    PLATFORM_ID=""
+    [ -f /etc/os-release ] && source /etc/os-release
+    if [ "$PLATFORM_ID" = "platform:el9" ]; then
+        TOOLCHAIN_URL="http://127.0.0.1:8080"
     else
-        curl -L "$github_proxy"https://github.com/sbwml/toolchain-cache/releases/latest/download/toolchain_"$LIBC"_"$toolchain_arch".tar.gz -o toolchain.tar.gz $CURL_BAR
+        TOOLCHAIN_URL="$github_proxy"https://github.com/sbwml/toolchain-cache/releases/latest/download
+    fi
+    if [ "$USE_GCC13" = "y" ]; then
+        curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_13.tar.gz -o toolchain.tar.gz $CURL_BAR
+    else
+        curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch".tar.gz -o toolchain.tar.gz $CURL_BAR
     fi
     echo -e "\n${GREEN_COLOR}Process Toolchain ...${RES}"
     tar -zxf toolchain.tar.gz && rm -f toolchain.tar.gz
