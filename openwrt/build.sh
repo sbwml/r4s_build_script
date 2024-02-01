@@ -153,6 +153,7 @@ git clone $github_mirror/mj22226/openwrt -b linux-6.6 master/mj22226_openwrt --d
 
 if [ -d openwrt ]; then
     cd openwrt
+    [ "$1" = "rc2" ] && echo "$CURRENT_DATE" > version.date
     curl -Os https://$mirror/openwrt/patch/key.tar.gz && tar zxf key.tar.gz && rm -f key.tar.gz
 else
     echo -e "${RED_COLOR}Failed to download source code${RES}"
