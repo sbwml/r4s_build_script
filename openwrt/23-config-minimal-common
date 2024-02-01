@@ -121,6 +121,9 @@ CONFIG_PACKAGE_kmod-usb3=y
 ### Kernel Modules - out-of-tree driver
 CONFIG_PACKAGE_kmod-usb-net-rtl8152-vendor=y
 
+### Kernel Modules - USB WiFi Adapter
+CONFIG_PACKAGE_kmod-mt7921u=y
+
 ### Utilities
 CONFIG_PACKAGE_bash=y
 CONFIG_PACKAGE_taskset=y
