@@ -121,7 +121,7 @@ else
 fi
 
 # Shortcut Forwarding Engine
-git clone https://$gitea/sbwml/shortcut-fe package/shortcut-fe
+git clone https://$gitea/sbwml/shortcut-fe package/new/shortcut-fe
 
 # Patch FireWall 4
 if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
