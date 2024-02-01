@@ -54,28 +54,28 @@ git clone https://github.com/sbwml/autocore-arm -b openwrt-23.05 package/new/aut
 # Aria2 & ariaNG
 rm -rf feeds/packages/net/ariang
 rm -rf feeds/luci/applications/luci-app-aria2
-git clone https://github.com/sbwml/ariang-nginx package/ariang-nginx
+git clone https://github.com/sbwml/ariang-nginx package/new/ariang-nginx
 rm -rf feeds/packages/net/aria2
 git clone https://github.com/sbwml/feeds_packages_net_aria2 -b 22.03 feeds/packages/net/aria2
 
 # AirConnect
-git clone https://github.com/sbwml/luci-app-airconnect package/airconnect
+git clone https://github.com/sbwml/luci-app-airconnect package/new/airconnect
 
 # SSRP & Passwall
 rm -rf feeds/packages/net/{xray-core,v2ray-core,v2ray-geodata,sing-box}
-git clone https://github.com/sbwml/openwrt_helloworld package/helloworld -b v5
+git clone https://github.com/sbwml/openwrt_helloworld package/new/helloworld -b v5
 
 # DAED
-git clone https://github.com/sbwml/luci-app-daed package/daed
-git clone https://github.com/sbwml/luci-app-daed-next package/daed-next
+git clone https://github.com/sbwml/luci-app-daed package/new/daed
+git clone https://github.com/sbwml/luci-app-daed-next package/new/daed-next
 
 # immortalwrt homeproxy
-git clone https://github.com/immortalwrt/homeproxy package/homeproxy/homeproxy
-sed -i "s/ImmortalWrt/OpenWrt/g" package/homeproxy/homeproxy/po/zh_Hans/homeproxy.po
-sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" package/homeproxy/homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
+git clone https://github.com/immortalwrt/homeproxy package/new/homeproxy
+sed -i "s/ImmortalWrt/OpenWrt/g" package/new/homeproxy/po/zh_Hans/homeproxy.po
+sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" package/new/homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
 
 # alist
-git clone https://github.com/sbwml/openwrt-alist package/alist
+git clone https://github.com/sbwml/openwrt-alist package/new/alist
 
 # Netdata
 rm -rf feeds/packages/admin/netdata
@@ -83,24 +83,24 @@ cp -a ../master/packages/admin/netdata feeds/packages/admin/netdata
 sed -i 's/syslog/none/g' feeds/packages/admin/netdata/files/netdata.conf
 
 # OpenAI
-git clone https://github.com/sbwml/luci-app-openai package/openai
+git clone https://github.com/sbwml/luci-app-openai package/new/openai
 
 # qBittorrent
-git clone https://github.com/sbwml/luci-app-qbittorrent package/qbittorrent
+git clone https://github.com/sbwml/luci-app-qbittorrent package/new/qbittorrent
 
 # 解除网易云音乐播放限制
 git clone https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic package/new/luci-app-unblockneteasemusic
 sed -i 's/解除网易云音乐播放限制/网易云音乐解锁/g' package/new/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
 
 # xunlei
-git clone https://github.com/sbwml/luci-app-xunlei package/xunlei
+git clone https://github.com/sbwml/luci-app-xunlei package/new/xunlei
 
 # Theme
 git clone --depth 1 https://github.com/sbwml/luci-theme-argon.git package/new/luci-theme-argon
 
 # Mosdns
 rm -rf feeds/packages/net/v2ray-geodata
-git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
+git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/new/mosdns
 
 # OpenAppFilter
 git clone https://github.com/sbwml/OpenAppFilter --depth=1 package/new/OpenAppFilter
@@ -116,7 +116,7 @@ sed -i 's/services/network/g' feeds/luci/applications/luci-app-nlbwmon/htdocs/lu
 
 #### 磁盘分区 / 清理内存 / 打印机 / 定时重启 / 数据监控 / KMS / 访问控制（互联网时间）/ ADG luci / IP 限速 / 文件管理器 / CPU / 迅雷快鸟
 rm -rf feeds/packages/utils/coremark
-git clone https://github.com/sbwml/openwrt_pkgs package/openwrt_pkgs --depth=1
+git clone https://github.com/sbwml/openwrt_pkgs package/new/openwrt_pkgs --depth=1
 
 # 翻译
 sed -i 's,发送,Transmission,g' feeds/luci/applications/luci-app-transmission/po/zh_Hans/transmission.po
