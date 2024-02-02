@@ -28,9 +28,9 @@ rm -rf target/linux/generic/*-6.6 target/linux/generic/files
 mv target_linux_generic/target/linux/generic/* target/linux/generic/
 rm -rf target_linux_generic
 
-# kernel patches - linux-6.6-rt21
+# kernel patches - linux-stable-rt
 if [ "$platform" = "rk3568" ] || [ "$platform" = "x86_64" ]; then
-    curl -s https://$mirror/tags/rt/patch-6.6.14-rt21.patch > target/linux/generic/backport-6.6/000-kernel-patch-6.6.14-rt21.patch
+    curl -s https://$mirror/tags/rt/patch-6.6.x-rt.patch > target/linux/generic/backport-6.6/000-kernel-patch-6.6.x-rt.patch
 fi
 
 # kernel modules

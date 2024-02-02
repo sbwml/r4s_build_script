@@ -2,8 +2,12 @@
 
 ROOT="./"
 
+# RT PATCH
+RT_PATCH_VERSION=`curl -s https://us.cooluc.com/kernel/projects/rt/6.6/ | grep -o 'patch-.*\.patch\.xz' | sed 's/.*">//'`
+curl -s "https://us.cooluc.com/kernel/projects/rt/6.6/$RT_PATCH_VERSION" | xzcat > $ROOT/rt/patch-6.6.x-rt.patch
+
 # LTS
-KERNEL_VERSION=`curl -s https://us.cooluc.com/kernel/v6.x/sha256sums.asc | awk '{print $2}' | grep -E ^linux-6.6 | grep tar.xz | sed 's/linux-//g;s/.tar.xz//g' | tail -n 1`
+KERNEL_VERSION=`echo $RT_PATCH_VERSION | grep -oP 'patch-(\d+\.\d+\.\d+)-rt\d+\.patch\.xz' | grep -oP '\d+\.\d+\.\d+'`
 KERNEL_HASH=`curl -s https://us.cooluc.com/kernel/v6.x/sha256sums.asc | grep linux-$KERNEL_VERSION | grep tar.xz | awk '{print $1}'`
 TAG=`echo $KERNEL_VERSION | awk -F"." '{print $3}'`
 
