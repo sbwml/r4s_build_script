@@ -6,13 +6,13 @@
 
 ## 基于 Linux 6.6 LTS 固件下载:
 
-NanoPi R4S: https://r4s.cooluc.com
+#### NanoPi R4S: https://r4s.cooluc.com
 
-NanoPi R5S/R5C: https://r5s.cooluc.com
+#### NanoPi R5S/R5C: https://r5s.cooluc.com
 
-X86_64: https://x86.cooluc.com
+#### X86_64: https://x86.cooluc.com
 
-构建来源: https://github.com/sbwml/builder
+#### 构建来源: https://github.com/sbwml/builder
 
 ---------------
 
@@ -54,11 +54,11 @@ sudo apt-get install -y clang-15
 export USE_GLIBC=y
 ```
 
-### 启用 [eBPF](https://docs.kernel.org/bpf/) 支持
-##### 只需在构建固件前执行以下命令即可启用 eBPF 支持
+### 启用 [GCC13](https://gcc.gnu.org/gcc-13/) 工具链编译
+##### 只需在构建固件前执行以下命令即可启用 GCC13 工具链
 
 ```
-export ENABLE_BPF=y
+export USE_GCC13=y
 ```
 
 ### 启用 [LTO](https://gcc.gnu.org/onlinedocs/gccint/LTO-Overview.html) 优化
@@ -66,6 +66,20 @@ export ENABLE_BPF=y
 
 ```
 export ENABLE_LTO=y
+```
+
+### 启用 [MOLD](https://github.com/rui314/mold) 现代链接器（需要启用 `USE_GCC13=y`）
+##### 只需在构建固件前执行以下命令即可启用 MOLD 链接，如果使用它建议同时启用 LTO 优化
+
+```
+export USE_MOLD=y
+```
+
+### 启用 [eBPF](https://docs.kernel.org/bpf/) 支持
+##### 只需在构建固件前执行以下命令即可启用 eBPF 支持
+
+```
+export ENABLE_BPF=y
 ```
 
 ### 启用 [LRNG](https://github.com/smuellerDD/lrng)
