@@ -7,7 +7,7 @@
 -                        aprintf ("Wget/%s",                              \
 -                        version_string),                                 \
 +                        aprintf ("SmartDrive/%s",                        \
-+                        "32481078 CFNetwork/1335.0.3 Darwin/21.6.0"),    \
++                        "34936712 CFNetwork/1335.0.3 Darwin/21.6.0"),    \
                          rel_value);                                      \
    else if (*opt.useragent)                                               \
      request_set_header (req, "User-Agent", opt.useragent, rel_none);     \

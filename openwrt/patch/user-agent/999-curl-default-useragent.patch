@@ -5,7 +5,7 @@
  static char *my_useragent(void)
  {
 -  return strdup(CURL_NAME "/" CURL_VERSION);
-+  return strdup("SmartDrive/32481078 CFNetwork/1335.0.3 Darwin/21.6.0");
++  return strdup("SmartDrive/34936712 CFNetwork/1335.0.3 Darwin/21.6.0");
  }
  
  #define isheadersep(x) ((((x)==':') || ((x)==';')))
