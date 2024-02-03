@@ -319,6 +319,18 @@ endef
 $(eval $(call KernelPackage,drm-gem-shmem-helper))
 
 
+define KernelPackage/drm_suballoc_helper
+  SUBMENU:=$(VIDEO_MENU)
+  TITLE:=DRM suballoc helper
+  DEPENDS:=@TARGET_x86 @DISPLAY_SUPPORT @LINUX_6_6 +kmod-drm
+  KCONFIG:=CONFIG_DRM_SUBALLOC_HELPER
+  FILES:=$(LINUX_DIR)/drivers/gpu/drm/drm_suballoc_helper.ko
+  AUTOLOAD:=$(call AutoProbe,drm_suballoc_helper)
+endef
+
+$(eval $(call KernelPackage,drm_suballoc_helper))
+
+
 define KernelPackage/drm-ttm
   SUBMENU:=$(VIDEO_MENU)
   TITLE:=GPU memory management subsystem
@@ -367,20 +379,23 @@ endef
 
 $(eval $(call KernelPackage,drm-kms-helper))
 
+
 define KernelPackage/drm-amdgpu
   SUBMENU:=$(VIDEO_MENU)
   TITLE:=AMDGPU DRM support
   DEPENDS:=@TARGET_x86 @DISPLAY_SUPPORT +kmod-backlight +kmod-drm-ttm \
 	+kmod-drm-ttm-helper +kmod-drm-kms-helper +kmod-i2c-algo-bit +amdgpu-firmware \
 	+LINUX_6_6:kmod-drm-display-helper +LINUX_6_6:kmod-drm-buddy \
-	+LINUX_6_6:kmod-acpi-video
+	+LINUX_6_6:kmod-acpi-video +LINUX_6_6:kmod-drm_suballoc_helper
   KCONFIG:=CONFIG_DRM_AMDGPU \
 	CONFIG_DRM_AMDGPU_SI=y \
 	CONFIG_DRM_AMDGPU_CIK=y \
 	CONFIG_DRM_AMD_DC=y \
 	CONFIG_DEBUG_KERNEL_DC=n
   FILES:=$(LINUX_DIR)/drivers/gpu/drm/amd/amdgpu/amdgpu.ko \
-	$(LINUX_DIR)/drivers/gpu/drm/scheduler/gpu-sched.ko
+	$(LINUX_DIR)/drivers/gpu/drm/scheduler/gpu-sched.ko \
+	$(LINUX_DIR)/drivers/gpu/drm/amd/amdxcp/amdxcp.ko@ge6.6 \
+	$(LINUX_DIR)/drivers/gpu/drm/drm_exec.ko@ge6.6
   AUTOLOAD:=$(call AutoProbe,amdgpu)
 endef
 
@@ -511,7 +526,8 @@ define KernelPackage/drm-radeon
   TITLE:=Radeon DRM support
   DEPENDS:=@TARGET_x86 @DISPLAY_SUPPORT +kmod-backlight +kmod-drm-kms-helper \
 	+kmod-drm-ttm +kmod-drm-ttm-helper +kmod-i2c-algo-bit +radeon-firmware \
-	+LINUX_6_6:kmod-drm-display-helper +LINUX_6_6:kmod-acpi-video
+	+LINUX_6_6:kmod-drm-display-helper +LINUX_6_6:kmod-acpi-video \
+	+LINUX_6_6:kmod-drm_suballoc_helper
   KCONFIG:=CONFIG_DRM_RADEON
   FILES:=$(LINUX_DIR)/drivers/gpu/drm/radeon/radeon.ko
   AUTOLOAD:=$(call AutoProbe,radeon)
