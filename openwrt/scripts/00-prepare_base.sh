@@ -238,9 +238,9 @@ git clone https://github.com/sbwml/package_libs_nghttp3 package/libs/nghttp3
 rm -rf feeds/packages/libs/ngtcp2
 git clone https://github.com/sbwml/package_libs_ngtcp2 package/libs/ngtcp2
 
-# curl - http3/quic patches
+# curl/8.5.0 - fix passwall `time_pretransfer` check
 rm -rf feeds/packages/net/curl
-cp -a ../master/packages/net/curl feeds/packages/net/curl
+git clone https://github.com/sbwml/feeds_packages_net_curl feeds/packages/net/curl
 
 # wget - SmartDrive user-agent
 mkdir -p feeds/packages/net/wget/patches
