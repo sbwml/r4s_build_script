@@ -61,6 +61,9 @@ git clone https://github.com/sbwml/feeds_packages_net_aria2 -b 22.03 feeds/packa
 # AirConnect
 git clone https://github.com/sbwml/luci-app-airconnect package/new/airconnect
 
+# netkit-ftp
+git clone https://github.com/sbwml/package_new_ftp package/new/ftp
+
 # SSRP & Passwall
 rm -rf feeds/packages/net/{xray-core,v2ray-core,v2ray-geodata,sing-box}
 git clone https://github.com/sbwml/openwrt_helloworld package/new/helloworld -b v5
