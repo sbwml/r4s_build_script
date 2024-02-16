@@ -261,7 +261,7 @@ export ENABLE_LTO=$ENABLE_LTO
 # openwrt-23.05 gcc11/13
 if [ "$USE_GCC13" = "y" ]; then
     curl -s https://$mirror/openwrt/generic/config-gcc13 >> .config
-    curl -s https://github.com/openwrt/openwrt/commit/df47decd60808d099e663b32f60795f629ee81e3.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/200-toolchain-gcc-update-to-13.2.patch | patch -p1
 elif [ ! "$USE_GLIBC" = "y" ]; then
     curl -s https://$mirror/openwrt/generic/config-gcc11 >> .config
 fi

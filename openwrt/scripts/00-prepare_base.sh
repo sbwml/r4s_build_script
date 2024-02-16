@@ -358,8 +358,8 @@ rm -rf package/system/urngd
 git clone https://github.com/sbwml/package_system_urngd package/system/urngd
 
 # zlib - 1.3
-ZLIB_VERSION=1.3
-ZLIB_HASH=8a9ba2898e1d0d774eca6ba5b4627a11e5588ba85c8851336eb38de4683050a7
+ZLIB_VERSION=1.3.1
+ZLIB_HASH=38ef96b8dfe510d42707d9c781877914792541133e1870841463bfa73f883e32
 sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$ZLIB_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$ZLIB_HASH/" package/libs/zlib/Makefile
 
 # profile
