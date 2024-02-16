@@ -105,9 +105,6 @@ git clone --depth 1 https://github.com/sbwml/luci-theme-argon.git package/new/lu
 rm -rf feeds/packages/net/v2ray-geodata
 git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/new/mosdns
 
-# natmap
-git clone https://github.com/blueberry-pie-11/luci-app-natmap package/new/natmap
-
 # OpenAppFilter
 git clone https://github.com/sbwml/OpenAppFilter --depth=1 package/new/OpenAppFilter
 

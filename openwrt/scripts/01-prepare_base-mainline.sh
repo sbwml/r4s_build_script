@@ -146,12 +146,13 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.x/iwinfo/0001-devices-add-MediaT
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/iwinfo/0004-add-rtl8812au-devices.patch > package/network/utils/iwinfo/patches/0004-add-rtl8812au-devices.patch
 
 # wireless-regdb
+rm -rf package/firmware/wireless-regdb
+cp -a ../master/openwrt/package/firmware/wireless-regdb package/firmware/wireless-regdb
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/500-world-regd-5GHz.patch > package/firmware/wireless-regdb/patches/500-world-regd-5GHz.patch
 
 # mac80211 - fix linux 6.6 & add rtw89
 rm -rf package/kernel/mac80211
-cp -a ../master/mj22226_openwrt/package/kernel/mac80211 package/kernel/mac80211
-rm -f package/kernel/mac80211/patches/ath11k/100-wifi-ath11k-use-unique-QRTR-instance-ID.patch package/kernel/mac80211/patches/build/200-Revert-wifi-iwlwifi-Use-generic-thermal_zone_get_tri.patch
+git clone https://github.com/sbwml/package_kernel_mac80211 package/kernel/mac80211
 
 # mac80211/patches/rtl - rtw88
 mkdir -p package/kernel/mac80211/patches/rtl
