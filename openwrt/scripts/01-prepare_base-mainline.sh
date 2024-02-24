@@ -161,6 +161,7 @@ curl -s https://$mirror/openwrt/patch/mac80211/901-wifi-rtw88-8822b-disable-call
 curl -s https://$mirror/openwrt/patch/mac80211/903-wifi-rtw88-Remove-duplicate-NULL-check-before-callin.patch > package/kernel/mac80211/patches/rtl/903-wifi-rtw88-Remove-duplicate-NULL-check-before-callin.patch
 curl -s https://$mirror/openwrt/patch/mac80211/904-wifi-rtw88-usb-kill-and-free-rx-urbs-on-probe-failur.patch > package/kernel/mac80211/patches/rtl/904-wifi-rtw88-usb-kill-and-free-rx-urbs-on-probe-failur.patch
 curl -s https://$mirror/openwrt/patch/mac80211/905-wifi-rtw88-add-missing-call-to-cancel_work_sync.patch > package/kernel/mac80211/patches/rtl/905-wifi-rtw88-add-missing-call-to-cancel_work_sync.patch
+curl -s https://$mirror/openwrt/patch/mac80211/906-wifi-rtw88-8821c-Fix-beacon-loss-and-disconnect.patch > package/kernel/mac80211/patches/rtl/906-wifi-rtw88-8821c-Fix-beacon-loss-and-disconnect.patch
 
 # kernel patch
 # btf: silence btf module warning messages

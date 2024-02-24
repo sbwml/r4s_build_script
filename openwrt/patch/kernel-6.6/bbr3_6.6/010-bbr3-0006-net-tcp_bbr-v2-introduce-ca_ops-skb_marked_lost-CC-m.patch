@@ -30,7 +30,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -1097,6 +1097,9 @@ struct tcp_congestion_ops {
+@@ -1099,6 +1099,9 @@ struct tcp_congestion_ops {
  	/* override sysctl_tcp_min_tso_segs */
  	u32 (*min_tso_segs)(struct sock *sk);
  

@@ -376,7 +376,7 @@ define KernelPackage/phy-aquantia
   TITLE:=Aquantia Ethernet PHYs
   DEPENDS:=+kmod-libphy +kmod-hwmon-core
   KCONFIG:=CONFIG_AQUANTIA_PHY
-  FILES:=$(LINUX_DIR)/drivers/net/phy/aquantia.ko
+  FILES:=$(LINUX_DIR)/drivers/net/phy/aquantia/aquantia.ko
   AUTOLOAD:=$(call AutoLoad,18,aquantia,1)
 endef
 
