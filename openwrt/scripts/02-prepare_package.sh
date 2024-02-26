@@ -17,6 +17,10 @@ sed -i '/boot()/,+2d' feeds/packages/net/ddns-scripts/files/etc/init.d/ddns
 # nlbwmon - disable syslog
 sed -i 's/stderr 1/stderr 0/g' feeds/packages/net/nlbwmon/files/nlbwmon.init
 
+# lrzsz - 0.12.20
+rm -rf feeds/packages/utils/lrzsz
+git clone https://github.com/sbwml/packages_utils_lrzsz package/new/lrzsz
+
 # FRPC
 rm -rf feeds/packages/net/frp
 cp -a ../master/packages/net/frp feeds/packages/net/frp
