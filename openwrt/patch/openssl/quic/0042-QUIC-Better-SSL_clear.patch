@@ -15,17 +15,15 @@ Don't make the new functions public.
  test/sslapitest.c   | 17 +++-------
  4 files changed, 63 insertions(+), 45 deletions(-)
 
-diff --git a/ssl/ssl_lib.c b/ssl/ssl_lib.c
-index 588c48f8..b0ab5c6e 100644
 --- a/ssl/ssl_lib.c
 +++ b/ssl/ssl_lib.c
-@@ -566,7 +566,56 @@ static void clear_ciphers(SSL *s)
+@@ -581,8 +581,57 @@ static void clear_ciphers(SSL *s)
      ssl_clear_hash_ctx(&s->write_hash);
  }
  
 +#ifndef OPENSSL_NO_QUIC
  int SSL_clear(SSL *s)
-+{
+ {
 +    if (!SSL_clear_not_quic(s))
 +        return 0;
 +    return SSL_clear_quic(s);
@@ -73,10 +71,11 @@ index 588c48f8..b0ab5c6e 100644
 +#else
 +int SSL_clear(SSL *s)
 +#endif
- {
++{
      if (s->method == NULL) {
          ERR_raise(ERR_LIB_SSL, SSL_R_NO_METHOD_SPECIFIED);
-@@ -625,38 +674,6 @@ int SSL_clear(SSL *s)
+         return 0;
+@@ -640,38 +689,6 @@ int SSL_clear(SSL *s)
      s->shared_sigalgs = NULL;
      s->shared_sigalgslen = 0;
  
@@ -115,11 +114,9 @@ index 588c48f8..b0ab5c6e 100644
      /*
       * Check to see if we were changed into a different method, if so, revert
       * back.
-diff --git a/ssl/ssl_local.h b/ssl/ssl_local.h
-index 839e7b69..74b4319d 100644
 --- a/ssl/ssl_local.h
 +++ b/ssl/ssl_local.h
-@@ -2867,6 +2867,11 @@ void custom_exts_free(custom_ext_methods *exts);
+@@ -2867,6 +2867,11 @@ void custom_exts_free(custom_ext_methods
  
  void ssl_comp_free_compression_methods_int(void);
  
@@ -131,11 +128,9 @@ index 839e7b69..74b4319d 100644
  /* ssl_mcnf.c */
  void ssl_ctx_system_config(SSL_CTX *ctx);
  
-diff --git a/ssl/statem/statem.c b/ssl/statem/statem.c
-index e67ee26e..d80d4da2 100644
 --- a/ssl/statem/statem.c
 +++ b/ssl/statem/statem.c
-@@ -334,8 +334,13 @@ static int state_machine(SSL *s, int server)
+@@ -334,8 +334,13 @@ static int state_machine(SSL *s, int ser
           * If we are stateless then we already called SSL_clear() - don't do
           * it again and clear the STATELESS flag itself.
           */
@@ -149,11 +144,9 @@ index e67ee26e..d80d4da2 100644
      }
  #ifndef OPENSSL_NO_SCTP
      if (SSL_IS_DTLS(s) && BIO_dgram_is_sctp(SSL_get_wbio(s))) {
-diff --git a/test/sslapitest.c b/test/sslapitest.c
-index e6c38e43..ac9a72f2 100644
 --- a/test/sslapitest.c
 +++ b/test/sslapitest.c
-@@ -10482,7 +10482,6 @@ static int test_quic_api_version(int clnt, int srvr)
+@@ -10510,7 +10510,6 @@ static int test_quic_api_version(int cln
      static const char *client_str = "CLIENT";
      const uint8_t *peer_str;
      size_t peer_str_len;
@@ -161,7 +154,7 @@ index e6c38e43..ac9a72f2 100644
  
      TEST_info("original clnt=0x%X, srvr=0x%X\n", clnt, srvr);
  
-@@ -10505,10 +10504,8 @@ static int test_quic_api_version(int clnt, int srvr)
+@@ -10533,10 +10532,8 @@ static int test_quic_api_version(int cln
              || !TEST_true(SSL_set_app_data(clientssl, serverssl))
              || !TEST_true(test_quic_api_set_versions(clientssl, clnt))
              || !TEST_true(test_quic_api_set_versions(serverssl, srvr))
@@ -173,7 +166,7 @@ index e6c38e43..ac9a72f2 100644
              || !TEST_true(SSL_version(serverssl) == TLS1_3_VERSION)
              || !TEST_true(SSL_version(clientssl) == TLS1_3_VERSION)
              || !(TEST_int_eq(SSL_quic_read_level(clientssl), ssl_encryption_application))
-@@ -10630,7 +10627,6 @@ static int quic_setupearly_data_test(SSL_CTX **cctx, SSL_CTX **sctx,
+@@ -10658,7 +10655,6 @@ static int quic_setupearly_data_test(SSL
  {
      static const char *server_str = "SERVER";
      static const char *client_str = "CLIENT";
@@ -181,7 +174,7 @@ index e6c38e43..ac9a72f2 100644
  
      if (*sctx == NULL
              && (!TEST_true(create_ssl_ctx_pair(libctx, TLS_server_method(),
-@@ -10708,10 +10704,8 @@ static int quic_setupearly_data_test(SSL_CTX **cctx, SSL_CTX **sctx,
+@@ -10736,10 +10732,8 @@ static int quic_setupearly_data_test(SSL
      if (sess == NULL)
          return 1;
  
@@ -194,7 +187,7 @@ index e6c38e43..ac9a72f2 100644
          return 0;
  
      /* Deal with two NewSessionTickets */
-@@ -10750,15 +10744,12 @@ static int test_quic_early_data(int tst)
+@@ -10778,15 +10772,12 @@ static int test_quic_early_data(int tst)
      SSL *clientssl = NULL, *serverssl = NULL;
      int testresult = 0;
      SSL_SESSION *sess = NULL;
@@ -211,6 +204,3 @@ index e6c38e43..ac9a72f2 100644
              || !TEST_true(SSL_get_early_data_status(serverssl)))
          goto end;
  
--- 
-2.42.0
-

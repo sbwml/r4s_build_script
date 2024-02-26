@@ -8,11 +8,9 @@ Subject: [PATCH 04/43] QUIC: Move QUIC transport params to encrypted
  ssl/statem/extensions.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/ssl/statem/extensions.c b/ssl/statem/extensions.c
-index ee8263b7..81181635 100644
 --- a/ssl/statem/extensions.c
 +++ b/ssl/statem/extensions.c
-@@ -377,7 +377,7 @@ static const EXTENSION_DEFINITION ext_defs[] = {
+@@ -377,7 +377,7 @@ static const EXTENSION_DEFINITION ext_de
  #ifndef OPENSSL_NO_QUIC
      {
          TLSEXT_TYPE_quic_transport_parameters,
@@ -21,6 +19,3 @@ index ee8263b7..81181635 100644
          | SSL_EXT_TLS_IMPLEMENTATION_ONLY | SSL_EXT_TLS1_3_ONLY,
          init_quic_transport_params,
          tls_parse_ctos_quic_transport_params, tls_parse_stoc_quic_transport_params,
--- 
-2.42.0
-

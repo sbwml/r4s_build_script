@@ -51,8 +51,6 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
  create mode 100644 ssl/ssl_quic.c
  create mode 100644 ssl/statem/statem_quic.c
 
-diff --git a/Configure b/Configure
-index dd06aa48..69851e1e 100755
 --- a/Configure
 +++ b/Configure
 @@ -467,6 +467,7 @@ my @disablables = (
@@ -71,8 +69,6 @@ index dd06aa48..69851e1e 100755
  
      "fips"              => [ "fips-securitychecks", "acvp-tests" ],
  
-diff --git a/INSTALL.md b/INSTALL.md
-index fef408e9..87b1faef 100644
 --- a/INSTALL.md
 +++ b/INSTALL.md
 @@ -822,6 +822,10 @@ Don't use POSIX IO capabilities.
@@ -86,11 +82,9 @@ index fef408e9..87b1faef 100644
  ### no-rdrand
  
  Don't use hardware RDRAND capabilities.
-diff --git a/crypto/err/openssl.txt b/crypto/err/openssl.txt
-index e51504b7..e537738c 100644
 --- a/crypto/err/openssl.txt
 +++ b/crypto/err/openssl.txt
-@@ -1249,6 +1249,7 @@ SSL_R_AT_LEAST_TLS_1_2_NEEDED_IN_SUITEB_MODE:158:\
+@@ -1251,6 +1251,7 @@ SSL_R_AT_LEAST_TLS_1_2_NEEDED_IN_SUITEB_
  SSL_R_BAD_CHANGE_CIPHER_SPEC:103:bad change cipher spec
  SSL_R_BAD_CIPHER:186:bad cipher
  SSL_R_BAD_DATA:390:bad data
@@ -98,7 +92,7 @@ index e51504b7..e537738c 100644
  SSL_R_BAD_DATA_RETURNED_BY_CALLBACK:106:bad data returned by callback
  SSL_R_BAD_DECOMPRESSION:107:bad decompression
  SSL_R_BAD_DH_VALUE:102:bad dh value
-@@ -1536,6 +1537,7 @@ SSL_R_VERSION_TOO_LOW:396:version too low
+@@ -1538,6 +1539,7 @@ SSL_R_VERSION_TOO_LOW:396:version too lo
  SSL_R_WRONG_CERTIFICATE_TYPE:383:wrong certificate type
  SSL_R_WRONG_CIPHER_RETURNED:261:wrong cipher returned
  SSL_R_WRONG_CURVE:378:wrong curve
@@ -106,8 +100,6 @@ index e51504b7..e537738c 100644
  SSL_R_WRONG_SIGNATURE_LENGTH:264:wrong signature length
  SSL_R_WRONG_SIGNATURE_SIZE:265:wrong signature size
  SSL_R_WRONG_SIGNATURE_TYPE:370:wrong signature type
-diff --git a/doc/man3/SSL_CIPHER_get_name.pod b/doc/man3/SSL_CIPHER_get_name.pod
-index e22a85a0..7f00f09d 100644
 --- a/doc/man3/SSL_CIPHER_get_name.pod
 +++ b/doc/man3/SSL_CIPHER_get_name.pod
 @@ -13,6 +13,7 @@ SSL_CIPHER_get_digest_nid,
@@ -126,7 +118,7 @@ index e22a85a0..7f00f09d 100644
   int SSL_CIPHER_is_aead(const SSL_CIPHER *c);
   const SSL_CIPHER *SSL_CIPHER_find(SSL *ssl, const unsigned char *ptr);
   uint32_t SSL_CIPHER_get_id(const SSL_CIPHER *c);
-@@ -91,6 +93,15 @@ TLS 1.3 cipher suites) B<NID_auth_any> is returned. Examples (not comprehensive)
+@@ -91,6 +93,15 @@ TLS 1.3 cipher suites) B<NID_auth_any> i
   NID_auth_ecdsa
   NID_auth_psk
  
@@ -151,9 +143,6 @@ index e22a85a0..7f00f09d 100644
  =head1 COPYRIGHT
  
  Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.
-diff --git a/doc/man3/SSL_CTX_set_quic_method.pod b/doc/man3/SSL_CTX_set_quic_method.pod
-new file mode 100644
-index 00000000..d938eb4e
 --- /dev/null
 +++ b/doc/man3/SSL_CTX_set_quic_method.pod
 @@ -0,0 +1,232 @@
@@ -389,11 +378,9 @@ index 00000000..d938eb4e
 +L<https://www.openssl.org/source/license.html>.
 +
 +=cut
-diff --git a/include/openssl/evp.h b/include/openssl/evp.h
-index e64072f9..d7c3f7b7 100644
 --- a/include/openssl/evp.h
 +++ b/include/openssl/evp.h
-@@ -1741,6 +1741,11 @@ int EVP_PKEY_CTX_set_mac_key(EVP_PKEY_CTX *ctx, const unsigned char *key,
+@@ -1741,6 +1741,11 @@ int EVP_PKEY_CTX_set_mac_key(EVP_PKEY_CT
   * Method handles all operations: don't assume any digest related defaults.
   */
  # define EVP_PKEY_FLAG_SIGCTX_CUSTOM     4
@@ -405,8 +392,6 @@ index e64072f9..d7c3f7b7 100644
  # ifndef OPENSSL_NO_DEPRECATED_3_0
  OSSL_DEPRECATEDIN_3_0 const EVP_PKEY_METHOD *EVP_PKEY_meth_find(int type);
  OSSL_DEPRECATEDIN_3_0 EVP_PKEY_METHOD *EVP_PKEY_meth_new(int id, int flags);
-diff --git a/include/openssl/ssl.h.in b/include/openssl/ssl.h.in
-index 105b4a4a..e8f49714 100644
 --- a/include/openssl/ssl.h.in
 +++ b/include/openssl/ssl.h.in
 @@ -2521,6 +2521,51 @@ void SSL_set_allow_early_data_cb(SSL *s,
@@ -461,8 +446,6 @@ index 105b4a4a..e8f49714 100644
  # ifdef  __cplusplus
  }
  # endif
-diff --git a/include/openssl/sslerr.h b/include/openssl/sslerr.h
-index b156fc2f..a60076ee 100644
 --- a/include/openssl/sslerr.h
 +++ b/include/openssl/sslerr.h
 @@ -28,6 +28,7 @@
@@ -481,8 +464,6 @@ index b156fc2f..a60076ee 100644
  # define SSL_R_WRONG_SIGNATURE_LENGTH                     264
  # define SSL_R_WRONG_SIGNATURE_SIZE                       265
  # define SSL_R_WRONG_SIGNATURE_TYPE                       370
-diff --git a/include/openssl/tls1.h b/include/openssl/tls1.h
-index d6e9331f..9edb5453 100644
 --- a/include/openssl/tls1.h
 +++ b/include/openssl/tls1.h
 @@ -151,6 +151,9 @@ extern "C" {
@@ -495,11 +476,9 @@ index d6e9331f..9edb5453 100644
  # ifndef OPENSSL_NO_NEXTPROTONEG
  /* This is not an IANA defined extension number */
  #  define TLSEXT_TYPE_next_proto_neg              13172
-diff --git a/include/openssl/types.h b/include/openssl/types.h
-index de9f1665..bae9d2f0 100644
 --- a/include/openssl/types.h
 +++ b/include/openssl/types.h
-@@ -229,6 +229,8 @@ typedef struct ossl_decoder_ctx_st OSSL_DECODER_CTX;
+@@ -229,6 +229,8 @@ typedef struct ossl_decoder_ctx_st OSSL_
  
  typedef struct ossl_self_test_st OSSL_SELF_TEST;
  
@@ -508,8 +487,6 @@ index de9f1665..bae9d2f0 100644
  #ifdef  __cplusplus
  }
  #endif
-diff --git a/ssl/build.info b/ssl/build.info
-index 0851357f..ac874379 100644
 --- a/ssl/build.info
 +++ b/ssl/build.info
 @@ -38,6 +38,8 @@ IF[{- !$disabled{'deprecated-3.0'} -}]
@@ -521,8 +498,6 @@ index 0851357f..ac874379 100644
  DEFINE[../libssl]=$AESDEF
  
  SOURCE[../providers/libcommon.a]=record/tls_pad.c
-diff --git a/ssl/s3_msg.c b/ssl/s3_msg.c
-index c0f0dbc1..667c5385 100644
 --- a/ssl/s3_msg.c
 +++ b/ssl/s3_msg.c
 @@ -81,6 +81,16 @@ int ssl3_dispatch_alert(SSL *s)
@@ -542,11 +517,9 @@ index c0f0dbc1..667c5385 100644
      i = do_ssl3_write(s, SSL3_RT_ALERT, &s->s3.send_alert[0], &alertlen, 1, 0,
                        &written);
      if (i <= 0) {
-diff --git a/ssl/ssl_ciph.c b/ssl/ssl_ciph.c
-index 73a82128..a73cb532 100644
 --- a/ssl/ssl_ciph.c
 +++ b/ssl/ssl_ciph.c
-@@ -2239,3 +2239,35 @@ const char *OSSL_default_ciphersuites(void)
+@@ -2240,3 +2240,35 @@ const char *OSSL_default_ciphersuites(vo
             "TLS_CHACHA20_POLY1305_SHA256:"
             "TLS_AES_128_GCM_SHA256";
  }
@@ -582,11 +555,9 @@ index 73a82128..a73cb532 100644
 +    }
 +    return NID_undef;
 +}
-diff --git a/ssl/ssl_err.c b/ssl/ssl_err.c
-index 41898844..0210a73a 100644
 --- a/ssl/ssl_err.c
 +++ b/ssl/ssl_err.c
-@@ -27,6 +27,7 @@ static const ERR_STRING_DATA SSL_str_reasons[] = {
+@@ -27,6 +27,7 @@ static const ERR_STRING_DATA SSL_str_rea
      "bad change cipher spec"},
      {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_BAD_CIPHER), "bad cipher"},
      {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_BAD_DATA), "bad data"},
@@ -594,7 +565,7 @@ index 41898844..0210a73a 100644
      {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_BAD_DATA_RETURNED_BY_CALLBACK),
      "bad data returned by callback"},
      {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_BAD_DECOMPRESSION), "bad decompression"},
-@@ -544,6 +545,8 @@ static const ERR_STRING_DATA SSL_str_reasons[] = {
+@@ -544,6 +545,8 @@ static const ERR_STRING_DATA SSL_str_rea
      {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_WRONG_CIPHER_RETURNED),
      "wrong cipher returned"},
      {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_WRONG_CURVE), "wrong curve"},
@@ -603,11 +574,9 @@ index 41898844..0210a73a 100644
      {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_WRONG_SIGNATURE_LENGTH),
      "wrong signature length"},
      {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_WRONG_SIGNATURE_SIZE),
-diff --git a/ssl/ssl_lib.c b/ssl/ssl_lib.c
-index 81a9f072..6d2ab0e3 100644
 --- a/ssl/ssl_lib.c
 +++ b/ssl/ssl_lib.c
-@@ -841,6 +841,10 @@ SSL *SSL_new(SSL_CTX *ctx)
+@@ -856,6 +856,10 @@ SSL *SSL_new(SSL_CTX *ctx)
  
      s->job = NULL;
  
@@ -618,7 +587,7 @@ index 81a9f072..6d2ab0e3 100644
  #ifndef OPENSSL_NO_CT
      if (!SSL_set_ct_validation_callback(s, ctx->ct_validation_callback,
                                          ctx->ct_validation_callback_arg))
-@@ -1240,6 +1244,18 @@ void SSL_free(SSL *s)
+@@ -1253,6 +1257,18 @@ void SSL_free(SSL *s)
      OPENSSL_free(s->pha_context);
      EVP_MD_CTX_free(s->pha_dgst);
  
@@ -637,7 +606,7 @@ index 81a9f072..6d2ab0e3 100644
      sk_X509_NAME_pop_free(s->ca_names, X509_NAME_free);
      sk_X509_NAME_pop_free(s->client_ca_names, X509_NAME_free);
  
-@@ -1833,6 +1849,12 @@ static int ssl_io_intern(void *vargs)
+@@ -1852,6 +1868,12 @@ static int ssl_io_intern(void *vargs)
  
  int ssl_read_internal(SSL *s, void *buf, size_t num, size_t *readbytes)
  {
@@ -650,7 +619,7 @@ index 81a9f072..6d2ab0e3 100644
      if (s->handshake_func == NULL) {
          ERR_raise(ERR_LIB_SSL, SSL_R_UNINITIALIZED);
          return -1;
-@@ -1964,6 +1986,12 @@ int SSL_get_early_data_status(const SSL *s)
+@@ -1983,6 +2005,12 @@ int SSL_get_early_data_status(const SSL
  
  static int ssl_peek_internal(SSL *s, void *buf, size_t num, size_t *readbytes)
  {
@@ -663,7 +632,7 @@ index 81a9f072..6d2ab0e3 100644
      if (s->handshake_func == NULL) {
          ERR_raise(ERR_LIB_SSL, SSL_R_UNINITIALIZED);
          return -1;
-@@ -2024,6 +2052,12 @@ int SSL_peek_ex(SSL *s, void *buf, size_t num, size_t *readbytes)
+@@ -2043,6 +2071,12 @@ int SSL_peek_ex(SSL *s, void *buf, size_
  
  int ssl_write_internal(SSL *s, const void *buf, size_t num, size_t *written)
  {
@@ -676,7 +645,7 @@ index 81a9f072..6d2ab0e3 100644
      if (s->handshake_func == NULL) {
          ERR_raise(ERR_LIB_SSL, SSL_R_UNINITIALIZED);
          return -1;
-@@ -3838,6 +3872,11 @@ int SSL_get_error(const SSL *s, int i)
+@@ -3857,6 +3891,11 @@ int SSL_get_error(const SSL *s, int i)
      }
  
      if (SSL_want_read(s)) {
@@ -688,7 +657,7 @@ index 81a9f072..6d2ab0e3 100644
          bio = SSL_get_rbio(s);
          if (BIO_should_read(bio))
              return SSL_ERROR_WANT_READ;
-@@ -4205,7 +4244,7 @@ EVP_PKEY *SSL_CTX_get0_privatekey(const SSL_CTX *ctx)
+@@ -4224,7 +4263,7 @@ EVP_PKEY *SSL_CTX_get0_privatekey(const
  
  const SSL_CIPHER *SSL_get_current_cipher(const SSL *s)
  {
@@ -697,8 +666,6 @@ index 81a9f072..6d2ab0e3 100644
          return s->session->cipher;
      return NULL;
  }
-diff --git a/ssl/ssl_local.h b/ssl/ssl_local.h
-index 5fb1feb8..f6b06293 100644
 --- a/ssl/ssl_local.h
 +++ b/ssl/ssl_local.h
 @@ -337,6 +337,13 @@
@@ -772,9 +739,6 @@ index 5fb1feb8..f6b06293 100644
      /*
       * Parsed form of the ClientHello, kept around across client_hello_cb
       * calls.
-diff --git a/ssl/ssl_quic.c b/ssl/ssl_quic.c
-new file mode 100644
-index 00000000..a39e4419
 --- /dev/null
 +++ b/ssl/ssl_quic.c
 @@ -0,0 +1,248 @@
@@ -1026,11 +990,9 @@ index 00000000..a39e4419
 +}
 +
 +#endif
-diff --git a/ssl/statem/extensions.c b/ssl/statem/extensions.c
-index 1518ca7f..ee8263b7 100644
 --- a/ssl/statem/extensions.c
 +++ b/ssl/statem/extensions.c
-@@ -59,6 +59,10 @@ static int final_early_data(SSL *s, unsigned int context, int sent);
+@@ -59,6 +59,10 @@ static int final_early_data(SSL *s, unsi
  static int final_maxfragmentlen(SSL *s, unsigned int context, int sent);
  static int init_post_handshake_auth(SSL *s, unsigned int context);
  static int final_psk(SSL *s, unsigned int context, int sent);
@@ -1041,7 +1003,7 @@ index 1518ca7f..ee8263b7 100644
  
  /* Structure to define a built-in extension */
  typedef struct extensions_definition_st {
-@@ -370,6 +374,19 @@ static const EXTENSION_DEFINITION ext_defs[] = {
+@@ -370,6 +374,19 @@ static const EXTENSION_DEFINITION ext_de
          tls_construct_certificate_authorities,
          tls_construct_certificate_authorities, NULL,
      },
@@ -1061,7 +1023,7 @@ index 1518ca7f..ee8263b7 100644
      {
          /* Must be immediately before pre_shared_key */
          TLSEXT_TYPE_padding,
-@@ -1728,3 +1745,15 @@ static int final_psk(SSL *s, unsigned int context, int sent)
+@@ -1728,3 +1745,15 @@ static int final_psk(SSL *s, unsigned in
  
      return 1;
  }
@@ -1077,11 +1039,9 @@ index 1518ca7f..ee8263b7 100644
 +    return 1;
 +}
 +#endif
-diff --git a/ssl/statem/extensions_clnt.c b/ssl/statem/extensions_clnt.c
-index 842be072..52742dc3 100644
 --- a/ssl/statem/extensions_clnt.c
 +++ b/ssl/statem/extensions_clnt.c
-@@ -1196,7 +1196,29 @@ EXT_RETURN tls_construct_ctos_post_handshake_auth(SSL *s, WPACKET *pkt,
+@@ -1196,7 +1196,29 @@ EXT_RETURN tls_construct_ctos_post_hands
  #endif
  }
  
@@ -1095,7 +1055,7 @@ index 842be072..52742dc3 100644
 +        || s->ext.quic_transport_params_len == 0) {
 +        return EXT_RETURN_NOT_SENT;
 +    }
- 
++
 +    if (!WPACKET_put_bytes_u16(pkt, TLSEXT_TYPE_quic_transport_parameters)
 +            || !WPACKET_start_sub_packet_u16(pkt)
 +            || !WPACKET_sub_memcpy_u16(pkt, s->ext.quic_transport_params,
@@ -1104,14 +1064,14 @@ index 842be072..52742dc3 100644
 +        SSLfatal(s, SSL_AD_INTERNAL_ERROR, ERR_R_INTERNAL_ERROR);
 +        return EXT_RETURN_FAIL;
 +    }
-+
+ 
 +    return EXT_RETURN_SENT;
 +}
 +#endif
  /*
   * Parse the server's renegotiation binding and abort if it's not right
   */
-@@ -1981,3 +2003,29 @@ int tls_parse_stoc_psk(SSL *s, PACKET *pkt, unsigned int context, X509 *x,
+@@ -1981,3 +2003,29 @@ int tls_parse_stoc_psk(SSL *s, PACKET *p
  
      return 1;
  }
@@ -1141,11 +1101,9 @@ index 842be072..52742dc3 100644
 +    return 1;
 +}
 +#endif
-diff --git a/ssl/statem/extensions_srvr.c b/ssl/statem/extensions_srvr.c
-index 1fab5a3d..0ca8f154 100644
 --- a/ssl/statem/extensions_srvr.c
 +++ b/ssl/statem/extensions_srvr.c
-@@ -1232,6 +1232,33 @@ int tls_parse_ctos_post_handshake_auth(SSL *s, PACKET *pkt,
+@@ -1232,6 +1232,33 @@ int tls_parse_ctos_post_handshake_auth(S
      return 1;
  }
  
@@ -1179,7 +1137,7 @@ index 1fab5a3d..0ca8f154 100644
  /*
   * Add the server's renegotiation binding
   */
-@@ -1914,3 +1941,27 @@ EXT_RETURN tls_construct_stoc_psk(SSL *s, WPACKET *pkt, unsigned int context,
+@@ -1914,3 +1941,27 @@ EXT_RETURN tls_construct_stoc_psk(SSL *s
  
      return EXT_RETURN_SENT;
  }
@@ -1207,11 +1165,9 @@ index 1fab5a3d..0ca8f154 100644
 +    return EXT_RETURN_SENT;
 +}
 +#endif
-diff --git a/ssl/statem/statem.c b/ssl/statem/statem.c
-index 553546d9..f6caa64e 100644
 --- a/ssl/statem/statem.c
 +++ b/ssl/statem/statem.c
-@@ -583,6 +583,10 @@ static SUB_STATE_RETURN read_state_machine(SSL *s)
+@@ -583,6 +583,10 @@ static SUB_STATE_RETURN read_state_machi
                   * In DTLS we get the whole message in one go - header and body
                   */
                  ret = dtls_get_message(s, &mt);
@@ -1222,7 +1178,7 @@ index 553546d9..f6caa64e 100644
              } else {
                  ret = tls_get_message_header(s, &mt);
              }
-@@ -612,8 +616,8 @@ static SUB_STATE_RETURN read_state_machine(SSL *s)
+@@ -612,8 +616,8 @@ static SUB_STATE_RETURN read_state_machi
                  return SUB_STATE_ERROR;
              }
  
@@ -1233,7 +1189,7 @@ index 553546d9..f6caa64e 100644
                      && s->s3.tmp.message_size > 0
                      && !grow_init_buf(s, s->s3.tmp.message_size
                                           + SSL3_HM_HEADER_LENGTH)) {
-@@ -631,7 +635,8 @@ static SUB_STATE_RETURN read_state_machine(SSL *s)
+@@ -631,7 +635,8 @@ static SUB_STATE_RETURN read_state_machi
                   * opportunity to do any further processing.
                   */
                  ret = dtls_get_message_body(s, &len);
@@ -1243,7 +1199,7 @@ index 553546d9..f6caa64e 100644
                  ret = tls_get_message_body(s, &len);
              }
              if (ret == 0) {
-@@ -921,6 +926,15 @@ static SUB_STATE_RETURN write_state_machine(SSL *s)
+@@ -921,6 +926,15 @@ static SUB_STATE_RETURN write_state_mach
  int statem_flush(SSL *s)
  {
      s->rwstate = SSL_WRITING;
@@ -1259,8 +1215,6 @@ index 553546d9..f6caa64e 100644
      if (BIO_flush(s->wbio) <= 0) {
          return 0;
      }
-diff --git a/ssl/statem/statem_lib.c b/ssl/statem/statem_lib.c
-index b1ee38b9..1afe26be 100644
 --- a/ssl/statem/statem_lib.c
 +++ b/ssl/statem/statem_lib.c
 @@ -44,9 +44,23 @@ int ssl3_do_write(SSL *s, int type)
@@ -1289,7 +1243,7 @@ index b1ee38b9..1afe26be 100644
      if (ret <= 0)
          return -1;
      if (type == SSL3_RT_HANDSHAKE)
-@@ -1169,6 +1183,7 @@ int tls_get_message_header(SSL *s, int *mt)
+@@ -1169,6 +1183,7 @@ int tls_get_message_header(SSL *s, int *
  
      do {
          while (s->init_num < SSL3_HM_HEADER_LENGTH) {
@@ -1297,11 +1251,9 @@ index b1ee38b9..1afe26be 100644
              i = s->method->ssl_read_bytes(s, SSL3_RT_HANDSHAKE, &recvd_type,
                                            &p[s->init_num],
                                            SSL3_HM_HEADER_LENGTH - s->init_num,
-diff --git a/ssl/statem/statem_local.h b/ssl/statem/statem_local.h
-index ad4d93b1..57e31451 100644
 --- a/ssl/statem/statem_local.h
 +++ b/ssl/statem/statem_local.h
-@@ -104,6 +104,7 @@ __owur int tls_get_message_header(SSL *s, int *mt);
+@@ -104,6 +104,7 @@ __owur int tls_get_message_header(SSL *s
  __owur int tls_get_message_body(SSL *s, size_t *len);
  __owur int dtls_get_message(SSL *s, int *mt);
  __owur int dtls_get_message_body(SSL *s, size_t *len);
@@ -1309,7 +1261,7 @@ index ad4d93b1..57e31451 100644
  
  /* Message construction and processing functions */
  __owur int tls_process_initial_server_flight(SSL *s);
-@@ -251,6 +252,10 @@ int tls_parse_ctos_psk(SSL *s, PACKET *pkt, unsigned int context, X509 *x,
+@@ -251,6 +252,10 @@ int tls_parse_ctos_psk(SSL *s, PACKET *p
                         size_t chainidx);
  int tls_parse_ctos_post_handshake_auth(SSL *, PACKET *pkt, unsigned int context,
                                         X509 *x, size_t chainidx);
@@ -1320,7 +1272,7 @@ index ad4d93b1..57e31451 100644
  
  EXT_RETURN tls_construct_stoc_renegotiate(SSL *s, WPACKET *pkt,
                                            unsigned int context, X509 *x,
-@@ -311,6 +316,11 @@ EXT_RETURN tls_construct_stoc_cryptopro_bug(SSL *s, WPACKET *pkt,
+@@ -311,6 +316,11 @@ EXT_RETURN tls_construct_stoc_cryptopro_
                                              size_t chainidx);
  EXT_RETURN tls_construct_stoc_psk(SSL *s, WPACKET *pkt, unsigned int context,
                                    X509 *x, size_t chainidx);
@@ -1332,7 +1284,7 @@ index ad4d93b1..57e31451 100644
  
  /* Client Extension processing */
  EXT_RETURN tls_construct_ctos_renegotiate(SSL *s, WPACKET *pkt, unsigned int context,
-@@ -380,6 +390,11 @@ EXT_RETURN tls_construct_ctos_psk(SSL *s, WPACKET *pkt, unsigned int context,
+@@ -380,6 +390,11 @@ EXT_RETURN tls_construct_ctos_psk(SSL *s
                                    X509 *x, size_t chainidx);
  EXT_RETURN tls_construct_ctos_post_handshake_auth(SSL *s, WPACKET *pkt, unsigned int context,
                                                    X509 *x, size_t chainidx);
@@ -1344,7 +1296,7 @@ index ad4d93b1..57e31451 100644
  
  int tls_parse_stoc_renegotiate(SSL *s, PACKET *pkt, unsigned int context,
                                 X509 *x, size_t chainidx);
-@@ -423,6 +438,10 @@ int tls_parse_stoc_cookie(SSL *s, PACKET *pkt, unsigned int context, X509 *x,
+@@ -423,6 +438,10 @@ int tls_parse_stoc_cookie(SSL *s, PACKET
                         size_t chainidx);
  int tls_parse_stoc_psk(SSL *s, PACKET *pkt, unsigned int context, X509 *x,
                         size_t chainidx);
@@ -1355,9 +1307,6 @@ index ad4d93b1..57e31451 100644
  
  int tls_handle_alpn(SSL *s);
  
-diff --git a/ssl/statem/statem_quic.c b/ssl/statem/statem_quic.c
-new file mode 100644
-index 00000000..66acc30d
 --- /dev/null
 +++ b/ssl/statem/statem_quic.c
 @@ -0,0 +1,106 @@
@@ -1467,11 +1416,9 @@ index 00000000..66acc30d
 +}
 +
 +#endif
-diff --git a/ssl/tls13_enc.c b/ssl/tls13_enc.c
-index ddcff5eb..459964d9 100644
 --- a/ssl/tls13_enc.c
 +++ b/ssl/tls13_enc.c
-@@ -440,6 +440,9 @@ int tls13_change_cipher_state(SSL *s, int which)
+@@ -440,6 +440,9 @@ int tls13_change_cipher_state(SSL *s, in
      ktls_crypto_info_t crypto_info;
      BIO *bio;
  #endif
@@ -1481,7 +1428,7 @@ index ddcff5eb..459964d9 100644
  
      if (which & SSL3_CC_READ) {
          if (s->enc_read_ctx != NULL) {
-@@ -485,6 +488,9 @@ int tls13_change_cipher_state(SSL *s, int which)
+@@ -485,6 +488,9 @@ int tls13_change_cipher_state(SSL *s, in
              label = client_early_traffic;
              labellen = sizeof(client_early_traffic) - 1;
              log_label = CLIENT_EARLY_LABEL;
@@ -1491,7 +1438,7 @@ index ddcff5eb..459964d9 100644
  
              handlen = BIO_get_mem_data(s->s3.handshake_buffer, &hdata);
              if (handlen <= 0) {
-@@ -544,6 +550,9 @@ int tls13_change_cipher_state(SSL *s, int which)
+@@ -544,6 +550,9 @@ int tls13_change_cipher_state(SSL *s, in
                  goto err;
              }
              hashlen = hashlenui;
@@ -1501,7 +1448,7 @@ index ddcff5eb..459964d9 100644
              EVP_MD_CTX_free(mdctx);
  
              if (!tls13_hkdf_expand(s, md, insecret,
-@@ -561,6 +570,14 @@ int tls13_change_cipher_state(SSL *s, int which)
+@@ -561,6 +570,14 @@ int tls13_change_cipher_state(SSL *s, in
                  /* SSLfatal() already called */
                  goto err;
              }
@@ -1516,7 +1463,7 @@ index ddcff5eb..459964d9 100644
          } else if (which & SSL3_CC_HANDSHAKE) {
              insecret = s->handshake_secret;
              finsecret = s->client_finished_secret;
-@@ -568,6 +585,15 @@ int tls13_change_cipher_state(SSL *s, int which)
+@@ -568,6 +585,15 @@ int tls13_change_cipher_state(SSL *s, in
              label = client_handshake_traffic;
              labellen = sizeof(client_handshake_traffic) - 1;
              log_label = CLIENT_HANDSHAKE_LABEL;
@@ -1532,7 +1479,7 @@ index ddcff5eb..459964d9 100644
              /*
               * The handshake hash used for the server read/client write handshake
               * traffic secret is the same as the hash for the server
-@@ -590,6 +616,15 @@ int tls13_change_cipher_state(SSL *s, int which)
+@@ -590,6 +616,15 @@ int tls13_change_cipher_state(SSL *s, in
               * previously saved value.
               */
              hash = s->server_finished_hash;
@@ -1548,7 +1495,7 @@ index ddcff5eb..459964d9 100644
          }
      } else {
          /* Early data never applies to client-read/server-write */
-@@ -600,11 +635,29 @@ int tls13_change_cipher_state(SSL *s, int which)
+@@ -600,11 +635,29 @@ int tls13_change_cipher_state(SSL *s, in
              label = server_handshake_traffic;
              labellen = sizeof(server_handshake_traffic) - 1;
              log_label = SERVER_HANDSHAKE_LABEL;
@@ -1578,7 +1525,7 @@ index ddcff5eb..459964d9 100644
          }
      }
  
-@@ -732,6 +785,12 @@ int tls13_change_cipher_state(SSL *s, int which)
+@@ -732,6 +785,12 @@ int tls13_change_cipher_state(SSL *s, in
  skip_ktls:
  # endif
  #endif
@@ -1591,11 +1538,9 @@ index ddcff5eb..459964d9 100644
      ret = 1;
   err:
      if ((which & SSL3_CC_EARLY) != 0) {
-diff --git a/test/helpers/ssltestlib.c b/test/helpers/ssltestlib.c
-index ef4a6177..4812f27a 100644
 --- a/test/helpers/ssltestlib.c
 +++ b/test/helpers/ssltestlib.c
-@@ -1157,6 +1157,11 @@ int create_ssl_connection(SSL *serverssl, SSL *clientssl, int want)
+@@ -1157,6 +1157,11 @@ int create_ssl_connection(SSL *serverssl
      if (!create_bare_ssl_connection(serverssl, clientssl, want, 1))
          return 0;
  
@@ -1607,11 +1552,9 @@ index ef4a6177..4812f27a 100644
      /*
       * We attempt to read some data on the client side which we expect to fail.
       * This will ensure we have received the NewSessionTicket in TLSv1.3 where
-diff --git a/test/sslapitest.c b/test/sslapitest.c
-index 2191b297..80ccd202 100644
 --- a/test/sslapitest.c
 +++ b/test/sslapitest.c
-@@ -10415,6 +10415,135 @@ end:
+@@ -10443,6 +10443,135 @@ end:
      return testresult;
  }
  
@@ -1747,8 +1690,8 @@ index 2191b297..80ccd202 100644
  OPT_TEST_DECLARE_USAGE("certfile privkeyfile srpvfile tmpfile provider config dhfile\n")
  
  int setup_tests(void)
-@@ -10687,6 +10816,9 @@ int setup_tests(void)
-     ADD_ALL_TESTS(test_pipelining, 6);
+@@ -10715,6 +10844,9 @@ int setup_tests(void)
+     ADD_ALL_TESTS(test_pipelining, 7);
  #endif
      ADD_ALL_TESTS(test_handshake_retry, 16);
 +#ifndef OPENSSL_NO_QUIC
@@ -1757,8 +1700,6 @@ index 2191b297..80ccd202 100644
      return 1;
  
   err:
-diff --git a/test/tls13secretstest.c b/test/tls13secretstest.c
-index bf214d3d..8323b237 100644
 --- a/test/tls13secretstest.c
 +++ b/test/tls13secretstest.c
 @@ -224,6 +224,13 @@ void ssl_evp_md_free(const EVP_MD *md)
@@ -1775,11 +1716,9 @@ index bf214d3d..8323b237 100644
  /* End of mocked out code */
  
  static int test_secret(SSL *s, unsigned char *prk,
-diff --git a/util/libssl.num b/util/libssl.num
-index f055c967..72ee0bed 100644
 --- a/util/libssl.num
 +++ b/util/libssl.num
-@@ -520,3 +520,14 @@ SSL_load_client_CA_file_ex              520	3_0_0	EXIST::FUNCTION:
+@@ -520,3 +520,14 @@ SSL_load_client_CA_file_ex
  SSL_set0_tmp_dh_pkey                    521	3_0_0	EXIST::FUNCTION:
  SSL_CTX_set0_tmp_dh_pkey                522	3_0_0	EXIST::FUNCTION:
  SSL_group_to_name                       523	3_0_0	EXIST::FUNCTION:
@@ -1794,11 +1733,9 @@ index f055c967..72ee0bed 100644
 +SSL_quic_max_handshake_flight_len       20008	3_0_0	EXIST::FUNCTION:QUIC
 +SSL_process_quic_post_handshake         20009	3_0_0	EXIST::FUNCTION:QUIC
 +SSL_provide_quic_data                   20010	3_0_0	EXIST::FUNCTION:QUIC
-diff --git a/util/other.syms b/util/other.syms
-index cdd62e81..baba3633 100644
 --- a/util/other.syms
 +++ b/util/other.syms
-@@ -142,6 +142,8 @@ custom_ext_free_cb                      datatype
+@@ -143,6 +143,8 @@ custom_ext_free_cb
  custom_ext_parse_cb                     datatype
  pem_password_cb                         datatype
  ssl_ct_validation_cb                    datatype
@@ -1807,6 +1744,3 @@ index cdd62e81..baba3633 100644
  #
  ASN1_BIT_STRING_digest                  define
  BIO_append_filename                     define
--- 
-2.42.0
-

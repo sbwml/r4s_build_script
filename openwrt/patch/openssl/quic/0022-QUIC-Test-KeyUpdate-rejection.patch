@@ -10,11 +10,9 @@ integrated into the TLSProxy setup.
  test/sslapitest.c | 11 +++++++++++
  1 file changed, 11 insertions(+)
 
-diff --git a/test/sslapitest.c b/test/sslapitest.c
-index 082081f1..ab12539d 100644
 --- a/test/sslapitest.c
 +++ b/test/sslapitest.c
-@@ -10540,6 +10540,17 @@ static int test_quic_api(void)
+@@ -10568,6 +10568,17 @@ static int test_quic_api(void)
              || !TEST_true(SSL_process_quic_post_handshake(clientssl)))
          goto end;
  
@@ -32,6 +30,3 @@ index 082081f1..ab12539d 100644
      testresult = 1;
  
   end:
--- 
-2.42.0
-

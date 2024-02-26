@@ -9,11 +9,9 @@ matches BoringSSL behavior.
  ssl/ssl_quic.c | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/ssl/ssl_quic.c b/ssl/ssl_quic.c
-index 9d4c8014..49a4f3ab 100644
 --- a/ssl/ssl_quic.c
 +++ b/ssl/ssl_quic.c
-@@ -143,6 +143,9 @@ int SSL_provide_quic_data(SSL *ssl, OSSL_ENCRYPTION_LEVEL level,
+@@ -143,6 +143,9 @@ int SSL_provide_quic_data(SSL *ssl, OSSL
          return 0;
      }
  
@@ -23,6 +21,3 @@ index 9d4c8014..49a4f3ab 100644
      if (ssl->quic_buf == NULL) {
          BUF_MEM *buf;
          if ((buf = BUF_MEM_new()) == NULL) {
--- 
-2.42.0
-

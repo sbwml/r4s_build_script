@@ -7,8 +7,6 @@ Subject: [PATCH 12/43] QUIC: Add OPENSSL_NO_QUIC wrapper
  ssl/ssl_local.h | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/ssl/ssl_local.h b/ssl/ssl_local.h
-index 91d07ac5..c791beb5 100644
 --- a/ssl/ssl_local.h
 +++ b/ssl/ssl_local.h
 @@ -1491,9 +1491,11 @@ struct ssl_st {
@@ -23,6 +21,3 @@ index 91d07ac5..c791beb5 100644
      unsigned char exporter_master_secret[EVP_MAX_MD_SIZE];
      unsigned char early_exporter_master_secret[EVP_MAX_MD_SIZE];
      EVP_CIPHER_CTX *enc_read_ctx; /* cryptographic state */
--- 
-2.42.0
-

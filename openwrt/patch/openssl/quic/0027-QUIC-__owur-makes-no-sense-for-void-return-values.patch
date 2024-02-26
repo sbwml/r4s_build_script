@@ -7,11 +7,9 @@ Subject: [PATCH 27/43] QUIC: __owur makes no sense for void return values
  include/openssl/ssl.h.in | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/openssl/ssl.h.in b/include/openssl/ssl.h.in
-index 89d82406..01028345 100644
 --- a/include/openssl/ssl.h.in
 +++ b/include/openssl/ssl.h.in
-@@ -2563,7 +2563,7 @@ __owur int SSL_process_quic_post_handshake(SSL *ssl);
+@@ -2563,7 +2563,7 @@ __owur int SSL_process_quic_post_handsha
  __owur int SSL_is_quic(SSL *ssl);
  
  /* BoringSSL API */
@@ -20,6 +18,3 @@ index 89d82406..01028345 100644
  
  /*
   * Set an explicit value that you want to use
--- 
-2.42.0
-

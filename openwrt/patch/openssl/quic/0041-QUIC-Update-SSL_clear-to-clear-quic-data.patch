@@ -12,11 +12,9 @@ from the server SSL.
  test/sslapitest.c         | 19 ++++++++++++++-----
  3 files changed, 46 insertions(+), 10 deletions(-)
 
-diff --git a/ssl/ssl_lib.c b/ssl/ssl_lib.c
-index 24d9fb3c..588c48f8 100644
 --- a/ssl/ssl_lib.c
 +++ b/ssl/ssl_lib.c
-@@ -625,6 +625,38 @@ int SSL_clear(SSL *s)
+@@ -640,6 +640,38 @@ int SSL_clear(SSL *s)
      s->shared_sigalgs = NULL;
      s->shared_sigalgslen = 0;
  
@@ -55,11 +53,9 @@ index 24d9fb3c..588c48f8 100644
      /*
       * Check to see if we were changed into a different method, if so, revert
       * back.
-diff --git a/test/helpers/ssltestlib.c b/test/helpers/ssltestlib.c
-index 4812f27a..ef4a6177 100644
 --- a/test/helpers/ssltestlib.c
 +++ b/test/helpers/ssltestlib.c
-@@ -1157,11 +1157,6 @@ int create_ssl_connection(SSL *serverssl, SSL *clientssl, int want)
+@@ -1157,11 +1157,6 @@ int create_ssl_connection(SSL *serverssl
      if (!create_bare_ssl_connection(serverssl, clientssl, want, 1))
          return 0;
  
@@ -71,11 +67,9 @@ index 4812f27a..ef4a6177 100644
      /*
       * We attempt to read some data on the client side which we expect to fail.
       * This will ensure we have received the NewSessionTicket in TLSv1.3 where
-diff --git a/test/sslapitest.c b/test/sslapitest.c
-index c4d94106..e6c38e43 100644
 --- a/test/sslapitest.c
 +++ b/test/sslapitest.c
-@@ -10482,6 +10482,7 @@ static int test_quic_api_version(int clnt, int srvr)
+@@ -10510,6 +10510,7 @@ static int test_quic_api_version(int cln
      static const char *client_str = "CLIENT";
      const uint8_t *peer_str;
      size_t peer_str_len;
@@ -83,7 +77,7 @@ index c4d94106..e6c38e43 100644
  
      TEST_info("original clnt=0x%X, srvr=0x%X\n", clnt, srvr);
  
-@@ -10504,8 +10505,10 @@ static int test_quic_api_version(int clnt, int srvr)
+@@ -10532,8 +10533,10 @@ static int test_quic_api_version(int cln
              || !TEST_true(SSL_set_app_data(clientssl, serverssl))
              || !TEST_true(test_quic_api_set_versions(clientssl, clnt))
              || !TEST_true(test_quic_api_set_versions(serverssl, srvr))
@@ -96,7 +90,7 @@ index c4d94106..e6c38e43 100644
              || !TEST_true(SSL_version(serverssl) == TLS1_3_VERSION)
              || !TEST_true(SSL_version(clientssl) == TLS1_3_VERSION)
              || !(TEST_int_eq(SSL_quic_read_level(clientssl), ssl_encryption_application))
-@@ -10627,6 +10630,7 @@ static int quic_setupearly_data_test(SSL_CTX **cctx, SSL_CTX **sctx,
+@@ -10655,6 +10658,7 @@ static int quic_setupearly_data_test(SSL
  {
      static const char *server_str = "SERVER";
      static const char *client_str = "CLIENT";
@@ -104,7 +98,7 @@ index c4d94106..e6c38e43 100644
  
      if (*sctx == NULL
              && (!TEST_true(create_ssl_ctx_pair(libctx, TLS_server_method(),
-@@ -10704,8 +10708,10 @@ static int quic_setupearly_data_test(SSL_CTX **cctx, SSL_CTX **sctx,
+@@ -10732,8 +10736,10 @@ static int quic_setupearly_data_test(SSL
      if (sess == NULL)
          return 1;
  
@@ -117,7 +111,7 @@ index c4d94106..e6c38e43 100644
          return 0;
  
      /* Deal with two NewSessionTickets */
-@@ -10744,12 +10750,15 @@ static int test_quic_early_data(int tst)
+@@ -10772,12 +10778,15 @@ static int test_quic_early_data(int tst)
      SSL *clientssl = NULL, *serverssl = NULL;
      int testresult = 0;
      SSL_SESSION *sess = NULL;
@@ -134,6 +128,3 @@ index c4d94106..e6c38e43 100644
              || !TEST_true(SSL_get_early_data_status(serverssl)))
          goto end;
  
--- 
-2.42.0
-

@@ -7,11 +7,9 @@ Subject: [PATCH 26/43] QUIC: return success when no post-handshake data
  ssl/ssl_quic.c | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/ssl/ssl_quic.c b/ssl/ssl_quic.c
-index 971af0f4..477a386d 100644
 --- a/ssl/ssl_quic.c
 +++ b/ssl/ssl_quic.c
-@@ -309,6 +309,10 @@ int SSL_process_quic_post_handshake(SSL *ssl)
+@@ -309,6 +309,10 @@ int SSL_process_quic_post_handshake(SSL
          return 0;
      }
  
@@ -22,6 +20,3 @@ index 971af0f4..477a386d 100644
      /*
       * This is always safe (we are sure to be at a record boundary) because
       * SSL_read()/SSL_write() are never used for QUIC connections -- the
--- 
-2.42.0
-

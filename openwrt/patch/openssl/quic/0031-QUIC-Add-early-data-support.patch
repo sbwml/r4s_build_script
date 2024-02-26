@@ -18,8 +18,6 @@ support to QUIC.
  util/libssl.num                      |   1 +
  8 files changed, 327 insertions(+), 33 deletions(-)
 
-diff --git a/doc/man3/SSL_CTX_set_quic_method.pod b/doc/man3/SSL_CTX_set_quic_method.pod
-index b6104b90..c2bce34d 100644
 --- a/doc/man3/SSL_CTX_set_quic_method.pod
 +++ b/doc/man3/SSL_CTX_set_quic_method.pod
 @@ -17,7 +17,8 @@ SSL_is_quic,
@@ -53,11 +51,9 @@ index b6104b90..c2bce34d 100644
  =head1 NOTES
  
  These APIs are implementations of BoringSSL's QUIC APIs.
-diff --git a/include/openssl/ssl.h.in b/include/openssl/ssl.h.in
-index 01028345..5f337616 100644
 --- a/include/openssl/ssl.h.in
 +++ b/include/openssl/ssl.h.in
-@@ -2577,6 +2577,8 @@ __owur int SSL_get_peer_quic_transport_version(const SSL *ssl);
+@@ -2577,6 +2577,8 @@ __owur int SSL_get_peer_quic_transport_v
  
  int SSL_CIPHER_get_prf_nid(const SSL_CIPHER *c);
  
@@ -66,11 +62,9 @@ index 01028345..5f337616 100644
  #  endif
  
  # ifdef  __cplusplus
-diff --git a/ssl/ssl_lib.c b/ssl/ssl_lib.c
-index 598f3e8a..24d9fb3c 100644
 --- a/ssl/ssl_lib.c
 +++ b/ssl/ssl_lib.c
-@@ -3978,6 +3978,21 @@ int SSL_do_handshake(SSL *s)
+@@ -3997,6 +3997,21 @@ int SSL_do_handshake(SSL *s)
              ret = s->handshake_func(s);
          }
      }
@@ -92,11 +86,9 @@ index 598f3e8a..24d9fb3c 100644
      return ret;
  }
  
-diff --git a/ssl/ssl_quic.c b/ssl/ssl_quic.c
-index d50b1247..9d4c8014 100644
 --- a/ssl/ssl_quic.c
 +++ b/ssl/ssl_quic.c
-@@ -257,24 +257,46 @@ int quic_set_encryption_secrets(SSL *ssl, OSSL_ENCRYPTION_LEVEL level)
+@@ -257,24 +257,46 @@ int quic_set_encryption_secrets(SSL *ssl
          return 1;
      }
  
@@ -185,11 +177,9 @@ index d50b1247..9d4c8014 100644
 +
 +    ssl->early_data_state = SSL_EARLY_DATA_CONNECTING;
 +}
-diff --git a/ssl/statem/statem_srvr.c b/ssl/statem/statem_srvr.c
-index 391e638c..2d3f05d9 100644
 --- a/ssl/statem/statem_srvr.c
 +++ b/ssl/statem/statem_srvr.c
-@@ -964,6 +964,16 @@ WORK_STATE ossl_statem_server_post_work(SSL *s, WORK_STATE wst)
+@@ -964,6 +964,16 @@ WORK_STATE ossl_statem_server_post_work(
                          SSL3_CC_APPLICATION | SSL3_CHANGE_CIPHER_SERVER_WRITE))
              /* SSLfatal() already called */
              return WORK_ERROR;
@@ -206,11 +196,9 @@ index 391e638c..2d3f05d9 100644
          }
          break;
  
-diff --git a/ssl/tls13_enc.c b/ssl/tls13_enc.c
-index 643d2dbf..33cf7919 100644
 --- a/ssl/tls13_enc.c
 +++ b/ssl/tls13_enc.c
-@@ -434,20 +434,76 @@ static int quic_change_cipher_state(SSL *s, int which)
+@@ -434,20 +434,76 @@ static int quic_change_cipher_state(SSL
      int is_server_write = ((which & SSL3_CHANGE_CIPHER_SERVER_WRITE) == SSL3_CHANGE_CIPHER_SERVER_WRITE);
      int is_early = (which & SSL3_CC_EARLY);
  
@@ -232,12 +220,7 @@ index 643d2dbf..33cf7919 100644
 +            SSLfatal(s, SSL_AD_INTERNAL_ERROR, SSL_R_BAD_HANDSHAKE_LENGTH);
 +            goto err;
 +        }
- 
--    /* Ensure cast to size_t is safe */
--    hashleni = EVP_MD_size(md);
--    if (!ossl_assert(hashleni >= 0)) {
--        SSLfatal(s, SSL_AD_INTERNAL_ERROR, ERR_R_EVP_LIB);
--        goto err;
++
 +        if (s->early_data_state == SSL_EARLY_DATA_CONNECTING
 +                && s->max_early_data > 0
 +                && s->session->ext.max_early_data == 0) {
@@ -286,7 +269,12 @@ index 643d2dbf..33cf7919 100644
 +            /* SSLfatal() already called */;
 +            goto err;
 +        }
-+
+ 
+-    /* Ensure cast to size_t is safe */
+-    hashleni = EVP_MD_size(md);
+-    if (!ossl_assert(hashleni >= 0)) {
+-        SSLfatal(s, SSL_AD_INTERNAL_ERROR, ERR_R_EVP_LIB);
+-        goto err;
 +        /* Ensure cast to size_t is safe */
 +        hashleni = EVP_MD_size(md);
 +        if (!ossl_assert(hashleni >= 0)) {
@@ -299,7 +287,7 @@ index 643d2dbf..33cf7919 100644
  
      if (is_client_read || is_server_write) {
          if (is_handshake) {
-@@ -553,10 +609,12 @@ static int quic_change_cipher_state(SSL *s, int which)
+@@ -553,10 +609,12 @@ static int quic_change_cipher_state(SSL
              }
          }
  
@@ -316,11 +304,9 @@ index 643d2dbf..33cf7919 100644
      }
  
      ret = 1;
-diff --git a/test/sslapitest.c b/test/sslapitest.c
-index bec2edf5..f0c658b2 100644
 --- a/test/sslapitest.c
 +++ b/test/sslapitest.c
-@@ -10616,6 +10616,159 @@ end:
+@@ -10644,6 +10644,159 @@ end:
      serverssl = NULL;
      return testresult;
  }
@@ -480,7 +466,7 @@ index bec2edf5..f0c658b2 100644
  #endif /* OPENSSL_NO_QUIC */
  
  OPT_TEST_DECLARE_USAGE("certfile privkeyfile srpvfile tmpfile provider config dhfile\n")
-@@ -10892,6 +11045,9 @@ int setup_tests(void)
+@@ -10920,6 +11073,9 @@ int setup_tests(void)
      ADD_ALL_TESTS(test_handshake_retry, 16);
  #ifndef OPENSSL_NO_QUIC
      ADD_ALL_TESTS(test_quic_api, 9);
@@ -490,15 +476,10 @@ index bec2edf5..f0c658b2 100644
  #endif
      return 1;
  
-diff --git a/util/libssl.num b/util/libssl.num
-index 41ebba40..4a9d5b20 100644
 --- a/util/libssl.num
 +++ b/util/libssl.num
-@@ -535,3 +535,4 @@ SSL_set_quic_use_legacy_codepoint       20011	3_0_0	EXIST::FUNCTION:QUIC
+@@ -535,3 +535,4 @@ SSL_set_quic_use_legacy_codepoint
  SSL_set_quic_transport_version          20012	3_0_0	EXIST::FUNCTION:QUIC
  SSL_get_peer_quic_transport_version     20013	3_0_0	EXIST::FUNCTION:QUIC
  SSL_get_quic_transport_version          20014	3_0_0	EXIST::FUNCTION:QUIC
 +SSL_set_quic_early_data_enabled         20015	3_0_0	EXIST::FUNCTION:QUIC
--- 
-2.42.0
-

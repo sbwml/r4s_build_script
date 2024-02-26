@@ -11,11 +11,9 @@ initialized).
  ssl/tls13_enc.c | 217 ++++++++++++++++++++++++++++++------------------
  2 files changed, 138 insertions(+), 86 deletions(-)
 
-diff --git a/ssl/ssl_quic.c b/ssl/ssl_quic.c
-index a76c24ea..670deea5 100644
 --- a/ssl/ssl_quic.c
 +++ b/ssl/ssl_quic.c
-@@ -199,7 +199,6 @@ int quic_set_encryption_secrets(SSL *ssl, OSSL_ENCRYPTION_LEVEL level)
+@@ -199,7 +199,6 @@ int quic_set_encryption_secrets(SSL *ssl
      uint8_t *s2c_secret = NULL;
      size_t len;
      const EVP_MD *md;
@@ -23,7 +21,7 @@ index a76c24ea..670deea5 100644
  
      if (!SSL_IS_QUIC(ssl))
          return 1;
-@@ -240,12 +239,6 @@ int quic_set_encryption_secrets(SSL *ssl, OSSL_ENCRYPTION_LEVEL level)
+@@ -240,12 +239,6 @@ int quic_set_encryption_secrets(SSL *ssl
          return 0;
      }
  
@@ -36,11 +34,9 @@ index a76c24ea..670deea5 100644
      if (ssl->server) {
          if (!ssl->quic_method->set_encryption_secrets(ssl, level, c2s_secret,
                                                        s2c_secret, len)) {
-diff --git a/ssl/tls13_enc.c b/ssl/tls13_enc.c
-index ccd8bdd5..3c41e514 100644
 --- a/ssl/tls13_enc.c
 +++ b/ssl/tls13_enc.c
-@@ -400,27 +400,144 @@ static int derive_secret_key_and_iv(SSL *s, int sending, const EVP_MD *md,
+@@ -400,27 +400,144 @@ static int derive_secret_key_and_iv(SSL
      return 1;
  }
  
@@ -203,7 +199,7 @@ index ccd8bdd5..3c41e514 100644
      unsigned char *iv;
      unsigned char key[EVP_MAX_KEY_LENGTH];
      unsigned char secret[EVP_MAX_MD_SIZE];
-@@ -440,8 +557,10 @@ int tls13_change_cipher_state(SSL *s, int which)
+@@ -440,8 +557,10 @@ int tls13_change_cipher_state(SSL *s, in
      ktls_crypto_info_t crypto_info;
      BIO *bio;
  #endif
@@ -215,7 +211,7 @@ index ccd8bdd5..3c41e514 100644
  #endif
  
      if (which & SSL3_CC_READ) {
-@@ -488,9 +607,6 @@ int tls13_change_cipher_state(SSL *s, int which)
+@@ -488,9 +607,6 @@ int tls13_change_cipher_state(SSL *s, in
              label = client_early_traffic;
              labellen = sizeof(client_early_traffic) - 1;
              log_label = CLIENT_EARLY_LABEL;
@@ -225,7 +221,7 @@ index ccd8bdd5..3c41e514 100644
  
              handlen = BIO_get_mem_data(s->s3.handshake_buffer, &hdata);
              if (handlen <= 0) {
-@@ -567,14 +683,6 @@ int tls13_change_cipher_state(SSL *s, int which)
+@@ -567,14 +683,6 @@ int tls13_change_cipher_state(SSL *s, in
                  /* SSLfatal() already called */
                  goto err;
              }
@@ -240,7 +236,7 @@ index ccd8bdd5..3c41e514 100644
          } else if (which & SSL3_CC_HANDSHAKE) {
              insecret = s->handshake_secret;
              finsecret = s->client_finished_secret;
-@@ -582,15 +690,6 @@ int tls13_change_cipher_state(SSL *s, int which)
+@@ -582,15 +690,6 @@ int tls13_change_cipher_state(SSL *s, in
              label = client_handshake_traffic;
              labellen = sizeof(client_handshake_traffic) - 1;
              log_label = CLIENT_HANDSHAKE_LABEL;
@@ -256,7 +252,7 @@ index ccd8bdd5..3c41e514 100644
              /*
               * The handshake hash used for the server read/client write handshake
               * traffic secret is the same as the hash for the server
-@@ -613,15 +712,6 @@ int tls13_change_cipher_state(SSL *s, int which)
+@@ -613,15 +712,6 @@ int tls13_change_cipher_state(SSL *s, in
               * previously saved value.
               */
              hash = s->server_finished_hash;
@@ -272,7 +268,7 @@ index ccd8bdd5..3c41e514 100644
          }
      } else {
          /* Early data never applies to client-read/server-write */
-@@ -632,29 +722,11 @@ int tls13_change_cipher_state(SSL *s, int which)
+@@ -632,29 +722,11 @@ int tls13_change_cipher_state(SSL *s, in
              label = server_handshake_traffic;
              labellen = sizeof(server_handshake_traffic) - 1;
              log_label = SERVER_HANDSHAKE_LABEL;
@@ -302,7 +298,7 @@ index ccd8bdd5..3c41e514 100644
          }
      }
  
-@@ -723,14 +795,6 @@ int tls13_change_cipher_state(SSL *s, int which)
+@@ -723,14 +795,6 @@ int tls13_change_cipher_state(SSL *s, in
          }
      } else if (label == client_application_traffic)
          memcpy(s->client_app_traffic_secret, secret, hashlen);
@@ -329,6 +325,3 @@ index ccd8bdd5..3c41e514 100644
      ret = 1;
   err:
      if ((which & SSL3_CC_EARLY) != 0) {
--- 
-2.42.0
-

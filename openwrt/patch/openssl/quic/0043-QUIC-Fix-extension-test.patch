@@ -8,8 +8,6 @@ Subject: [PATCH 43/43] QUIC: Fix extension test
  test/ext_internal_test.c | 7 +++++++
  2 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/ssl/ssl_local.h b/ssl/ssl_local.h
-index 74b4319d..51c4a77a 100644
 --- a/ssl/ssl_local.h
 +++ b/ssl/ssl_local.h
 @@ -773,8 +773,8 @@ typedef enum tlsext_index_en {
@@ -23,8 +21,6 @@ index 74b4319d..51c4a77a 100644
      TLSEXT_IDX_padding,
      TLSEXT_IDX_psk,
      /* Dummy index - must always be the last entry */
-diff --git a/test/ext_internal_test.c b/test/ext_internal_test.c
-index dec6ee61..769b2539 100644
 --- a/test/ext_internal_test.c
 +++ b/test/ext_internal_test.c
 @@ -69,6 +69,13 @@ static EXT_LIST ext_list[] = {
@@ -41,6 +37,3 @@ index dec6ee61..769b2539 100644
      EXT_ENTRY(padding),
      EXT_ENTRY(psk),
      EXT_END(num_builtins)
--- 
-2.42.0
-

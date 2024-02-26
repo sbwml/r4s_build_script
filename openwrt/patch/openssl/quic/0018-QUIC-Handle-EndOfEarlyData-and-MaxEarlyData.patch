@@ -10,11 +10,9 @@ Subject: [PATCH 18/43] QUIC: Handle EndOfEarlyData and MaxEarlyData
  ssl/statem/statem_srvr.c     |  4 ++++
  4 files changed, 33 insertions(+), 2 deletions(-)
 
-diff --git a/ssl/statem/extensions_clnt.c b/ssl/statem/extensions_clnt.c
-index 3ae28e68..3e763611 100644
 --- a/ssl/statem/extensions_clnt.c
 +++ b/ssl/statem/extensions_clnt.c
-@@ -1919,6 +1919,17 @@ int tls_parse_stoc_early_data(SSL *s, PACKET *pkt, unsigned int context,
+@@ -1919,6 +1919,17 @@ int tls_parse_stoc_early_data(SSL *s, PA
              return 0;
          }
  
@@ -32,11 +30,9 @@ index 3ae28e68..3e763611 100644
          s->session->ext.max_early_data = max_early_data;
  
          return 1;
-diff --git a/ssl/statem/extensions_srvr.c b/ssl/statem/extensions_srvr.c
-index 8c6fd9bc..198b48ea 100644
 --- a/ssl/statem/extensions_srvr.c
 +++ b/ssl/statem/extensions_srvr.c
-@@ -1890,12 +1890,20 @@ EXT_RETURN tls_construct_stoc_early_data(SSL *s, WPACKET *pkt,
+@@ -1890,12 +1890,20 @@ EXT_RETURN tls_construct_stoc_early_data
                                           size_t chainidx)
  {
      if (context == SSL_EXT_TLS1_3_NEW_SESSION_TICKET) {
@@ -59,11 +55,9 @@ index 8c6fd9bc..198b48ea 100644
                  || !WPACKET_close(pkt)) {
              SSLfatal(s, SSL_AD_INTERNAL_ERROR, ERR_R_INTERNAL_ERROR);
              return EXT_RETURN_FAIL;
-diff --git a/ssl/statem/statem_clnt.c b/ssl/statem/statem_clnt.c
-index 3cd1ee2d..36cbba2a 100644
 --- a/ssl/statem/statem_clnt.c
 +++ b/ssl/statem/statem_clnt.c
-@@ -904,6 +904,14 @@ int ossl_statem_client_construct_message(SSL *s, WPACKET *pkt,
+@@ -904,6 +904,14 @@ int ossl_statem_client_construct_message
          break;
  
      case TLS_ST_CW_END_OF_EARLY_DATA:
@@ -78,11 +72,9 @@ index 3cd1ee2d..36cbba2a 100644
          *confunc = tls_construct_end_of_early_data;
          *mt = SSL3_MT_END_OF_EARLY_DATA;
          break;
-diff --git a/ssl/statem/statem_srvr.c b/ssl/statem/statem_srvr.c
-index a9e67f9d..69126bd5 100644
 --- a/ssl/statem/statem_srvr.c
 +++ b/ssl/statem/statem_srvr.c
-@@ -76,6 +76,10 @@ static int ossl_statem_server13_read_transition(SSL *s, int mt)
+@@ -76,6 +76,10 @@ static int ossl_statem_server13_read_tra
              break;
          } else if (s->ext.early_data == SSL_EARLY_DATA_ACCEPTED) {
              if (mt == SSL3_MT_END_OF_EARLY_DATA) {
@@ -93,6 +85,3 @@ index a9e67f9d..69126bd5 100644
                  st->hand_state = TLS_ST_SR_END_OF_EARLY_DATA;
                  return 1;
              }
--- 
-2.42.0
-

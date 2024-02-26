@@ -7,11 +7,9 @@ Subject: [PATCH 13/43] QUIC: Correctly disable middlebox compat
  ssl/ssl_quic.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/ssl/ssl_quic.c b/ssl/ssl_quic.c
-index 0017d1eb..a76c24ea 100644
 --- a/ssl/ssl_quic.c
 +++ b/ssl/ssl_quic.c
-@@ -173,7 +173,7 @@ int SSL_CTX_set_quic_method(SSL_CTX *ctx, const SSL_QUIC_METHOD *quic_method)
+@@ -173,7 +173,7 @@ int SSL_CTX_set_quic_method(SSL_CTX *ctx
          break;
      }
      ctx->quic_method = quic_method;
@@ -20,7 +18,7 @@ index 0017d1eb..a76c24ea 100644
      return 1;
  }
  
-@@ -189,7 +189,7 @@ int SSL_set_quic_method(SSL *ssl, const SSL_QUIC_METHOD *quic_method)
+@@ -189,7 +189,7 @@ int SSL_set_quic_method(SSL *ssl, const
          break;
      }
      ssl->quic_method = quic_method;
@@ -29,6 +27,3 @@ index 0017d1eb..a76c24ea 100644
      return 1;
  }
  
--- 
-2.42.0
-

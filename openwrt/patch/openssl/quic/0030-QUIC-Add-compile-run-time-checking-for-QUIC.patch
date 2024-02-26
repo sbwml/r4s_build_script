@@ -10,8 +10,6 @@ Subject: [PATCH 30/43] QUIC: Add compile/run-time checking for QUIC
  include/openssl/crypto.h.in  |  4 ++++
  4 files changed, 28 insertions(+)
 
-diff --git a/apps/info.c b/apps/info.c
-index c6860365..f0f043b7 100644
 --- a/apps/info.c
 +++ b/apps/info.c
 @@ -15,6 +15,9 @@ typedef enum OPTION_choice {
@@ -47,8 +45,6 @@ index c6860365..f0f043b7 100644
          }
      }
      if (opt_num_rest() != 0)
-diff --git a/crypto/info.c b/crypto/info.c
-index a0dc2e80..480bb7e6 100644
 --- a/crypto/info.c
 +++ b/crypto/info.c
 @@ -199,6 +199,10 @@ const char *OPENSSL_info(int t)
@@ -62,11 +58,9 @@ index a0dc2e80..480bb7e6 100644
      default:
          break;
      }
-diff --git a/doc/man3/OpenSSL_version.pod b/doc/man3/OpenSSL_version.pod
-index e1cf16e2..946bb151 100644
 --- a/doc/man3/OpenSSL_version.pod
 +++ b/doc/man3/OpenSSL_version.pod
-@@ -211,6 +211,14 @@ automatically configured but may be set via an environment variable.
+@@ -211,6 +211,14 @@ automatically configured but may be set
  The value has the same syntax as the environment variable.
  For x86 the string looks like C<OPENSSL_ia32cap=0x123:0x456>.
  
@@ -81,8 +75,6 @@ index e1cf16e2..946bb151 100644
  =back
  
  For an unknown I<t>, NULL is returned.
-diff --git a/include/openssl/crypto.h.in b/include/openssl/crypto.h.in
-index 7232f647..53a3758e 100644
 --- a/include/openssl/crypto.h.in
 +++ b/include/openssl/crypto.h.in
 @@ -176,6 +176,10 @@ const char *OPENSSL_info(int type);
@@ -96,6 +88,3 @@ index 7232f647..53a3758e 100644
  int OPENSSL_issetugid(void);
  
  struct crypto_ex_data_st {
--- 
-2.42.0
-
