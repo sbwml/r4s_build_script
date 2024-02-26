@@ -92,31 +92,31 @@ if [ "$ENABLE_LRNG" = "y" ]; then
         echo '# CONFIG_LRNG_HWRAND_IF is not set' >> target/linux/generic/config-6.6
     fi
     pushd target/linux/generic/hack-6.6
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0001-LRNG-Entropy-Source-and-DRNG-Manager.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0002-LRNG-allocate-one-DRNG-instance-per-NUMA-node.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0003-LRNG-proc-interface.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0004-LRNG-add-switchable-DRNG-support.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0005-LRNG-add-common-generic-hash-support.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0006-crypto-DRBG-externalize-DRBG-functions-for-LRNG.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0007-LRNG-add-SP800-90A-DRBG-extension.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0008-LRNG-add-kernel-crypto-API-PRNG-extension.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0009-LRNG-add-atomic-DRNG-implementation.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0010-LRNG-add-common-timer-based-entropy-source-code.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0011-LRNG-add-interrupt-entropy-source.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0012-scheduler-add-entropy-sampling-hook.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0013-LRNG-add-scheduler-based-entropy-source.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0014-LRNG-add-SP800-90B-compliant-health-tests.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0015-LRNG-add-random.c-entropy-source-support.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0016-LRNG-CPU-entropy-source.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0017-LRNG-add-Jitter-RNG-fast-noise-source.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0018-LRNG-add-option-to-enable-runtime-entropy-rate-confi.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0019-LRNG-add-interface-for-gathering-of-raw-entropy.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0020-LRNG-add-power-on-and-runtime-self-tests.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0021-LRNG-sysctls-and-proc-interface.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0022-LRMG-add-drop-in-replacement-random-4-API.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0023-LRNG-add-kernel-crypto-API-interface.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0024-LRNG-add-dev-lrng-device-file-support.patch
-        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/0025-LRNG-add-hwrand-framework-interface.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0001-LRNG-Entropy-Source-and-DRNG-Manager.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0002-LRNG-allocate-one-DRNG-instance-per-NUMA-node.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0003-LRNG-proc-interface.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0004-LRNG-add-switchable-DRNG-support.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0005-LRNG-add-common-generic-hash-support.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0006-crypto-DRBG-externalize-DRBG-functions-for-LRNG.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0007-LRNG-add-SP800-90A-DRBG-extension.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0008-LRNG-add-kernel-crypto-API-PRNG-extension.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0009-LRNG-add-atomic-DRNG-implementation.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0010-LRNG-add-common-timer-based-entropy-source-code.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0011-LRNG-add-interrupt-entropy-source.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0012-scheduler-add-entropy-sampling-hook.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0013-LRNG-add-scheduler-based-entropy-source.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0014-LRNG-add-SP800-90B-compliant-health-tests.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0015-LRNG-add-random.c-entropy-source-support.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0016-LRNG-CPU-entropy-source.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0017-LRNG-add-Jitter-RNG-fast-noise-source.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0018-LRNG-add-option-to-enable-runtime-entropy-rate-confi.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0019-LRNG-add-interface-for-gathering-of-raw-entropy.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0020-LRNG-add-power-on-and-runtime-self-tests.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0021-LRNG-sysctls-and-proc-interface.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0022-LRMG-add-drop-in-replacement-random-4-API.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0023-LRNG-add-kernel-crypto-API-interface.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0024-LRNG-add-dev-lrng-device-file-support.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/lrng_v52_6.6/011-LRNG-0025-LRNG-add-hwrand-framework-interface.patch
     popd
 fi
 
@@ -130,6 +130,7 @@ cp -a ../master/openwrt/package/kernel/rtl8812au-ct package/kernel/rtl8812au-ct
 
 # add rtl8812au-ac
 cp -a ../master/mj22226_openwrt/package/kernel/rtl8812au-ac package/kernel/rtl8812au-ac
+sed -i 's/+wifi-scripts //' package/kernel/rtl8812au-ac/Makefile
 
 # ath10k-ct - fix mac80211 6.1-rc
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/kmod-patches/ath10k-ct.patch | patch -p1
@@ -156,12 +157,13 @@ git clone https://github.com/sbwml/package_kernel_mac80211 package/kernel/mac802
 
 # mac80211/patches/rtl - rtw88
 mkdir -p package/kernel/mac80211/patches/rtl
-curl -s https://$mirror/openwrt/patch/mac80211/900-hack-rtw88-phy.patch > package/kernel/mac80211/patches/rtl/900-hack-rtw88-phy.patch
-curl -s https://$mirror/openwrt/patch/mac80211/901-wifi-rtw88-8822b-disable-call-trace-when-write-RF-mo.patch > package/kernel/mac80211/patches/rtl/901-wifi-rtw88-8822b-disable-call-trace-when-write-RF-mo.patch
-curl -s https://$mirror/openwrt/patch/mac80211/903-wifi-rtw88-Remove-duplicate-NULL-check-before-callin.patch > package/kernel/mac80211/patches/rtl/903-wifi-rtw88-Remove-duplicate-NULL-check-before-callin.patch
-curl -s https://$mirror/openwrt/patch/mac80211/904-wifi-rtw88-usb-kill-and-free-rx-urbs-on-probe-failur.patch > package/kernel/mac80211/patches/rtl/904-wifi-rtw88-usb-kill-and-free-rx-urbs-on-probe-failur.patch
-curl -s https://$mirror/openwrt/patch/mac80211/905-wifi-rtw88-add-missing-call-to-cancel_work_sync.patch > package/kernel/mac80211/patches/rtl/905-wifi-rtw88-add-missing-call-to-cancel_work_sync.patch
-curl -s https://$mirror/openwrt/patch/mac80211/906-wifi-rtw88-8821c-Fix-beacon-loss-and-disconnect.patch > package/kernel/mac80211/patches/rtl/906-wifi-rtw88-8821c-Fix-beacon-loss-and-disconnect.patch
+pushd package/kernel/mac80211/patches/rtl
+    curl -Os https://$mirror/openwrt/patch/mac80211/900-hack-rtw88-phy.patch
+    curl -Os https://$mirror/openwrt/patch/mac80211/901-wifi-rtw88-8822b-disable-call-trace-when-write-RF-mo.patch
+    curl -Os https://$mirror/openwrt/patch/mac80211/905-wifi-rtw88-add-missing-call-to-cancel_work_sync.patch
+    curl -Os https://$mirror/openwrt/patch/mac80211/906-wifi-rtw88-8821c-Fix-beacon-loss-and-disconnect.patch
+    curl -Os https://$mirror/openwrt/patch/mac80211/907-wifi-rtw88-usb-Add-magic-missing-from-register-acces.patch
+popd
 
 # kernel patch
 # btf: silence btf module warning messages

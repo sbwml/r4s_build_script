@@ -167,6 +167,12 @@ pushd feeds/luci
     curl -s https://$mirror/openwrt/patch/firewall4/03-luci-app-firewall_add_ipv6-nat.patch | patch -p1
 popd
 
+# openssl - bump version
+if [ "$version" = "rc2" ]; then
+    rm -rf package/libs/openssl
+    cp -a ../master/openwrt-23.05/package/libs/openssl package/libs/openssl
+fi
+
 # openssl - quictls
 pushd package/libs/openssl/patches
     curl -sO https://$mirror/openwrt/patch/openssl/quic/0001-QUIC-Add-support-for-BoringSSL-QUIC-APIs.patch
