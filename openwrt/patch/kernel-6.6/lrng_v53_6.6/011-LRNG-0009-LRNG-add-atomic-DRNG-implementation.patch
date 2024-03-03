@@ -1,4 +1,4 @@
-From b90487ecfb504c7d0f90893e26f8aae8c5665632 Mon Sep 17 00:00:00 2001
+From 389801583540fb464b09520576b6b733b7e01ad0 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Mon, 20 Feb 2023 22:05:24 +0100
 Subject: [PATCH 09/25] LRNG - add atomic DRNG implementation

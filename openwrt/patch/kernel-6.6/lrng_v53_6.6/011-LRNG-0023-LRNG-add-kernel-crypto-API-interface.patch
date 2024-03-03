@@ -1,4 +1,4 @@
-From 3e8e7ebb3b748f1bc30657321bac79270dd74e9c Mon Sep 17 00:00:00 2001
+From e817d2116b4e61a136b3d153f4488ca0ffdc93be Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Sun, 9 Oct 2022 10:22:39 +0200
 Subject: [PATCH 23/25] LRNG - add kernel crypto API interface

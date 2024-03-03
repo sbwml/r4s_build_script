@@ -1,4 +1,4 @@
-From c58045cd02c57d4949fa4692ba31d861d47e2b72 Mon Sep 17 00:00:00 2001
+From a6a18a9232bb8b0c99143038b93318eaa49115b1 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Sun, 31 Jul 2022 22:34:51 +0200
 Subject: [PATCH 21/25] LRNG - sysctls and /proc interface
@@ -16,8 +16,8 @@ is not compiled.
 Signed-off-by: Stephan Mueller <smueller@chronox.de>
 ---
  drivers/char/lrng/Makefile      |   1 +
- drivers/char/lrng/lrng_sysctl.c | 140 ++++++++++++++++++++++++++++++++
- 2 files changed, 141 insertions(+)
+ drivers/char/lrng/lrng_sysctl.c | 139 ++++++++++++++++++++++++++++++++
+ 2 files changed, 140 insertions(+)
  create mode 100644 drivers/char/lrng/lrng_sysctl.c
 
 --- a/drivers/char/lrng/Makefile
@@ -32,7 +32,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
  obj-$(CONFIG_LRNG_SWITCH)		+= lrng_switch.o
 --- /dev/null
 +++ b/drivers/char/lrng/lrng_sysctl.c
-@@ -0,0 +1,140 @@
+@@ -0,0 +1,139 @@
 +// SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
 +/*
 + * LRNG sysctl interfaces
@@ -164,7 +164,6 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 +		.proc_handler   = proc_dointvec,
 +		.extra1		= &lrng_drng_reseed_max_min,
 +	},
-+	{ }
 +};
 +
 +static int __init random_sysctls_init(void)

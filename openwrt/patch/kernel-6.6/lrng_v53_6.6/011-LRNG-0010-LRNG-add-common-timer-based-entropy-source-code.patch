@@ -1,4 +1,4 @@
-From cc19027362a47799c15478a9b0f1d8af53920fa8 Mon Sep 17 00:00:00 2001
+From 9932023caca6947d709b0b1171b3cab4a4e1c6c5 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Sun, 15 May 2022 16:21:44 +0200
 Subject: [PATCH 10/25] LRNG - add common timer-based entropy source code

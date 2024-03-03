@@ -1,4 +1,4 @@
-From 764b63de77e440676b5873454564ca4309c375db Mon Sep 17 00:00:00 2001
+From 6339729fafd02024d06ed7d37bec1ac9fc98f438 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Sun, 15 May 2022 17:56:56 +0200
 Subject: [PATCH 18/25] LRNG - add option to enable runtime entropy rate

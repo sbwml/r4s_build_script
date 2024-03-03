@@ -1,4 +1,4 @@
-From 3b83baddadc11ee0ec0be37b314d4edd418aef21 Mon Sep 17 00:00:00 2001
+From 31388ff6617e45c68c5873f6f77ab4b30195b772 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
 Date: Tue, 25 Apr 2023 22:22:44 +0200
 Subject: [PATCH 01/25] LRNG: Entropy Source and DRNG Manager
