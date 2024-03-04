@@ -255,7 +255,7 @@ curl -s https://$mirror/openwrt/patch/user-agent/999-wget-default-useragent.patc
 # dnsmasq - bump version
 DNSMASQ_VERSION=2.90
 DNSMASQ_HASH=8e50309bd837bfec9649a812e066c09b6988b73d749b7d293c06c57d46a109e4
-sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$DNSMASQ_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$DNSMASQ_HASH/" package/network/services/dnsmasq/Makefile
+sed -ri "s/(PKG_UPSTREAM_VERSION:=)[^\"]*/\1$DNSMASQ_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$DNSMASQ_HASH/" package/network/services/dnsmasq/Makefile
 curl -s https://$mirror/openwrt/patch/dnsmasq/200-ubus_dns.patch > package/network/services/dnsmasq/patches/200-ubus_dns.patch
 
 # Docker
