@@ -17,6 +17,10 @@ sed -i '/boot()/,+2d' feeds/packages/net/ddns-scripts/files/etc/init.d/ddns
 # nlbwmon - disable syslog
 sed -i 's/stderr 1/stderr 0/g' feeds/packages/net/nlbwmon/files/nlbwmon.init
 
+# boost - 1.84.0
+rm -rf feeds/packages/libs/boost
+cp -a ../master/packages/libs/boost feeds/packages/libs/boost
+
 # lrzsz - 0.12.20
 rm -rf feeds/packages/utils/lrzsz
 git clone https://github.com/sbwml/packages_utils_lrzsz package/new/lrzsz
