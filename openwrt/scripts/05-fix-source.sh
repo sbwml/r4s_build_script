@@ -7,7 +7,7 @@ sed -i "/CONFIGURE_ARGS/i\TARGET_CFLAGS += -ffat-lto-objects\n" feeds/packages/l
 sed -i '/PKG_BUILD_FLAGS/ s/$/ no-gc-sections/' package/boot/grub2/Makefile
 
 # fix gcc13
-if [ "$USE_GCC13" = "y" ]; then
+if [ "$USE_GCC13" = "y" ] || [ "$USE_GCC14" = y ]; then
     # libwebsockets
     mkdir feeds/packages/libs/libwebsockets/patches
     pushd feeds/packages/libs/libwebsockets/patches
@@ -15,6 +15,46 @@ if [ "$USE_GCC13" = "y" ]; then
         curl -sLO https://raw.githubusercontent.com/openwrt/packages/bcd970fb4ff6029fbf612dccf6d8c2902a65e20e/libs/libwebsockets/patches/011-fix-enum-int-mismatch-mbedtls.patch
         curl -sLO https://raw.githubusercontent.com/openwrt/packages/94bd1ca8bad053a772a3ea8cb06ce59241fb9a57/libs/libwebsockets/patches/100-fix-uninitialized-variable-usage.patch
     popd
+fi
+
+# fix gcc14
+if [ "$USE_GCC14" = y ]; then
+    # iproute2
+    sed -i '/TARGET_LDFLAGS/iTARGET_CFLAGS += -Wno-incompatible-pointer-types' package/network/utils/iproute2/Makefile
+    # ppp
+    sed -i '/MAKE_FLAGS += COPTS/iTARGET_CFLAGS += -Wno-implicit-function-declaration' package/network/services/ppp/Makefile
+    # openvswitch
+    sed -i 's/-std=gnu99/-std=gnu99 -Wno-implicit-function-declaration -Wno-int-conversion/' feeds/packages/net/openvswitch/Makefile
+    # wsdd2
+    sed -i '/Build\/Compile/iTARGET_CFLAGS += -Wno-int-conversion' feeds/packages/net/wsdd2/Makefile
+    # libunwind
+    sed -i '/TARGET_LDFLAGS/iTARGET_CFLAGS += -Wno-incompatible-pointer-types' package/libs/libunwind/Makefile
+    # uboot
+    [ "$platform" != "x86_64" ] && curl -s https://$mirror/openwrt/patch/packages-patches/gcc-14/990-uboot-fix-gcc14.patch > package/boot/uboot-rockchip/patches/990-uboot-fix-gcc14.patch
+    # lrzsz
+    curl -s https://$mirror/openwrt/patch/packages-patches/gcc-14/900-lrzsz-fix-gcc14.patch > package/new/lrzsz/patches/900-lrzsz-fix-gcc14.patch
+    sed -i '/lrzsz\/install/iTARGET_CFLAGS += -Wno-implicit-function-declaration -Wno-builtin-declaration-mismatch -Wno-incompatible-pointer-types' package/new/lrzsz/Makefile
+    # mbedtls
+    curl -s https://$mirror/openwrt/patch/mbedtls-23.05/900-fix-build-with-gcc14.patch > package/libs/mbedtls/patches/900-fix-build-with-gcc14.patch
+    # linux-atm
+    curl -s https://$mirror/openwrt/patch/packages-patches/gcc-14/linux-atm-fix-gcc14.patch | patch -p1
+    # lsof
+    rm -rf feeds/packages/utils/lsof
+    cp -a ../master/packages/utils/lsof feeds/packages/utils/lsof
+    # screen
+    SCREEN_VERSION=4.9.1
+    SCREEN_HASH=26cef3e3c42571c0d484ad6faf110c5c15091fbf872b06fa7aa4766c7405ac69
+    sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$SCREEN_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$SCREEN_HASH/" feeds/packages/utils/screen/Makefile
+    sed -i '/CONFIGURE_ARGS/iTARGET_CFLAGS += -Wno-implicit-function-declaration' feeds/packages/utils/screen/Makefile
+    rm -rf feeds/packages/utils/screen/patches
+    # irqbalance
+    sed -i '/MESON_ARGS/iTARGET_CFLAGS += -Wno-int-conversion' feeds/packages/utils/irqbalance/Makefile
+    # xdp-tools
+    sed -i '/TARGET_LDFLAGS +=/iTARGET_CFLAGS += -Wno-error=calloc-transposed-args' package/network/utils/xdp-tools/Makefile
+    # perl
+    sed -i '/Filter -g3/aTARGET_CFLAGS += -Wno-implicit-function-declaration' feeds/packages/lang/perl/Makefile
+    # grub2
+    sed -i '/Host\/Configure/iTARGET_CFLAGS += -Wno-incompatible-pointer-types' package/boot/grub2/Makefile
 fi
 
 # xdp-tools

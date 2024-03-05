@@ -1,0 +1,16 @@
+diff --git a/package/network/utils/linux-atm/Makefile b/package/network/utils/linux-atm/Makefile
+index c74febc..93dd2e0 100644
+--- a/package/network/utils/linux-atm/Makefile
++++ b/package/network/utils/linux-atm/Makefile
+@@ -111,7 +111,10 @@ define Build/Compile
+ 	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR)/src/qgen \
+ 		LDFLAGS="" \
+ 		all
+-	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR) OBJCOPY=$(TARGET_CROSS)objcopy all
++	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR) \
++		CFLAGS="-I$(PKG_BUILD_DIR)/src/include -Wno-incompatible-pointer-types" \
++		OBJCOPY=$(TARGET_CROSS)objcopy \
++		all
+ endef
+ 
+ define Build/InstallDev

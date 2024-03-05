@@ -1,0 +1,20 @@
+--- a/arch/arm/mach-rockchip/rk3399/Makefile
++++ b/arch/arm/mach-rockchip/rk3399/Makefile
+@@ -4,6 +4,7 @@
+ # SPDX-License-Identifier:     GPL-2.0+
+ #
+ 
++ccflags-y += -Wno-implicit-function-declaration
+ obj-y += clk_rk3399.o
+ obj-y += rk3399.o
+ obj-y += syscon_rk3399.o
+--- a/arch/arm/mach-rockchip/rk3568/Makefile
++++ b/arch/arm/mach-rockchip/rk3568/Makefile
+@@ -4,6 +4,7 @@
+ # SPDX-License-Identifier:     GPL-2.0+
+ #
+ 
++ccflags-y += -Wno-implicit-function-declaration
+ obj-y += clk_rk3568.o
+ obj-y += rk3568.o
+ obj-y += syscon_rk3568.o

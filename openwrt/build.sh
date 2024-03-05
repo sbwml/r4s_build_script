@@ -83,9 +83,13 @@ export platform=$2
 [ "$platform" = "nanopi-r5s" ] && export platform="rk3568" toolchain_arch="nanopi-r5s"
 [ "$platform" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
 
-# gcc13
+# gcc13 & 14
 if [ "$USE_GCC13" = y ]; then
     export USE_GCC13=y
+    # use mold
+    [ "$USE_MOLD" = y ] && USE_MOLD=y
+elif [ "$USE_GCC14" = y ]; then
+    export USE_GCC14=y
     # use mold
     [ "$USE_MOLD" = y ] && USE_MOLD=y
 fi
@@ -125,7 +129,13 @@ fi
 
 echo -e "${GREEN_COLOR}Date: $CURRENT_DATE${RES}\r\n"
 
-[ "$USE_GCC13" = "y" ] && echo -e "${GREEN_COLOR}GCC VERSION: 13${RES}" || echo -e "${GREEN_COLOR}GCC VERSION: 11${RES}"
+if [ "$USE_GCC13" = "y" ]; then
+    echo -e "${GREEN_COLOR}GCC VERSION: 13${RES}"
+elif [ "$USE_GCC14" = "y" ]; then
+    echo -e "${GREEN_COLOR}GCC VERSION: 14${RES}"
+else
+    echo -e "${GREEN_COLOR}GCC VERSION: 11${RES}"
+fi
 [ "$USE_MOLD" = "y" ] && echo -e "${GREEN_COLOR}USE_MOLD: true${RES}" || echo -e "${GREEN_COLOR}USE_MOLD: false${RES}"
 [ "$ENABLE_OTA" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_OTA: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_OTA: false${RES}"
 [ "$ENABLE_BPF" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_BPF: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_BPF: false${RES}"
@@ -216,6 +226,12 @@ if [ "$platform" = "rk3568" ] || [ "$platform" = "rk3399" ] || [ "$platform" = "
     bash 01-prepare_base-mainline.sh
     bash 04-fix_kmod.sh
 fi
+
+if [ "$USE_GCC14" = "y" ]; then
+    rm -rf toolchain/binutils
+    cp -a ../master/openwrt/toolchain/binutils toolchain/binutils
+fi
+
 rm -f 0*-*.sh
 rm -rf ../master
 
@@ -258,10 +274,17 @@ export ENABLE_LTO=$ENABLE_LTO
 # mold
 [ "$USE_MOLD" = "y" ] && echo 'CONFIG_USE_MOLD=y' >> .config
 
-# openwrt-23.05 gcc11/13
-if [ "$USE_GCC13" = "y" ]; then
-    curl -s https://$mirror/openwrt/generic/config-gcc13 >> .config
+# openwrt-23.05 gcc11/13/14
+if [ "$USE_GCC13" = "y" ] || [ "$USE_GCC14" = "y" ]; then
+    [ "$USE_GCC13" = "y" ] && curl -s https://$mirror/openwrt/generic/config-gcc13 >> .config
+    [ "$USE_GCC14" = "y" ] && curl -s https://$mirror/openwrt/generic/config-gcc14 >> .config
     curl -s https://$mirror/openwrt/patch/generic/200-toolchain-gcc-update-to-13.2.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/201-toolchain-gcc-add-support-for-GCC-14.patch | patch -p1
+    if [ "$USE_GCC14" = "y" ]; then
+        cp -a toolchain/gcc/patches-13.x toolchain/gcc/patches-14.x
+        curl -s https://$mirror/openwrt/patch/generic/gcc-14/910-mbsd_multi.patch > toolchain/gcc/patches-14.x/910-mbsd_multi.patch
+        curl -s https://$mirror/openwrt/patch/generic/gcc-14/990-libatomic-Fix-build-for---disable-gnu-indirect-function-PR113986.patch > toolchain/gcc/patches-14.x/990-libatomic-Fix-build-for---disable-gnu-indirect-function-PR113986.patch
+    fi
 elif [ ! "$USE_GLIBC" = "y" ]; then
     curl -s https://$mirror/openwrt/generic/config-gcc11 >> .config
 fi
@@ -286,6 +309,8 @@ if [ "$BUILD_FAST" = "y" ]; then
     fi
     if [ "$USE_GCC13" = "y" ]; then
         curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_13.tar.gz -o toolchain.tar.gz $CURL_BAR
+    elif [ "$USE_GCC14" = "y" ]; then
+        curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_14.tar.gz -o toolchain.tar.gz $CURL_BAR
     else
         curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch".tar.gz -o toolchain.tar.gz $CURL_BAR
     fi
@@ -312,6 +337,8 @@ if [ "$BUILD_TOOLCHAIN" = "y" ]; then
     [ "$USE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
     if [ "$USE_GCC13" = "y" ]; then
         tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch"_13.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
+    elif [ "$USE_GCC14" = "y" ]; then
+        tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch"_14.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
     else
         tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch".tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
     fi
