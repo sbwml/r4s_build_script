@@ -54,7 +54,7 @@ if [ "$USE_GCC14" = y ]; then
     # perl
     sed -i '/Filter -g3/aTARGET_CFLAGS += -Wno-implicit-function-declaration' feeds/packages/lang/perl/Makefile
     # grub2
-    sed -i '/Host\/Configure/iTARGET_CFLAGS += -Wno-incompatible-pointer-types' package/boot/grub2/Makefile
+    sed -i '/define Host\/Configure/iTARGET_CFLAGS += -Wno-incompatible-pointer-types' package/boot/grub2/Makefile
 fi
 
 # xdp-tools
