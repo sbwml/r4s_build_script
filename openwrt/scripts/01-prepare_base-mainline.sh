@@ -177,6 +177,7 @@ curl -s https://$mirror/openwrt/patch/kernel-6.6/net/953-net-patch-linux-kernel-
 # backport
 curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/901-v6.8-cache-enforce-cache-groups.patch > target/linux/generic/backport-6.6/901-v6.8-cache-enforce-cache-groups.patch
 curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/902-v6.8-netns-ipv4-reorganize-netns_ipv4-fast-path-variables.patch > target/linux/generic/backport-6.6/902-v6.8-netns-ipv4-reorganize-netns_ipv4-fast-path-variables.patch
+curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/903-v6.8-net-device-reorganize-net_device-fast-path-variables.patch > target/linux/generic/backport-6.6/903-v6.8-net-device-reorganize-net_device-fast-path-variables.patch
 
 # ubnt-ledbar - fix linux-6.x
 rm -rf package/kernel/ubnt-ledbar
