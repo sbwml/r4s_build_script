@@ -32,9 +32,9 @@ export gitea=git.cooluc.com
 
 # github mirror
 if [ "$isCN" = "CN" ]; then
-    export github_mirror="https://github.com"
+    export github="gitcode.com"
 else
-    export github_mirror="https://github.com"
+    export github="github.com"
 fi
 
 # Check root
@@ -147,19 +147,19 @@ fi
 # get source
 rm -rf openwrt master && mkdir master
 # openwrt - releases
-git clone --depth=1 $github_mirror/openwrt/openwrt -b $branch
+git clone --depth=1 https://$github/openwrt/openwrt -b $branch
 
 # openwrt master
-git clone $github_mirror/openwrt/openwrt master/openwrt --depth=1
-git clone $github_mirror/openwrt/packages master/packages --depth=1
-git clone $github_mirror/openwrt/luci master/luci --depth=1
-git clone $github_mirror/openwrt/routing master/routing --depth=1
+git clone https://$github/openwrt/openwrt master/openwrt --depth=1
+git clone https://$github/openwrt/packages master/packages --depth=1
+git clone https://$github/openwrt/luci master/luci --depth=1
+git clone https://$github/openwrt/routing master/routing --depth=1
 # openwrt-23.05
-[ "$1" = "rc2" ] && git clone $github_mirror/openwrt/openwrt -b openwrt-23.05 master/openwrt-23.05 --depth=1
+[ "$1" = "rc2" ] && git clone https://$github/openwrt/openwrt -b openwrt-23.05 master/openwrt-23.05 --depth=1
 # immortalwrt master
-git clone $github_mirror/immortalwrt/packages master/immortalwrt_packages --depth=1
+git clone https://$github/immortalwrt/packages master/immortalwrt_packages --depth=1
 # mj22226 openwrt
-git clone $github_mirror/mj22226/openwrt -b linux-6.6 master/mj22226_openwrt --depth=1
+git clone https://$github/mj22226/openwrt -b linux-6.6 master/mj22226_openwrt --depth=1
 
 if [ -d openwrt ]; then
     cd openwrt
@@ -190,10 +190,10 @@ else
     telephony=";$branch"
 fi
 cat > feeds.conf <<EOF
-src-git packages $github_mirror/openwrt/packages.git$packages
-src-git luci $github_mirror/openwrt/luci.git$luci
-src-git routing $github_mirror/openwrt/routing.git$routing
-src-git telephony $github_mirror/openwrt/telephony.git$telephony
+src-git packages https://$github/openwrt/packages.git$packages
+src-git luci https://$github/openwrt/luci.git$luci
+src-git routing https://$github/openwrt/routing.git$routing
+src-git telephony https://$github/openwrt/telephony.git$telephony
 EOF
 
 # Init feeds

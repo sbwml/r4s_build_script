@@ -67,7 +67,7 @@ curl -s https://$mirror/openwrt/patch/packages-patches/xtables-addons/202-fix-lu
 pushd feeds/telephony
   # dahdi-linux
   rm -rf libs/dahdi-linux
-  git clone https://github.com/sbwml/feeds_telephony_libs_dahdi-linux libs/dahdi-linux
+  git clone https://$github/sbwml/feeds_telephony_libs_dahdi-linux libs/dahdi-linux
 popd
 
 # routing - batman-adv

@@ -3,11 +3,11 @@
 # Rockchip - rkbin & u-boot
 rm -rf package/boot/uboot-rockchip package/boot/arm-trusted-firmware-rockchip
 if [ "$platform" = "rk3568" ]; then
-    git clone https://github.com/sbwml/package_boot_uboot-rockchip package/boot/uboot-rockchip
-    git clone https://github.com/sbwml/arm-trusted-firmware-rockchip package/boot/arm-trusted-firmware-rockchip
+    git clone https://$github/sbwml/package_boot_uboot-rockchip package/boot/uboot-rockchip
+    git clone https://$github/sbwml/arm-trusted-firmware-rockchip package/boot/arm-trusted-firmware-rockchip
 else
-    git clone https://github.com/sbwml/package_boot_uboot-rockchip package/boot/uboot-rockchip -b v2023.04
-    git clone https://github.com/sbwml/arm-trusted-firmware-rockchip package/boot/arm-trusted-firmware-rockchip -b 0419
+    git clone https://$github/sbwml/package_boot_uboot-rockchip package/boot/uboot-rockchip -b v2023.04
+    git clone https://$github/sbwml/arm-trusted-firmware-rockchip package/boot/arm-trusted-firmware-rockchip -b 0419
 fi
 
 # BTF: fix failed to validate module
@@ -43,10 +43,10 @@ if [ "$ENABLE_UHTTPD" != "y" ]; then
 fi
 
 # NIC driver - R8168 & R8125 & R8152 & R8101
-git clone https://github.com/sbwml/package_kernel_r8168 package/kernel/r8168
-git clone https://github.com/sbwml/package_kernel_r8152 package/kernel/r8152
-git clone https://github.com/sbwml/package_kernel_r8101 package/kernel/r8101
-git clone https://github.com/sbwml/package_kernel_r8125 package/kernel/r8125
+git clone https://$github/sbwml/package_kernel_r8168 package/kernel/r8168
+git clone https://$github/sbwml/package_kernel_r8152 package/kernel/r8152
+git clone https://$github/sbwml/package_kernel_r8101 package/kernel/r8101
+git clone https://$github/sbwml/package_kernel_r8125 package/kernel/r8125
 
 # netifd - fix auto-negotiate by upstream
 if [ "$version" = "rc2" ]; then
@@ -158,7 +158,7 @@ fi
 git clone https://$gitea/sbwml/nft-fullcone package/new/nft-fullcone
 
 # IPv6 NAT
-git clone https://github.com/sbwml/packages_new_nat6 package/new/nat6
+git clone https://$github/sbwml/packages_new_nat6 package/new/nat6
 
 # Patch Luci add fullcone & shortcut-fe & ipv6-nat option
 pushd feeds/luci
@@ -238,15 +238,15 @@ fi
 
 # nghttp3
 rm -rf feeds/packages/libs/nghttp3
-git clone https://github.com/sbwml/package_libs_nghttp3 package/libs/nghttp3
+git clone https://$github/sbwml/package_libs_nghttp3 package/libs/nghttp3
 
 # ngtcp2
 rm -rf feeds/packages/libs/ngtcp2
-git clone https://github.com/sbwml/package_libs_ngtcp2 package/libs/ngtcp2
+git clone https://$github/sbwml/package_libs_ngtcp2 package/libs/ngtcp2
 
 # curl/8.5.0 - fix passwall `time_pretransfer` check
 rm -rf feeds/packages/net/curl
-git clone https://github.com/sbwml/feeds_packages_net_curl feeds/packages/net/curl
+git clone https://$github/sbwml/feeds_packages_net_curl feeds/packages/net/curl
 
 # wget - SmartDrive user-agent
 mkdir -p feeds/packages/net/wget/patches
@@ -317,7 +317,7 @@ popd
 
 # nginx - latest version
 rm -rf feeds/packages/net/nginx
-git clone https://github.com/sbwml/feeds_packages_net_nginx feeds/packages/net/nginx -b quic
+git clone https://$github/sbwml/feeds_packages_net_nginx feeds/packages/net/nginx -b quic
 sed -i 's/procd_set_param stdout 1/procd_set_param stdout 0/g;s/procd_set_param stderr 1/procd_set_param stderr 0/g' feeds/packages/net/nginx/files/nginx.init
 
 # nginx - ubus
@@ -363,11 +363,11 @@ rm -f feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/statu
 
 # ppp - 2.5.0
 rm -rf package/network/services/ppp
-git clone https://github.com/sbwml/package_network_services_ppp package/network/services/ppp
+git clone https://$github/sbwml/package_network_services_ppp package/network/services/ppp
 
 # urngd - 2020-01-21
 rm -rf package/system/urngd
-git clone https://github.com/sbwml/package_system_urngd package/system/urngd
+git clone https://$github/sbwml/package_system_urngd package/system/urngd
 
 # zlib - 1.3
 ZLIB_VERSION=1.3.1

@@ -23,7 +23,7 @@ sed -ie 's/^\(.\).*vermagic$/\1cp $(TOPDIR)\/.vermagic $(LINUX_DIR)\/.vermagic/'
 grep HASH include/kernel-6.6 | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}' > .vermagic
 
 # kernel generic patches
-git clone https://github.com/sbwml/target_linux_generic -b linux-6.6
+git clone https://$github/sbwml/target_linux_generic -b linux-6.6
 rm -rf target/linux/generic/*-6.6 target/linux/generic/files
 mv target_linux_generic/target/linux/generic/* target/linux/generic/
 rm -rf target_linux_generic
@@ -137,7 +137,7 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.x/kmod-patches/ath10k-ct.patch |
 
 # mt76 - update to 2023-12-18
 rm -rf package/kernel/mt76
-git clone https://github.com/sbwml/package_kernel_mt76 package/kernel/mt76
+git clone https://$github/sbwml/package_kernel_mt76 package/kernel/mt76
 
 # iwinfo: add mt7922 device id
 mkdir -p package/network/utils/iwinfo/patches
@@ -153,7 +153,7 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.x/500-world-regd-5GHz.patch > pa
 
 # mac80211 - fix linux 6.6 & add rtw89
 rm -rf package/kernel/mac80211
-git clone https://github.com/sbwml/package_kernel_mac80211 package/kernel/mac80211
+git clone https://$github/sbwml/package_kernel_mac80211 package/kernel/mac80211
 
 # mac80211/patches/rtl - rtw88
 mkdir -p package/kernel/mac80211/patches/rtl
