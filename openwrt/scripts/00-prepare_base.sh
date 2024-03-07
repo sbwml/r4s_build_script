@@ -42,11 +42,12 @@ if [ "$ENABLE_UHTTPD" != "y" ]; then
     fi
 fi
 
-# NIC driver - R8168 & R8125 & R8152 & R8101
+# Realtek driver - R8168 & R8125 & R8126 & R8152 & R8101
 git clone https://$github/sbwml/package_kernel_r8168 package/kernel/r8168
 git clone https://$github/sbwml/package_kernel_r8152 package/kernel/r8152
 git clone https://$github/sbwml/package_kernel_r8101 package/kernel/r8101
 git clone https://$github/sbwml/package_kernel_r8125 package/kernel/r8125
+git clone https://$github/sbwml/package_kernel_r8126 package/kernel/r8126
 
 # netifd - fix auto-negotiate by upstream
 if [ "$version" = "rc2" ]; then
