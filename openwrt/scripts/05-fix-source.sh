@@ -28,7 +28,8 @@ if [ "$USE_GCC14" = y ]; then
     # wsdd2
     sed -i '/Build\/Compile/iTARGET_CFLAGS += -Wno-int-conversion' feeds/packages/net/wsdd2/Makefile
     # libunwind
-    sed -i '/TARGET_LDFLAGS/iTARGET_CFLAGS += -Wno-incompatible-pointer-types' package/libs/libunwind/Makefile
+    rm -rf package/libs/libunwind
+    git clone https://github.com/sbwml/package_libs_libunwind package/libs/libunwind
     # uboot
     [ "$platform" != "x86_64" ] && curl -s https://$mirror/openwrt/patch/packages-patches/gcc-14/990-uboot-fix-gcc14.patch > package/boot/uboot-rockchip/patches/990-uboot-fix-gcc14.patch
     # lrzsz
@@ -50,7 +51,7 @@ if [ "$USE_GCC14" = y ]; then
     # irqbalance
     sed -i '/MESON_ARGS/iTARGET_CFLAGS += -Wno-int-conversion' feeds/packages/utils/irqbalance/Makefile
     # xdp-tools
-    sed -i '/TARGET_LDFLAGS +=/iTARGET_CFLAGS += -Wno-error=calloc-transposed-args' package/network/utils/xdp-tools/Makefile
+    curl -s https://$mirror/openwrt/patch/packages-patches/gcc-14/xdp-tools/900-Fix-transposed-calloc-arguments.patch > package/network/utils/xdp-tools/patches/900-Fix-transposed-calloc-arguments.patch
     # perl
     sed -i '/Filter -g3/aTARGET_CFLAGS += -Wno-implicit-function-declaration' feeds/packages/lang/perl/Makefile
     # grub2
