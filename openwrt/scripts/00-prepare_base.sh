@@ -49,10 +49,6 @@ git clone https://$github/sbwml/package_kernel_r8101 package/kernel/r8101
 git clone https://$github/sbwml/package_kernel_r8125 package/kernel/r8125
 git clone https://$github/sbwml/package_kernel_r8126 package/kernel/r8126
 
-# Wangxun driver - ngbe & txgbe
-git clone https://nanopi:nanopi@$gitea/sbwml/package_kernel_ngbe package/kernel/ngbe
-git clone https://nanopi:nanopi@$gitea/sbwml/package_kernel_txgbe package/kernel/txgbe
-
 # netifd - fix auto-negotiate by upstream
 if [ "$version" = "rc2" ]; then
     rm -rf package/network/config/netifd

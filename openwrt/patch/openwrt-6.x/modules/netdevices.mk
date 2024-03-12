@@ -1589,3 +1589,51 @@ endef
 
 $(eval $(call KernelPackage,lan743x))
 
+
+define KernelPackage/libwx
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  TITLE:=Wangxun(R) Ethernet driver common library
+  DEPENDS:=@PCI_SUPPORT @LINUX_6_6
+  KCONFIG:=CONFIG_LIBWX
+  FILES:=$(LINUX_DIR)/drivers/net/ethernet/wangxun/libwx/libwx.ko
+  AUTOLOAD:=$(call AutoProbe,libwx)
+endef
+
+define KernelPackage/libwx/description
+ Common library for Wangxun(R) Ethernet drivers
+endef
+
+$(eval $(call KernelPackage,libwx))
+
+
+define KernelPackage/ngbe
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  TITLE:=Wangxun(R) GbE PCI Express adapters support
+  DEPENDS:=@PCI_SUPPORT +kmod-libwx
+  KCONFIG:=CONFIG_NGBE
+  FILES:=$(LINUX_DIR)/drivers/net/ethernet/wangxun/ngbe/ngbe.ko
+  AUTOLOAD:=$(call AutoProbe,ngbe)
+endef
+
+define KernelPackage/ngbe/description
+ Kernel modules for Wangxun(R) GbE PCI Ethernet chipsets
+endef
+
+$(eval $(call KernelPackage,ngbe))
+
+
+define KernelPackage/txgbe
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  TITLE:=Wangxun(R) 10GbE PCI Express adapters support
+  DEPENDS:=@PCI_SUPPORT +kmod-libwx
+  KCONFIG:=CONFIG_TXGBE
+  FILES:=$(LINUX_DIR)/drivers/net/ethernet/wangxun/txgbe/txgbe.ko
+  AUTOLOAD:=$(call AutoProbe,txgbe)
+endef
+
+define KernelPackage/txgbe/description
+ Kernel modules for Wangxun(R) 10GbE PCI Ethernet chipsets
+endef
+
+$(eval $(call KernelPackage,txgbe))
+
