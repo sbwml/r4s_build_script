@@ -1590,6 +1590,23 @@ endef
 $(eval $(call KernelPackage,lan743x))
 
 
+define KernelPackage/pcs_xpcs
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  TITLE:=Synopsys DesignWare XPCS controller
+  DEPENDS:=+kmod-phylink
+  KCONFIG:=CONFIG_PCS_XPCS
+  FILES:=$(LINUX_DIR)/drivers/net/pcs/pcs_xpcs.ko
+  AUTOLOAD:=$(call AutoProbe,pcs_xpcs)
+endef
+
+define KernelPackage/pcs_xpcs/description
+ This driver provides helper functions for Synopsys DesignWare XPCS
+ controllers.
+endef
+
+$(eval $(call KernelPackage,pcs_xpcs))
+
+
 define KernelPackage/libwx
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Wangxun(R) Ethernet driver common library
@@ -1625,7 +1642,7 @@ $(eval $(call KernelPackage,ngbe))
 define KernelPackage/txgbe
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Wangxun(R) 10GbE PCI Express adapters support
-  DEPENDS:=@PCI_SUPPORT +kmod-libwx
+  DEPENDS:=@PCI_SUPPORT +kmod-libwx +kmod-pcs_xpcs +kmod-regmap-core
   KCONFIG:=CONFIG_TXGBE
   FILES:=$(LINUX_DIR)/drivers/net/ethernet/wangxun/txgbe/txgbe.ko
   AUTOLOAD:=$(call AutoProbe,txgbe)
