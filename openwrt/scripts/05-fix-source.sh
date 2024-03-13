@@ -20,25 +20,24 @@ fi
 # fix gcc14
 if [ "$USE_GCC14" = y ]; then
     # iproute2
-    sed -i '/TARGET_LDFLAGS/iTARGET_CFLAGS += -Wno-incompatible-pointer-types' package/network/utils/iproute2/Makefile
-    # ppp
-    sed -i '/MAKE_FLAGS += COPTS/iTARGET_CFLAGS += -Wno-implicit-function-declaration' package/network/services/ppp/Makefile
+    rm -rf package/network/utils/iproute2
+    git clone https://$github/sbwml/package_network_utils_iproute2 package/network/utils/iproute2
     # openvswitch
-    sed -i 's/-std=gnu99/-std=gnu99 -Wno-implicit-function-declaration -Wno-int-conversion/' feeds/packages/net/openvswitch/Makefile
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/openvswitch/0008-ovs-atomic-Fix-inclusion-of-Clang-header-by-GCC-14.patch > feeds/packages/net/openvswitch/patches/0008-ovs-atomic-Fix-inclusion-of-Clang-header-by-GCC-14.patch
     # wsdd2
-    sed -i '/Build\/Compile/iTARGET_CFLAGS += -Wno-int-conversion' feeds/packages/net/wsdd2/Makefile
+    mkdir -p feeds/packages/net/wsdd2/patches
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/wsdd2/100-wsdd2-cast-from-pointer-to-integer-of-different-size.patch > feeds/packages/net/wsdd2/patches/100-wsdd2-cast-from-pointer-to-integer-of-different-size.patch
     # libunwind
     rm -rf package/libs/libunwind
-    git clone https://github.com/sbwml/package_libs_libunwind package/libs/libunwind
-    # uboot
-    [ "$platform" != "x86_64" ] && curl -s https://$mirror/openwrt/patch/packages-patches/gcc-14/990-uboot-fix-gcc14.patch > package/boot/uboot-rockchip/patches/990-uboot-fix-gcc14.patch
+    git clone https://$github/sbwml/package_libs_libunwind package/libs/libunwind
     # lrzsz
-    curl -s https://$mirror/openwrt/patch/packages-patches/gcc-14/900-lrzsz-fix-gcc14.patch > package/new/lrzsz/patches/900-lrzsz-fix-gcc14.patch
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/lrzsz/900-lrzsz-fix-gcc14.patch > package/new/lrzsz/patches/900-lrzsz-fix-gcc14.patch
     sed -i '/lrzsz\/install/iTARGET_CFLAGS += -Wno-implicit-function-declaration -Wno-builtin-declaration-mismatch -Wno-incompatible-pointer-types' package/new/lrzsz/Makefile
     # mbedtls
-    curl -s https://$mirror/openwrt/patch/mbedtls-23.05/900-fix-build-with-gcc14.patch > package/libs/mbedtls/patches/900-fix-build-with-gcc14.patch
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/mbedtls/900-tests-fix-calloc-argument-list-gcc-14-fix.patch > package/libs/mbedtls/patches/900-tests-fix-calloc-argument-list-gcc-14-fix.patch
     # linux-atm
-    curl -s https://$mirror/openwrt/patch/packages-patches/gcc-14/linux-atm-fix-gcc14.patch | patch -p1
+    rm -rf package/network/utils/linux-atm
+    git clone https://$github/sbwml/package_network_utils_linux-atm package/network/utils/linux-atm
     # lsof
     rm -rf feeds/packages/utils/lsof
     cp -a ../master/packages/utils/lsof feeds/packages/utils/lsof
@@ -46,16 +45,16 @@ if [ "$USE_GCC14" = y ]; then
     SCREEN_VERSION=4.9.1
     SCREEN_HASH=26cef3e3c42571c0d484ad6faf110c5c15091fbf872b06fa7aa4766c7405ac69
     sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$SCREEN_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$SCREEN_HASH/" feeds/packages/utils/screen/Makefile
-    sed -i '/CONFIGURE_ARGS/iTARGET_CFLAGS += -Wno-implicit-function-declaration' feeds/packages/utils/screen/Makefile
-    rm -rf feeds/packages/utils/screen/patches
+    rm -rf feeds/packages/utils/screen/patches && mkdir -p feeds/packages/utils/screen/patches
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/screen/900-fix-implicit-function-declaration.patch > feeds/packages/utils/screen/patches/900-fix-implicit-function-declaration.patch
     # irqbalance
-    sed -i '/MESON_ARGS/iTARGET_CFLAGS += -Wno-int-conversion' feeds/packages/utils/irqbalance/Makefile
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/irqbalance/900-procinterrupts-fix-initialisation-of-regex_t-struct.patch > feeds/packages/utils/irqbalance/patches/900-procinterrupts-fix-initialisation-of-regex_t-struct.patch
     # xdp-tools
-    curl -s https://$mirror/openwrt/patch/packages-patches/gcc-14/xdp-tools/900-Fix-transposed-calloc-arguments.patch > package/network/utils/xdp-tools/patches/900-Fix-transposed-calloc-arguments.patch
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/xdp-tools/900-Fix-transposed-calloc-arguments.patch > package/network/utils/xdp-tools/patches/900-Fix-transposed-calloc-arguments.patch
     # perl
-    sed -i '/Filter -g3/aTARGET_CFLAGS += -Wno-implicit-function-declaration' feeds/packages/lang/perl/Makefile
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/perl/1000-fix-implicit-declaration-error.patch > feeds/packages/lang/perl/patches/1000-fix-implicit-declaration-error.patch
     # grub2
-    sed -i '/define Host\/Configure/iTARGET_CFLAGS += -Wno-incompatible-pointer-types' package/boot/grub2/Makefile
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/grub2/900-fix-incompatible-pointer-type.patch > package/boot/grub2/patches/900-fix-incompatible-pointer-type.patch
 fi
 
 # xdp-tools

@@ -1,0 +1,22 @@
+--- a/ext/POSIX/POSIX.xs
++++ b/ext/POSIX/POSIX.xs
+@@ -36,11 +36,6 @@ static int not_here(const char *s);
+ #include <sys/errno2.h>
+ #endif
+ #include <float.h>
+-#ifdef I_FENV
+-#if !(defined(__vax__) && defined(__NetBSD__))
+-#include <fenv.h>
+-#endif
+-#endif
+ #include <limits.h>
+ #include <locale.h>
+ #include <math.h>
+@@ -51,6 +46,7 @@ static int not_here(const char *s);
+ #include <signal.h>
+ #include <stdarg.h>
+ #include <stddef.h>
++#include <fenv.h>
+ 
+ #ifdef I_UNISTD
+ #include <unistd.h>

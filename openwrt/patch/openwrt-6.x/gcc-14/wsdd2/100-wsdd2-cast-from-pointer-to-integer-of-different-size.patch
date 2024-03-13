@@ -1,0 +1,23 @@
+From bf77439f043c5df7102dc266b55e86ec524d17ee Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Wed, 13 Mar 2024 08:33:57 +0800
+Subject: [PATCH] wsdd2: cast from pointer to integer of different size
+
+* fix build with gcc 14
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ wsdd2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/wsdd2.c
++++ b/wsdd2.c
+@@ -543,7 +543,7 @@ static int netlink_recv(struct endpoint
+ 	char buf[PAGE_SIZE];
+ 	struct sockaddr_nl sa;
+ 	struct iovec iov = { buf, sizeof buf };
+-	struct msghdr msg = { &sa, sizeof sa, &iov, 1, NULL, 0, 0 };
++	struct msghdr msg = { &sa, sizeof sa, &iov, 1, (intptr_t)NULL, 0, 0 };
+ 	ssize_t msglen = recvmsg(ep->sock, &msg, 0);
+ 
+ 	DEBUG(2, W, "%s: %zd bytes", __func__, msglen);

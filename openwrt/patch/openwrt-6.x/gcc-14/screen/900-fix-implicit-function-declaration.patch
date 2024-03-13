@@ -1,0 +1,15 @@
+--- a/pty.c
++++ b/pty.c
+@@ -51,11 +51,7 @@
+ # include <sys/ttold.h>
+ #endif
+ 
+-#ifdef ISC
+-# include <sys/tty.h>
+-# include <sys/sioctl.h>
+-# include <sys/pty.h>
+-#endif
++#include <pty.h>
+ 
+ #ifdef sgi
+ # include <sys/sysmacros.h>

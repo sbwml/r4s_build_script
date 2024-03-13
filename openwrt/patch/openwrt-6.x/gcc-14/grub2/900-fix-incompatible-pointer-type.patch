@@ -1,0 +1,23 @@
+--- a/grub-core/disk/luks2.c
++++ b/grub-core/disk/luks2.c
+@@ -394,9 +394,9 @@ luks2_verify_key (grub_luks2_digest_t *d
+   gcry_err_code_t gcry_ret;
+ 
+   /* Decode both digest and salt */
+-  if (!base64_decode (d->digest, grub_strlen (d->digest), (char *)digest, &digestlen))
++  if (!base64_decode (d->digest, grub_strlen (d->digest), (char *)digest, (size_t *)&digestlen))
+     return grub_error (GRUB_ERR_BAD_ARGUMENT, "Invalid digest");
+-  if (!base64_decode (d->salt, grub_strlen (d->salt), (char *)salt, &saltlen))
++  if (!base64_decode (d->salt, grub_strlen (d->salt), (char *)salt, (size_t *)&saltlen))
+     return grub_error (GRUB_ERR_BAD_ARGUMENT, "Invalid digest salt");
+ 
+   /* Configure the hash used for the digest. */
+@@ -435,7 +435,7 @@ luks2_decrypt_key (grub_uint8_t *out_key
+   grub_err_t ret;
+ 
+   if (!base64_decode (k->kdf.salt, grub_strlen (k->kdf.salt),
+-		     (char *)salt, &saltlen))
++		     (char *)salt, (size_t *)&saltlen))
+     {
+       ret = grub_error (GRUB_ERR_BAD_ARGUMENT, "Invalid keyslot salt");
+       goto err;
