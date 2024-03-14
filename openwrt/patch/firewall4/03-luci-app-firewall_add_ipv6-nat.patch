@@ -1,9 +1,7 @@
-diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-index 1c85684848..9b6d7b1139 100644
 --- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 +++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-@@ -62,6 +62,12 @@ return view.extend({
- 			o = s.option(form.Flag, 'fullcone6', _('Enable FullCone NAT6'));
+@@ -67,6 +67,12 @@ return view.extend({
+ 			o.depends('fullcone', '1');
  		};
  
 +		if (L.hasSystemFeature('ipv6')) {
