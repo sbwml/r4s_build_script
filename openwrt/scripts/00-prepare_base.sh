@@ -129,10 +129,13 @@ git clone https://$gitea/sbwml/shortcut-fe package/new/shortcut-fe
 
 # Patch FireWall 4
 if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
-    # firewall4
+    # firewall4 - master
     rm -rf package/network/config/firewall4
     cp -a ../master/openwrt/package/network/config/firewall4 package/network/config/firewall4
     mkdir -p package/network/config/firewall4/patches
+    # fix ct status dnat
+    curl -s https://$mirror/openwrt/patch/firewall4/firewall4_patches/990-unconditionally-allow-ct-status-dnat.patch > package/network/config/firewall4/patches/990-unconditionally-allow-ct-status-dnat.patch
+    # fullcone
     curl -s https://$mirror/openwrt/patch/firewall4/firewall4_patches/999-01-firewall4-add-fullcone-support.patch > package/network/config/firewall4/patches/999-01-firewall4-add-fullcone-support.patch
     # kernel version
     curl -s https://$mirror/openwrt/patch/firewall4/firewall4_patches/002-fix-fw4.uc-adept-kernel-version-type-of-x.x.patch > package/network/config/firewall4/patches/002-fix-fw4.uc-adept-kernel-version-type-of-x.x.patch
