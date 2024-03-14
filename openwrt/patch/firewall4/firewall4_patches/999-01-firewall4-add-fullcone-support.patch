@@ -19,8 +19,6 @@ IPv6 traffic do NOT need this FullCone NAT functionality.
  4 files changed, 96 insertions(+), 3 deletions(-)
  create mode 100644 root/usr/share/firewall4/templates/zone-fullcone.uc
 
-diff --git a/root/etc/config/firewall b/root/etc/config/firewall
-index b9a4647..7187723 100644
 --- a/root/etc/config/firewall
 +++ b/root/etc/config/firewall
 @@ -5,6 +5,7 @@ config defaults
@@ -40,13 +38,11 @@ index b9a4647..7187723 100644
  	option masq		1
  	option mtu_fix		1
  
-diff --git a/root/usr/share/firewall4/templates/ruleset.uc b/root/usr/share/firewall4/templates/ruleset.uc
-index eaa1f04..e29eae6 100644
 --- a/root/usr/share/firewall4/templates/ruleset.uc
 +++ b/root/usr/share/firewall4/templates/ruleset.uc
-@@ -310,6 +310,12 @@ table inet fw4 {
+@@ -327,6 +327,12 @@ table inet fw4 {
  {%   for (let redirect in fw4.redirects(`dstnat_${zone.name}`)): %}
- 		{%+ include("redirect.uc", { fw4, redirect }) %}
+ 		{%+ include("redirect.uc", { fw4, zone, redirect }) %}
  {%   endfor %}
 +{%   if (zone.fullcone4): %}
 +		{%+ include("zone-fullcone.uc", { fw4, zone, family: 4, direction: "dstnat" }) %}
@@ -57,9 +53,9 @@ index eaa1f04..e29eae6 100644
  {%   fw4.includes('chain-append', `dstnat_${zone.name}`) %}
  	}
  
-@@ -320,20 +326,26 @@ table inet fw4 {
+@@ -337,20 +343,26 @@ table inet fw4 {
  {%   for (let redirect in fw4.redirects(`srcnat_${zone.name}`)): %}
- 		{%+ include("redirect.uc", { fw4, redirect }) %}
+ 		{%+ include("redirect.uc", { fw4, zone, redirect }) %}
  {%   endfor %}
 -{%   if (zone.masq): %}
 +{%   if (zone.masq && !zone.fullcone4): %}
@@ -86,9 +82,6 @@ index eaa1f04..e29eae6 100644
  {%   fw4.includes('chain-append', `srcnat_${zone.name}`) %}
  	}
  
-diff --git a/root/usr/share/firewall4/templates/zone-fullcone.uc b/root/usr/share/firewall4/templates/zone-fullcone.uc
-new file mode 100644
-index 0000000..77d9806
 --- /dev/null
 +++ b/root/usr/share/firewall4/templates/zone-fullcone.uc
 @@ -0,0 +1,4 @@
@@ -96,8 +89,6 @@ index 0000000..77d9806
 +		meta nfproto {{ fw4.nfproto(family) }} fullcone comment "!fw4: Handle {{
 +		zone.name
 +}} {{ fw4.nfproto(family, true) }} fullcone NAT {{ direction }} traffic"
-diff --git a/root/usr/share/ucode/fw4.uc b/root/usr/share/ucode/fw4.uc
-index 1b4764c..c5716da 100644
 --- a/root/usr/share/ucode/fw4.uc
 +++ b/root/usr/share/ucode/fw4.uc
 @@ -1,3 +1,5 @@
@@ -106,7 +97,7 @@ index 1b4764c..c5716da 100644
  const fs = require("fs");
  const uci = require("uci");
  const ubus = require("ubus");
-@@ -428,6 +430,25 @@ function nft_try_hw_offload(devices) {
+@@ -489,6 +491,25 @@ function nft_try_hw_offload(devices) {
  	return (rc == 0);
  }
  
@@ -132,7 +123,7 @@ index 1b4764c..c5716da 100644
  
  return {
  	read_kernel_version: function() {
-@@ -765,6 +786,18 @@ return {
+@@ -832,6 +853,18 @@ return {
  			warn(`[!] ${msg}\n`);
  	},
  
@@ -151,7 +142,7 @@ index 1b4764c..c5716da 100644
  	get: function(sid, opt) {
  		return this.cursor.get("firewall", sid, opt);
  	},
-@@ -946,6 +979,21 @@ return {
+@@ -1013,6 +1046,21 @@ return {
  		}
  	},
  
@@ -173,7 +164,7 @@ index 1b4764c..c5716da 100644
  	parse_policy: function(val) {
  		return this.parse_enum(val, [
  			"accept",
-@@ -1385,6 +1433,7 @@ return {
+@@ -1452,6 +1500,7 @@ return {
  			"dnat",
  			"snat",
  			"masquerade",
@@ -181,7 +172,7 @@ index 1b4764c..c5716da 100644
  			"accept",
  			"reject",
  			"drop"
-@@ -1852,6 +1901,7 @@ return {
+@@ -1923,6 +1972,7 @@ return {
  		}
  
  		let defs = this.parse_options(data, {
@@ -189,7 +180,7 @@ index 1b4764c..c5716da 100644
  			input: [ "policy", "drop" ],
  			output: [ "policy", "drop" ],
  			forward: [ "policy", "drop" ],
-@@ -1884,6 +1934,11 @@ return {
+@@ -1957,6 +2007,11 @@ return {
  
  		delete defs.syn_flood;
  
@@ -201,7 +192,7 @@ index 1b4764c..c5716da 100644
  		this.state.defaults = defs;
  	},
  
-@@ -1908,6 +1963,8 @@ return {
+@@ -1981,6 +2036,8 @@ return {
  			masq_dest: [ "network", null, PARSE_LIST ],
  
  			masq6: [ "bool" ],
@@ -210,7 +201,7 @@ index 1b4764c..c5716da 100644
  
  			extra: [ "string", null, UNSUPPORTED ],
  			extra_src: [ "string", null, UNSUPPORTED ],
-@@ -1940,6 +1997,18 @@ return {
+@@ -2013,6 +2070,18 @@ return {
  			}
  		}
  
@@ -229,7 +220,7 @@ index 1b4764c..c5716da 100644
  		if (zone.mtu_fix && this.kernel < 0x040a0000) {
  			this.warn_section(data, "option 'mtu_fix' requires kernel 4.10 or later");
  			return;
-@@ -2110,10 +2179,15 @@ return {
+@@ -2182,10 +2251,15 @@ return {
  		zone.related_subnets = related_subnets;
  		zone.related_physdevs = related_physdevs;
  

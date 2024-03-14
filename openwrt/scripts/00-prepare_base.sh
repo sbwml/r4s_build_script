@@ -133,11 +133,13 @@ if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     rm -rf package/network/config/firewall4
     cp -a ../master/openwrt/package/network/config/firewall4 package/network/config/firewall4
     mkdir -p package/network/config/firewall4/patches
-    curl -s https://$mirror/openwrt/patch/firewall4/999-01-firewall4-add-fullcone-support.patch > package/network/config/firewall4/patches/999-01-firewall4-add-fullcone-support.patch
+    curl -s https://$mirror/openwrt/patch/firewall4/firewall4_patches/999-01-firewall4-add-fullcone-support.patch > package/network/config/firewall4/patches/999-01-firewall4-add-fullcone-support.patch
     # kernel version
-    curl -s https://$mirror/openwrt/patch/firewall4/002-fix-fw4.uc-adept-kernel-version-type-of-x.x.patch > package/network/config/firewall4/patches/002-fix-fw4.uc-adept-kernel-version-type-of-x.x.patch
+    curl -s https://$mirror/openwrt/patch/firewall4/firewall4_patches/002-fix-fw4.uc-adept-kernel-version-type-of-x.x.patch > package/network/config/firewall4/patches/002-fix-fw4.uc-adept-kernel-version-type-of-x.x.patch
     # fix flow offload
-    curl -s https://$mirror/openwrt/patch/firewall4/001-fix-fw4-flow-offload.patch > package/network/config/firewall4/patches/001-fix-fw4-flow-offload.patch
+    curl -s https://$mirror/openwrt/patch/firewall4/firewall4_patches/001-fix-fw4-flow-offload.patch > package/network/config/firewall4/patches/001-fix-fw4-flow-offload.patch
+    # add custom nft command support
+    curl -s https://$mirror/openwrt/patch/firewall4/100-openwrt-firewall4-add-custom-nft-command-support.patch | patch -p1
     # libnftnl
     rm -rf package/libs/libnftnl
     cp -a ../master/openwrt/package/libs/libnftnl package/libs/libnftnl
@@ -161,11 +163,12 @@ git clone https://$gitea/sbwml/nft-fullcone package/new/nft-fullcone
 # IPv6 NAT
 git clone https://$github/sbwml/packages_new_nat6 package/new/nat6
 
-# Patch Luci add fullcone & shortcut-fe & ipv6-nat option
+# Patch Luci add fullcone & shortcut-fe & ipv6-nat & custom nft command option
 pushd feeds/luci
     curl -s https://$mirror/openwrt/patch/firewall4/01-luci-app-firewall_add_fullcone.patch | patch -p1
     curl -s https://$mirror/openwrt/patch/firewall4/02-luci-app-firewall_add_shortcut-fe.patch | patch -p1
     curl -s https://$mirror/openwrt/patch/firewall4/03-luci-app-firewall_add_ipv6-nat.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/firewall4/04-luci-add-firewall4-nft-rules-file.patch | patch -p1
 popd
 
 # openssl - bump version
