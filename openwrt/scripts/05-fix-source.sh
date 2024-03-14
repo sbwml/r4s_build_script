@@ -47,8 +47,6 @@ if [ "$USE_GCC14" = y ]; then
     sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$SCREEN_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$SCREEN_HASH/" feeds/packages/utils/screen/Makefile
     rm -rf feeds/packages/utils/screen/patches && mkdir -p feeds/packages/utils/screen/patches
     curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/screen/900-fix-implicit-function-declaration.patch > feeds/packages/utils/screen/patches/900-fix-implicit-function-declaration.patch
-    # irqbalance
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/irqbalance/900-procinterrupts-fix-initialisation-of-regex_t-struct.patch > feeds/packages/utils/irqbalance/patches/900-procinterrupts-fix-initialisation-of-regex_t-struct.patch
     # xdp-tools
     curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/xdp-tools/900-Fix-transposed-calloc-arguments.patch > package/network/utils/xdp-tools/patches/900-Fix-transposed-calloc-arguments.patch
     # perl

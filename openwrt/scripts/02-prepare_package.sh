@@ -25,6 +25,10 @@ cp -a ../master/packages/libs/boost feeds/packages/libs/boost
 rm -rf feeds/packages/utils/lrzsz
 git clone https://$github/sbwml/packages_utils_lrzsz package/new/lrzsz
 
+# irqbalance - openwrt master
+rm -rf feeds/packages/utils/irqbalance
+cp -a ../master/packages/utils/irqbalance feeds/packages/utils/irqbalance
+
 # FRPC
 rm -rf feeds/packages/net/frp
 cp -a ../master/packages/net/frp feeds/packages/net/frp
