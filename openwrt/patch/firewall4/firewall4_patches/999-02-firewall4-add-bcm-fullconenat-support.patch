@@ -99,16 +99,16 @@
 +		if (defs.brcmfullcone == 0) {
 +			if (!nft_try_fullcone()) {
 +				delete defs.fullcone;
-+				this.warn("nft_try_fullcone failed, disable fullcone globally\n");
++				this.warn_section(data, "nft_try_fullcone failed, disable fullcone globally");
 +			} else {
-+				this.warn("nft_try_fullcone success");
++				this.myinfo_section(data, "nft_try_fullcone success");
 +			}
 +		} else if (defs.brcmfullcone == 1) {
 +			if (!nft_try_brcmfullcone()) {
 +				delete defs.fullcone;
-+				this.warn("nft_try_brcmfullcone failed, disable fullcone globally\n");
++				this.warn_section(data, "nft_try_brcmfullcone failed, disable fullcone globally");
 +			} else {
-+				this.warn("nft_try_brcmfullcone success");
++				this.myinfo_section(data, "nft_try_brcmfullcone success");
 +			}
  		}
  
