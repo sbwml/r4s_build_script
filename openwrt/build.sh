@@ -158,8 +158,6 @@ git clone https://$github/openwrt/routing master/routing --depth=1
 [ "$1" = "rc2" ] && git clone https://$github/openwrt/openwrt -b openwrt-23.05 master/openwrt-23.05 --depth=1
 # immortalwrt master
 git clone https://$github/immortalwrt/packages master/immortalwrt_packages --depth=1
-# mj22226 openwrt
-git clone https://$github/mj22226/openwrt -b linux-6.6 master/mj22226_openwrt --depth=1
 
 if [ -d openwrt ]; then
     cd openwrt

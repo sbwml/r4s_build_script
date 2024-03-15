@@ -13,6 +13,7 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/64/config-6.6 > target/lin
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/config-6.6 > target/linux/x86/config-6.6
 mkdir -p target/linux/x86/patches-6.6
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/patches-6.6/100-fix_cs5535_clockevt.patch > target/linux/x86/patches-6.6/100-fix_cs5535_clockevt.patch
+curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/patches-6.6/103-pcengines_apu6_platform.patch > target/linux/x86/patches-6.6/103-pcengines_apu6_platform.patch
 sed -i '/KERNEL_PATCHVER/a\KERNEL_TESTING_PATCHVER:=6.6' target/linux/x86/Makefile
 
 # kernel - 6.x
@@ -120,17 +121,16 @@ if [ "$ENABLE_LRNG" = "y" ]; then
     popd
 fi
 
-# linux-firmware: rtw89 / rtl8723d / rtl8821c firmware
+# linux-firmware: rtw89 / rtl8723d / rtl8821c /i915 firmware
 rm -rf package/firmware/linux-firmware
-cp -a ../master/mj22226_openwrt/package/firmware/linux-firmware package/firmware/linux-firmware
+git clone https://$github/sbwml/package_firmware_linux-firmware package/firmware/linux-firmware
 
 # rtl8812au-ct - fix linux-6.1
 rm -rf package/kernel/rtl8812au-ct
 cp -a ../master/openwrt/package/kernel/rtl8812au-ct package/kernel/rtl8812au-ct
 
 # add rtl8812au-ac
-cp -a ../master/mj22226_openwrt/package/kernel/rtl8812au-ac package/kernel/rtl8812au-ac
-sed -i 's/+wifi-scripts //' package/kernel/rtl8812au-ac/Makefile
+git clone https://$github/sbwml/package_kernel_rtl8812au-ac package/kernel/rtl8812au-ac
 
 # ath10k-ct - fix mac80211 6.1-rc
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/kmod-patches/ath10k-ct.patch | patch -p1
