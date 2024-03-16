@@ -46,8 +46,10 @@ fi
 # Start time
 starttime=`date +'%Y-%m-%d %H:%M:%S'`
 CURRENT_DATE=$(date +%s)
+
 # Cpus
 cores=`expr $(nproc --all) + 1`
+
 # $CURL_BAR
 if curl --help | grep progress-bar >/dev/null 2>&1; then
     CURL_BAR="--progress-bar";
@@ -144,8 +146,9 @@ fi
 [ "$BUILD_FAST" = "y" ] && echo -e "${GREEN_COLOR}BUILD_FAST: true${RES}" || echo -e "${GREEN_COLOR}BUILD_FAST: false${RES}"
 [ "$MINIMAL_BUILD" = "y" ] && echo -e "${GREEN_COLOR}MINIMAL_BUILD: true${RES}\r\n" || echo -e "${GREEN_COLOR}MINIMAL_BUILD: false${RES}\r\n"
 
-# get source
+# clean old files
 rm -rf openwrt master && mkdir master
+
 # openwrt - releases
 git clone --depth=1 https://$github/openwrt/openwrt -b $branch
 
@@ -154,8 +157,10 @@ git clone https://$github/openwrt/openwrt master/openwrt --depth=1
 git clone https://$github/openwrt/packages master/packages --depth=1
 git clone https://$github/openwrt/luci master/luci --depth=1
 git clone https://$github/openwrt/routing master/routing --depth=1
+
 # openwrt-23.05
 [ "$1" = "rc2" ] && git clone https://$github/openwrt/openwrt -b openwrt-23.05 master/openwrt-23.05 --depth=1
+
 # immortalwrt master
 git clone https://$github/immortalwrt/packages master/immortalwrt_packages --depth=1
 

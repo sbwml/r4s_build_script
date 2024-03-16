@@ -15,6 +15,8 @@ mkdir -p target/linux/x86/patches-6.6
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/patches-6.6/100-fix_cs5535_clockevt.patch > target/linux/x86/patches-6.6/100-fix_cs5535_clockevt.patch
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/patches-6.6/103-pcengines_apu6_platform.patch > target/linux/x86/patches-6.6/103-pcengines_apu6_platform.patch
 sed -i '/KERNEL_PATCHVER/a\KERNEL_TESTING_PATCHVER:=6.6' target/linux/x86/Makefile
+curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/base-files/etc/board.d/01_leds > target/linux/x86/base-files/etc/board.d/01_leds
+curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/base-files/etc/board.d/02_network > target/linux/x86/base-files/etc/board.d/02_network
 
 # kernel - 6.x
 curl -s https://$mirror/tags/kernel-6.6 > include/kernel-6.6
@@ -24,10 +26,8 @@ sed -ie 's/^\(.\).*vermagic$/\1cp $(TOPDIR)\/.vermagic $(LINUX_DIR)\/.vermagic/'
 grep HASH include/kernel-6.6 | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}' > .vermagic
 
 # kernel generic patches
-git clone https://$github/sbwml/target_linux_generic -b linux-6.6
-rm -rf target/linux/generic/*-6.6 target/linux/generic/files
-mv target_linux_generic/target/linux/generic/* target/linux/generic/
-rm -rf target_linux_generic
+rm -rf target/linux/generic
+git clone https://$github/sbwml/target_linux_generic -b main target/linux/generic
 
 # kernel modules
 rm -rf package/kernel/linux

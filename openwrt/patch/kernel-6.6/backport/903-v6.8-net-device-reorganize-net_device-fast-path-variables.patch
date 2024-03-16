@@ -24,7 +24,7 @@ Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 
 --- a/include/linux/netdevice.h
 +++ b/include/linux/netdevice.h
-@@ -2066,6 +2066,70 @@ enum netdev_stat_type {
+@@ -2089,6 +2089,70 @@ enum netdev_stat_type {
   */
  
  struct net_device {
@@ -95,7 +95,7 @@ Signed-off-by: Jakub Kicinski <kuba@kernel.org>
  	char			name[IFNAMSIZ];
  	struct netdev_name_node	*name_node;
  	struct dev_ifalias	__rcu *ifalias;
-@@ -2090,7 +2154,6 @@ struct net_device {
+@@ -2113,7 +2177,6 @@ struct net_device {
  	struct list_head	unreg_list;
  	struct list_head	close_list;
  	struct list_head	ptype_all;
@@ -103,7 +103,7 @@ Signed-off-by: Jakub Kicinski <kuba@kernel.org>
  
  	struct {
  		struct list_head upper;
-@@ -2098,25 +2161,12 @@ struct net_device {
+@@ -2121,25 +2184,12 @@ struct net_device {
  	} adj_list;
  
  	/* Read-mostly cache-line for fast-path access */
@@ -129,7 +129,7 @@ Signed-off-by: Jakub Kicinski <kuba@kernel.org>
  	netdev_features_t	hw_features;
  	netdev_features_t	wanted_features;
  	netdev_features_t	vlan_features;
-@@ -2160,8 +2210,6 @@ struct net_device {
+@@ -2183,8 +2233,6 @@ struct net_device {
  	const struct tlsdev_ops *tlsdev_ops;
  #endif
  
@@ -138,7 +138,7 @@ Signed-off-by: Jakub Kicinski <kuba@kernel.org>
  	unsigned char		operstate;
  	unsigned char		link_mode;
  
-@@ -2202,9 +2250,7 @@ struct net_device {
+@@ -2225,9 +2273,7 @@ struct net_device {
  
  
  	/* Protocol-specific pointers */
@@ -148,7 +148,7 @@ Signed-off-by: Jakub Kicinski <kuba@kernel.org>
  #if IS_ENABLED(CONFIG_VLAN_8021Q)
  	struct vlan_info __rcu	*vlan_info;
  #endif
-@@ -2239,26 +2285,15 @@ struct net_device {
+@@ -2262,26 +2308,15 @@ struct net_device {
  	/* Interface address info used in eth_type_trans() */
  	const unsigned char	*dev_addr;
  
@@ -175,7 +175,7 @@ Signed-off-by: Jakub Kicinski <kuba@kernel.org>
  	struct netdev_queue __rcu *ingress_queue;
  #ifdef CONFIG_NETFILTER_INGRESS
  	struct nf_hook_entries __rcu *nf_hooks_ingress;
-@@ -2273,25 +2308,13 @@ struct net_device {
+@@ -2296,25 +2331,13 @@ struct net_device {
  /*
   * Cache lines mostly used on transmit path
   */
@@ -201,7 +201,7 @@ Signed-off-by: Jakub Kicinski <kuba@kernel.org>
  #ifdef CONFIG_NET_SCHED
  	DECLARE_HASHTABLE	(qdisc_hash, 4);
  #endif
-@@ -2330,12 +2353,6 @@ struct net_device {
+@@ -2353,12 +2376,6 @@ struct net_device {
  	bool needs_free_netdev;
  	void (*priv_destructor)(struct net_device *dev);
  
@@ -214,7 +214,7 @@ Signed-off-by: Jakub Kicinski <kuba@kernel.org>
  	/* mid-layer private */
  	void				*ml_priv;
  	enum netdev_ml_priv_type	ml_priv_type;
-@@ -2370,20 +2387,15 @@ struct net_device {
+@@ -2393,20 +2410,15 @@ struct net_device {
   */
  #define GSO_MAX_SIZE		(8 * GSO_MAX_SEGS)
  
