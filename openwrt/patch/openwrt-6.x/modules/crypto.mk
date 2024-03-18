@@ -37,6 +37,7 @@ $(eval $(call KernelPackage,crypto-acompress))
 
 define KernelPackage/crypto-aead
   TITLE:=CryptoAPI AEAD support
+  DEPENDS:=+kmod-crypto-rng
   KCONFIG:= \
 	CONFIG_CRYPTO_AEAD \
 	CONFIG_CRYPTO_AEAD2
@@ -216,7 +217,7 @@ $(eval $(call KernelPackage,crypto-ecb))
 
 define KernelPackage/crypto-ecdh
   TITLE:=ECDH algorithm
-  DEPENDS:=+kmod-crypto-kpp
+  DEPENDS:=+kmod-crypto-kpp +kmod-crypto-rng
   KCONFIG:= CONFIG_CRYPTO_ECDH
   FILES:= \
 	$(LINUX_DIR)/crypto/ecdh_generic.ko \
@@ -824,7 +825,7 @@ $(eval $(call KernelPackage,crypto-rmd160))
 
 define KernelPackage/crypto-rng
   TITLE:=CryptoAPI random number generation
-  DEPENDS:=+kmod-crypto-hash +kmod-crypto-hmac +kmod-crypto-sha512
+  DEPENDS:=+kmod-crypto-hash +kmod-crypto-sha512
   KCONFIG:= \
 	CONFIG_CRYPTO_DRBG \
 	CONFIG_CRYPTO_DRBG_HMAC=y \
@@ -845,7 +846,7 @@ $(eval $(call KernelPackage,crypto-rng))
 
 define KernelPackage/crypto-seqiv
   TITLE:=CryptoAPI Sequence Number IV Generator
-  DEPENDS:=+kmod-crypto-aead +kmod-crypto-rng
+  DEPENDS:=+kmod-crypto-aead
   KCONFIG:=CONFIG_CRYPTO_SEQIV
   FILES:=$(LINUX_DIR)/crypto/seqiv.ko
   AUTOLOAD:=$(call AutoLoad,09,seqiv)
