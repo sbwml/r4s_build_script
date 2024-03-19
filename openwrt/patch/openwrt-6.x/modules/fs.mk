@@ -87,6 +87,7 @@ define KernelPackage/fs-smbfs-common
   SUBMENU:=$(FS_MENU)
   TITLE:=SMBFS common dependencies support
   HIDDEN:=1
+  DEPENDS:=+LINUX_6_6:kmod-fs-netfs +LINUX_6_6:kmod-nls-ucs2-utils
   KCONFIG:=\
 	CONFIG_SMBFS_COMMON@lt6.1 \
 	CONFIG_SMBFS@ge6.1
@@ -129,9 +130,7 @@ define KernelPackage/fs-cifs
     +kmod-crypto-des \
     +kmod-asn1-decoder \
     +kmod-oid-registry \
-    +kmod-dnsresolver \
-    +LINUX_6_6:kmod-fs-netfs \
-    +LINUX_6_6:kmod-fs-nls-ucs2-utils
+    +kmod-dnsresolver
 endef
 
 define KernelPackage/fs-cifs/description
@@ -342,10 +341,10 @@ $(eval $(call KernelPackage,fs-isofs))
 define KernelPackage/fs-jfs
   SUBMENU:=$(FS_MENU)
   TITLE:=JFS filesystem support
-  DEPENDS:=+LINUX_6_6:kmod-fs-nls-ucs2-utils
   KCONFIG:=CONFIG_JFS_FS
   FILES:=$(LINUX_DIR)/fs/jfs/jfs.ko
   AUTOLOAD:=$(call AutoLoad,30,jfs,1)
+  DEPENDS:=+LINUX_6_6:kmod-nls-ucs2-utils
   $(call AddDepends/nls)
 endef
 
@@ -362,7 +361,6 @@ define KernelPackage/fs-ksmbd
   DEPENDS:= \
 	  +kmod-nls-base \
 	  +kmod-nls-utf8 \
-	  +kmod-crypto-md4 \
 	  +kmod-crypto-md5 \
 	  +kmod-crypto-hmac \
 	  +kmod-crypto-ecb \
@@ -375,8 +373,7 @@ define KernelPackage/fs-ksmbd
 	  +kmod-crypto-gcm \
 	  +kmod-asn1-decoder \
 	  +kmod-oid-registry \
-	  +kmod-fs-smbfs-common \
-	  +LINUX_6_6:kmod-fs-nls-ucs2-utils
+	  +kmod-fs-smbfs-common
   KCONFIG:= \
 	CONFIG_SMB_SERVER \
 	CONFIG_SMB_SERVER_SMBDIRECT=n \
@@ -438,17 +435,6 @@ endef
 $(eval $(call KernelPackage,fs-netfs))
 
 
-define KernelPackage/fs-nls-ucs2-utils
-  SUBMENU:=$(FS_MENU)
-  TITLE:=UCS-2 conversion utilities
-  DEPENDS:=@LINUX_6_6
-  KCONFIG:=CONFIG_NLS_UCS2_UTILS
-  FILES:=$(LINUX_DIR)/fs/nls/nls_ucs2_utils.ko
-endef
-
-$(eval $(call KernelPackage,fs-nls-ucs2-utils))
-
-
 define KernelPackage/fs-nfs
   SUBMENU:=$(FS_MENU)
   TITLE:=NFS filesystem client support
@@ -486,8 +472,7 @@ define KernelPackage/fs-nfs-common
   FILES:= \
 	$(LINUX_DIR)/fs/lockd/lockd.ko \
 	$(LINUX_DIR)/net/sunrpc/sunrpc.ko \
-	$(LINUX_DIR)/fs/nfs_common/grace.ko \
-	$(LINUX_DIR)/fs/nfs_common/nfs_ssc.ko@lt6.6
+	$(LINUX_DIR)/fs/nfs_common/grace.ko
   AUTOLOAD:=$(call AutoLoad,30,grace sunrpc lockd)
 endef
 
@@ -732,6 +717,7 @@ define KernelPackage/pstore
 	CONFIG_PSTORE_DEFLATE_COMPRESS_DEFAULT=y
   FILES:= $(LINUX_DIR)/fs/pstore/pstore.ko
   AUTOLOAD:=$(call AutoLoad,30,pstore,1)
+  DEPENDS:=+LINUX_6_6:kmod-lib-zlib-deflate +LINUX_6_6:kmod-lib-zlib-inflate
 endef
 
 define KernelPackage/pstore/description

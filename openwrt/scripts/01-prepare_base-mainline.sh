@@ -135,9 +135,9 @@ git clone https://$github/sbwml/package_kernel_rtl8812au-ac package/kernel/rtl88
 # ath10k-ct - fix mac80211 6.1-rc
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/kmod-patches/ath10k-ct.patch | patch -p1
 
-# mt76 - update to 2023-12-18
+# mt76 - main
 rm -rf package/kernel/mt76
-git clone https://$github/sbwml/package_kernel_mt76 package/kernel/mt76
+cp -a ../master/openwrt/package/kernel/mt76 package/kernel/mt76
 
 # iwinfo: add mt7922 device id
 mkdir -p package/network/utils/iwinfo/patches

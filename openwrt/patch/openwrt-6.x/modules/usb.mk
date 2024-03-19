@@ -331,17 +331,6 @@ define KernelPackage/usb-bcma
 endef
 $(eval $(call KernelPackage,usb-bcma))
 
-define KernelPackage/usb-fotg210
-  TITLE:=Support for FOTG210 USB host controllers
-  DEPENDS:=@USB_SUPPORT @TARGET_gemini
-  KCONFIG:=CONFIG_USB_FOTG210_HCD
-  FILES:= \
-	$(if $(CONFIG_USB_FOTG210_HCD),$(LINUX_DIR)/drivers/usb/host/fotg210-hcd.ko)
-  AUTOLOAD:=$(call AutoLoad,50,fotg210-hcd,1)
-  $(call AddDepends/usb)
-endef
-$(eval $(call KernelPackage,usb-fotg210))
-
 define KernelPackage/usb-ssb
   TITLE:=Support for SSB USB controllers
   DEPENDS:=@USB_SUPPORT @TARGET_bcm47xx
@@ -468,6 +457,44 @@ define KernelPackage/usb-dwc2-pci/description
 endef
 
 $(eval $(call KernelPackage,usb-dwc2-pci))
+
+
+define KernelPackage/usb-cdns
+  TITLE:=Cadence USB USB controller driver
+  DEPENDS:=+USB_GADGET_SUPPORT:kmod-usb-gadget +kmod-usb-roles
+  KCONFIG:= \
+	CONFIG_USB_CDNS_SUPPORT
+  FILES:= $(LINUX_DIR)/drivers/usb/cdns3/cdns-usb-common.ko
+  AUTOLOAD:=$(call AutoLoad,50,cdns-usb-common,1)
+  $(call AddDepends/usb)
+endef
+
+define KernelPackage/usb-cdns/description
+ This driver provides USB Device Controller support for the
+ Cadence USB Core
+endef
+
+$(eval $(call KernelPackage,usb-cdns))
+
+
+define KernelPackage/usb-cdns3
+  TITLE:=Cadence USB3 USB controller driver
+  DEPENDS:=+kmod-usb-cdns
+  KCONFIG:= \
+	CONFIG_USB_CDNS3 \
+	CONFIG_USB_CDNS3_GADGET=y \
+	CONFIG_USB_CDNS3_HOST=y
+  FILES:= $(LINUX_DIR)/drivers/usb/cdns3/cdns3.ko
+  AUTOLOAD:=$(call AutoLoad,54,cdns3,1)
+  $(call AddDepends/usb)
+endef
+
+define KernelPackage/usb-cdns3/description
+ This driver provides support for the Dual Role SuperSpeed
+ USB Controller based on the Cadence USB3 IP Core
+endef
+
+$(eval $(call KernelPackage,usb-cdns3))
 
 
 define KernelPackage/usb-dwc3
@@ -762,8 +789,9 @@ $(eval $(call KernelPackage,usb-serial-mct))
 
 define KernelPackage/usb-serial-mos7720
   TITLE:=Support for Moschip MOS7720 devices
-  KCONFIG:=CONFIG_USB_SERIAL_MOS7720
+  KCONFIG:=CONFIG_USB_SERIAL_MOS7720 CONFIG_USB_SERIAL_MOS7715_PARPORT=y
   FILES:=$(LINUX_DIR)/drivers/usb/serial/mos7720.ko
+  DEPENDS:=+kmod-ppdev
   AUTOLOAD:=$(call AutoProbe,mos7720)
   $(call AddDepends/usb-serial)
 endef
@@ -1140,7 +1168,6 @@ endef
 
 define KernelPackage/usb-net-aqc111
   TITLE:=Support for USB-to-Ethernet Aquantia AQtion 5/2.5GbE
-  DEPENDS:=+kmod-libphy
   KCONFIG:=CONFIG_USB_NET_AQC111
   FILES:=$(LINUX_DIR)/drivers/$(USBNET_DIR)/aqc111.ko
   AUTOLOAD:=$(call AutoProbe,aqc111)
@@ -1158,7 +1185,7 @@ define KernelPackage/usb-net-asix
   TITLE:=Kernel module for USB-to-Ethernet Asix convertors
   DEPENDS:= \
 	+kmod-libphy +kmod-net-selftests +kmod-mdio-devres +kmod-phy-ax88796b \
-	+LINUX_6_6:kmod-phylink
+	+LINUX_6_1:kmod-phylink +LINUX_6_6:kmod-phylink
   KCONFIG:=CONFIG_USB_NET_AX8817X
   FILES:=$(LINUX_DIR)/drivers/$(USBNET_DIR)/asix.ko
   AUTOLOAD:=$(call AutoProbe,asix)
@@ -1286,7 +1313,7 @@ $(eval $(call KernelPackage,usb-net-smsc75xx))
 
 define KernelPackage/usb-net-smsc95xx
   TITLE:=SMSC LAN95XX based USB 2.0 10/100 ethernet devices
-  DEPENDS:=+kmod-libphy +kmod-phy-smsc +LINUX_6_6:kmod-net-selftests
+  DEPENDS:=+kmod-libphy +kmod-phy-smsc +!LINUX_5_15:kmod-net-selftests
   KCONFIG:=CONFIG_USB_NET_SMSC95XX
   FILES:=$(LINUX_DIR)/drivers/$(USBNET_DIR)/smsc95xx.ko
   AUTOLOAD:=$(call AutoProbe,smsc95xx)
@@ -1579,7 +1606,7 @@ define KernelPackage/usb-hid-mcp2221
   SUBMENU:=$(USB_MENU)
   TITLE:=Microchip USB 2.0 to I2C/UART Protocol Converter with GPIO
   KCONFIG:=CONFIG_HID_MCP2221
-  DEPENDS:=@GPIO_SUPPORT +kmod-usb-hid +kmod-i2c-core +(LINUX_6_6):+kmod-industrialio-triggered-buffer
+  DEPENDS:=@GPIO_SUPPORT +kmod-usb-hid +kmod-i2c-core +LINUX_6_6:kmod-iio-core
   FILES:=$(LINUX_DIR)/drivers/hid/hid-mcp2221.ko
   AUTOLOAD:=$(call AutoProbe,hid-mcp2221)
 endef

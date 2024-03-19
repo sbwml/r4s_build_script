@@ -34,7 +34,7 @@ define KernelPackage/hwmon-ad7418
   KCONFIG:=CONFIG_SENSORS_AD7418
   FILES:=$(LINUX_DIR)/drivers/hwmon/ad7418.ko
   AUTOLOAD:=$(call AutoLoad,60,ad7418 ad7418)
-  $(call AddDepends/hwmon,+kmod-i2c-core)
+  $(call AddDepends/hwmon,+kmod-i2c-core +LINUX_6_6:kmod-regmap-core)
 endef
 
 define KernelPackage/hwmon-ad7418/description
@@ -52,7 +52,7 @@ define KernelPackage/hwmon-adt7410
 	$(LINUX_DIR)/drivers/hwmon/adt7x10.ko \
 	$(LINUX_DIR)/drivers/hwmon/adt7410.ko
   AUTOLOAD:=$(call AutoLoad,60,adt7x10 adt7410)
-  $(call AddDepends/hwmon,+kmod-i2c-core +LINUX_6_6:kmod-regmap-core)
+  $(call AddDepends/hwmon,+kmod-i2c-core +!LINUX_5_15:kmod-regmap-core)
 endef
 
 define KernelPackage/hwmon-adt7410/description
@@ -75,6 +75,23 @@ define KernelPackage/hwmon-adt7475/description
 endef
 
 $(eval $(call KernelPackage,hwmon-adt7475))
+
+
+define KernelPackage/hwmon-coretemp
+  TITLE:=Intel Core/Core2/Atom temperature sensor
+  KCONFIG:=CONFIG_SENSORS_CORETEMP
+  FILES:=$(LINUX_DIR)/drivers/hwmon/coretemp.ko
+  AUTOLOAD:=$(call AutoProbe,coretemp)
+  $(call AddDepends/hwmon,@TARGET_x86)
+endef
+
+define KernelPackage/hwmon-coretemp/description
+  Kernel module for Intel Core/Core2/Atom temperature monitoring support.
+  Most of the family 6 CPUs are supported.
+  Check Documentation/hwmon/coretemp.rst for details.
+endef
+
+$(eval $(call KernelPackage,hwmon-coretemp))
 
 
 define KernelPackage/hwmon-dme1737
@@ -419,9 +436,9 @@ define KernelPackage/hwmon-nct6775
   KCONFIG:=CONFIG_SENSORS_NCT6775
   FILES:= \
 	$(LINUX_DIR)/drivers/hwmon/nct6775.ko \
-	$(LINUX_DIR)/drivers/hwmon/nct6775-core.ko@ge5.19
+	$(LINUX_DIR)/drivers/hwmon/nct6775-core.ko
   AUTOLOAD:=$(call AutoProbe,nct6775)
-  $(call AddDepends/hwmon,@PCI_SUPPORT @TARGET_x86 +kmod-hwmon-vid +LINUX_6_6:kmod-regmap-core)
+  $(call AddDepends/hwmon,@PCI_SUPPORT @TARGET_x86 +kmod-hwmon-vid +kmod-regmap-core)
 endef
 
 define KernelPackage/hwmon-nct6775/description
@@ -553,6 +570,21 @@ define KernelPackage/hwmon-sht3x/description
 endef
 
 $(eval $(call KernelPackage,hwmon-sht3x))
+
+
+define KernelPackage/hwmon-tc654
+  TITLE:=TC654 monitoring support
+  KCONFIG:=CONFIG_SENSORS_TC654
+  FILES:=$(LINUX_DIR)/drivers/hwmon/tc654.ko
+  AUTOLOAD:=$(call AutoLoad,60,tc654)
+  $(call AddDepends/hwmon,+kmod-i2c-core)
+endef
+
+define KernelPackage/hwmon-tc654/description
+ Kernel module for Microchip TC654/TC655 and compatibles
+endef
+
+$(eval $(call KernelPackage,hwmon-tc654))
 
 
 define KernelPackage/hwmon-tmp102
