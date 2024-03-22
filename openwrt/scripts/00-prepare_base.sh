@@ -267,8 +267,10 @@ mkdir -p feeds/packages/net/wget/patches
 curl -s https://$mirror/openwrt/patch/user-agent/999-wget-default-useragent.patch > feeds/packages/net/wget/patches/999-wget-default-useragent.patch
 
 # dnsmasq - bump version
-rm -rf package/network/services/dnsmasq
-cp -a ../master/openwrt-23.05/package/network/services/dnsmasq package/network/services/dnsmasq
+if [ "$version" = "rc2" ]; then
+    rm -rf package/network/services/dnsmasq
+    cp -a ../master/openwrt-23.05/package/network/services/dnsmasq package/network/services/dnsmasq
+fi
 
 # Docker
 rm -rf feeds/luci/applications/luci-app-dockerman
