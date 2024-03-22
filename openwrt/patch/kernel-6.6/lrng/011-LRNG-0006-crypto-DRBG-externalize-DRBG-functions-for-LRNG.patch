@@ -1,6 +1,6 @@
-From 35dba1d51402cf2f9589757ecfa747651e2c49a6 Mon Sep 17 00:00:00 2001
+From 457a18d887ffb7555838e65505a6a8a72a5e0ae0 Mon Sep 17 00:00:00 2001
 From: Stephan Mueller <smueller@chronox.de>
-Date: Tue, 15 Sep 2020 22:17:43 +0200
+Date: Thu, 21 Mar 2024 14:17:33 +0100
 Subject: [PATCH 06/25] crypto: DRBG - externalize DRBG functions for LRNG
 
 This patch allows several DRBG functions to be called by the LRNG kernel
