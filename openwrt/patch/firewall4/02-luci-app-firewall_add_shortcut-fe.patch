@@ -1,8 +1,6 @@
-diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-index 9d0dce8dfb..904db78007 100644
 --- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 +++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-@@ -86,7 +86,7 @@ return view.extend({
+@@ -91,7 +91,7 @@ return view.extend({
  			o = s.option(form.Flag, 'flow_offloading',
  				_('Software flow offloading'),
  				_('Software based offloading for routing/NAT'));
@@ -11,7 +9,7 @@ index 9d0dce8dfb..904db78007 100644
  
  			o = s.option(form.Flag, 'flow_offloading_hw',
  				_('Hardware flow offloading'),
-@@ -95,6 +95,22 @@ return view.extend({
+@@ -100,6 +100,22 @@ return view.extend({
  			o.depends('flow_offloading', '1');
  		}
  

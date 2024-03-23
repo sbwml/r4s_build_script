@@ -1,5 +1,3 @@
-diff --git a/package/libs/mbedtls/Config.in b/package/libs/mbedtls/Config.in
-index ffabd79..93a5d02 100644
 --- a/package/libs/mbedtls/Config.in
 +++ b/package/libs/mbedtls/Config.in
 @@ -140,6 +140,11 @@ config MBEDTLS_ECP_DP_CURVE448_ENABLED
@@ -14,8 +12,6 @@ index ffabd79..93a5d02 100644
  config MBEDTLS_CERTS_C
  	bool "MBEDTLS_CERTS_C"
  	default n
-diff --git a/package/libs/mbedtls/Makefile b/package/libs/mbedtls/Makefile
-index a6a7ac3..16661e6 100644
 --- a/package/libs/mbedtls/Makefile
 +++ b/package/libs/mbedtls/Makefile
 @@ -60,6 +60,7 @@ MBEDTLS_BUILD_OPTS_CIPHERS= \
@@ -26,7 +22,7 @@ index a6a7ac3..16661e6 100644
    CONFIG_MBEDTLS_CERTS_C \
    CONFIG_MBEDTLS_CIPHER_MODE_OFB \
    CONFIG_MBEDTLS_CIPHER_MODE_XTS \
-@@ -122,6 +123,9 @@ CSR generation (gen_key, cert_req)
+@@ -124,6 +125,9 @@ CSR generation (gen_key, cert_req)
  endef
  
  TARGET_CFLAGS := $(filter-out -O%,$(TARGET_CFLAGS))

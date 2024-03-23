@@ -7,6 +7,19 @@ export PINK_COLOR='\e[1;35m'
 export SHAN='\e[1;33;5m'
 export RES='\e[0m'
 
+GROUP=
+group() {
+    endgroup
+    echo "::group::  $1"
+    GROUP=1
+}
+endgroup() {
+    if [ -n "$GROUP" ]; then
+        echo "::endgroup::"
+    fi
+    GROUP=
+}
+
 #####################################
 #  NanoPi R4S OpenWrt Build Script  #
 #####################################
@@ -150,6 +163,7 @@ fi
 rm -rf openwrt master && mkdir master
 
 # openwrt - releases
+[ "$(whoami)" = "runner" ] && group "download openwrt source"
 git clone --depth=1 https://$github/openwrt/openwrt -b $branch
 
 # openwrt master
@@ -163,6 +177,7 @@ git clone https://$github/openwrt/routing master/routing --depth=1
 
 # immortalwrt master
 git clone https://$github/immortalwrt/packages master/immortalwrt_packages --depth=1
+[ "$(whoami)" = "runner" ] && endgroup
 
 if [ -d openwrt ]; then
     cd openwrt
@@ -200,8 +215,13 @@ src-git telephony https://$github/openwrt/telephony.git$telephony
 EOF
 
 # Init feeds
+[ "$(whoami)" = "runner" ] && group "./scripts/feeds update -a"
 ./scripts/feeds update -a
+[ "$(whoami)" = "runner" ] && endgroup
+
+[ "$(whoami)" = "runner" ] && group "./scripts/feeds install -a"
 ./scripts/feeds install -a
+[ "$(whoami)" = "runner" ] && endgroup
 
 # loader dl
 if [ -f ../dl.gz ]; then
@@ -209,7 +229,6 @@ if [ -f ../dl.gz ]; then
 fi
 
 ###############################################
-
 echo -e "\n${GREEN_COLOR}Patching ...${RES}\n"
 
 # scripts
@@ -221,6 +240,7 @@ curl -sO https://$mirror/openwrt/scripts/04-fix_kmod.sh
 curl -sO https://$mirror/openwrt/scripts/05-fix-source.sh
 curl -sO https://$mirror/openwrt/scripts/99_clean_build_cache.sh
 chmod 0755 *sh
+[ "$(whoami)" = "runner" ] && group "Patching ..."
 bash 00-prepare_base.sh
 bash 02-prepare_package.sh
 bash 03-convert_translation.sh
@@ -229,6 +249,7 @@ if [ "$platform" = "rk3568" ] || [ "$platform" = "rk3399" ] || [ "$platform" = "
     bash 01-prepare_base-mainline.sh
     bash 04-fix_kmod.sh
 fi
+[ "$(whoami)" = "runner" ] && endgroup
 
 if [ "$USE_GCC14" = "y" ]; then
     rm -rf toolchain/binutils
