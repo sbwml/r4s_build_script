@@ -163,7 +163,7 @@ fi
 rm -rf openwrt master && mkdir master
 
 # openwrt - releases
-[ "$(whoami)" = "runner" ] && group "download openwrt source"
+[ "$(whoami)" = "runner" ] && group "source code"
 git clone --depth=1 https://$github/openwrt/openwrt -b $branch
 
 # openwrt master
@@ -215,11 +215,11 @@ src-git telephony https://$github/openwrt/telephony.git$telephony
 EOF
 
 # Init feeds
-[ "$(whoami)" = "runner" ] && group "./scripts/feeds update -a"
+[ "$(whoami)" = "runner" ] && group "feeds update -a"
 ./scripts/feeds update -a
 [ "$(whoami)" = "runner" ] && endgroup
 
-[ "$(whoami)" = "runner" ] && group "./scripts/feeds install -a"
+[ "$(whoami)" = "runner" ] && group "feeds install -a"
 ./scripts/feeds install -a
 [ "$(whoami)" = "runner" ] && endgroup
 
