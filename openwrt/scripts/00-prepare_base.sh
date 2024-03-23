@@ -357,6 +357,9 @@ sed -i "s/openwrt.org/www.qq.com/g" feeds/luci/modules/luci-mod-network/htdocs/l
 # luci - drop ethernet port status
 rm -f feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js
 
+# luci - rollback dhcp.js
+curl -s https://$mirror/openwrt/patch/luci/dhcp/dhcp.js > feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/dhcp.js
+
 # ppp - 2.5.0
 rm -rf package/network/services/ppp
 git clone https://$github/sbwml/package_network_services_ppp package/network/services/ppp
