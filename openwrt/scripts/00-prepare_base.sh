@@ -52,12 +52,6 @@ git clone https://$github/sbwml/package_kernel_r8101 package/kernel/r8101
 git clone https://$github/sbwml/package_kernel_r8125 package/kernel/r8125
 git clone https://$github/sbwml/package_kernel_r8126 package/kernel/r8126
 
-# netifd - fix auto-negotiate by upstream
-if [ "$version" = "rc2" ]; then
-    rm -rf package/network/config/netifd
-    cp -a ../master/openwrt-23.05/package/network/config/netifd package/network/config/netifd
-fi
-
 # Optimization level -Ofast
 if [ "$platform" = "x86_64" ]; then
     curl -s https://$mirror/openwrt/patch/target-modify_for_x86_64.patch | patch -p1
@@ -181,12 +175,6 @@ pushd feeds/luci
     curl -s https://$mirror/openwrt/patch/firewall4/04-luci-add-firewall4-nft-rules-file.patch | patch -p1
 popd
 
-# openssl - bump version
-if [ "$version" = "rc2" ]; then
-    rm -rf package/libs/openssl
-    cp -a ../master/openwrt-23.05/package/libs/openssl package/libs/openssl
-fi
-
 # openssl - quictls
 pushd package/libs/openssl/patches
     curl -sO https://$mirror/openwrt/patch/openssl/quic/0001-QUIC-Add-support-for-BoringSSL-QUIC-APIs.patch
@@ -265,12 +253,6 @@ git clone https://$github/sbwml/feeds_packages_net_curl feeds/packages/net/curl
 # wget - SmartDrive user-agent
 mkdir -p feeds/packages/net/wget/patches
 curl -s https://$mirror/openwrt/patch/user-agent/999-wget-default-useragent.patch > feeds/packages/net/wget/patches/999-wget-default-useragent.patch
-
-# dnsmasq - bump version
-if [ "$version" = "rc2" ]; then
-    rm -rf package/network/services/dnsmasq
-    cp -a ../master/openwrt-23.05/package/network/services/dnsmasq package/network/services/dnsmasq
-fi
 
 # Docker
 rm -rf feeds/luci/applications/luci-app-dockerman

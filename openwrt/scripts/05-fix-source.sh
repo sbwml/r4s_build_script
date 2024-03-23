@@ -22,8 +22,6 @@ if [ "$USE_GCC14" = y ]; then
     # iproute2
     rm -rf package/network/utils/iproute2
     git clone https://$github/sbwml/package_network_utils_iproute2 package/network/utils/iproute2
-    # openvswitch
-    [ "$version" = "rc2" ] && curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/openvswitch/0008-ovs-atomic-Fix-inclusion-of-Clang-header-by-GCC-14.patch > feeds/packages/net/openvswitch/patches/0008-ovs-atomic-Fix-inclusion-of-Clang-header-by-GCC-14.patch
     # wsdd2
     mkdir -p feeds/packages/net/wsdd2/patches
     curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/wsdd2/100-wsdd2-cast-from-pointer-to-integer-of-different-size.patch > feeds/packages/net/wsdd2/patches/100-wsdd2-cast-from-pointer-to-integer-of-different-size.patch
