@@ -240,7 +240,7 @@ curl -sO https://$mirror/openwrt/scripts/04-fix_kmod.sh
 curl -sO https://$mirror/openwrt/scripts/05-fix-source.sh
 curl -sO https://$mirror/openwrt/scripts/99_clean_build_cache.sh
 chmod 0755 *sh
-[ "$(whoami)" = "runner" ] && group "Patching ..."
+[ "$(whoami)" = "runner" ] && group "patching openwrt"
 bash 00-prepare_base.sh
 bash 02-prepare_package.sh
 bash 03-convert_translation.sh
@@ -299,6 +299,7 @@ export ENABLE_LTO=$ENABLE_LTO
 [ "$USE_MOLD" = "y" ] && echo 'CONFIG_USE_MOLD=y' >> .config
 
 # openwrt-23.05 gcc11/13/14
+[ "$(whoami)" = "runner" ] && group "patching toolchain"
 if [ "$USE_GCC13" = "y" ] || [ "$USE_GCC14" = "y" ]; then
     [ "$USE_GCC13" = "y" ] && curl -s https://$mirror/openwrt/generic/config-gcc13 >> .config
     [ "$USE_GCC14" = "y" ] && curl -s https://$mirror/openwrt/generic/config-gcc14 >> .config
@@ -312,6 +313,7 @@ if [ "$USE_GCC13" = "y" ] || [ "$USE_GCC14" = "y" ]; then
 elif [ ! "$USE_GLIBC" = "y" ]; then
     curl -s https://$mirror/openwrt/generic/config-gcc11 >> .config
 fi
+[ "$(whoami)" = "runner" ] && endgroup
 
 # clean directory - github actions
 [ "$(whoami)" = "runner" ] && echo 'CONFIG_AUTOREMOVE=y' >> .config
