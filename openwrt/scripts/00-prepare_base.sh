@@ -345,10 +345,12 @@ sed -i 's/cheaper = 1/cheaper = 2/g' feeds/packages/net/uwsgi/files-luci-support
 sed -i 's/option timeout 30/option timeout 60/g' package/system/rpcd/files/rpcd.config
 sed -i 's#20) \* 1000#60) \* 1000#g' feeds/luci/modules/luci-base/htdocs/luci-static/resources/rpc.js
 
-# luci - 20_memory & refresh interval
+# luci - 20_memory & 25_storage & refresh interval
 pushd feeds/luci
     curl -s https://$mirror/openwrt/patch/luci/20_memory.js.patch | patch -p1
     curl -s https://$mirror/openwrt/patch/luci/luci-refresh-interval.patch | patch -p1
+    # luci-mod-status: storage index applicable only to valid
+    curl -s https://$mirror/openwrt/patch/luci/luci-mod-status-storage-index-applicable-only-to-val.patch | patch -p1
 popd
 
 # Luci diagnostics.js
