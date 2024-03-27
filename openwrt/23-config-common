@@ -234,6 +234,7 @@ CONFIG_PACKAGE_gdisk=y
 CONFIG_PACKAGE_htop=y
 CONFIG_PACKAGE_iperf3=y
 CONFIG_PACKAGE_iputils-ping=y
+CONFIG_PACKAGE_less=y
 CONFIG_PACKAGE_lrzsz=y
 CONFIG_PACKAGE_lsblk=y
 CONFIG_PACKAGE_lscpu=y
@@ -287,6 +288,7 @@ CONFIG_PACKAGE_shadow-utils=y
 
 ### GNU Core Utilities
 CONFIG_PACKAGE_coreutils=y
+CONFIG_PACKAGE_coreutils-cat=y
 CONFIG_PACKAGE_coreutils-chmod=y
 CONFIG_PACKAGE_coreutils-chown=y
 CONFIG_PACKAGE_coreutils-chroot=y
