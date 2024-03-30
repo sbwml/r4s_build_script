@@ -40,7 +40,7 @@ index cdbf9fa..1d73df8 100644
  
 -PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
 +ifeq ($(PKG_VERSION),14.0.1)
-+  PKG_SOURCE_URL:=https://github.com/sbwml/gcc/releases/download/$(PKG_NAME)-$(PKG_VERSION)
++  PKG_SOURCE_URL:=https://github.com/sbwml/gcc/releases/download/gcc-$(PKG_VERSION)
 +else
 +  PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
 +endif
@@ -52,7 +52,7 @@ index cdbf9fa..1d73df8 100644
  endif
  
 +ifeq ($(PKG_VERSION),14.0.1)
-+  PKG_HASH:=bcff0ef145006e387f342f4f3952e76b51df0620d1f09594b85c564ff263b8ef
++  PKG_HASH:=a945f3719a2430efec19776df940a018ab5d2315f58e635233d1d6ffa12d3e28
 +endif
 +
  PATCH_DIR=../patches-$(GCC_MAJOR_VERSION).x
