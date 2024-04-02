@@ -266,7 +266,8 @@ if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
 fi
 sed -i '/sysctl.d/d' feeds/packages/utils/dockerd/Makefile
 pushd feeds/packages
-    curl -s https://$mirror/openwrt/patch/docker/dockerd-fix-bridge-network.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/docker/0001-dockerd-fix-bridge-network.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/docker/0002-docker-add-buildkit-experimental-support.patch | patch -p1
 popd
 
 # cgroupfs-mount
