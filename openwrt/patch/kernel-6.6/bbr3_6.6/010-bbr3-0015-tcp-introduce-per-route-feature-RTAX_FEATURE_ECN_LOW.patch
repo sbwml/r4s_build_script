@@ -74,7 +74,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	__u8	proto;
 --- a/net/ipv4/tcp_minisocks.c
 +++ b/net/ipv4/tcp_minisocks.c
-@@ -439,6 +439,8 @@ void tcp_ca_openreq_child(struct sock *s
+@@ -435,6 +435,8 @@ void tcp_ca_openreq_child(struct sock *s
  	u32 ca_key = dst_metric(dst, RTAX_CC_ALGO);
  	bool ca_got_dst = false;
  
