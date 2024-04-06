@@ -1,0 +1,11 @@
+/usr/bin/aircast
+/usr/bin/airupnp
+/usr/bin/alist
+/usr/bin/frpc
+/usr/bin/mosdns
+/usr/bin/sslocal
+/usr/bin/ssserver
+/usr/bin/v2dat
+/usr/bin/xray
+/usr/bin/xray-plugin
+/usr/sbin/haproxy

@@ -334,6 +334,9 @@ fi
 # uhttpd
 [ "$ENABLE_UHTTPD" = "y" ] && sed -i '/nginx/d' .config && echo 'CONFIG_PACKAGE_ariang=y' >> .config
 
+# bcm53xx: upx_list.txt
+[ "$platform" = "bcm53xx" ] && curl -s https://$mirror/openwrt/generic/upx_list.txt > upx_list.txt
+
 # Toolchain Cache
 if [ "$BUILD_FAST" = "y" ]; then
     [ "$USE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
