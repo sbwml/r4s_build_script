@@ -18,6 +18,11 @@ sed -i '/KERNEL_PATCHVER/a\KERNEL_TESTING_PATCHVER:=6.6' target/linux/x86/Makefi
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/base-files/etc/board.d/01_leds > target/linux/x86/base-files/etc/board.d/01_leds
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/base-files/etc/board.d/02_network > target/linux/x86/base-files/etc/board.d/02_network
 
+# bcm53xx - target
+rm -rf target/linux/bcm53xx
+git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_bcm53xx target/linux/bcm53xx
+git clone https://nanopi:nanopi@$gitea/sbwml/brcmfmac-firmware-4366c-pcie package/firmware/brcmfmac-firmware-4366c-pcie
+
 # kernel - 6.x
 curl -s https://$mirror/tags/kernel-6.6 > include/kernel-6.6
 
@@ -60,29 +65,33 @@ pushd package/kernel/linux/modules
     curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/virt.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/w1.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/wpan.mk
+    [ "$platform" = "bcm53xx" ] && sed -i 's/tcp-bbr3/tcp-bbr/g' netsupport.mk
+    [ "$platform" = "bcm53xx" ] && sed -i 's/BBRv3/BBR/g' netsupport.mk
 popd
 
 # BBRv3 - linux-6.6
-pushd target/linux/generic/backport-6.6
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0001-net-tcp_bbr-broaden-app-limited-rate-sample-detectio.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0002-net-tcp_bbr-v2-shrink-delivered_mstamp-first_tx_msta.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0003-net-tcp_bbr-v2-snapshot-packets-in-flight-at-transmi.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0004-net-tcp_bbr-v2-count-packets-lost-over-TCP-rate-samp.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0005-net-tcp_bbr-v2-export-FLAG_ECE-in-rate_sample.is_ece.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0006-net-tcp_bbr-v2-introduce-ca_ops-skb_marked_lost-CC-m.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0007-net-tcp_bbr-v2-adjust-skb-tx.in_flight-upon-merge-in.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0008-net-tcp_bbr-v2-adjust-skb-tx.in_flight-upon-split-in.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0009-net-tcp-add-new-ca-opts-flag-TCP_CONG_WANTS_CE_EVENT.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0010-net-tcp-re-generalize-TSO-sizing-in-TCP-CC-module-AP.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0011-net-tcp-add-fast_ack_mode-1-skip-rwin-check-in-tcp_f.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0012-net-tcp_bbr-v2-record-app-limited-status-of-TLP-repa.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0013-net-tcp_bbr-v2-inform-CC-module-of-losses-repaired-b.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0014-net-tcp_bbr-v2-introduce-is_acking_tlp_retrans_seq-i.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0015-tcp-introduce-per-route-feature-RTAX_FEATURE_ECN_LOW.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0016-net-tcp_bbr-v3-update-TCP-bbr-congestion-control-mod.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0017-net-tcp_bbr-v3-ensure-ECN-enabled-BBR-flows-set-ECT-.patch
-    curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0018-tcp-export-TCPI_OPT_ECN_LOW-in-tcp_info-tcpi_options.patch
-popd
+if [ "$platform" != "bcm53xx" ]; then
+    pushd target/linux/generic/backport-6.6
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0001-net-tcp_bbr-broaden-app-limited-rate-sample-detectio.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0002-net-tcp_bbr-v2-shrink-delivered_mstamp-first_tx_msta.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0003-net-tcp_bbr-v2-snapshot-packets-in-flight-at-transmi.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0004-net-tcp_bbr-v2-count-packets-lost-over-TCP-rate-samp.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0005-net-tcp_bbr-v2-export-FLAG_ECE-in-rate_sample.is_ece.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0006-net-tcp_bbr-v2-introduce-ca_ops-skb_marked_lost-CC-m.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0007-net-tcp_bbr-v2-adjust-skb-tx.in_flight-upon-merge-in.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0008-net-tcp_bbr-v2-adjust-skb-tx.in_flight-upon-split-in.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0009-net-tcp-add-new-ca-opts-flag-TCP_CONG_WANTS_CE_EVENT.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0010-net-tcp-re-generalize-TSO-sizing-in-TCP-CC-module-AP.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0011-net-tcp-add-fast_ack_mode-1-skip-rwin-check-in-tcp_f.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0012-net-tcp_bbr-v2-record-app-limited-status-of-TLP-repa.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0013-net-tcp_bbr-v2-inform-CC-module-of-losses-repaired-b.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0014-net-tcp_bbr-v2-introduce-is_acking_tlp_retrans_seq-i.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0015-tcp-introduce-per-route-feature-RTAX_FEATURE_ECN_LOW.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0016-net-tcp_bbr-v3-update-TCP-bbr-congestion-control-mod.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0017-net-tcp_bbr-v3-ensure-ECN-enabled-BBR-flows-set-ECT-.patch
+        curl -Os https://$mirror/openwrt/patch/kernel-6.6/bbr3_6.6/010-bbr3-0018-tcp-export-TCPI_OPT_ECN_LOW-in-tcp_info-tcpi_options.patch
+    popd
+fi
 
 # LRNG v54 - linux-6.6
 if [ "$ENABLE_LRNG" = "y" ]; then
@@ -178,12 +187,14 @@ curl -s https://$mirror/openwrt/patch/kernel-6.6/net/983-add-bcm-fullcone-nft_ma
 # shortcut-fe
 curl -s https://$mirror/openwrt/patch/kernel-6.6/net/601-netfilter-export-udp_get_timeouts-function.patch > target/linux/generic/hack-6.6/601-netfilter-export-udp_get_timeouts-function.patch
 curl -s https://$mirror/openwrt/patch/kernel-6.6/net/953-net-patch-linux-kernel-to-support-shortcut-fe.patch > target/linux/generic/hack-6.6/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
-# backport
-curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/901-v6.8-cache-enforce-cache-groups.patch > target/linux/generic/backport-6.6/901-v6.8-cache-enforce-cache-groups.patch
-curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/902-v6.8-netns-ipv4-reorganize-netns_ipv4-fast-path-variables.patch > target/linux/generic/backport-6.6/902-v6.8-netns-ipv4-reorganize-netns_ipv4-fast-path-variables.patch
-curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/903-v6.8-net-device-reorganize-net_device-fast-path-variables.patch > target/linux/generic/backport-6.6/903-v6.8-net-device-reorganize-net_device-fast-path-variables.patch
-curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/904-v6.8-tcp-reorganize-tcp_sock-fast-path-variables.patch > target/linux/generic/backport-6.6/904-v6.8-tcp-reorganize-tcp_sock-fast-path-variables.patch
-curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/905-v6.8-tcp-move-tp-scaling_ratio-to-tcp_sock_read_txrx-grou.patch > target/linux/generic/backport-6.6/905-v6.8-tcp-move-tp-scaling_ratio-to-tcp_sock_read_txrx-grou.patch
+# backport - 6.8 fast-path-variables
+if [ "$platform" != "bcm53xx" ]; then
+    curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/901-v6.8-cache-enforce-cache-groups.patch > target/linux/generic/backport-6.6/901-v6.8-cache-enforce-cache-groups.patch
+    curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/902-v6.8-netns-ipv4-reorganize-netns_ipv4-fast-path-variables.patch > target/linux/generic/backport-6.6/902-v6.8-netns-ipv4-reorganize-netns_ipv4-fast-path-variables.patch
+    curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/903-v6.8-net-device-reorganize-net_device-fast-path-variables.patch > target/linux/generic/backport-6.6/903-v6.8-net-device-reorganize-net_device-fast-path-variables.patch
+    curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/904-v6.8-tcp-reorganize-tcp_sock-fast-path-variables.patch > target/linux/generic/backport-6.6/904-v6.8-tcp-reorganize-tcp_sock-fast-path-variables.patch
+    curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/905-v6.8-tcp-move-tp-scaling_ratio-to-tcp_sock_read_txrx-grou.patch > target/linux/generic/backport-6.6/905-v6.8-tcp-move-tp-scaling_ratio-to-tcp_sock_read_txrx-grou.patch
+fi
 
 # ubnt-ledbar - fix linux-6.x
 rm -rf package/kernel/ubnt-ledbar
