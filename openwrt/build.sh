@@ -274,6 +274,7 @@ if [ "$platform" = "x86_64" ]; then
     ALL_KMODS=y
 elif [ "$platform" = "bcm53xx" ]; then
     curl -s https://$mirror/openwrt/23-config-musl-r8500 > .config
+    ALL_KMODS=y
 elif [ "$platform" = "rk3568" ]; then
     curl -s https://$mirror/openwrt/23-config-musl-r5s > .config
     ALL_KMODS=y
