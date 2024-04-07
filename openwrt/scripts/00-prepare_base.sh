@@ -367,6 +367,9 @@ rm -f feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/statu
 # luci - rollback dhcp.js
 curl -s https://$mirror/openwrt/patch/luci/dhcp/dhcp.js > feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/dhcp.js
 
+# luci - disable wireless WPA3
+[ "$platform" = "bcm53xx" ] && sed -i -e '/if (has_ap_sae || has_sta_sae) {/{N;N;N;N;d;}' feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js
+
 # ppp - 2.5.0
 rm -rf package/network/services/ppp
 git clone https://$github/sbwml/package_network_services_ppp package/network/services/ppp
