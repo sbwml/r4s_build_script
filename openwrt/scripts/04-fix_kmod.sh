@@ -72,3 +72,9 @@ popd
 # routing - batman-adv
 rm -rf feeds/routing/batman-adv
 cp -a ../master/routing/batman-adv feeds/routing/batman-adv
+
+# bcm53xx
+if [ "$platform" = "bcm53xx" ]; then
+    # libpfring
+    sed -i '/CONFIGURE_VARS +=/iEXTRA_CFLAGS += -Wno-int-conversion\n' feeds/packages/libs/libpfring/Makefile
+fi
