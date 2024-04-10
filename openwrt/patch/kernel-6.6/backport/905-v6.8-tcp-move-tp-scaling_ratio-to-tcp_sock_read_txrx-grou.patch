@@ -36,7 +36,7 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
  		u64 mstamp; /* (Re)sent time of the skb */
 --- a/net/ipv4/tcp.c
 +++ b/net/ipv4/tcp.c
-@@ -4662,7 +4662,8 @@ static void __init tcp_struct_check(void
+@@ -4664,7 +4664,8 @@ static void __init tcp_struct_check(void
  	CACHELINE_ASSERT_GROUP_MEMBER(struct tcp_sock, tcp_sock_read_txrx, prr_out);
  	CACHELINE_ASSERT_GROUP_MEMBER(struct tcp_sock, tcp_sock_read_txrx, lost_out);
  	CACHELINE_ASSERT_GROUP_MEMBER(struct tcp_sock, tcp_sock_read_txrx, sacked_out);
