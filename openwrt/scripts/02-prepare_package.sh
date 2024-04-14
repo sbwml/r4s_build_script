@@ -60,6 +60,8 @@ sed -i 's/#directory mask/directory mask/g' feeds/packages/net/samba4/files/smb.
 sed -i 's/0666/0644/g;s/0744/0755/g;s/0777/0755/g' feeds/luci/applications/luci-app-samba4/htdocs/luci-static/resources/view/samba4.js
 sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/samba.config
 sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/smb.conf.template
+# rk3568 bind cpus
+[ "$platform" = "rk3568" ] && sed -i 's#/usr/sbin/smbd#/usr/bin/taskset -c 0-1 /usr/sbin/smbd#' feeds/packages/net/samba4/files/samba.init
 
 # autoCore
 git clone https://$github/sbwml/autocore-arm -b openwrt-23.05 package/new/autocore
