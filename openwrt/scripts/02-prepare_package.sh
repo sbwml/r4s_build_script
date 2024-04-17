@@ -50,9 +50,9 @@ git clone https://$github/sbwml/feeds_packages_net_samba4 feeds/packages/net/sam
 # enable multi-channel
 sed -i '/workgroup/a \\n\t## enable multi-channel' feeds/packages/net/samba4/files/smb.conf.template
 sed -i '/enable multi-channel/a \\tserver multi channel support = yes' feeds/packages/net/samba4/files/smb.conf.template
-sed -i 's/#aio read size = 0/aio read size = 1/g' feeds/packages/net/samba4/files/smb.conf.template
-sed -i 's/#aio write size = 0/aio write size = 1/g' feeds/packages/net/samba4/files/smb.conf.template
 # default config
+sed -i 's/#aio read size = 0/aio read size = 0/g' feeds/packages/net/samba4/files/smb.conf.template
+sed -i 's/#aio write size = 0/aio write size = 0/g' feeds/packages/net/samba4/files/smb.conf.template
 sed -i 's/invalid users = root/#invalid users = root/g' feeds/packages/net/samba4/files/smb.conf.template
 sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages/net/samba4/files/smb.conf.template
 sed -i 's/#create mask/create mask/g' feeds/packages/net/samba4/files/smb.conf.template
@@ -61,7 +61,10 @@ sed -i 's/0666/0644/g;s/0744/0755/g;s/0777/0755/g' feeds/luci/applications/luci-
 sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/samba.config
 sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/smb.conf.template
 # rk3568 bind cpus
-[ "$platform" = "rk3568" ] && sed -i 's#/usr/sbin/smbd#/usr/bin/taskset -c 0-1 /usr/sbin/smbd#' feeds/packages/net/samba4/files/samba.init
+[ "$platform" = "rk3568" ] && sed -i 's#/usr/sbin/smbd -F#/usr/bin/taskset -c 1,0 /usr/sbin/smbd -F#' feeds/packages/net/samba4/files/samba.init
+
+# samba4 user management
+git clone https://github.com/sbwml/luci-app-smbuser package/new/luci-app-smbuser
 
 # autoCore
 git clone https://$github/sbwml/autocore-arm -b openwrt-23.05 package/new/autocore
@@ -109,7 +112,7 @@ git clone https://$github/sbwml/luci-app-openai package/new/openai
 # qBittorrent
 git clone https://$github/sbwml/luci-app-qbittorrent package/new/qbittorrent
 
-# 解除网易云音乐播放限制
+# unblockneteasemusic
 git clone https://$github/UnblockNeteaseMusic/luci-app-unblockneteasemusic package/new/luci-app-unblockneteasemusic
 sed -i 's/解除网易云音乐播放限制/网易云音乐解锁/g' package/new/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
 
@@ -131,7 +134,7 @@ rm -rf feeds/packages/net/iperf3
 cp -a ../master/packages/net/iperf3 feeds/packages/net/iperf3
 sed -i "s/D_GNU_SOURCE/D_GNU_SOURCE -funroll-loops/g" feeds/packages/net/iperf3/Makefile
 
-# 带宽监控
+# nlbwmon
 sed -i 's/services/network/g' feeds/luci/applications/luci-app-nlbwmon/root/usr/share/luci/menu.d/luci-app-nlbwmon.json
 sed -i 's/services/network/g' feeds/luci/applications/luci-app-nlbwmon/htdocs/luci-static/resources/view/nlbw/config.js
 
@@ -145,7 +148,7 @@ elif [ "$platform" = "rk3399" ]; then
     curl -s https://$mirror/openwrt/patch/coremark/coremark.aarch64-6-threads > package/new/custom/coremark/src/musl/coremark.aarch64
 fi
 
-# 翻译
+# FRPC Translation
 sed -i 's,发送,Transmission,g' feeds/luci/applications/luci-app-transmission/po/zh_Hans/transmission.po
 sed -i 's,frp 服务器,FRP 服务器,g' feeds/luci/applications/luci-app-frps/po/zh_Hans/frps.po
 sed -i 's,frp 客户端,FRP 客户端,g' feeds/luci/applications/luci-app-frpc/po/zh_Hans/frpc.po
