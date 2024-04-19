@@ -33,7 +33,7 @@ grep HASH include/kernel-6.6 | awk -F'HASH-' '{print $2}' | awk '{print $1}' | m
 
 # kernel generic patches
 rm -rf target/linux/generic
-git clone https://$gitea/sbwml/target_linux_generic -b main target/linux/generic
+git clone https://$github/sbwml/target_linux_generic -b main target/linux/generic
 
 # kernel modules
 rm -rf package/kernel/linux
