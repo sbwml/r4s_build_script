@@ -1,0 +1,16 @@
+--- a/feeds/luci/applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js
++++ b/feeds/luci/applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js
+@@ -7,11 +7,10 @@
+ 
+ //	[Widget, Option, Title, Description, {Param: 'Value'}],
+ var startupConf = [
+-	[form.Flag, 'stdout', _('Log stdout')],
+-	[form.Flag, 'stderr', _('Log stderr')],
++	[form.Flag, 'enable', _('Enable'), undefined, {datatype: 'bool', default: 'true', rmempty: false}],
+ 	[widgets.UserSelect, 'user', _('Run daemon as user')],
+ 	[widgets.GroupSelect, 'group', _('Run daemon as group')],
+-	[form.Flag, 'respawn', _('Respawn when crashed')],
++	[form.Flag, 'respawn', _('Respawn when crashed'), undefined, {datatype: 'bool', default: 'true', rmempty: false}],
+ 	[form.DynamicList, 'env', _('Environment variable'), _('OS environments pass to frp for config file template, see <a href="https://github.com/fatedier/frp#configuration-file-template">frp README</a>'), {placeholder: 'ENV_NAME=value'}],
+ 	[form.DynamicList, 'conf_inc', _('Additional configs'), _('Config files include in temporary config file'), {placeholder: '/etc/frp/frpc.d/frpc_full.ini'}]
+ ];

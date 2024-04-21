@@ -37,8 +37,11 @@ sed -i 's/procd_set_param stderr $stderr/procd_set_param stderr 0/g' feeds/packa
 sed -i 's/stdout stderr //g' feeds/packages/net/frp/files/frpc.init
 sed -i '/stdout:bool/d;/stderr:bool/d' feeds/packages/net/frp/files/frpc.init
 sed -i '/stdout/d;/stderr/d' feeds/packages/net/frp/files/frpc.config
-curl -s https://$mirror/openwrt/patch/luci/applications/luci-app-frpc-hide-token.patch | patch -p1
-sed -i '/Log stdout/d;/Log stderr/d' feeds/luci/applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js
+sed -i 's/env conf_inc/env conf_inc enable/g' feeds/packages/net/frp/files/frpc.init
+sed -i "s/'conf_inc:list(string)'/& \\\\/" feeds/packages/net/frp/files/frpc.init
+sed -i "/conf_inc:list/a\\\t\t\'enable:bool:0\'" feeds/packages/net/frp/files/frpc.init
+curl -s https://$mirror/openwrt/patch/luci/applications/001-luci-app-frpc-hide-token.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/luci/applications/002-luci-app-frpc-add-enable-flag.patch | patch -p1
 
 # haproxy - bump version
 rm -rf feeds/packages/net/haproxy
