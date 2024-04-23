@@ -258,7 +258,11 @@ if [ "$platform" = "x86_64" ]; then
     curl -s https://$mirror/openwrt/23-config-musl-x86 > .config
     ALL_KMODS=y
 elif [ "$platform" = "bcm53xx" ]; then
-    curl -s https://$mirror/openwrt/23-config-musl-r8500 > .config
+    if [ "$MINIMAL_BUILD" = "y" ]; then
+        curl -s https://$mirror/openwrt/23-config-musl-r8500-minimal > .config
+    else
+        curl -s https://$mirror/openwrt/23-config-musl-r8500 > .config
+    fi
     ALL_KMODS=y
 elif [ "$platform" = "rk3568" ]; then
     curl -s https://$mirror/openwrt/23-config-musl-r5s > .config
@@ -268,13 +272,11 @@ else
 fi
 
 # config-common
-if [ "$platform" != "bcm53xx" ]; then
-    if [ "$MINIMAL_BUILD" = "y" ]; then
-        curl -s https://$mirror/openwrt/23-config-minimal-common >> .config
-        echo 'VERSION_TYPE="minimal"' >> package/base-files/files/usr/lib/os-release
-    else
-        curl -s https://$mirror/openwrt/23-config-common >> .config
-    fi
+if [ "$MINIMAL_BUILD" = "y" ]; then
+    [ "$platform" != "bcm53xx" ] && curl -s https://$mirror/openwrt/23-config-minimal-common >> .config
+    echo 'VERSION_TYPE="minimal"' >> package/base-files/files/usr/lib/os-release
+else
+    [ "$platform" != "bcm53xx" ] && curl -s https://$mirror/openwrt/23-config-common >> .config
 fi
 
 # ota
@@ -447,7 +449,11 @@ elif [ "$platform" = "bcm53xx" ]; then
         # OTA json
         if [ "$1" = "rc2" ]; then
             mkdir -p ota
-            BUILD_TYPE=releases
+            if [ "$MINIMAL_BUILD" = "y" ]; then
+                BUILD_TYPE=minimal
+            else
+                BUILD_TYPE=releases
+            fi
             VERSION=$(sed 's/v//g' version.txt)
             SHA256=$(sha256sum bin/targets/bcm53xx/generic/*-bcm53xx-generic-netgear_r8500-squashfs.chk | awk '{print $1}')
             cat > ota/fw.json <<EOF
