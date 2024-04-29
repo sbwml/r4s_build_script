@@ -127,7 +127,6 @@ git clone https://$github/sbwml/luci-app-xunlei package/new/xunlei
 git clone --depth 1 https://$github/sbwml/luci-theme-argon.git package/new/luci-theme-argon
 
 # Mosdns
-rm -rf feeds/packages/net/v2ray-geodata
 git clone https://$github/sbwml/luci-app-mosdns -b v5 package/new/mosdns
 
 # OpenAppFilter
@@ -151,6 +150,10 @@ if [ "$platform" = "rk3568" ]; then
 elif [ "$platform" = "rk3399" ]; then
     curl -s https://$mirror/openwrt/patch/coremark/coremark.aarch64-6-threads > package/new/custom/coremark/src/musl/coremark.aarch64
 fi
+
+# luci-compat - fix translation
+sed -i 's/<%:Up%>/<%:Move up%>/g' feeds/luci/modules/luci-compat/luasrc/view/cbi/tblsection.htm
+sed -i 's/<%:Down%>/<%:Move down%>/g' feeds/luci/modules/luci-compat/luasrc/view/cbi/tblsection.htm
 
 # FRPC Translation
 sed -i 's,发送,Transmission,g' feeds/luci/applications/luci-app-transmission/po/zh_Hans/transmission.po
