@@ -99,8 +99,6 @@ fi
 
 # Mbedtls AES & GCM Crypto Extensions
 if [ ! "$platform" = "x86_64" ]; then
-    rm -rf package/libs/mbedtls
-    cp -a ../master/openwrt/package/libs/mbedtls package/libs/mbedtls
     curl -s https://$mirror/openwrt/patch/mbedtls-23.05/200-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch > package/libs/mbedtls/patches/200-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
     curl -s https://$mirror/openwrt/patch/mbedtls-23.05/mbedtls.patch | patch -p1
 fi

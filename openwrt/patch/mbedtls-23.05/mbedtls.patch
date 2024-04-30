@@ -22,7 +22,7 @@
    CONFIG_MBEDTLS_CERTS_C \
    CONFIG_MBEDTLS_CIPHER_MODE_OFB \
    CONFIG_MBEDTLS_CIPHER_MODE_XTS \
-@@ -124,6 +125,9 @@ CSR generation (gen_key, cert_req)
+@@ -122,6 +123,9 @@ CSR generation (gen_key, cert_req)
  endef
  
  TARGET_CFLAGS := $(filter-out -O%,$(TARGET_CFLAGS))
