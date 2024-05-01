@@ -7,6 +7,10 @@
 
 board_config_update
 
+if [ -f /sys/class/dmi/id/product_name ]; then
+	[ $(grep -c -i -E "virtual|kvm|qemu|ecs|cvm" /sys/class/dmi/id/product_name) -ge 1 ] && alias board_name="echo virtual_platform"
+fi
+
 case "$(board_name)" in
 barracuda-networks-inc-barracuda-ng-firewall-f12)
 	ucidef_set_network_device_path "eth1" "pci0000:00/0000:00:14.0/0000:01:00.0"
@@ -86,8 +90,11 @@ silicom-80500-0214-*)
 	ucidef_set_network_device_path "eth3" "pci0000:00/0000:00:10.0/0000:07:00.0"
 	ucidef_set_interfaces_lan_wan "eth0 eth1 eth2 eth3" "wan0"
 	;;
-*)
+virtual_platform)
 	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+	;;
+*)
+	ucidef_set_interfaces_lan_wan "eth0" "eth1"
 	;;
 esac
 board_config_flush
