@@ -33,7 +33,7 @@ sed -i 's/noinitrd/noinitrd intel_pstate=disable/g' target/linux/x86/image/grub-
 sed -i 's/intel_pstate=disable/intel_pstate=disable mitigations=off/g' target/linux/x86/image/grub-efi.cfg
 
 # default LAN IP
-[ "$platform" != "bcm53xx" ] && sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
+sed -i "s/192.168.1.1/$LAN/g" package/base-files/files/bin/config_generate
 
 # Use nginx instead of uhttpd
 if [ "$ENABLE_UHTTPD" != "y" ]; then

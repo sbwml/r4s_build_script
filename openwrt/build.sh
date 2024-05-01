@@ -94,6 +94,9 @@ elif [ "$1" = "rc2" ]; then
     export toolchain_version=openwrt-23.05
 fi
 
+# lan
+[ -n "$LAN" ] && export LAN=$LAN
+
 # platform
 [ "$2" = "nanopi-r4s" ] && export platform="rk3399" toolchain_arch="nanopi-r4s"
 [ "$2" = "nanopi-r5s" ] && export platform="rk3568" toolchain_arch="nanopi-r5s"
@@ -127,6 +130,7 @@ if [ "$platform" = "x86_64" ]; then
     echo -e "${GREEN_COLOR}Model: x86_64${RES}"
 elif [ "$platform" = "bcm53xx" ]; then
     echo -e "${GREEN_COLOR}Model: netgear_r8500${RES}"
+    [ -z "$LAN" ] && export LAN="192.168.1.1"
 elif [ "$platform" = "rk3568" ]; then
     echo -e "${GREEN_COLOR}Model: nanopi-r5s/r5c${RES}"
     [ "$1" = "rc2" ] && model="nanopi-r5s"
@@ -157,7 +161,8 @@ fi
 [ "$ENABLE_LTO" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_LTO: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_LTO: false${RES}"
 [ "$ENABLE_LRNG" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_LRNG: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_LRNG: false${RES}"
 [ "$BUILD_FAST" = "y" ] && echo -e "${GREEN_COLOR}BUILD_FAST: true${RES}" || echo -e "${GREEN_COLOR}BUILD_FAST: false${RES}"
-[ "$MINIMAL_BUILD" = "y" ] && echo -e "${GREEN_COLOR}MINIMAL_BUILD: true${RES}\r\n" || echo -e "${GREEN_COLOR}MINIMAL_BUILD: false${RES}\r\n"
+[ "$MINIMAL_BUILD" = "y" ] && echo -e "${GREEN_COLOR}MINIMAL_BUILD: true${RES}" || echo -e "${GREEN_COLOR}MINIMAL_BUILD: false${RES}"
+[ -n "$LAN" ] && echo -e "${GREEN_COLOR}LAN IP: $LAN${RES}\r\n" || echo -e "${GREEN_COLOR}LAN IP: 10.0.0.1${RES}\r\n"
 
 # clean old files
 rm -rf openwrt master && mkdir master
