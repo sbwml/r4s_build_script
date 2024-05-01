@@ -92,7 +92,7 @@ if [ "$USE_MOLD" = "y" ]; then
     curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0005-build-replace-SSTRIP_ARGS-with-SSTRIP_DISCARD_TRAILI.patch | patch -p1
     curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0006-config-add-a-knob-to-use-the-mold-linker-for-package.patch | patch -p1
     curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0007-rules-prepare-to-use-different-linkers.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0008-tools-mold-update-to-2.4.0.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0008-tools-mold-update-to-2.30.0.patch | patch -p1
     # no-mold
     sed -i '/PKG_BUILD_PARALLEL/aPKG_BUILD_FLAGS:=no-mold' feeds/packages/utils/attr/Makefile
 fi
