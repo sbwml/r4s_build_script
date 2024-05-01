@@ -54,8 +54,8 @@ sudo apt-get install -y clang-15
 export USE_GLIBC=y
 ```
 
-### 启用 [GCC13](https://gcc.gnu.org/gcc-13/)/[GCC14](https://gcc.gnu.org/gcc-14/) 工具链编译
-##### 只需在构建固件前执行以下命令即可启用 GCC13/GCC14 工具链
+### 启用 [GCC13](https://gcc.gnu.org/gcc-13/)/[GCC14](https://gcc.gnu.org/gcc-14/)/[GCC15](https://gcc.gnu.org/gcc-15/) 工具链编译
+##### 只需在构建固件前执行以下命令即可启用 GCC13/GCC14/GCC15 工具链
 
 ```
 # GCC13
@@ -67,6 +67,11 @@ export USE_GCC13=y
 export USE_GCC14=y
 ```
 
+```
+# GCC15
+export USE_GCC15=y
+```
+
 ### 启用 [LTO](https://gcc.gnu.org/onlinedocs/gccint/LTO-Overview.html) 优化
 ##### 只需在构建固件前执行以下命令即可启用编译器 LTO 优化
 
@@ -74,7 +79,7 @@ export USE_GCC14=y
 export ENABLE_LTO=y
 ```
 
-### 启用 [MOLD](https://github.com/rui314/mold) 现代链接器（需要启用 `USE_GCC13=y` 或 `USE_GCC14=y`）
+### 启用 [MOLD](https://github.com/rui314/mold) 现代链接器（需要启用 `USE_GCC13=y` 或 `USE_GCC14=y` 或 `USE_GCC15=y`）
 ##### 只需在构建固件前执行以下命令即可启用 MOLD 链接，如果使用它建议同时启用 LTO 优化
 
 ```
@@ -109,6 +114,14 @@ export BUILD_FAST=y
 
 ```
 export MINIMAL_BUILD=y
+```
+
+### 更改 LAN IP 地址
+##### 自定义默认 LAN IP 地址
+##### 只需在构建固件前执行以下命令即可覆盖默认 LAN 地址（默认：10.0.0.1）
+
+```
+export LAN=10.0.0.1
 ```
 
 ---------------
