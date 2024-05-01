@@ -7,7 +7,7 @@ sed -i "/CONFIGURE_ARGS/i\TARGET_CFLAGS += -ffat-lto-objects\n" feeds/packages/l
 sed -i '/PKG_BUILD_FLAGS/ s/$/ no-gc-sections/' package/boot/grub2/Makefile
 
 # fix gcc13
-if [ "$USE_GCC13" = "y" ] || [ "$USE_GCC14" = y ]; then
+if [ "$USE_GCC13" = "y" ] || [ "$USE_GCC14" = y ] || [ "$USE_GCC15" = y ]; then
     # libwebsockets
     mkdir feeds/packages/libs/libwebsockets/patches
     pushd feeds/packages/libs/libwebsockets/patches
@@ -18,7 +18,7 @@ if [ "$USE_GCC13" = "y" ] || [ "$USE_GCC14" = y ]; then
 fi
 
 # fix gcc14
-if [ "$USE_GCC14" = y ]; then
+if [ "$USE_GCC14" = y ] || [ "$USE_GCC15" = y ]; then
     # iproute2
     rm -rf package/network/utils/iproute2
     git clone https://$github/sbwml/package_network_utils_iproute2 package/network/utils/iproute2

@@ -100,13 +100,17 @@ fi
 [ "$2" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
 [ "$2" = "netgear_r8500" ] && export platform="bcm53xx" toolchain_arch="bcm53xx"
 
-# gcc13 & 14
+# gcc13 & 14 & 15
 if [ "$USE_GCC13" = y ]; then
     export USE_GCC13=y
     # use mold
     [ "$USE_MOLD" = y ] && USE_MOLD=y
 elif [ "$USE_GCC14" = y ]; then
     export USE_GCC14=y
+    # use mold
+    [ "$USE_MOLD" = y ] && USE_MOLD=y
+elif [ "$USE_GCC15" = y ]; then
+    export USE_GCC15=y
     # use mold
     [ "$USE_MOLD" = y ] && USE_MOLD=y
 fi
@@ -142,6 +146,8 @@ if [ "$USE_GCC13" = "y" ]; then
     echo -e "${GREEN_COLOR}GCC VERSION: 13${RES}"
 elif [ "$USE_GCC14" = "y" ]; then
     echo -e "${GREEN_COLOR}GCC VERSION: 14${RES}"
+elif [ "$USE_GCC15" = "y" ]; then
+    echo -e "${GREEN_COLOR}GCC VERSION: 15${RES}"
 else
     echo -e "${GREEN_COLOR}GCC VERSION: 11${RES}"
 fi
@@ -245,7 +251,7 @@ if [ "$platform" = "rk3568" ] || [ "$platform" = "rk3399" ] || [ "$platform" = "
 fi
 [ "$(whoami)" = "runner" ] && endgroup
 
-if [ "$USE_GCC14" = "y" ]; then
+if [ "$USE_GCC14" = "y" ] || [ "$USE_GCC15" = "y" ]; then
     rm -rf toolchain/binutils
     cp -a ../master/openwrt/toolchain/binutils toolchain/binutils
 fi
@@ -299,18 +305,22 @@ export ENABLE_LTO=$ENABLE_LTO
 # mold
 [ "$USE_MOLD" = "y" ] && echo 'CONFIG_USE_MOLD=y' >> .config
 
-# openwrt-23.05 gcc11/13/14
+# openwrt-23.05 gcc11/13/14/15
 [ "$(whoami)" = "runner" ] && group "patching toolchain"
-if [ "$USE_GCC13" = "y" ] || [ "$USE_GCC14" = "y" ]; then
+if [ "$USE_GCC13" = "y" ] || [ "$USE_GCC14" = "y" ] || [ "$USE_GCC15" = "y" ]; then
     [ "$USE_GCC13" = "y" ] && curl -s https://$mirror/openwrt/generic/config-gcc13 >> .config
     [ "$USE_GCC14" = "y" ] && curl -s https://$mirror/openwrt/generic/config-gcc14 >> .config
+    [ "$USE_GCC15" = "y" ] && curl -s https://$mirror/openwrt/generic/config-gcc15 >> .config
     curl -s https://$mirror/openwrt/patch/generic/200-toolchain-gcc-update-to-13.2.patch | patch -p1
     curl -s https://$mirror/openwrt/patch/generic/201-toolchain-gcc-add-support-for-GCC-14.patch | patch -p1
-    if [ "$USE_GCC14" = "y" ]; then
-        cp -a toolchain/gcc/patches-13.x toolchain/gcc/patches-14.x
-        curl -s https://$mirror/openwrt/patch/generic/gcc-14/910-mbsd_multi.patch > toolchain/gcc/patches-14.x/910-mbsd_multi.patch
-        curl -s https://$mirror/openwrt/patch/generic/gcc-14/990-libatomic-Fix-build-for---disable-gnu-indirect-function-PR113986.patch > toolchain/gcc/patches-14.x/990-libatomic-Fix-build-for---disable-gnu-indirect-function-PR113986.patch
-    fi
+    curl -s https://$mirror/openwrt/patch/generic/202-toolchain-gcc-add-support-for-GCC-15.patch | patch -p1
+    # gcc14/15 init
+    cp -a toolchain/gcc/patches-13.x toolchain/gcc/patches-14.x
+    curl -s https://$mirror/openwrt/patch/generic/gcc-14/910-mbsd_multi.patch > toolchain/gcc/patches-14.x/910-mbsd_multi.patch
+    curl -s https://$mirror/openwrt/patch/generic/gcc-14/990-libatomic-Fix-build-for---disable-gnu-indirect-function-PR113986.patch > toolchain/gcc/patches-14.x/990-libatomic-Fix-build-for---disable-gnu-indirect-function-PR113986.patch
+    cp -a toolchain/gcc/patches-14.x toolchain/gcc/patches-15.x
+    rm -f toolchain/gcc/patches-15.x/990-libatomic-Fix-build-for---disable-gnu-indirect-function-PR113986.patch
+    curl -s https://$mirror/openwrt/patch/generic/gcc-15/970-macos_arm64-building-fix.patch > toolchain/gcc/patches-15.x/970-macos_arm64-building-fix.patch
 elif [ ! "$USE_GLIBC" = "y" ]; then
     curl -s https://$mirror/openwrt/generic/config-gcc11 >> .config
 fi
@@ -341,6 +351,8 @@ if [ "$BUILD_FAST" = "y" ]; then
         curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_13.tar.gz -o toolchain.tar.gz $CURL_BAR
     elif [ "$USE_GCC14" = "y" ]; then
         curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_14.tar.gz -o toolchain.tar.gz $CURL_BAR
+    elif [ "$USE_GCC15" = "y" ]; then
+        curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_15.tar.gz -o toolchain.tar.gz $CURL_BAR
     else
         curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch".tar.gz -o toolchain.tar.gz $CURL_BAR
     fi
@@ -369,6 +381,8 @@ if [ "$BUILD_TOOLCHAIN" = "y" ]; then
         tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch"_13.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
     elif [ "$USE_GCC14" = "y" ]; then
         tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch"_14.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
+    elif [ "$USE_GCC15" = "y" ]; then
+        tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch"_15.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
     else
         tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch".tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
     fi

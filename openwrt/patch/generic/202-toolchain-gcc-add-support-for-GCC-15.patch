@@ -1,0 +1,57 @@
+diff --git a/toolchain/gcc/Config.in b/toolchain/gcc/Config.in
+index ca89051..510c813 100644
+--- a/toolchain/gcc/Config.in
++++ b/toolchain/gcc/Config.in
+@@ -17,6 +17,9 @@ choice
+ 
+ 	config GCC_USE_VERSION_14
+ 		bool "gcc 14.x"
++
++	config GCC_USE_VERSION_15
++		bool "gcc 15.x"
+ endchoice
+ 
+ config GCC_USE_GRAPHITE
+diff --git a/toolchain/gcc/Config.version b/toolchain/gcc/Config.version
+index 0935582..f461b70 100644
+--- a/toolchain/gcc/Config.version
++++ b/toolchain/gcc/Config.version
+@@ -10,9 +10,14 @@ config GCC_VERSION_14
+ 	default y if GCC_USE_VERSION_14
+ 	bool
+ 
++config GCC_VERSION_15
++	default y if GCC_USE_VERSION_15
++	bool
++
+ config GCC_VERSION
+ 	string
+ 	default "11.3.0"	if GCC_VERSION_11
+ 	default "13.2.0"	if GCC_VERSION_13
+ 	default "14.0.1"	if GCC_VERSION_14
++	default "15.0.0"	if GCC_VERSION_15
+ 	default "12.3.0"
+diff --git a/toolchain/gcc/common.mk b/toolchain/gcc/common.mk
+index d1e2913..2c49637 100644
+--- a/toolchain/gcc/common.mk
++++ b/toolchain/gcc/common.mk
+@@ -26,7 +26,7 @@ PKG_VERSION:=$(firstword $(subst +, ,$(GCC_VERSION)))
+ GCC_MAJOR_VERSION:=$(word 1,$(subst ., ,$(PKG_VERSION)))
+ GCC_DIR:=$(PKG_NAME)-$(PKG_VERSION)
+ 
+-ifeq ($(PKG_VERSION),14.0.1)
++ifeq ($(filter $(PKG_VERSION),14.0.1 15.0.0),$(PKG_VERSION))
+   PKG_SOURCE_URL:=https://github.com/sbwml/gcc/releases/download/gcc-$(PKG_VERSION)
+ else
+   PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
+@@ -50,6 +50,10 @@ ifeq ($(PKG_VERSION),14.0.1)
+   PKG_HASH:=a945f3719a2430efec19776df940a018ab5d2315f58e635233d1d6ffa12d3e28
+ endif
+ 
++ifeq ($(PKG_VERSION),15.0.0)
++  PKG_HASH:=5f27302fe293875ea6c80e17b681feb04d19e48889d5256899dbec1cfbbc5c41
++endif
++
+ PATCH_DIR=../patches-$(GCC_MAJOR_VERSION).x
+ 
+ BUGURL=http://bugs.openwrt.org/
