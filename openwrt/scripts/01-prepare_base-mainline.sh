@@ -5,7 +5,6 @@
 # Rockchip - target - r4s/r5s only
 rm -rf target/linux/rockchip
 git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip-6.x target/linux/rockchip -b linux-6.6
-[ "$platform" = "rk3568" ] && sed -i 's/CONFIG_PREEMPT=y/CONFIG_PREEMPT_DYNAMIC=y/g' target/linux/rockchip/armv8/config-6.6
 
 # x86_64 - target
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/64/config-6.6 > target/linux/x86/64/config-6.6
