@@ -124,6 +124,9 @@ export USE_GLIBC=$USE_GLIBC
 # lrng
 export ENABLE_LRNG=$ENABLE_LRNG
 
+# kernel build with clang lto
+[ "$platform" != "bcm53xx" ] && export KERNEL_CLANG_LTO=$KERNEL_CLANG_LTO || export KERNEL_CLANG_LTO=n
+
 # print version
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
 if [ "$platform" = "x86_64" ]; then
@@ -155,6 +158,7 @@ elif [ "$USE_GCC15" = "y" ]; then
 else
     echo -e "${GREEN_COLOR}GCC VERSION: 11${RES}"
 fi
+[ "$KERNEL_CLANG_LTO" = "y" ] && echo -e "${GREEN_COLOR}KERNEL_CLANG_LTO: true${RES}" || echo -e "${GREEN_COLOR}KERNEL_CLANG_LTO: false${RES}"
 [ "$USE_MOLD" = "y" ] && echo -e "${GREEN_COLOR}USE_MOLD: true${RES}" || echo -e "${GREEN_COLOR}USE_MOLD: false${RES}"
 [ "$ENABLE_OTA" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_OTA: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_OTA: false${RES}"
 [ "$ENABLE_BPF" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_BPF: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_BPF: false${RES}"
@@ -310,6 +314,11 @@ export ENABLE_LTO=$ENABLE_LTO
 # mold
 [ "$USE_MOLD" = "y" ] && echo 'CONFIG_USE_MOLD=y' >> .config
 
+# clang
+if [ "$KERNEL_CLANG_LTO" = "y" ]; then
+    curl -s https://$mirror/openwrt/generic/config-clang >> .config
+fi
+
 # openwrt-23.05 gcc11/13/14/15
 [ "$(whoami)" = "runner" ] && group "patching toolchain"
 if [ "$USE_GCC13" = "y" ] || [ "$USE_GCC14" = "y" ] || [ "$USE_GCC15" = "y" ]; then
@@ -396,7 +405,7 @@ else
     echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
     sed -i "/BUILD_DATE/d" package/base-files/files/usr/lib/os-release
     sed -i "/BUILD_ID/aBUILD_DATE=\"$CURRENT_DATE\"" package/base-files/files/usr/lib/os-release
-    make -j$cores
+    make -j$cores IGNORE_ERRORS="n m"
 fi
 
 # Compile time

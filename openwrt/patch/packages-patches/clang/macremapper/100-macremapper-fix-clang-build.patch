@@ -1,0 +1,16 @@
+--- a/feeds/packages/kernel/macremapper/Makefile
++++ b/feeds/packages/kernel/macremapper/Makefile
+@@ -39,4 +39,13 @@ endef
+ MAKE_FLAGS += KERNEL_SRC=$(LINUX_DIR) ARCH=$(LINUX_KARCH)
+ MAKE_PATH:=kernelmod
+ 
++ifneq (,$(findstring clang,$(KERNEL_CC)))
++	ifneq (,$(filter clang-%,$(KERNEL_CC)))
++		LLVM:=-$(subst clang-,,$(KERNEL_CC))
++	else
++		LLVM:=
++	endif
++	MAKE_FLAGS += CC=$(KERNEL_CC) LD=ld.lld$(LLVM)
++endif
++
+ $(eval $(call KernelPackage,macremapper))

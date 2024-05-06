@@ -78,3 +78,28 @@ if [ "$platform" = "bcm53xx" ]; then
     # libpfring
     sed -i '/CONFIGURE_VARS +=/iEXTRA_CFLAGS += -Wno-int-conversion\n' feeds/packages/libs/libpfring/Makefile
 fi
+
+# clang
+if [ "$KERNEL_CLANG_LTO" = "y" ]; then
+    # drop xtables-addons
+    #   CCLD   libxt_CHAOS.so
+    # mold: warning: /home/sbwml/openwrt/staging_dir/target-aarch64_generic_musl/usr/lib/libxtables.so: skipping incompatible file arm64 62
+    # mold: fatal: library not found: xtables
+    # clang-16: error: linker command failed with exit code 1 (use -v to see invocation)
+    rm -rf feeds/packages/net/xtables-addons
+    # netatop
+    sed -i 's/$(MAKE)/$(KERNEL_MAKE)/g' feeds/packages/admin/netatop/Makefile
+    curl -s https://$mirror/openwrt/patch/packages-patches/clang/netatop/900-fix-build-with-clang.patch > feeds/packages/admin/netatop/patches/900-fix-build-with-clang.patch
+    # dmx_usb_module
+    rm -rf feeds/packages/libs/dmx_usb_module
+    git clone https://$gitea/sbwml/feeds_packages_libs_dmx_usb_module feeds/packages/libs/dmx_usb_module
+    # macremapper
+    curl -s https://$mirror/openwrt/patch/packages-patches/clang/macremapper/100-macremapper-fix-clang-build.patch | patch -p1
+    # coova-chilli module
+    rm -rf feeds/packages/net/coova-chilli
+    git clone https://$github/sbwml/kmod_packages_net_coova-chilli feeds/packages/net/coova-chilli
+    # rtl8812au-ac & rtl8812au-ct
+    rm -rf package/kernel/rtl8812au-ac package/kernel/rtl8812au-ct
+    git clone https://$gitea/sbwml/package_kernel_rtl8812au-ac package/kernel/rtl8812au-ac
+    git clone https://$gitea/sbwml/package_kernel_rtl8812au-ct package/kernel/rtl8812au-ct
+fi

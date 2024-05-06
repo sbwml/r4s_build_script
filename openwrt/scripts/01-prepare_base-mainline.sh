@@ -34,6 +34,19 @@ grep HASH include/kernel-6.6 | awk -F'HASH-' '{print $2}' | awk '{print $1}' | m
 rm -rf target/linux/generic
 git clone https://$github/sbwml/target_linux_generic -b main target/linux/generic
 
+# kernel - clang lto
+if [ "$KERNEL_CLANG_LTO" = "y" ]; then
+    echo 'CONFIG_LTO=y' >> target/linux/generic/config-6.6
+    echo 'CONFIG_LTO_CLANG=y' >> target/linux/generic/config-6.6
+    echo 'CONFIG_LTO_CLANG_FULL=y' >> target/linux/generic/config-6.6
+    echo 'CONFIG_HAS_LTO_CLANG=y' >> target/linux/generic/config-6.6
+    echo 'CONFIG_RANDSTRUCT_NONE=y' >> target/linux/generic/config-6.6
+    echo '# CONFIG_CFI_CLANG is not set' >> target/linux/generic/config-6.6
+    echo '# CONFIG_LTO_NONE is not set' >> target/linux/generic/config-6.6
+    echo '# CONFIG_RANDSTRUCT_FULL is not set' >> target/linux/generic/config-6.6
+    echo '# CONFIG_RELR is not set' >> target/linux/generic/config-6.6
+fi
+
 # kernel modules
 rm -rf package/kernel/linux
 git checkout package/kernel/linux
@@ -140,9 +153,6 @@ cp -a ../master/openwrt/package/kernel/rtl8812au-ct package/kernel/rtl8812au-ct
 
 # add rtl8812au-ac
 git clone https://$github/sbwml/package_kernel_rtl8812au-ac package/kernel/rtl8812au-ac
-
-# ath10k-ct - fix mac80211 6.1-rc
-curl -s https://$mirror/openwrt/patch/openwrt-6.x/kmod-patches/ath10k-ct.patch | patch -p1
 
 # mt76 - main
 rm -rf package/kernel/mt76

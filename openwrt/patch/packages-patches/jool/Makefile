@@ -40,6 +40,7 @@ define Build/Compile
 		CFLAGS_MODULE=$(NOXTABLES) \
 		modules
 	$(MAKE) -C "$(LINUX_DIR)" \
+		KBUILD_MODPOST_WARN=1 \
 		KERNEL_DIR="$(LINUX_DIR)" \
 		ARCH="$(LINUX_KARCH)" \
 		CROSS_COMPILE="$(TARGET_CROSS)" \
@@ -48,6 +49,7 @@ define Build/Compile
 		V="$(V)" \
 		modules
 	$(MAKE) -C "$(LINUX_DIR)" \
+		KBUILD_MODPOST_WARN=1 \
 		KERNEL_DIR="$(LINUX_DIR)" \
 		ARCH="$(LINUX_KARCH)" \
 		CROSS_COMPILE="$(TARGET_CROSS)" \

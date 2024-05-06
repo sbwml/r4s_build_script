@@ -1,0 +1,11 @@
+diff --git a/module/Makefile b/module/Makefile
+index 6994666..72b5fc1 100644
+--- a/module/Makefile
++++ b/module/Makefile
+@@ -18,3 +18,6 @@ clean:
+ 	rm -fr .tmp_versions
+ 
+ netatop.o:	../netatop.h	../netatopversion.h
++
++# clang
++ccflags-y += -Wno-strict-prototypes

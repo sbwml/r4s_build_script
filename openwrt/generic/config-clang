@@ -1,0 +1,4 @@
+
+CONFIG_KERNEL_CC="clang"
+CONFIG_EXTRA_OPTIMIZATION=""
+# CONFIG_PACKAGE_kselftests-bpf is not set
