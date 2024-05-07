@@ -1,4 +1,4 @@
-# NanoPi R4S/R5S/R5C & X86_64 OpenWrt 简易构建脚本存档
+# NanoPi R4S/R5S & X86_64 OpenWrt 简易构建脚本存档
 
 ### 存档来自：https://init2.cooluc.com
 
@@ -8,7 +8,7 @@
 
 #### NanoPi R4S: https://r4s.cooluc.com
 
-#### NanoPi R5S/R5C: https://r5s.cooluc.com
+#### NanoPi R5S: https://r5s.cooluc.com
 
 #### X86_64: https://x86.cooluc.com
 
@@ -134,7 +134,7 @@ export LAN=10.0.0.1
 bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 nanopi-r4s
 ```
 
-### nanopi-r5s/r5c
+### nanopi-r5s
 ```shell
 # linux-6.6
 bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 nanopi-r5s
@@ -197,7 +197,7 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) dev x86_64
 bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc2 nanopi-r4s
 ```
 
-#### nanopi-r5s/r5c openwrt-23.05
+#### nanopi-r5s openwrt-23.05
 ```shell
 # linux-6.6
 bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc2 nanopi-r5s
