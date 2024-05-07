@@ -13,10 +13,10 @@ index 9156f9c..ca89051 100644
  
  config GCC_USE_GRAPHITE
 diff --git a/toolchain/gcc/Config.version b/toolchain/gcc/Config.version
-index a7e55eb..0935582 100644
+index 92033af..200a356 100644
 --- a/toolchain/gcc/Config.version
 +++ b/toolchain/gcc/Config.version
-@@ -6,8 +6,13 @@ config GCC_VERSION_13
+@@ -6,10 +6,15 @@ config GCC_VERSION_13
  	default y if GCC_USE_VERSION_13
  	bool
  
@@ -28,31 +28,20 @@ index a7e55eb..0935582 100644
  	string
  	default "11.3.0"	if GCC_VERSION_11
  	default "13.2.0"	if GCC_VERSION_13
-+	default "14.0.1"	if GCC_VERSION_14
++	default "14.1.0"	if GCC_VERSION_14
  	default "12.3.0"
+ 
+ config GCC_USE_DEFAULT_VERSION
 diff --git a/toolchain/gcc/common.mk b/toolchain/gcc/common.mk
-index cdbf9fa..1d73df8 100644
+index cdbf9fa..f5db99f 100644
 --- a/toolchain/gcc/common.mk
 +++ b/toolchain/gcc/common.mk
-@@ -26,7 +26,11 @@ PKG_VERSION:=$(firstword $(subst +, ,$(GCC_VERSION)))
- GCC_MAJOR_VERSION:=$(word 1,$(subst ., ,$(PKG_VERSION)))
- GCC_DIR:=$(PKG_NAME)-$(PKG_VERSION)
- 
--PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
-+ifeq ($(PKG_VERSION),14.0.1)
-+  PKG_SOURCE_URL:=https://github.com/sbwml/gcc/releases/download/gcc-$(PKG_VERSION)
-+else
-+  PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
-+endif
- PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
- PKG_CPE_ID:=cpe:/a:gnu:gcc
- 
-@@ -42,6 +46,10 @@ ifeq ($(PKG_VERSION),13.2.0)
+@@ -42,6 +42,10 @@ ifeq ($(PKG_VERSION),13.2.0)
    PKG_HASH:=e275e76442a6067341a27f04c5c6b83d8613144004c0413528863dc6b5c743da
  endif
  
-+ifeq ($(PKG_VERSION),14.0.1)
-+  PKG_HASH:=a945f3719a2430efec19776df940a018ab5d2315f58e635233d1d6ffa12d3e28
++ifeq ($(PKG_VERSION),14.1.0)
++  PKG_HASH:=e283c654987afe3de9d8080bc0bd79534b5ca0d681a73a11ff2b5d3767426840
 +endif
 +
  PATCH_DIR=../patches-$(GCC_MAJOR_VERSION).x
