@@ -1,8 +1,7 @@
 name: Build releases
 
 on:
-  watch:
-    types: started
+  workflow_dispatch:
 
 jobs:
   build:
@@ -16,8 +15,6 @@ jobs:
       fail-fast: false
       matrix:
         model:
-          - nanopi-r4s
-          - nanopi-r5s
           - x86_64
         tag:
           - type: rc2
@@ -84,7 +81,8 @@ jobs:
       run: |
         export PATH="/opt/clang/bin:$PATH"
         export GITHUB_REPO=${{ github.repository }}
-        BUILD_FAST=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_BPF=y USE_GCC13=y USE_MOLD=y bash <(curl -sS https://raw.githubusercontent.com/${{ github.repository }}/master/openwrt/build.sh) ${{ matrix.tag.type }} ${{ matrix.model }}
+        [ "${{ matrix.model }}" != "netgear_r8500" ] && export KERNEL_CLANG_LTO=y
+        BUILD_FAST=y ENABLE_BPF=y ENABLE_LTO=y ENABLE_LRNG=y USE_GCC15=y USE_MOLD=y LAN=172.16.1.1 bash <(curl -sS https://raw.githubusercontent.com/${{ github.repository }}/master/openwrt/build.sh) ${{ matrix.tag.type }} ${{ matrix.model }}
         cd openwrt
         tags=$(git describe --abbrev=0 --tags)
         echo "latest_release=$tags" >>$GITHUB_ENV
@@ -133,6 +131,7 @@ jobs:
         name: OpenWRT-${{ env.latest_release }}
         allowUpdates: true
         tag: ${{ env.latest_release }}
+        body: OpenWrt 23.05 with Kernel 6.6 Enhanced
         commit: master
         replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}

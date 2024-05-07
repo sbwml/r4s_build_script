@@ -8,8 +8,8 @@ CONFIG_TESTING_KERNEL=y
 ### Basic
 CONFIG_ALL_KMODS=y
 CONFIG_ALL_NONSHARED=y
-CONFIG_KERNEL_BUILD_DOMAIN="cooluc.com"
-CONFIG_KERNEL_BUILD_USER="admin"
+# CONFIG_KERNEL_BUILD_DOMAIN="cooluc.com"
+# CONFIG_KERNEL_BUILD_USER="admin"
 CONFIG_PACKAGE_autocore-x86=y
 CONFIG_PACKAGE_bind-host=y
 CONFIG_PACKAGE_block-mount=y
@@ -22,10 +22,10 @@ CONFIG_TARGET_ROOTFS_PARTSIZE=944
 ### Kernel driver
 CONFIG_PACKAGE_kmod-igb=y
 CONFIG_PACKAGE_kmod-igc=y
-CONFIG_PACKAGE_kmod-mt76x2=y
-CONFIG_PACKAGE_kmod-mt7921e=y
-CONFIG_PACKAGE_kmod-mt7921u=y
-CONFIG_PACKAGE_kmod-mt7922-firmware=y
+# CONFIG_PACKAGE_kmod-mt76x2 is not set
+# CONFIG_PACKAGE_kmod-mt7921e is not set
+# CONFIG_PACKAGE_kmod-mt7921u is not set
+# CONFIG_PACKAGE_kmod-mt7922-firmware is not set
 CONFIG_PACKAGE_kmod-ngbe=y
 CONFIG_PACKAGE_kmod-r8101=y
 CONFIG_PACKAGE_kmod-r8125=y
@@ -36,25 +36,25 @@ CONFIG_PACKAGE_kmod-txgbe=y
 CONFIG_PACKAGE_kmod-nvme=y
 
 ### Display & Extra Drivers
-CONFIG_PACKAGE_kmod-backlight-pwm=y
-CONFIG_PACKAGE_kmod-backlight=y
-CONFIG_PACKAGE_kmod-drm-amdgpu=y
-CONFIG_PACKAGE_kmod-drm-i915=y
-CONFIG_PACKAGE_kmod-drm-kms-helper=y
-CONFIG_PACKAGE_kmod-drm-radeon=y
-CONFIG_PACKAGE_kmod-drm-ttm=y
-CONFIG_PACKAGE_kmod-drm=y
+# CONFIG_PACKAGE_kmod-backlight-pwm is not set
+# CONFIG_PACKAGE_kmod-backlight is not set
+# CONFIG_PACKAGE_kmod-drm-amdgpu is not set
+# CONFIG_PACKAGE_kmod-drm-i915 is not set
+# CONFIG_PACKAGE_kmod-drm-kms-helper is not set
+# CONFIG_PACKAGE_kmod-drm-radeon is not set
+# CONFIG_PACKAGE_kmod-drm-ttm is not set
+# CONFIG_PACKAGE_kmod-drm is not set
 CONFIG_PACKAGE_kmod-fb-cfb-copyarea=y
 CONFIG_PACKAGE_kmod-fb-cfb-fillrect=y
 CONFIG_PACKAGE_kmod-fb-cfb-imgblt=y
 CONFIG_PACKAGE_kmod-fb-sys-fops=y
 CONFIG_PACKAGE_kmod-fb-sys-ram=y
 CONFIG_PACKAGE_kmod-fb=y
-CONFIG_PACKAGE_kmod-sound-hda-codec-realtek=y
-CONFIG_PACKAGE_kmod-sound-hda-intel=y
-CONFIG_PACKAGE_kmod-video-pwc=y
-CONFIG_PACKAGE_kmod-video-uvc=y
-CONFIG_PACKAGE_kmod-video-videobuf2=y
+# CONFIG_PACKAGE_kmod-sound-hda-codec-realtek is not set
+# CONFIG_PACKAGE_kmod-sound-hda-intel is not set
+# CONFIG_PACKAGE_kmod-video-pwc is not set
+# CONFIG_PACKAGE_kmod-video-uvc is not set
+# CONFIG_PACKAGE_kmod-video-videobuf2 is not set
 
 ### Utilities
 CONFIG_PACKAGE_qemu-ga=y
