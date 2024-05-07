@@ -81,12 +81,9 @@ fi
 
 # clang
 if [ "$KERNEL_CLANG_LTO" = "y" ]; then
-    # drop xtables-addons
-    #   CCLD   libxt_CHAOS.so
-    # mold: warning: /home/sbwml/openwrt/staging_dir/target-aarch64_generic_musl/usr/lib/libxtables.so: skipping incompatible file arm64 62
-    # mold: fatal: library not found: xtables
-    # clang-16: error: linker command failed with exit code 1 (use -v to see invocation)
+    # xtables-addons module
     rm -rf feeds/packages/net/xtables-addons
+    git clone https://$github/sbwml/kmod_packages_net_xtables-addons feeds/packages/net/xtables-addons
     # netatop
     sed -i 's/$(MAKE)/$(KERNEL_MAKE)/g' feeds/packages/admin/netatop/Makefile
     curl -s https://$mirror/openwrt/patch/packages-patches/clang/netatop/900-fix-build-with-clang.patch > feeds/packages/admin/netatop/patches/900-fix-build-with-clang.patch
