@@ -135,7 +135,7 @@ elif [ "$platform" = "bcm53xx" ]; then
     echo -e "${GREEN_COLOR}Model: netgear_r8500${RES}"
     [ -z "$LAN" ] && export LAN="192.168.1.1"
 elif [ "$platform" = "rk3568" ]; then
-    echo -e "${GREEN_COLOR}Model: nanopi-r5s${RES}"
+    echo -e "${GREEN_COLOR}Model: nanopi-r5s/r5c${RES}"
     [ "$1" = "rc2" ] && model="nanopi-r5s"
 else
     echo -e "${GREEN_COLOR}Model: nanopi-r4s${RES}"
@@ -502,7 +502,7 @@ EOF
         exit 1
     fi
 else
-    if [ -f bin/targets/rockchip/armv8*/*-r5s-ext4-sysupgrade.img.gz ] || [ -f bin/targets/rockchip/armv8*/*-r4s-ext4-sysupgrade.img.gz ]; then
+    if [ -f bin/targets/rockchip/armv8*/*-r5s-ext4-sysupgrade.img.gz ] || [ -f bin/targets/rockchip/armv8*/*-r5c-ext4-sysupgrade.img.gz ] || [ -f bin/targets/rockchip/armv8*/*-r4s-ext4-sysupgrade.img.gz ]; then
         if [ "$ALL_KMODS" = y ]; then
             cp -a bin/targets/rockchip/armv8*/packages $kmodpkg_name
             rm -f $kmodpkg_name/Packages*
@@ -537,9 +537,17 @@ else
 }
 EOF
             elif [ "$model" = "nanopi-r5s" ]; then
+                SHA256_R5C=$(sha256sum bin/targets/rockchip/armv8*/*-r5c-squashfs-sysupgrade.img.gz | awk '{print $1}')
                 SHA256_R5S=$(sha256sum bin/targets/rockchip/armv8*/*-r5s-squashfs-sysupgrade.img.gz | awk '{print $1}')
                 cat > ota/fw.json <<EOF
 {
+  "friendlyarm,nanopi-r5c": [
+    {
+      "build_date": "$CURRENT_DATE",
+      "sha256sum": "$SHA256_R5C",
+      "url": "https://r5s.cooluc.com/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5c-squashfs-sysupgrade.img.gz"
+    }
+  ],
   "friendlyarm,nanopi-r5s": [
     {
       "build_date": "$CURRENT_DATE",
