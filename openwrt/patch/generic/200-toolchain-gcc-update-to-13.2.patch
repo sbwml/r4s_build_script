@@ -17,16 +17,18 @@ Signed-off-by: sbwml <admin@cooluc.com>
  delete mode 100644 toolchain/gcc/patches-13.x/701-riscv-linux-Don-t-add-latomic-with-pthread.patch
 
 diff --git a/toolchain/gcc/Config.version b/toolchain/gcc/Config.version
-index 7126a0c..a7e55eb 100644
+index e40d6b2..92033af 100644
 --- a/toolchain/gcc/Config.version
 +++ b/toolchain/gcc/Config.version
-@@ -9,5 +9,5 @@ config GCC_VERSION_13
+@@ -9,7 +9,7 @@ config GCC_VERSION_13
  config GCC_VERSION
  	string
  	default "11.3.0"	if GCC_VERSION_11
 -	default "13.1.0"	if GCC_VERSION_13
 +	default "13.2.0"	if GCC_VERSION_13
  	default "12.3.0"
+ 
+ config GCC_USE_DEFAULT_VERSION
 diff --git a/toolchain/gcc/common.mk b/toolchain/gcc/common.mk
 index 31a1492..cdbf9fa 100644
 --- a/toolchain/gcc/common.mk

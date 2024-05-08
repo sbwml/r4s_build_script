@@ -34,6 +34,9 @@ grep HASH include/kernel-6.6 | awk -F'HASH-' '{print $2}' | awk '{print $1}' | m
 rm -rf target/linux/generic
 git clone https://$github/sbwml/target_linux_generic -b main target/linux/generic
 
+# bcm53xx - fix build kernel with clang
+[ "$platform" = "bcm53xx" ] && [ "$KERNEL_CLANG_LTO" = "y" ] && rm -f target/linux/generic/hack-6.6/220-arm-gc_sections.patch
+
 # kernel - clang lto
 if [ "$KERNEL_CLANG_LTO" = "y" ]; then
     echo 'CONFIG_LTO=y' >> target/linux/generic/config-6.6

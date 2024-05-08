@@ -125,7 +125,7 @@ export USE_GLIBC=$USE_GLIBC
 export ENABLE_LRNG=$ENABLE_LRNG
 
 # kernel build with clang lto
-[ "$platform" != "bcm53xx" ] && export KERNEL_CLANG_LTO=$KERNEL_CLANG_LTO || export KERNEL_CLANG_LTO=n
+export KERNEL_CLANG_LTO=$KERNEL_CLANG_LTO
 
 # print version
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
@@ -158,7 +158,7 @@ elif [ "$USE_GCC15" = "y" ]; then
 else
     echo -e "${GREEN_COLOR}GCC VERSION: 11${RES}"
 fi
-[ "$KERNEL_CLANG_LTO" = "y" ] && echo -e "${GREEN_COLOR}KERNEL_CLANG_LTO: true${RES}" || echo -e "${GREEN_COLOR}KERNEL_CLANG_LTO: false${RES}"
+[ -n "$LAN" ] && echo -e "${GREEN_COLOR}LAN: $LAN${RES}" || echo -e "${GREEN_COLOR}LAN: 10.0.0.1${RES}"
 [ "$USE_MOLD" = "y" ] && echo -e "${GREEN_COLOR}USE_MOLD: true${RES}" || echo -e "${GREEN_COLOR}USE_MOLD: false${RES}"
 [ "$ENABLE_OTA" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_OTA: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_OTA: false${RES}"
 [ "$ENABLE_BPF" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_BPF: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_BPF: false${RES}"
@@ -166,7 +166,7 @@ fi
 [ "$ENABLE_LRNG" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_LRNG: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_LRNG: false${RES}"
 [ "$BUILD_FAST" = "y" ] && echo -e "${GREEN_COLOR}BUILD_FAST: true${RES}" || echo -e "${GREEN_COLOR}BUILD_FAST: false${RES}"
 [ "$MINIMAL_BUILD" = "y" ] && echo -e "${GREEN_COLOR}MINIMAL_BUILD: true${RES}" || echo -e "${GREEN_COLOR}MINIMAL_BUILD: false${RES}"
-[ -n "$LAN" ] && echo -e "${GREEN_COLOR}LAN IP: $LAN${RES}\r\n" || echo -e "${GREEN_COLOR}LAN IP: 10.0.0.1${RES}\r\n"
+[ "$KERNEL_CLANG_LTO" = "y" ] && echo -e "${GREEN_COLOR}KERNEL_CLANG_LTO: true${RES}\r\n" || echo -e "${GREEN_COLOR}KERNEL_CLANG_LTO: false${RES}\r\n"
 
 # clean old files
 rm -rf openwrt master && mkdir master
