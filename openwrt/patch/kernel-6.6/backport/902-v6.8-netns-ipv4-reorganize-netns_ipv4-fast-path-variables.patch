@@ -133,7 +133,7 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
  	unsigned long sysctl_tcp_comp_sack_slack_ns;
 --- a/net/core/net_namespace.c
 +++ b/net/core/net_namespace.c
-@@ -1099,11 +1099,56 @@ out:
+@@ -1102,11 +1102,56 @@ out:
  	rtnl_set_sk_err(net, RTNLGRP_NSID, err);
  }
  

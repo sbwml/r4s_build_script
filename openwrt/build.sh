@@ -127,13 +127,16 @@ export ENABLE_LRNG=$ENABLE_LRNG
 # kernel build with clang lto
 export KERNEL_CLANG_LTO=$KERNEL_CLANG_LTO
 
+# bpf
+export ENABLE_BPF=$ENABLE_BPF
+
 # print version
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
 if [ "$platform" = "x86_64" ]; then
     echo -e "${GREEN_COLOR}Model: x86_64${RES}"
 elif [ "$platform" = "bcm53xx" ]; then
     echo -e "${GREEN_COLOR}Model: netgear_r8500${RES}"
-    [ -z "$LAN" ] && export LAN="192.168.1.1"
+    [ "$LAN" = "10.0.0.1" ] && export LAN="192.168.1.1"
 elif [ "$platform" = "rk3568" ]; then
     echo -e "${GREEN_COLOR}Model: nanopi-r5s/r5c${RES}"
     [ "$1" = "rc2" ] && model="nanopi-r5s"
@@ -298,7 +301,6 @@ fi
 [ "$ENABLE_OTA" = "y" ] && [ "$version" = "rc2" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
 
 # bpf
-export ENABLE_BPF=$ENABLE_BPF
 [ "$ENABLE_BPF" = "y" ] && curl -s https://$mirror/openwrt/generic/config-bpf >> .config
 
 # LTO
