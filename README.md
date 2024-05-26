@@ -22,26 +22,25 @@ sudo apt-get update
 sudo apt-get install -y build-essential flex bison g++ gawk gcc-multilib g++-multilib gettext git libfuse-dev libncurses5-dev libssl-dev python3 python3-pip python3-ply python3-distutils python3-pyelftools rsync unzip zlib1g-dev file wget subversion patch upx-ucl autoconf automake curl asciidoc binutils bzip2 lib32gcc-s1 libc6-dev-i386 uglifyjs msmtp texinfo libreadline-dev libglib2.0-dev xmlto libelf-dev libtool autopoint antlr3 gperf ccache swig coreutils haveged scons libpython3-dev jq
 ```
 
-##### 安装 clang-15 - 启用 BPF 支持时需要
-##### 一些过旧的发行版没有提供 clang-15，可以通过 llvm 官方提供源安装：https://apt.llvm.org
+##### 安装 [LLVM/CLANG](https://github.com/sbwml/redhat-llvm-project) - 启用 `ENABLE_BPF` / `KERNEL_CLANG_LTO` 时需要
+
 ```shell
-# debian 11
-sudo sh -c 'echo "deb http://apt.llvm.org/bullseye/ llvm-toolchain-bullseye-15 main" >> /etc/apt/sources.list'
-sudo sh -c 'echo "deb-src http://apt.llvm.org/bullseye/ llvm-toolchain-bullseye-15 main" >> /etc/apt/sources.list'
-wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-sudo apt-get update
-sudo apt-get install -y clang-15
+# 下载并解压
+sudo mkdir -p /opt/clang
+curl -LO https://github.com/sbwml/redhat-llvm-project/releases/download/18.1.6/clang-18.1.6-x86_64-redhat-linux.tar.xz
+sudo tar --strip-components=1 -C /opt/clang -xf clang-18.1.6-x86_64-redhat-linux.tar.xz
+rm -rf clang-18.1.6-x86_64-redhat-linux.tar.xz
 
-# ubuntu 20.04
-sudo sh -c 'echo "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main" >> /etc/apt/sources.list'
-sudo sh -c 'echo "deb-src http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main" >> /etc/apt/sources.list'
-wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-sudo apt-get update
-sudo apt-get install -y clang-15
+# 添加 BIN 到系统变量
+export PATH="/opt/clang/bin:$PATH"
 
-# debian 12 or latest & ubuntu 22 or latest
-sudo apt-get update
-sudo apt-get install -y clang-15
+# clang 版本验证
+clang --version
+
+ clang version 18.1.6 (https://github.com/llvm/llvm-project 1118c2e05e67a36ed8ca250524525cdb66a55256)
+ Target: x86_64-redhat-linux
+ Thread model: posix
+ InstalledDir: /opt/clang/bin
 ```
 
 ---------------
@@ -53,14 +52,6 @@ sudo apt-get install -y clang-15
 
 ```
 export KERNEL_CLANG_LTO=y
-```
-
-### 启用 [glibc](https://www.gnu.org/software/libc/) （实验性）
-##### 脚本支持使用 glibc 库进行构建，当启用 glibc 进行构建时，构建的固件将会同时兼容 musl/glibc 的预构建二进制程序
-##### 只需在构建固件前执行以下命令即可启用 glibc 构建
-
-```
-export USE_GLIBC=y
 ```
 
 ### 启用 [GCC13](https://gcc.gnu.org/gcc-13/)/[GCC14](https://gcc.gnu.org/gcc-14/)/[GCC15](https://gcc.gnu.org/gcc-15/) 工具链编译
@@ -107,6 +98,14 @@ export ENABLE_BPF=y
 
 ```
 export ENABLE_LRNG=y
+```
+
+### 启用 [Glibc](https://www.gnu.org/software/libc/) 库构建 （实验性，可能会与 `KERNEL_CLANG_LTO` 冲突）
+##### 脚本支持使用 glibc 库进行构建，当启用 glibc 进行构建时，构建的固件将会同时兼容 musl/glibc 的预构建二进制程序
+##### 只需在构建固件前执行以下命令即可启用 glibc 构建
+
+```
+export USE_GLIBC=y
 ```
 
 ### 快速构建（仅限 Github Actions）
