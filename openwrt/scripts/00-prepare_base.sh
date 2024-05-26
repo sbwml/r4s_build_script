@@ -24,6 +24,10 @@ curl -s https://$mirror/openwrt/patch/generic/0003-kernel-Add-support-for-llvm-c
 # meson: add platform variable to cross-compilation file
 curl -s https://$mirror/openwrt/patch/generic/010-meson-add-platform-variable-to-cross-compilation-file.patch | patch -p1
 
+# dwarves: Fix a dwarf type DW_ATE_unsigned_1024 to btf encoding issue
+mkdir -p tools/dwarves/patches
+curl -s https://$mirror/openwrt/patch/openwrt-6.x/dwarves/100-btf_encoder-Fix-a-dwarf-type-DW_ATE_unsigned_1024-to-btf-encoding-issue.patch > tools/dwarves/patches/100-btf_encoder-Fix-a-dwarf-type-DW_ATE_unsigned_1024-to-btf-encoding-issue.patch
+
 # Fix x86 - CONFIG_ALL_KMODS
 if [ "$platform" = "x86_64" ]; then
     sed -i 's/hwmon, +PACKAGE_kmod-thermal:kmod-thermal/hwmon/g' package/kernel/linux/modules/hwmon.mk
@@ -59,9 +63,11 @@ git clone https://$github/sbwml/package_kernel_r8101 package/kernel/r8101
 git clone https://$github/sbwml/package_kernel_r8125 package/kernel/r8125
 git clone https://$github/sbwml/package_kernel_r8126 package/kernel/r8126
 
-# Optimization level -Ofast
+# GCC Optimization level -O3
 if [ "$platform" = "x86_64" ]; then
     curl -s https://$mirror/openwrt/patch/target-modify_for_x86_64.patch | patch -p1
+elif [ "$platform" = "armv8" ]; then
+    curl -s https://$mirror/openwrt/patch/target-modify_for_armsr.patch | patch -p1
 else
     curl -s https://$mirror/openwrt/patch/target-modify_for_rockchip.patch | patch -p1
 fi

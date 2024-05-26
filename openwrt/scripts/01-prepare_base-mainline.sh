@@ -22,6 +22,10 @@ git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_bcm53xx target/linux/b
 git clone https://nanopi:nanopi@$gitea/sbwml/brcmfmac-firmware-4366c-pcie package/firmware/brcmfmac-firmware-4366c-pcie
 git clone https://nanopi:nanopi@$gitea/sbwml/brcmfmac-firmware-4366b-pcie package/firmware/brcmfmac-firmware-4366b-pcie
 
+# armsr/armv8
+rm -rf target/linux/armsr
+git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_armsr target/linux/armsr
+
 # kernel - 6.x
 curl -s https://$mirror/tags/kernel-6.6 > include/kernel-6.6
 
