@@ -24,8 +24,9 @@ define Package/kselftests-bpf
   SECTION:=devel
   CATEGORY:=Development
   DEPENDS:= \
-	+libelf +zlib +libpthread +librt @!IN_SDK \
-	@KERNEL_DEBUG_FS @KERNEL_DEBUG_INFO_BTF @KERNEL_BPF_EVENTS
+	+libelf +zlib +libpthread +librt \
+	+kmod-crypto-user +kmod-crypto-sha1 \
+	@KERNEL_DEBUG_FS @KERNEL_DEBUG_INFO_BTF @KERNEL_BPF_EVENTS @!IN_SDK
   TITLE:=Linux Kernel Selftests (BPF)
   URL:=http://www.kernel.org
 endef
@@ -34,7 +35,17 @@ define Package/kselftests-bpf/description
   kselftests-bpf is the Linux kernel BPF test suite
 endef
 
-EXE_TARGETS = test_verifier
+EXE_TARGETS = \
+	test_verifier \
+	test_tag \
+	test_lpm_map \
+	test_dev_cgroup \
+	test_sock \
+	test_sockmap \
+	get_cgroup_id_user \
+	test_cgroup_storage \
+	test_tcpnotify_user \
+	test_sysctl
 
 MOD_TARGETS = $(if $(call kernel_patchver_ge,6.4),bpf_testmod.ko)
 
@@ -59,6 +70,7 @@ define Build/Compile
 endef
 
 define Package/kselftests-bpf/install
+	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_DIR) $(1)/usr/libexec/$(PKG_NAME)
 	$(foreach tgt,$(MOD_TARGETS), \
 		$(INSTALL_DATA) \
@@ -67,6 +79,7 @@ define Package/kselftests-bpf/install
 	$(foreach tgt,$(EXE_TARGETS), \
 		$(INSTALL_BIN) \
 			$(PKG_BUILD_DIR)/$(tgt) $(1)/usr/libexec/$(PKG_NAME); \
+		$(LN) /usr/libexec/$(PKG_NAME)/$(tgt) $(1)/usr/bin/$(tgt); \
 )
 endef
 
