@@ -44,10 +44,6 @@ sed -i '/procd_open_instance/i\\t\[ "$enable" -ne 1 \] \&\& return 1\n' feeds/pa
 curl -s https://$mirror/openwrt/patch/luci/applications/001-luci-app-frpc-hide-token.patch | patch -p1
 curl -s https://$mirror/openwrt/patch/luci/applications/002-luci-app-frpc-add-enable-flag.patch | patch -p1
 
-# haproxy - bump version
-rm -rf feeds/packages/net/haproxy
-cp -a ../master/packages/net/haproxy feeds/packages/net/haproxy
-
 # samba4 - bump version
 rm -rf feeds/packages/net/samba4
 git clone https://$github/sbwml/feeds_packages_net_samba4 feeds/packages/net/samba4
