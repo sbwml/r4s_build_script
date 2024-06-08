@@ -304,6 +304,7 @@ if [ "$MINIMAL_BUILD" = "y" ]; then
     echo 'VERSION_TYPE="minimal"' >> package/base-files/files/usr/lib/os-release
 else
     [ "$platform" != "bcm53xx" ] && curl -s https://$mirror/openwrt/23-config-common >> .config
+    [ "$platform" = "armv8" ] && sed -i '/DOCKER/Id' .config
 fi
 
 # ota
