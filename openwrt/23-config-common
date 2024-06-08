@@ -95,7 +95,6 @@ CONFIG_PACKAGE_luci-app-gowebdav=y
 CONFIG_PACKAGE_luci-app-mentohust=y
 CONFIG_PACKAGE_luci-app-mosdns=y
 CONFIG_PACKAGE_luci-app-natmap=y
-CONFIG_PACKAGE_luci-app-netdata=y
 CONFIG_PACKAGE_luci-app-netspeedtest=y
 CONFIG_PACKAGE_luci-app-nlbwmon=y
 CONFIG_PACKAGE_luci-app-oaf=y

@@ -178,4 +178,4 @@ rm -rf feeds/packages/utils/unzip
 git clone https://$github/sbwml/feeds_packages_utils_unzip feeds/packages/utils/unzip
 
 # tcp-brutal
-git clone https://github.com/sbwml/package_kernel_tcp-brutal package/kernel/tcp-brutal
+git clone https://$github/sbwml/package_kernel_tcp-brutal package/kernel/tcp-brutal
