@@ -8,7 +8,7 @@ jobs:
   build:
     if: github.event.repository.owner.id == github.event.sender.id
     name: Build ${{ matrix.model }}-${{ matrix.tag.version }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     defaults:
       run:
         shell: bash
@@ -41,21 +41,20 @@ jobs:
     - name: Set release env
       run: |
         sudo mkdir -p /builder
-        sudo chown -R runner.runner /builder
+        sudo chown -R runner:runner /builder
         echo WORKDIR="/builder" >> "$GITHUB_ENV"
 
     - name: Free disk space
       run: |
-        sudo rm -rf /etc/apt/sources.list.d
         sudo swapoff -a
         sudo rm -f /swapfile /mnt/swapfile
         sudo docker image prune -a -f
         sudo systemctl stop docker
         sudo snap set system refresh.retain=2
-        sudo apt-get -y purge firefox clang* ghc* google* llvm* mono* mongo* mysql* php*
+        sudo apt-get -y purge firefox clang* gcc-12 gcc-14 ghc* google* llvm* mono* mongo* mysql* php*
         sudo apt-get -y autoremove --purge
         sudo apt-get clean
-        sudo rm -rf /etc/mysql /etc/php /usr/lib/jvm /usr/libexec/docker /usr/local /usr/src/* /var/lib/docker /var/lib/gems /var/lib/mysql /var/lib/snapd /etc/skel /opt/{microsoft,az,hostedtoolcache,cni,mssql-tools,pipx} /usr/share/{az*,dotnet,swift,miniconda,gradle*,java,kotlinc,ri,sbt} /root/{.sbt,.local,.npm}
+        sudo rm -rf /etc/mysql /etc/php /usr/lib/{jvm,llvm} /usr/libexec/docker /usr/local /usr/src/* /var/lib/docker /var/lib/gems /var/lib/mysql /var/lib/snapd /etc/skel /opt/{microsoft,az,hostedtoolcache,cni,mssql-tools,pipx} /usr/share/{az*,dotnet,swift,miniconda,gradle*,java,kotlinc,ri,sbt} /root/{.sbt,.local,.npm} /usr/libexec/gcc/x86_64-linux-gnu/14 /usr/lib/x86_64-linux-gnu/{*clang*,*LLVM*} /home/linuxbrew
         sudo sed -i '/NVM_DIR/d;/skel/d' /root/{.bashrc,.profile}
         rm -rf ~/{.cargo,.dotnet,.rustup}
         df -Th
@@ -73,7 +72,7 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential flex bison cmake g++ gawk gcc-multilib g++-multilib gettext git libfuse-dev libncurses5-dev libssl-dev python3 python3-pip python3-ply python3-distutils python3-pyelftools rsync unzip zlib1g-dev file wget subversion patch upx-ucl autoconf automake curl asciidoc binutils bzip2 lib32gcc-s1 libc6-dev-i386 uglifyjs msmtp texinfo libreadline-dev libglib2.0-dev xmlto libelf-dev libtool autopoint antlr3 gperf ccache swig coreutils haveged scons libpython3-dev rename qemu-utils
+        sudo apt-get install -y build-essential flex bison cmake g++ gawk gcc-multilib g++-multilib gettext git libfuse-dev libncurses5-dev libssl-dev python3 python3-pip python3-ply python3-pyelftools rsync unzip zlib1g-dev file wget subversion patch upx-ucl autoconf automake curl asciidoc binutils bzip2 lib32gcc-s1 libc6-dev-i386 uglifyjs msmtp texinfo libreadline-dev libglib2.0-dev xmlto libelf-dev libtool autopoint antlr3 gperf ccache swig coreutils haveged scons libpython3-dev rename qemu-utils
         sudo apt-get clean
         git config --global user.name 'GitHub Actions' && git config --global user.email 'noreply@github.com'
 
@@ -95,7 +94,7 @@ jobs:
       run: |
         sudo mkdir -p /builder
         sudo mount /dev/github/runner /builder
-        sudo chown -R runner.runner /builder
+        sudo chown -R runner:runner /builder
         df -Th
 
     - name: Install LLVM
