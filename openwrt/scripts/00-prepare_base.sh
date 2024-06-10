@@ -261,10 +261,6 @@ git clone https://$github/sbwml/package_libs_ngtcp2 package/libs/ngtcp2
 rm -rf feeds/packages/net/curl
 git clone https://$github/sbwml/feeds_packages_net_curl feeds/packages/net/curl
 
-# wget - SmartDrive user-agent
-mkdir -p feeds/packages/net/wget/patches
-curl -s https://$mirror/openwrt/patch/user-agent/999-wget-default-useragent.patch > feeds/packages/net/wget/patches/999-wget-default-useragent.patch
-
 # Docker
 rm -rf feeds/luci/applications/luci-app-dockerman
 git clone https://$gitea/sbwml/luci-app-dockerman -b openwrt-23.05 feeds/luci/applications/luci-app-dockerman
