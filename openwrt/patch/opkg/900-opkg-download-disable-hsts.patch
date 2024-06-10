@@ -1,0 +1,10 @@
+--- a/libopkg/opkg_download.c
++++ b/libopkg/opkg_download.c
+@@ -159,6 +159,7 @@ opkg_download(const char *src, const cha
+ 
+ 		argv[i++] = "wget";
+ 		argv[i++] = "-q";
++		argv[i++] = "--no-hsts";
+ 		if (conf->no_check_certificate) {
+ 			argv[i++] = "--no-check-certificate";
+ 		}

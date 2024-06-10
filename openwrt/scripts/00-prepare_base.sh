@@ -337,6 +337,10 @@ sed -i '/ubus_parallel_req/a\        ubus_script_timeout 600;' feeds/packages/ne
 curl -s https://$mirror/openwrt/nginx/luci.locations > feeds/packages/net/nginx/files-luci-support/luci.locations
 curl -s https://$mirror/openwrt/nginx/uci.conf.template > feeds/packages/net/nginx-util/files/uci.conf.template
 
+# opkg
+mkdir -p package/system/opkg/patches
+curl -s https://$mirror/openwrt/patch/opkg/900-opkg-download-disable-hsts.patch > package/system/opkg/patches/900-opkg-download-disable-hsts.patch
+
 # uwsgi - bump version
 if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     rm -rf feeds/packages/net/uwsgi
