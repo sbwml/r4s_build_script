@@ -382,6 +382,13 @@ curl -s https://$mirror/openwrt/patch/luci/dhcp/dhcp.js > feeds/luci/modules/luc
 rm -rf package/network/services/ppp
 git clone https://$github/sbwml/package_network_services_ppp package/network/services/ppp
 
+# odhcpd RFC-9096
+mkdir -p package/network/services/odhcpd/patches
+curl -s https://$mirror/openwrt/patch/odhcpd/001-odhcpd-RFC-9096-compliance.patch > package/network/services/odhcpd/patches/001-odhcpd-RFC-9096-compliance.patch
+pushd feeds/luci
+    curl -s https://$mirror/openwrt/patch/odhcpd/luci-mod-network-add-option-for-ipv6-max-plt-vlt.patch | patch -p1
+popd
+
 # urngd - 2020-01-21
 rm -rf package/system/urngd
 git clone https://$github/sbwml/package_system_urngd package/system/urngd
