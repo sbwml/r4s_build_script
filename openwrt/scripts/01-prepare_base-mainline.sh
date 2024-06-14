@@ -229,3 +229,10 @@ if [ "$platform" = "rk3399" ] || [ "$platform" = "rk3568" ]; then
     curl -s https://$mirror/openwrt/patch/rtc/sysfixtime > package/base-files/files/etc/init.d/sysfixtime
     chmod 755 package/base-files/files/etc/init.d/sysfixtime
 fi
+
+# emmc-install
+if [ "$platform" = "rk3568" ]; then
+    mkdir -p files/sbin
+    curl -so files/sbin/emmc-install https://$mirror/openwrt/files/sbin/emmc-install
+    chmod 755 files/sbin/emmc-install
+fi
