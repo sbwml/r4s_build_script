@@ -35,7 +35,12 @@ grep HASH include/kernel-6.6 | awk -F'HASH-' '{print $2}' | awk '{print $1}' | m
 
 # kernel generic patches
 rm -rf target/linux/generic
-git clone https://$github/sbwml/target_linux_generic -b main target/linux/generic
+release_kernel_version=$(curl -s https://raw.githubusercontent.com/sbwml/r4s_build_script/master/tags/kernel-6.6 | awk -F'HASH-' '{print $2}' | awk '{print $1}')
+if [ "$kernel_version" = "$release_kernel_version" ]; then
+    git clone https://$github/sbwml/target_linux_generic -b main target/linux/generic --depth=1
+else
+    git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_generic -b main target/linux/generic --depth=1
+fi
 
 # bcm53xx - fix build kernel with clang
 [ "$platform" = "bcm53xx" ] && [ "$KERNEL_CLANG_LTO" = "y" ] && rm -f target/linux/generic/hack-6.6/220-arm-gc_sections.patch

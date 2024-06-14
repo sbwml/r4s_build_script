@@ -153,6 +153,7 @@ fi
 curl -s https://$mirror/tags/kernel-6.6 > kernel.txt
 kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
 kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
+export kernel_version=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')
 echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
 rm -f kernel.txt
 
