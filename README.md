@@ -100,7 +100,7 @@ export ENABLE_BPF=y
 export ENABLE_LRNG=y
 ```
 
-### 启用 [Glibc](https://www.gnu.org/software/libc/) 库构建 （实验性，可能会与 `KERNEL_CLANG_LTO` 冲突）
+### 启用 [Glibc](https://www.gnu.org/software/libc/) 库构建 （实验性）
 ##### 脚本支持使用 glibc 库进行构建，当启用 glibc 进行构建时，构建的固件将会同时兼容 musl/glibc 的预构建二进制程序
 ##### 只需在构建固件前执行以下命令即可启用 glibc 构建
 
