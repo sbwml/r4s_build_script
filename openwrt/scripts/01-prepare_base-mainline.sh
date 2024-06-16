@@ -59,7 +59,7 @@ if [ "$KERNEL_CLANG_LTO" = "y" ]; then
 fi
 
 # kernel - btf
-[ "$ENABLE_BPF" = "y" ] && echo 'CONFIG_DEBUG_INFO_BTF_MODULES=y' >> target/linux/generic/config-6.6
+[ "$ENABLE_BPF" = "y" ] && echo -e "CONFIG_DEBUG_INFO_BTF_MODULES=y\nCONFIG_PROBE_EVENTS_BTF_ARGS=y" >> target/linux/generic/config-6.6
 
 # kernel modules
 rm -rf package/kernel/linux
