@@ -14,6 +14,11 @@ fi
 # config/Config-kernel.in patch
 curl -s https://$mirror/openwrt/patch/generic/0001-kernel-add-MODULE_ALLOW_BTF_MISMATCH-option.patch | patch -p1
 
+# tools: add upx tools
+mkdir -p tools/upx
+curl -s https://$mirror/openwrt/patch/upx/Makefile > tools/upx/Makefile
+sed -i "/tools-y += sstrip/atools-y += upx" tools/Makefile
+
 # rootfs: upx compression
 # include/rootfs.mk
 curl -s https://$mirror/openwrt/patch/generic/0002-rootfs-add-upx-compression-support.patch | patch -p1
