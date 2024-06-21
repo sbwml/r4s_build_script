@@ -91,7 +91,6 @@ git clone https://$github/sbwml/openwrt_helloworld package/new/helloworld -b v5
 
 # DAED
 git clone https://$github/sbwml/luci-app-daed package/new/daed
-git clone https://$github/sbwml/luci-app-daed-next package/new/daed-next
 
 # immortalwrt homeproxy
 git clone https://$github/immortalwrt/homeproxy package/new/homeproxy
@@ -161,9 +160,6 @@ sed -i 's,frp 客户端,FRP 客户端,g' feeds/luci/applications/luci-app-frpc/p
 # SQM Translation
 mkdir -p feeds/packages/net/sqm-scripts/patches
 curl -s https://$mirror/openwrt/patch/sqm/001-help-translation.patch > feeds/packages/net/sqm-scripts/patches/001-help-translation.patch
-
-# SQM - luci menu order
-# sed -i "s/59/150/g" feeds/luci/applications/luci-app-sqm/root/usr/share/luci/menu.d/luci-app-sqm.json
 
 # mjpg-streamer init
 sed -i "s,option port '8080',option port '1024',g" feeds/packages/multimedia/mjpg-streamer/files/mjpg-streamer.config
