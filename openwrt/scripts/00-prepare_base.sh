@@ -26,6 +26,9 @@ curl -s https://$mirror/openwrt/patch/generic/0002-rootfs-add-upx-compression-su
 # kernel: Add support for llvm/clang compiler
 curl -s https://$mirror/openwrt/patch/generic/0003-kernel-Add-support-for-llvm-clang-compiler.patch | patch -p1
 
+# toolchain: Add libquadmath to the toolchain
+curl -s https://$mirror/openwrt/patch/generic/0004-libquadmath-Add-libquadmath-to-the-toolchain.patch | patch -p1
+
 # meson: add platform variable to cross-compilation file
 curl -s https://$mirror/openwrt/patch/generic/010-meson-add-platform-variable-to-cross-compilation-file.patch | patch -p1
 
