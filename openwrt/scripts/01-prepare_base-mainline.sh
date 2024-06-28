@@ -35,6 +35,7 @@ grep HASH include/kernel-6.6 | awk -F'HASH-' '{print $2}' | awk '{print $1}' | m
 
 # kernel generic patches
 rm -rf target/linux/generic
+kernel_version=$(grep HASH include/kernel-6.6 | awk -F'HASH-' '{print $2}' | awk '{print $1}')
 release_kernel_version=$(curl -s https://raw.githubusercontent.com/sbwml/r4s_build_script/master/tags/kernel-6.6 | awk -F'HASH-' '{print $2}' | awk '{print $1}')
 if [ "$kernel_version" = "$release_kernel_version" ]; then
     git clone https://$github/sbwml/target_linux_generic -b main target/linux/generic --depth=1
