@@ -36,16 +36,8 @@ curl -s https://$mirror/openwrt/patch/generic/010-meson-add-platform-variable-to
 mkdir -p tools/dwarves/patches
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/dwarves/100-btf_encoder-Fix-a-dwarf-type-DW_ATE_unsigned_1024-to-btf-encoding-issue.patch > tools/dwarves/patches/100-btf_encoder-Fix-a-dwarf-type-DW_ATE_unsigned_1024-to-btf-encoding-issue.patch
 
-# Fix x86 - CONFIG_ALL_KMODS
-if [ "$platform" = "x86_64" ]; then
-    sed -i 's/hwmon, +PACKAGE_kmod-thermal:kmod-thermal/hwmon/g' package/kernel/linux/modules/hwmon.mk
-fi
-
-# x86 - disable intel_pstate
-sed -i 's/noinitrd/noinitrd intel_pstate=disable/g' target/linux/x86/image/grub-efi.cfg
-
-# x86 - disable mitigations
-sed -i 's/intel_pstate=disable/intel_pstate=disable mitigations=off/g' target/linux/x86/image/grub-efi.cfg
+# x86 - disable intel_pstate & mitigations
+sed -i 's/noinitrd/noinitrd intel_pstate=disable mitigations=off/g' target/linux/x86/image/grub-efi.cfg
 
 # default LAN IP
 sed -i "s/192.168.1.1/$LAN/g" package/base-files/files/bin/config_generate
