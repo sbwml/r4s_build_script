@@ -6,10 +6,10 @@ Subject: [PATCH] kernel: Add support for llvm/clang compiler
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
  config/Config-devel.in     |  7 +++++++
- include/kernel-defaults.mk |  9 +++++++++
- include/kernel.mk          | 11 ++++++++++-
+ include/kernel-defaults.mk | 11 +++++++++++
+ include/kernel.mk          | 13 ++++++++++++-
  include/package.mk         |  4 ++++
- 4 files changed, 30 insertions(+), 1 deletion(-)
+ 4 files changed, 34 insertions(+), 1 deletion(-)
 
 diff --git a/config/Config-devel.in b/config/Config-devel.in
 index cbac91c..9079303 100644
@@ -30,27 +30,29 @@ index cbac91c..9079303 100644
  		string "Use external kernel tree" if DEVEL
  		default ""
 diff --git a/include/kernel-defaults.mk b/include/kernel-defaults.mk
-index b17ff7f..e692720 100644
+index b17ff7f..b8a1479 100644
 --- a/include/kernel-defaults.mk
 +++ b/include/kernel-defaults.mk
-@@ -13,6 +13,15 @@ ifneq (,$(KERNEL_CC))
+@@ -13,6 +13,17 @@ ifneq (,$(KERNEL_CC))
    KERNEL_MAKEOPTS += CC="$(KERNEL_CC)"
  endif
  
 +ifneq (,$(findstring clang,$(KERNEL_CC)))
 +  ifneq (,$(filter clang-%,$(KERNEL_CC)))
 +    LLVM := $(subst clang-,,$(KERNEL_CC))
++    LLVM_LLD := ld.lld-$(subst clang-,,$(KERNEL_CC))
 +  else
 +    LLVM := 1
++    LLVM_LLD := ld.lld
 +  endif
-+  KERNEL_MAKE_FLAGS += CC="$(KERNEL_CC)" LLVM=$(LLVM) LLVM_IAS=1
++  KERNEL_MAKE_FLAGS += CC="$(KERNEL_CC)" LD="$(LLVM_LLD)" LD=ld.lld LLVM=$(LLVM) LLVM_IAS=1
 +endif
 +
  export HOST_EXTRACFLAGS=-I$(STAGING_DIR_HOST)/include
  
  # defined in quilt.mk
 diff --git a/include/kernel.mk b/include/kernel.mk
-index 3012eb8..cee854c 100644
+index 3012eb8..1d85a8f 100644
 --- a/include/kernel.mk
 +++ b/include/kernel.mk
 @@ -35,7 +35,7 @@ else
@@ -62,17 +64,19 @@ index 3012eb8..cee854c 100644
      KERNEL_CROSS?=$(TARGET_CROSS)
    endif
  
-@@ -119,6 +119,15 @@ KERNEL_MAKE_FLAGS = \
+@@ -119,6 +119,17 @@ KERNEL_MAKE_FLAGS = \
  	cmd_syscalls= \
  	$(if $(__package_mk),KBUILD_EXTRA_SYMBOLS="$(wildcard $(PKG_SYMVERS_DIR)/*.symvers)")
  
 +ifneq (,$(findstring clang,$(KERNEL_CC)))
 +  ifneq (,$(filter clang-%,$(KERNEL_CC)))
 +    LLVM := $(subst clang-,,$(KERNEL_CC))
++    LLVM_LLD := ld.lld-$(subst clang-,,$(KERNEL_CC))
 +  else
 +    LLVM := 1
++    LLVM_LLD := ld.lld
 +  endif
-+  KERNEL_MAKE_FLAGS += CC="$(KERNEL_CC)" LLVM=$(LLVM) LLVM_IAS=1
++  KERNEL_MAKE_FLAGS += CC="$(KERNEL_CC)" LD="$(LLVM_LLD)" LLVM=$(LLVM) LLVM_IAS=1
 +endif
 +
  KERNEL_NOSTDINC_FLAGS = \
