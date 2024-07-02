@@ -444,7 +444,7 @@ if [ "$platform" = "x86_64" ]; then
                 BUILD_TYPE=releases
             fi
             VERSION=$(sed 's/v//g' version.txt)
-            SHA256=$(sha256sum bin/targets/x86/64/*-generic-squashfs-combined-efi.img.gz | awk '{print $1}')
+            SHA256=$(sha256sum bin/targets/x86/64*/*-generic-squashfs-combined-efi.img.gz | awk '{print $1}')
             cat > ota/fw.json <<EOF
 {
   "x86_64": [
