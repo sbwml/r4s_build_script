@@ -6,7 +6,7 @@ on:
       device:
         description: 'Select device to build'
         required: true
-        default: 'nanopi-r5s'
+        default: 'x86_64'
         type: choice
         options:
           - 'armv8'
@@ -14,6 +14,11 @@ on:
           - 'nanopi-r5s'
           - 'netgear_r8500'
           - 'x86_64'
+      build_options:
+        description: 'Build options (separate multiple options with spaces)'
+        required: false
+        default: 'BUILD_FAST=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_BPF=y USE_GCC13=y USE_MOLD=y'
+        type: string
 
 jobs:
   build:
@@ -62,7 +67,8 @@ jobs:
       continue-on-error: true
       run: |
         export GITHUB_REPO=${{ github.repository }}
-        BUILD_FAST=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_BPF=y USE_GCC13=y USE_MOLD=y bash <(curl -sS https://raw.githubusercontent.com/${{ github.repository }}/master/openwrt/build.sh) rc2 ${{ github.event.inputs.device }}
+        export ${{ github.event.inputs.build_options }}
+        bash <(curl -sS https://raw.githubusercontent.com/${{ github.repository }}/master/openwrt/build.sh) rc2 ${{ github.event.inputs.device }}
         cd openwrt
         tags=$(git describe --abbrev=0 --tags)
         echo "latest_release=$tags" >>$GITHUB_ENV
