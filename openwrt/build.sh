@@ -324,9 +324,18 @@ export ENABLE_LTO=$ENABLE_LTO
 # mold
 [ "$USE_MOLD" = "y" ] && echo 'CONFIG_USE_MOLD=y' >> .config
 
-# clang
+# kernel - CLANG + LTO; Allow CONFIG_KERNEL_CC=clang / clang-18 / clang-xx
 if [ "$KERNEL_CLANG_LTO" = "y" ]; then
-    curl -s https://$mirror/openwrt/generic/config-clang >> .config
+    echo '# Kernel - CLANG LTO' >> .config
+    echo 'CONFIG_KERNEL_CC="clang"' >> .config
+    echo 'CONFIG_EXTRA_OPTIMIZATION=""' >> .config
+    echo '# CONFIG_PACKAGE_kselftests-bpf is not set' >> .config
+fi
+
+# kernel - enable LRNG
+if [ "$ENABLE_LRNG" = "y" ]; then
+    echo -e "\n# Kernel - LRNG" >> .config
+    echo "CONFIG_KERNEL_LRNG=y" >> .config
 fi
 
 # openwrt-23.05 gcc11/13/14/15

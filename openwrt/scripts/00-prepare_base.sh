@@ -33,6 +33,9 @@ curl -s https://$mirror/openwrt/patch/generic/0004-libquadmath-Add-libquadmath-t
 # include/rootfs.mk
 curl -s https://$mirror/openwrt/patch/generic/0005-rootfs-add-r-w-permissions-for-UCI-configuration-fil.patch | patch -p1
 
+# build: kernel: add out-of-tree kernel config
+curl -s https://$mirror/openwrt/patch/generic/0006-build-kernel-add-out-of-tree-kernel-config.patch | patch -p1
+
 # meson: add platform variable to cross-compilation file
 curl -s https://$mirror/openwrt/patch/generic/010-meson-add-platform-variable-to-cross-compilation-file.patch | patch -p1
 
