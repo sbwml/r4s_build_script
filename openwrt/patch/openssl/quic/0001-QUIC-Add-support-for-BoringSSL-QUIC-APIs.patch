@@ -53,7 +53,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
 
 --- a/Configure
 +++ b/Configure
-@@ -467,6 +467,7 @@ my @disablables = (
+@@ -468,6 +468,7 @@ my @disablables = (
      "poly1305",
      "posix-io",
      "psk",
@@ -61,7 +61,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
      "rc2",
      "rc4",
      "rc5",
-@@ -635,6 +636,7 @@ my @disable_cascades = (
+@@ -636,6 +637,7 @@ my @disable_cascades = (
      "legacy"            => [ "md2" ],
  
      "cmp"               => [ "crmf" ],
@@ -71,7 +71,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
  
 --- a/INSTALL.md
 +++ b/INSTALL.md
-@@ -822,6 +822,10 @@ Don't use POSIX IO capabilities.
+@@ -829,6 +829,10 @@ Don't use POSIX IO capabilities.
  
  Don't build support for Pre-Shared Key based ciphersuites.
  
@@ -142,7 +142,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
 +
  =head1 COPYRIGHT
  
- Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.
+ Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.
 --- /dev/null
 +++ b/doc/man3/SSL_CTX_set_quic_method.pod
 @@ -0,0 +1,232 @@
@@ -456,7 +456,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
  # define SSL_R_BAD_DATA_RETURNED_BY_CALLBACK              106
  # define SSL_R_BAD_DECOMPRESSION                          107
  # define SSL_R_BAD_DH_VALUE                               102
-@@ -333,6 +334,7 @@
+@@ -335,6 +336,7 @@
  # define SSL_R_WRONG_CERTIFICATE_TYPE                     383
  # define SSL_R_WRONG_CIPHER_RETURNED                      261
  # define SSL_R_WRONG_CURVE                                378
@@ -565,7 +565,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
      {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_BAD_DATA_RETURNED_BY_CALLBACK),
      "bad data returned by callback"},
      {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_BAD_DECOMPRESSION), "bad decompression"},
-@@ -544,6 +545,8 @@ static const ERR_STRING_DATA SSL_str_rea
+@@ -548,6 +549,8 @@ static const ERR_STRING_DATA SSL_str_rea
      {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_WRONG_CIPHER_RETURNED),
      "wrong cipher returned"},
      {ERR_PACK(ERR_LIB_SSL, 0, SSL_R_WRONG_CURVE), "wrong curve"},
@@ -645,7 +645,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
      if (s->handshake_func == NULL) {
          ERR_raise(ERR_LIB_SSL, SSL_R_UNINITIALIZED);
          return -1;
-@@ -3857,6 +3891,11 @@ int SSL_get_error(const SSL *s, int i)
+@@ -3858,6 +3892,11 @@ int SSL_get_error(const SSL *s, int i)
      }
  
      if (SSL_want_read(s)) {
@@ -657,7 +657,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
          bio = SSL_get_rbio(s);
          if (BIO_should_read(bio))
              return SSL_ERROR_WANT_READ;
-@@ -4224,7 +4263,7 @@ EVP_PKEY *SSL_CTX_get0_privatekey(const
+@@ -4225,7 +4264,7 @@ EVP_PKEY *SSL_CTX_get0_privatekey(const
  
  const SSL_CIPHER *SSL_get_current_cipher(const SSL *s)
  {
@@ -1540,7 +1540,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
      if ((which & SSL3_CC_EARLY) != 0) {
 --- a/test/helpers/ssltestlib.c
 +++ b/test/helpers/ssltestlib.c
-@@ -1157,6 +1157,11 @@ int create_ssl_connection(SSL *serverssl
+@@ -1166,6 +1166,11 @@ int create_ssl_connection(SSL *serverssl
      if (!create_bare_ssl_connection(serverssl, clientssl, want, 1))
          return 0;
  
@@ -1554,7 +1554,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
       * This will ensure we have received the NewSessionTicket in TLSv1.3 where
 --- a/test/sslapitest.c
 +++ b/test/sslapitest.c
-@@ -10443,6 +10443,135 @@ end:
+@@ -10765,6 +10765,135 @@ static int test_multi_resume(int idx)
      return testresult;
  }
  
@@ -1690,10 +1690,10 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
  OPT_TEST_DECLARE_USAGE("certfile privkeyfile srpvfile tmpfile provider config dhfile\n")
  
  int setup_tests(void)
-@@ -10715,6 +10844,9 @@ int setup_tests(void)
-     ADD_ALL_TESTS(test_pipelining, 7);
+@@ -11041,6 +11170,9 @@ int setup_tests(void)
  #endif
      ADD_ALL_TESTS(test_handshake_retry, 16);
+     ADD_ALL_TESTS(test_multi_resume, 5);
 +#ifndef OPENSSL_NO_QUIC
 +    ADD_TEST(test_quic_api);
 +#endif

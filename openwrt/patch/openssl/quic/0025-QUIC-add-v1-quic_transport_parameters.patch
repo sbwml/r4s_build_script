@@ -472,7 +472,7 @@ Subject: [PATCH 25/43] QUIC: add v1 quic_transport_parameters
  #endif
 --- a/test/sslapitest.c
 +++ b/test/sslapitest.c
-@@ -10494,7 +10494,13 @@ static SSL_QUIC_METHOD quic_method = {
+@@ -10816,7 +10816,13 @@ static SSL_QUIC_METHOD quic_method = {
      test_quic_send_alert,
  };
  
@@ -487,7 +487,7 @@ Subject: [PATCH 25/43] QUIC: add v1 quic_transport_parameters
  {
      SSL_CTX *cctx = NULL, *sctx = NULL;
      SSL *clientssl = NULL, *serverssl = NULL;
-@@ -10505,29 +10511,7 @@ static int test_quic_api(void)
+@@ -10827,29 +10833,7 @@ static int test_quic_api(void)
      const uint8_t *peer_str;
      size_t peer_str_len;
  
@@ -518,7 +518,7 @@ Subject: [PATCH 25/43] QUIC: add v1 quic_transport_parameters
  
      if (!TEST_true(create_ssl_ctx_pair(libctx,
                                         TLS_server_method(),
-@@ -10546,6 +10530,8 @@ static int test_quic_api(void)
+@@ -10868,6 +10852,8 @@ static int test_quic_api(void)
                                                          sizeof(client_str)))
              || !TEST_true(SSL_set_app_data(serverssl, clientssl))
              || !TEST_true(SSL_set_app_data(clientssl, serverssl))
@@ -527,7 +527,7 @@ Subject: [PATCH 25/43] QUIC: add v1 quic_transport_parameters
              || !TEST_true(create_ssl_connection(serverssl, clientssl,
                                                  SSL_ERROR_NONE))
              || !TEST_true(SSL_version(serverssl) == TLS1_3_VERSION)
-@@ -10579,11 +10565,85 @@ static int test_quic_api(void)
+@@ -10901,11 +10887,85 @@ static int test_quic_api(void)
              || !TEST_int_le(SSL_do_handshake(serverssl), 0))
          goto end;
  
@@ -613,9 +613,9 @@ Subject: [PATCH 25/43] QUIC: add v1 quic_transport_parameters
  #endif /* OPENSSL_NO_QUIC */
  
  OPT_TEST_DECLARE_USAGE("certfile privkeyfile srpvfile tmpfile provider config dhfile\n")
-@@ -10859,7 +10919,7 @@ int setup_tests(void)
- #endif
+@@ -11185,7 +11245,7 @@ int setup_tests(void)
      ADD_ALL_TESTS(test_handshake_retry, 16);
+     ADD_ALL_TESTS(test_multi_resume, 5);
  #ifndef OPENSSL_NO_QUIC
 -    ADD_TEST(test_quic_api);
 +    ADD_ALL_TESTS(test_quic_api, 9);

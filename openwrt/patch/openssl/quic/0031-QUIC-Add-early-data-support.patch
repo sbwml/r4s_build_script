@@ -64,7 +64,7 @@ support to QUIC.
  # ifdef  __cplusplus
 --- a/ssl/ssl_lib.c
 +++ b/ssl/ssl_lib.c
-@@ -3997,6 +3997,21 @@ int SSL_do_handshake(SSL *s)
+@@ -3998,6 +3998,21 @@ int SSL_do_handshake(SSL *s)
              ret = s->handshake_func(s);
          }
      }
@@ -306,7 +306,7 @@ support to QUIC.
      ret = 1;
 --- a/test/sslapitest.c
 +++ b/test/sslapitest.c
-@@ -10644,6 +10644,159 @@ end:
+@@ -10966,6 +10966,159 @@ end:
      serverssl = NULL;
      return testresult;
  }
@@ -466,8 +466,8 @@ support to QUIC.
  #endif /* OPENSSL_NO_QUIC */
  
  OPT_TEST_DECLARE_USAGE("certfile privkeyfile srpvfile tmpfile provider config dhfile\n")
-@@ -10920,6 +11073,9 @@ int setup_tests(void)
-     ADD_ALL_TESTS(test_handshake_retry, 16);
+@@ -11246,6 +11399,9 @@ int setup_tests(void)
+     ADD_ALL_TESTS(test_multi_resume, 5);
  #ifndef OPENSSL_NO_QUIC
      ADD_ALL_TESTS(test_quic_api, 9);
 +# ifndef OSSL_NO_USABLE_TLS1_3

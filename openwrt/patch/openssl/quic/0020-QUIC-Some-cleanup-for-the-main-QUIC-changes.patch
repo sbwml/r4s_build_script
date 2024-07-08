@@ -179,7 +179,7 @@ Update referenced I-D versions.
 +#endif
 --- a/ssl/ssl_lib.c
 +++ b/ssl/ssl_lib.c
-@@ -4263,7 +4263,7 @@ EVP_PKEY *SSL_CTX_get0_privatekey(const
+@@ -4264,7 +4264,7 @@ EVP_PKEY *SSL_CTX_get0_privatekey(const
  
  const SSL_CIPHER *SSL_get_current_cipher(const SSL *s)
  {
@@ -598,7 +598,7 @@ Update referenced I-D versions.
      unsigned char *iv;
 --- a/test/sslapitest.c
 +++ b/test/sslapitest.c
-@@ -10444,9 +10444,11 @@ end:
+@@ -10766,9 +10766,11 @@ static int test_multi_resume(int idx)
  }
  
  #ifndef OPENSSL_NO_QUIC
@@ -612,7 +612,7 @@ Update referenced I-D versions.
  {
      test_printf_stderr("quic_set_encryption_secrets() %s, lvl=%d, len=%zd\n",
                         ssl->server ? "server" : "client", level, secret_len);
-@@ -10458,11 +10460,12 @@ static int test_quic_add_handshake_data(
+@@ -10780,11 +10782,12 @@ static int test_quic_add_handshake_data(
  {
      SSL *peer = (SSL*)SSL_get_app_data(ssl);
  
