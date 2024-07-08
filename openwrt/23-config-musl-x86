@@ -22,6 +22,8 @@ CONFIG_TARGET_ROOTFS_PARTSIZE=944
 ### Kernel driver
 CONFIG_PACKAGE_kmod-igb=y
 CONFIG_PACKAGE_kmod-igc=y
+CONFIG_PACKAGE_kmod-mlx4-core=y
+CONFIG_PACKAGE_kmod-mlx5-core=y
 CONFIG_PACKAGE_kmod-mt76x2=y
 CONFIG_PACKAGE_kmod-mt7921e=y
 CONFIG_PACKAGE_kmod-mt7921u=y
