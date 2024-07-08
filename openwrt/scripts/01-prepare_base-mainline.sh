@@ -40,7 +40,13 @@ release_kernel_version=$(curl -s https://raw.githubusercontent.com/sbwml/r4s_bui
 if [ "$kernel_version" = "$release_kernel_version" ]; then
     git clone https://$github/sbwml/target_linux_generic -b main target/linux/generic --depth=1
 else
-    git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_generic -b main target/linux/generic --depth=1
+    if [ "$(whoami)" = "runner" ]; then
+        git_name=private
+        git_password="$git_password"
+        git clone https://"$git_name":"$git_password"@$gitea/sbwml/target_linux_generic -b main target/linux/generic --depth=1
+    elif [ "$(whoami)" = "sbwml" ]; then
+        git clone https://$gitea/sbwml/target_linux_generic -b main target/linux/generic --depth=1
+    fi
 fi
 
 # bcm53xx - fix build kernel with clang
