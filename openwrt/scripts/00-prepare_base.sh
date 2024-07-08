@@ -194,6 +194,10 @@ pushd feeds/luci
 popd
 
 # openssl - quictls
+if [ "$version" = "rc2" ]; then
+    rm -rf package/libs/openssl
+    cp -a ../master/openwrt-23.05/package/libs/openssl package/libs/openssl
+fi
 pushd package/libs/openssl/patches
     curl -sO https://$mirror/openwrt/patch/openssl/quic/0001-QUIC-Add-support-for-BoringSSL-QUIC-APIs.patch
     curl -sO https://$mirror/openwrt/patch/openssl/quic/0002-QUIC-New-method-to-get-QUIC-secret-length.patch
