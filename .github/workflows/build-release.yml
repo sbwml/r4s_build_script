@@ -17,7 +17,7 @@ on:
       build_options:
         description: 'Build options (separate multiple options with spaces)'
         required: false
-        default: 'BUILD_FAST=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_BPF=y USE_GCC13=y USE_MOLD=y'
+        default: 'BUILD_FAST=y ENABLE_LTO=y ENABLE_MOLD=y ENABLE_LRNG=y ENABLE_BPF=y USE_GCC14=y'
         type: string
 
 jobs:

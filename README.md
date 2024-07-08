@@ -27,9 +27,9 @@ sudo apt-get install -y build-essential flex bison g++ gawk gcc-multilib g++-mul
 ```shell
 # 下载并解压
 sudo mkdir -p /opt/clang
-curl -LO https://github.com/sbwml/redhat-llvm-project/releases/download/18.1.6/clang-18.1.6-x86_64-redhat-linux.tar.xz
-sudo tar --strip-components=1 -C /opt/clang -xf clang-18.1.6-x86_64-redhat-linux.tar.xz
-rm -rf clang-18.1.6-x86_64-redhat-linux.tar.xz
+curl -LO https://github.com/sbwml/redhat-llvm-project/releases/download/18.1.8/clang-18.1.8-x86_64-redhat-linux.tar.xz
+sudo tar --strip-components=1 -C /opt/clang -xf clang-18.1.8-x86_64-redhat-linux.tar.xz
+rm -rf clang-18.1.8-x86_64-redhat-linux.tar.xz
 
 # 添加 BIN 到系统变量
 export PATH="/opt/clang/bin:$PATH"
@@ -37,8 +37,8 @@ export PATH="/opt/clang/bin:$PATH"
 # clang 版本验证
 clang --version
 
- clang version 18.1.6 (https://github.com/llvm/llvm-project 1118c2e05e67a36ed8ca250524525cdb66a55256)
- Target: x86_64-redhat-linux
+ clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+ Target: x86_64-redhat-linux-gnu
  Thread model: posix
  InstalledDir: /opt/clang/bin
 ```
@@ -47,7 +47,7 @@ clang --version
 
 ### 启用 [Clang/LLVM](https://docs.kernel.org/kbuild/llvm.html) 构建内核
 ##### 脚本支持使用 Clang/LLVM 构建内核，NanoPi & X86_64 设备将同时启用 LLVM LTO 链接时优化，这会增加编译的时间，但会获得更优的性能
-##### 编译环境需要安装 Clang/LLVM 工具链，推荐使用 clang 16-18 版本
+##### 编译环境需要安装 Clang/LLVM 工具链，推荐使用 clang 16~18 版本
 ##### 只需在构建固件前执行以下命令即可启用 Clang/LLVM 构建内核与内核模块
 
 ```
@@ -83,7 +83,7 @@ export ENABLE_LTO=y
 ##### 只需在构建固件前执行以下命令即可启用 MOLD 链接，如果使用它建议同时启用 LTO 优化
 
 ```
-export USE_MOLD=y
+export ENABLE_MOLD=y
 ```
 
 ### 启用 [eBPF](https://docs.kernel.org/bpf/) 支持
@@ -101,11 +101,19 @@ export ENABLE_LRNG=y
 ```
 
 ### 启用 [Glibc](https://www.gnu.org/software/libc/) 库构建 （实验性）
-##### 脚本支持使用 glibc 库进行构建，当启用 glibc 进行构建时，构建的固件将会同时兼容 musl/glibc 的预构建二进制程序
+##### 启用 glibc 库进行构建时，构建的固件将会同时兼容 musl/glibc 的预构建二进制程序，但缺失 `opkg install` 安装源支持
 ##### 只需在构建固件前执行以下命令即可启用 glibc 构建
 
 ```
-export USE_GLIBC=y
+export ENABLE_GLIBC=y
+```
+
+### 启用 [DPDK](https://www.dpdk.org/) 支持
+##### DPDK（Data Plane Development Kit）是一个开源工具集，专为加速数据包处理而设计，通过优化的数据平面技术，实现高性能、低延迟的网络应用
+##### 只需在构建固件前执行以下命令即可启用 DPDK 工具集支持
+
+```
+export ENABLE_DPDK=y
 ```
 
 ### 快速构建（仅限 Github Actions）

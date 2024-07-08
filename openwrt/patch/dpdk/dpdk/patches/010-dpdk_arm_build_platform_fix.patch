@@ -1,0 +1,28 @@
+--- a/config/arm/meson.build
++++ b/config/arm/meson.build
+@@ -699,8 +699,10 @@ if dpdk_conf.get('RTE_ARCH_32')
+     if meson.is_cross_build()
+         update_flags = true
+         soc = meson.get_cross_property('platform', '')
+-        if soc == ''
+-            error('Arm SoC must be specified in the cross file.')
++       if soc == ''
++           soc = platform
++        elif soc == ''
++            error('Arm SoC must be specified in the cross file or -Dplatform argument.')
+         endif
+         soc_config = socs.get(soc, {'not_supported': true})
+         flags_common = []
+@@ -754,8 +756,10 @@ else
+     else
+         # cross build
+         soc = meson.get_cross_property('platform', '')
+-        if soc == ''
+-            error('Arm SoC must be specified in the cross file.')
++       if soc == ''
++           soc = platform
++        elif soc == ''
++            error('Arm SoC must be specified in the cross file or -Dplatform argument.')
+         endif
+         soc_config = socs.get(soc, {'not_supported': true})
+     endif

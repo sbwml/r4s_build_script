@@ -28,6 +28,11 @@ git clone https://$github/sbwml/packages_utils_lrzsz package/new/lrzsz
 # irqbalance - openwrt master
 rm -rf feeds/packages/utils/irqbalance
 cp -a ../master/packages/utils/irqbalance feeds/packages/utils/irqbalance
+# irqbalance: disable build with numa
+if [ "$ENABLE_DPDK" = "y" ]; then
+    curl -s https://$mirror/openwrt/patch/irqbalance/011-meson-numa.patch > feeds/packages/utils/irqbalance/patches/011-meson-numa.patch
+    sed -i '/-Dcapng=disabled/i\\t-Dnuma=disabled \\' feeds/packages/utils/irqbalance/Makefile
+fi
 
 # FRPC
 rm -rf feeds/packages/net/frp

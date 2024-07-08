@@ -110,28 +110,24 @@ fi
 if [ "$USE_GCC13" = y ]; then
     export USE_GCC13=y
     # use mold
-    [ "$USE_MOLD" = y ] && USE_MOLD=y
+    [ "$ENABLE_MOLD" = y ] && export ENABLE_MOLD=y
 elif [ "$USE_GCC14" = y ]; then
     export USE_GCC14=y
     # use mold
-    [ "$USE_MOLD" = y ] && USE_MOLD=y
+    [ "$ENABLE_MOLD" = y ] && export ENABLE_MOLD=y
 elif [ "$USE_GCC15" = y ]; then
     export USE_GCC15=y
     # use mold
-    [ "$USE_MOLD" = y ] && USE_MOLD=y
+    [ "$ENABLE_MOLD" = y ] && export ENABLE_MOLD=y
 fi
 
-# use glibc
-export USE_GLIBC=$USE_GLIBC
-
-# lrng
-export ENABLE_LRNG=$ENABLE_LRNG
-
-# kernel build with clang lto
-export KERNEL_CLANG_LTO=$KERNEL_CLANG_LTO
-
-# bpf
-export ENABLE_BPF=$ENABLE_BPF
+# build.sh flags
+export \
+    ENABLE_BPF=$ENABLE_BPF \
+    ENABLE_DPDK=$ENABLE_DPDK \
+    ENABLE_GLIBC=$ENABLE_GLIBC \
+    ENABLE_LRNG=$ENABLE_LRNG \
+    KERNEL_CLANG_LTO=$KERNEL_CLANG_LTO \
 
 # print version
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
@@ -168,14 +164,16 @@ else
     echo -e "${GREEN_COLOR}GCC VERSION: 11${RES}"
 fi
 [ -n "$LAN" ] && echo -e "${GREEN_COLOR}LAN: $LAN${RES}" || echo -e "${GREEN_COLOR}LAN: 10.0.0.1${RES}"
-[ "$USE_MOLD" = "y" ] && echo -e "${GREEN_COLOR}USE_MOLD: true${RES}" || echo -e "${GREEN_COLOR}USE_MOLD: false${RES}"
-[ "$ENABLE_OTA" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_OTA: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_OTA: false${RES}"
-[ "$ENABLE_BPF" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_BPF: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_BPF: false${RES}"
-[ "$ENABLE_LTO" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_LTO: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_LTO: false${RES}"
-[ "$ENABLE_LRNG" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_LRNG: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_LRNG: false${RES}"
-[ "$BUILD_FAST" = "y" ] && echo -e "${GREEN_COLOR}BUILD_FAST: true${RES}" || echo -e "${GREEN_COLOR}BUILD_FAST: false${RES}"
+[ "$ENABLE_GLIBC" = "y" ] && echo -e "${GREEN_COLOR}Standard C Library:${RES} ${BLUE_COLOR}glibc${RES}" || echo -e "${GREEN_COLOR}Standard C Library:${RES} ${BLUE_COLOR}musl${RES}"
+[ "$ENABLE_OTA" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_OTA: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_OTA:${RES} ${YELLOW_COLOR}false${RES}"
+[ "$ENABLE_DPDK" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_DPDK: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_DPDK:${RES} ${YELLOW_COLOR}false${RES}"
+[ "$ENABLE_MOLD" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_MOLD: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_MOLD:${RES} ${YELLOW_COLOR}false${RES}"
+[ "$ENABLE_BPF" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_BPF: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_BPF:${RES} ${RED_COLOR}false${RES}"
+[ "$ENABLE_LTO" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_LTO: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_LTO:${RES} ${RED_COLOR}false${RES}"
+[ "$ENABLE_LRNG" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_LRNG: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_LRNG:${RES} ${RED_COLOR}false${RES}"
+[ "$BUILD_FAST" = "y" ] && echo -e "${GREEN_COLOR}BUILD_FAST: true${RES}" || echo -e "${GREEN_COLOR}BUILD_FAST:${RES} ${YELLOW_COLOR}false${RES}"
 [ "$MINIMAL_BUILD" = "y" ] && echo -e "${GREEN_COLOR}MINIMAL_BUILD: true${RES}" || echo -e "${GREEN_COLOR}MINIMAL_BUILD: false${RES}"
-[ "$KERNEL_CLANG_LTO" = "y" ] && echo -e "${GREEN_COLOR}KERNEL_CLANG_LTO: true${RES}\r\n" || echo -e "${GREEN_COLOR}KERNEL_CLANG_LTO: false${RES}\r\n"
+[ "$KERNEL_CLANG_LTO" = "y" ] && echo -e "${GREEN_COLOR}KERNEL_CLANG_LTO: true${RES}\r\n" || echo -e "${GREEN_COLOR}KERNEL_CLANG_LTO:${RES} ${YELLOW_COLOR}false${RES}\r\n"
 
 # clean old files
 rm -rf openwrt master && mkdir master
@@ -316,13 +314,19 @@ export ENABLE_LTO=$ENABLE_LTO
 [ "$ENABLE_LTO" = "y" ] && curl -s https://$mirror/openwrt/generic/config-lto >> .config
 
 # glibc
-[ "$USE_GLIBC" = "y" ] && {
+[ "$ENABLE_GLIBC" = "y" ] && {
     curl -s https://$mirror/openwrt/generic/config-glibc >> .config
     sed -i '/NaiveProxy/d' .config
 }
 
+# DPDK
+[ "$ENABLE_DPDK" = "y" ] && {
+    echo 'CONFIG_PACKAGE_dpdk-tools=y' >> .config
+    echo 'CONFIG_PACKAGE_numactl=y' >> .config
+}
+
 # mold
-[ "$USE_MOLD" = "y" ] && echo 'CONFIG_USE_MOLD=y' >> .config
+[ "$ENABLE_MOLD" = "y" ] && echo 'CONFIG_USE_MOLD=y' >> .config
 
 # kernel - CLANG + LTO; Allow CONFIG_KERNEL_CC=clang / clang-18 / clang-xx
 if [ "$KERNEL_CLANG_LTO" = "y" ]; then
@@ -352,7 +356,7 @@ if [ "$USE_GCC13" = "y" ] || [ "$USE_GCC14" = "y" ] || [ "$USE_GCC15" = "y" ]; t
     curl -s https://$mirror/openwrt/patch/generic/gcc-14/910-mbsd_multi.patch > toolchain/gcc/patches-14.x/910-mbsd_multi.patch
     cp -a toolchain/gcc/patches-14.x toolchain/gcc/patches-15.x
     curl -s https://$mirror/openwrt/patch/generic/gcc-15/970-macos_arm64-building-fix.patch > toolchain/gcc/patches-15.x/970-macos_arm64-building-fix.patch
-elif [ ! "$USE_GLIBC" = "y" ]; then
+elif [ ! "$ENABLE_GLIBC" = "y" ]; then
     curl -s https://$mirror/openwrt/generic/config-gcc11 >> .config
 fi
 [ "$(whoami)" = "runner" ] && endgroup
@@ -368,7 +372,7 @@ fi
 
 # Toolchain Cache
 if [ "$BUILD_FAST" = "y" ]; then
-    [ "$USE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
+    [ "$ENABLE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
     [ "$isCN" = "CN" ] && github_proxy="http://gh.cooluc.com/" || github_proxy=""
     echo -e "\n${GREEN_COLOR}Download Toolchain ...${RES}"
     PLATFORM_ID=""
@@ -407,7 +411,7 @@ if [ "$BUILD_TOOLCHAIN" = "y" ]; then
     echo -e "\r\n${GREEN_COLOR}Building Toolchain ...${RES}\r\n"
     make -j$cores toolchain/compile || make -j$cores toolchain/compile V=s || exit 1
     mkdir -p toolchain-cache
-    [ "$USE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
+    [ "$ENABLE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
     if [ "$USE_GCC13" = "y" ]; then
         tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch"_13.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
     elif [ "$USE_GCC14" = "y" ]; then

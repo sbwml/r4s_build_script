@@ -1,0 +1,461 @@
+if PACKAGE_libdpdk
+
+	if x86_64
+		choice LIBDPDK_ARCH
+			prompt "Optimize for x86_64 architecture"
+			default LIBDPDK_ARCH_x86-64
+
+			config LIBDPDK_ARCH_nocona
+				bool "nocona"
+
+			config LIBDPDK_ARCH_core2
+				bool "core2"
+
+			config LIBDPDK_ARCH_nehalem
+				bool "nehalem"
+
+			config LIBDPDK_ARCH_corei7
+				bool "corei7"
+
+			config LIBDPDK_ARCH_westmere
+				bool "westmere"
+
+			config LIBDPDK_ARCH_sandybridge
+				bool "sandybridge"
+
+			config LIBDPDK_ARCH_corei7-avx
+				bool "corei7-avx"
+
+			config LIBDPDK_ARCH_ivybridge
+				bool "ivybridge"
+
+			config LIBDPDK_ARCH_core-avx-i
+				bool "core-avx-i"
+
+			config LIBDPDK_ARCH_haswell
+				bool "haswell"
+
+			config LIBDPDK_ARCH_core-avx2
+				bool "core-avx2"
+
+			config LIBDPDK_ARCH_broadwell
+				bool "broadwell"
+
+			config LIBDPDK_ARCH_skylake
+				bool "skylake"
+
+			config LIBDPDK_ARCH_skylake-avx512
+				bool "skylake-avx512"
+
+			config LIBDPDK_ARCH_cannonlake
+				bool "cannonlake"
+
+			config LIBDPDK_ARCH_icelake-client
+				bool "icelake-client"
+
+			config LIBDPDK_ARCH_icelake-server
+				bool "icelake-server"
+
+			config LIBDPDK_ARCH_bonnell
+				bool "bonnell"
+
+			config LIBDPDK_ARCH_atom
+				bool "atom"
+
+			config LIBDPDK_ARCH_silvermont
+				bool "silvermont"
+
+			config LIBDPDK_ARCH_slm
+				bool "slm"
+
+			config LIBDPDK_ARCH_knl
+				bool "knl"
+
+			config LIBDPDK_ARCH_knm
+				bool "knm"
+
+			config LIBDPDK_ARCH_x86-64
+				bool "x86-64"
+
+			config LIBDPDK_ARCH_eden-x2
+				bool "eden-x2"
+
+			config LIBDPDK_ARCH_nano
+				bool "nano"
+
+			config LIBDPDK_ARCH_nano-1000
+				bool "nano-1000"
+
+			config LIBDPDK_ARCH_nano-2000
+				bool "nano-2000"
+
+			config LIBDPDK_ARCH_nano-3000
+				bool "nano-3000"
+
+			config LIBDPDK_ARCH_nano-x2
+				bool "nano-x2"
+
+			config LIBDPDK_ARCH_eden-x4
+				bool "eden-x4"
+
+			config LIBDPDK_ARCH_nano-x4
+				bool "nano-x4"
+
+			config LIBDPDK_ARCH_k8
+				bool "k8"
+
+			config LIBDPDK_ARCH_k8-sse3
+				bool "k8-sse3"
+
+			config LIBDPDK_ARCH_opteron
+				bool "opteron"
+
+			config LIBDPDK_ARCH_opteron-sse3
+				bool "opteron-sse3"
+
+			config LIBDPDK_ARCH_athlon64
+				bool "athlon64"
+
+			config LIBDPDK_ARCH_athlon64-sse3
+				bool "athlon64-sse3"
+
+			config LIBDPDK_ARCH_athlon-fx
+				bool "athlon-fx"
+
+			config LIBDPDK_ARCH_admfam10
+				bool "admfam10"
+
+			config LIBDPDK_ARCH_barcelona
+				bool "barcelona"
+
+			config LIBDPDK_ARCH_bdver1
+				bool "bdver1"
+
+			config LIBDPDK_ARCH_bdver2
+				bool "bdver2"
+
+			config LIBDPDK_ARCH_bdver3
+				bool "bdver3"
+
+			config LIBDPDK_ARCH_bdver4
+				bool "bdver4"
+
+			config LIBDPDK_ARCH_znver1
+				bool "znver1"
+
+			config LIBDPDK_ARCH_btver1
+				bool "btver1"
+
+			config LIBDPDK_ARCH_btver2
+				bool "btver2"
+
+		endchoice
+
+	endif
+
+	if aarch64
+
+		choice LIBDPDK_ARM_ARCH
+			prompt "Optimize for aarch64 architecture"
+			default LIBDPDK_ARM_ARCH_generic
+
+		config LIBDPDK_ARM_ARCH_generic
+			bool "generic"
+			help
+				Generic un-optimized build for armv8 aarch64 execution mode.
+
+		config LIBDPDK_ARM_ARCH_generic_aarch32
+			bool "generic_aarch32"
+			help 
+				Generic un-optimized build for armv8 aarch32 execution mode.
+
+		config LIBDPDK_ARM_ARCH_altra
+			bool "altra"
+			help
+				Ampere Altra/AltraMax	
+
+		config LIBDPDK_ARM_ARCH_ampereone
+			bool "ampereone"
+			help
+				Ampere AmpereOne
+
+		config LIBDPDK_ARM_ARCH_armada
+			bool "armada"
+			help
+				Ampere Marvell ARMADA
+
+		config LIBDPDK_ARM_ARCH_bluefield
+			bool "bluefield"
+			help
+				NVIDIA BlueField
+
+		config LIBDPDK_ARM_ARCH_bluefield3
+			bool "bluefield3"
+			help
+				NVIDIA BlueField-3
+
+		config LIBDPDK_ARM_ARCH_capri
+			bool "capri"
+			help
+				AMD Pensando Capri
+
+		config LIBDPDK_ARM_ARCH_cdx
+			bool "cdx"
+			help
+				AMD CDX
+
+		config LIBDPDK_ARM_ARCH_centriq2400
+			bool "centriq2400"
+			help
+				Qualcomm Centriq 2400
+
+		config LIBDPDK_ARM_ARCH_cn9k
+			bool "cn9k"
+			help
+				Marvell OCTEON 9
+
+		config LIBDPDK_ARM_ARCH_cn10k
+			bool "cn10k"
+			help
+				Marvell OCTEON 10
+
+		config LIBDPDK_ARM_ARCH_dpaa
+			bool "dpaa"
+			help
+				NXP DPAA
+
+		config LIBDPDK_ARM_ARCH_elba
+			bool "elba"
+			help
+				AMD Pensando Elba
+
+		config LIBDPDK_ARM_ARCH_emag
+			bool "emag"
+			help
+				Ampere eMAG
+
+		config LIBDPDK_ARM_ARCH_ft2000plus
+			bool "ft2000plus"
+			help
+				Phytium FT-2000+
+
+		config LIBDPDK_ARM_ARCH_tys2500
+			bool "tys2500"
+			help
+				Phytium TengYun S2500
+
+		config LIBDPDK_ARM_ARCH_grace
+			bool "grace"
+			help
+				NVIDIA Grace
+
+		config LIBDPDK_ARM_ARCH_graviton2
+			bool "graviton2"
+			help
+				AWS Graviton2
+
+		config LIBDPDK_ARM_ARCH_graviton3
+			bool "graviton3"
+			help
+				AWS Graviton3
+
+		config LIBDPDK_ARM_ARCH_graviton4
+			bool "graviton4"
+			help
+				AWS Graviton4
+
+		config LIBDPDK_ARM_ARCH_hip10
+			bool "hip10"
+			help
+				HiSilicon HIP10
+
+		config LIBDPDK_ARM_ARCH_kunpeng920
+			bool "kunpeng920"
+			help
+				HiSilicon Kunpeng 920
+
+		config LIBDPDK_ARM_ARCH_kunpeng930
+			bool "kunpeng930"
+			help
+				HiSilicon Kunpeng 930
+
+		config LIBDPDK_ARM_ARCH_n1sdp
+			bool "n1sdp"
+			help
+				Arm Neoverse N1SDP
+
+		config LIBDPDK_ARM_ARCH_n2
+			bool "n2"
+			help
+				Arm Neoverse N2
+
+		config LIBDPDK_ARM_ARCH_odyssey
+			bool "odyssey"
+			help
+				Marvell Odyssey
+
+		config LIBDPDK_ARM_ARCH_stingray
+			bool "stingray"
+			help
+				Broadcom Stingray
+
+		config LIBDPDK_ARM_ARCH_thunderx2
+			bool "thunderx2"
+			help
+				Marvell ThunderX2 T99
+
+		config LIBDPDK_ARM_ARCH_thunderxt88
+			bool "thunderxt88"
+			help
+				Marvell ThunderX T88
+
+		config LIBDPDK_ARM_ARCH_thunderxt83
+			bool "thunderxt83"
+			help
+				Marvell ThunderX T83
+
+		config LIBDPDK_ARM_ARCH_v2
+			bool "v2"
+			help
+				Arm Neoverse V2
+		endchoice
+	endif
+endif
+
+menu "Network Drivers"
+	depends on PACKAGE_libdpdk
+
+	config LIBDPDK_DRIVER_AXGBE
+		bool "axgbe driver support"
+		default n
+		help
+			AMD axgbe Ethernet driver.
+
+	config LIBDPDK_DRIVER_BNX2X
+		bool "bnx2x driver support"
+		default n
+		help
+			QLogic 578xx Ethernet driver.
+
+	config LIBDPDK_DRIVER_BNXT
+		bool "bnxt driver support"
+		default n
+		help
+			Broadcom BCM5741X/BCM575XX Ethernet driver.
+
+	config LIBDPDK_DRIVER_CNXK
+		bool "cnxk driver support"
+		default n
+		help
+			Marvell OCTEON CN9K/CN10K Ethernet driver.
+
+	config LIBDPDK_DRIVER_CXGBE
+		bool "cxgbe driver support"
+		default n
+		help
+			Chelsio Terminator Ethernet driver.
+
+	config LIBDPDK_DRIVER_DPAA
+		bool "dpaa driver support"
+		default n
+		help
+			NXP DPAA Ethernet driver.
+
+	config LIBDPDK_DRIVER_DPAA2
+		bool "dpaa2 driver support"
+		default n
+		help
+			NXP DPAA2 Ethernet driver.
+
+	config LIBDPDK_DRIVER_E1000
+		bool "e1000 driver support"
+		default y
+		help
+			Intel e1000 Ethernet driver.
+
+	config LIBDPDK_DRIVER_ENETC
+		bool "enetc driver support"
+		default n
+		help
+			NXP LS1028 SoC Ethernet driver.
+
+	config LIBDPDK_DRIVER_ENETFEC
+		bool "enetfec driver support"
+		default n
+		help
+			NXP i.MX 8M Mini SoC Ethernet driver.
+
+	config LIBDPDK_DRIVER_I40E
+		bool "i40e driver support"
+		default y
+		help
+			Intel 700 Series X710/XL710/XXV710/X722  Ethernet driver.
+
+	config LIBDPDK_DRIVER_ICE
+		bool "ice driver support"
+		select LIBDPDK_DRIVER_COMMON_IAVF
+		default y
+		help
+			Intel 800 Series E820/E822/E823 Ethernet driver.
+
+	config LIBDPDK_DRIVER_COMMON_IAVF
+		bool "common_iavf driver support"
+		default n
+		help
+			Intel 800 Series E820/E822/E823 Ethernet driver.
+
+	config LIBDPDK_DRIVER_IXGBE
+		bool "ixgbe driver support"
+		default y
+		help
+			Intel ixgbe Ethernet driver.
+
+	config LIBDPDK_DRIVER_MVNETA
+		bool "mvneta driver support"
+		default n
+		help
+			Marvell NETA Ethernet driver.
+
+	config LIBDPDK_DRIVER_NGBE
+		bool "ngbe driver support"
+		default y
+		help
+			Wangxun 1 Gigabit Ethernet driver.
+
+	config LIBDPDK_DRIVER_OCTEON_EP
+		bool "octeon_ep driver support"
+		default n
+		help
+			OCTEON TX EP Ethernet driver.
+
+	config LIBDPDK_DRIVER_OCTEONTX
+		bool "octeontx driver support"
+		default n
+		help
+			OCTEON TX Ethernet driver.
+
+	config LIBDPDK_DRIVER_PFE
+		bool "pfe driver support"
+		default n
+		help
+			NXP LS1012 Ethernet driver.
+
+	config LIBDPDK_DRIVER_R8125
+		bool "r8125 driver support"
+		default y
+		help
+			Realtek 2.5 Gigabit Ethernet driver.
+
+	config LIBDPDK_DRIVER_THUNDERX
+		bool "thunderx driver support"
+		default n
+		help
+			Cavium ThunderX Ethernet driver.
+
+	config LIBDPDK_DRIVER_VIRTIO
+		bool "virtio driver support"
+		default y
+		help
+			Virtualization Ethernet driver.
+
+endmenu
