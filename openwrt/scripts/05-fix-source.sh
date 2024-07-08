@@ -72,6 +72,11 @@ if [ "$USE_GCC14" = y ] || [ "$USE_GCC15" = y ]; then
         # uhttpd
         sed -i "/Package\/uhttpd\/install/i\TARGET_CFLAGS += -Wno-implicit-function-declaration\n" package/network/services/uhttpd/Makefile
     fi
+    # openssh - 9.8p1
+    if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
+        rm -rf feeds/packages/net/openssh
+        cp -a ../master/packages/net/openssh feeds/packages/net/openssh
+    fi
 fi
 
 # xdp-tools
