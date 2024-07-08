@@ -20,4 +20,7 @@ location ~ /cgi-bin/cgi-(backup|download|upload|exec) {
 
 location /luci-static {
 		error_log stderr crit;
+		if ($request_uri ~* \.(jpg|jpeg|png|gif|ico|webp|mp4|webm)$) {
+			add_header Cache-Control "public, max-age=2592000";
+		}
 }
