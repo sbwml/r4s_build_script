@@ -158,7 +158,7 @@ MESON_ARGS+= \
 define Package/libdpdk
   SECTION:=libs
   CATEGORY:=Libraries
-  DEPENDS:=@(x86_64||aarch64) +@KERNEL_HUGETLB_PAGE +librt +libpthread +libbpf +libpcap +libopenssl +zlib +jansson +libelf +libarchive +libbsd +libkmod +libnuma
+  DEPENDS:=@(x86_64||aarch64) +@KERNEL_HUGETLB_PAGE +librt +libpthread +libbpf +libpcap +libopenssl +zlib +jansson +libelf +libarchive +libbsd +libkmod +libnuma +libfdt
   TITLE:=Set of libraries and drivers for fast packet processing
   URL:=https://www.dpdk.org
 endef
