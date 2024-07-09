@@ -422,6 +422,12 @@ menu "Network Drivers"
 		help
 			Wangxun 1 Gigabit Ethernet driver.
 
+	config LIBDPDK_DRIVER_TXGBE
+		bool "txgbe driver support"
+		default y
+		help
+			Wangxun 10 Gigabit Ethernet driver.
+
 	config LIBDPDK_DRIVER_OCTEON_EP
 		bool "octeon_ep driver support"
 		default n
