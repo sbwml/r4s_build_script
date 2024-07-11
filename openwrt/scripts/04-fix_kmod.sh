@@ -60,7 +60,6 @@ popd
 # xtables-addons
 rm -rf feeds/packages/net/xtables-addons
 cp -a ../master/packages/net/xtables-addons feeds/packages/net/xtables-addons
-curl -s https://$mirror/openwrt/patch/packages-patches/xtables-addons/202-fix-lua-packetscript-for-linux-6.6.patch > feeds/packages/net/xtables-addons/patches/202-fix-lua-packetscript-for-linux-6.6.patch
 
 # telephony
 pushd feeds/telephony
