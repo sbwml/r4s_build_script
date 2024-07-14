@@ -108,6 +108,15 @@ export ENABLE_LRNG=y
 export ENABLE_GLIBC=y
 ```
 
+### 启用本地 Kernel Modules 安装源 （For developers）
+##### 启用该标志时，将会拷贝全部 target packages 到 rootfs 并替换 openwrt_core 源为本地方式，以供离线 `opkg install kmod-xxx` 安装操作
+##### 这会增加固件文件大小（大约 70MB），对项目内核版本、模块、补丁 有修改的需求时，该功能可能会有用
+##### 只需在构建固件前执行以下命令即可启用本地 Kernel Modules 安装源
+
+```
+export ENABLE_LOCAL_KMOD=y
+```
+
 ### 启用 [DPDK](https://www.dpdk.org/) 支持
 ##### DPDK（Data Plane Development Kit）是一个开源工具集，专为加速数据包处理而设计，通过优化的数据平面技术，实现高性能、低延迟的网络应用
 ##### 只需在构建固件前执行以下命令即可启用 DPDK 工具集支持

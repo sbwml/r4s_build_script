@@ -36,6 +36,9 @@ curl -s https://$mirror/openwrt/patch/generic/0005-rootfs-add-r-w-permissions-fo
 # build: kernel: add out-of-tree kernel config
 curl -s https://$mirror/openwrt/patch/generic/0006-build-kernel-add-out-of-tree-kernel-config.patch | patch -p1
 
+# rootfs: Add support for local kmod installation sources
+curl -s https://$mirror/openwrt/patch/generic/0007-rootfs-Add-support-for-local-kmod-installation-sourc.patch | patch -p1
+
 # meson: add platform variable to cross-compilation file
 curl -s https://$mirror/openwrt/patch/generic/010-meson-add-platform-variable-to-cross-compilation-file.patch | patch -p1
 
