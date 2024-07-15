@@ -151,9 +151,8 @@ cp -a ../master/openwrt/package/kernel/rtl8812au-ct package/kernel/rtl8812au-ct
 # add rtl8812au-ac
 git clone https://$github/sbwml/package_kernel_rtl8812au-ac package/kernel/rtl8812au-ac
 
-# mt76 - main
-rm -rf package/kernel/mt76
-cp -a ../master/openwrt/package/kernel/mt76 package/kernel/mt76
+# mt76 - 2024-05-17
+curl -s https://$mirror/openwrt/patch/mt76/Makefile > package/kernel/mt76/Makefile
 
 # iwinfo: add mt7922 device id
 mkdir -p package/network/utils/iwinfo/patches
@@ -169,7 +168,7 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.x/500-world-regd-5GHz.patch > pa
 
 # mac80211 - fix linux 6.6 & add rtw89
 rm -rf package/kernel/mac80211
-git clone https://$github/sbwml/package_kernel_mac80211 package/kernel/mac80211
+git clone https://$github/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b v6.6.15
 
 # mac80211/patches/rtl - rtw88
 mkdir -p package/kernel/mac80211/patches/rtl
