@@ -326,13 +326,12 @@ sed -i 's/procd_set_param stderr 1/procd_set_param stderr 0/g' feeds/packages/ut
 
 # UPnP
 rm -rf feeds/packages/net/miniupnpd
-git clone https://$gitea/sbwml/miniupnpd feeds/packages/net/miniupnpd
+git clone https://$gitea/sbwml/miniupnpd feeds/packages/net/miniupnpd -b v2.3.6
 rm -rf feeds/luci/applications/luci-app-upnp
 git clone https://$gitea/sbwml/luci-app-upnp feeds/luci/applications/luci-app-upnp
 pushd feeds/packages
     curl -s https://$mirror/openwrt/patch/miniupnpd/01-set-presentation_url.patch | patch -p1
     curl -s https://$mirror/openwrt/patch/miniupnpd/02-force_forwarding.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/miniupnpd/03-Update-301-options-force_forwarding-support.patch.patch | patch -p1
     curl -s https://$mirror/openwrt/patch/miniupnpd/04-enable-force_forwarding-by-default.patch | patch -p1
 popd
 
