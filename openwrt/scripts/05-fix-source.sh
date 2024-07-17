@@ -82,7 +82,9 @@ fi
 # fix gcc-15
 if [ "$USE_GCC15" = y ]; then
     # Mbedtls
-    curl -s https://$mirror/openwrt/patch/mbedtls-23.05/901-tests-fix-string-initialization-error-on-gcc15.patch > package/libs/mbedtls/patches/901-tests-fix-string-initialization-error-on-gcc15.patch
+    curl -s https://$mirror/openwrt/patch/gcc-15-dev/mbedtls/901-tests-fix-string-initialization-error-on-gcc15.patch > package/libs/mbedtls/patches/901-tests-fix-string-initialization-error-on-gcc15.patch
+    # elfutils
+    curl -s https://$mirror/openwrt/patch/gcc-15-dev/elfutils/901-backends-fix-string-initialization-error-on-gcc15.patch > package/libs/elfutils/patches/901-backends-fix-string-initialization-error-on-gcc15.patch
 fi
 
 # xdp-tools
