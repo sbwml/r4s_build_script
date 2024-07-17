@@ -144,9 +144,9 @@ popd
 rm -rf package/firmware/linux-firmware
 git clone https://$github/sbwml/package_firmware_linux-firmware package/firmware/linux-firmware
 
-# rtl8812au-ct - fix linux-6.1
+# rtl8812au-ct - fix linux-6.6
 rm -rf package/kernel/rtl8812au-ct
-cp -a ../master/openwrt/package/kernel/rtl8812au-ct package/kernel/rtl8812au-ct
+git clone https://$github/sbwml/package_kernel_rtl8812au-ct package/kernel/rtl8812au-ct
 
 # add rtl8812au-ac
 git clone https://$github/sbwml/package_kernel_rtl8812au-ac package/kernel/rtl8812au-ac
