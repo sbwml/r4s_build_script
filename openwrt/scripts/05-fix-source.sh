@@ -79,6 +79,12 @@ if [ "$USE_GCC14" = y ] || [ "$USE_GCC15" = y ]; then
     fi
 fi
 
+# fix gcc-15
+if [ "$USE_GCC15" = y ]; then
+    # Mbedtls
+    curl -s https://$mirror/openwrt/patch/mbedtls-23.05/901-tests-fix-string-initialization-error-on-gcc15.patch > package/libs/mbedtls/patches/901-tests-fix-string-initialization-error-on-gcc15.patch
+fi
+
 # xdp-tools
 [ "$platform" != "x86_64" ] && sed -i '/TARGET_LDFLAGS +=/iTARGET_CFLAGS += -Wno-error=maybe-uninitialized -ffat-lto-objects\n' package/network/utils/xdp-tools/Makefile
 [ "$platform" = "x86_64" ] && sed -i '/TARGET_LDFLAGS +=/iTARGET_CFLAGS += -ffat-lto-objects\n' package/network/utils/xdp-tools/Makefile
