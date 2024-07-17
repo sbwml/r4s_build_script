@@ -1,4 +1,4 @@
-From 18d4007ad731dfa625a6c03d1a946c453d7b92f2 Mon Sep 17 00:00:00 2001
+From 92b82f0545fa658e358a85db8c7acee706c5c520 Mon Sep 17 00:00:00 2001
 From: Andre Heider <a.heider@gmail.com>
 Date: Fri, 27 Jan 2023 16:35:46 +0100
 Subject: [PATCH 1/8] build: add support to use the mold linker for packages
@@ -12,10 +12,10 @@ Signed-off-by: Andre Heider <a.heider@gmail.com>
  1 file changed, 5 insertions(+)
 
 diff --git a/include/package.mk b/include/package.mk
-index c391d320aa..1791d6d9d4 100644
+index 802e33a..6988e5f 100644
 --- a/include/package.mk
 +++ b/include/package.mk
-@@ -55,6 +55,11 @@ ifeq ($(call pkg_build_flag,lto,$(if $(CONFIG_USE_LTO),1,0)),1)
+@@ -59,6 +59,11 @@ ifeq ($(call pkg_build_flag,lto,$(if $(CONFIG_USE_LTO),1,0)),1)
    TARGET_CXXFLAGS+= -flto=auto -fno-fat-lto-objects
    TARGET_LDFLAGS+= -flto=auto -fuse-linker-plugin
  endif
@@ -28,5 +28,5 @@ index c391d320aa..1791d6d9d4 100644
  include $(INCLUDE_DIR)/hardening.mk
  include $(INCLUDE_DIR)/prereq.mk
 -- 
-2.39.3
+2.43.5
 

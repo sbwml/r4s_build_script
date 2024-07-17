@@ -1,7 +1,7 @@
-From 8efa075165c3ebb21cb0f7d4eea155b337e60b09 Mon Sep 17 00:00:00 2001
+From 3f003e591567a7640b2d61f0bffc11ac9ff7c7dc Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Sun, 7 Jul 2024 18:51:18 +0800
-Subject: [PATCH] build: kernel: add out-of-tree kernel config
+Subject: [PATCH 6/7] build: kernel: add out-of-tree kernel config
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
@@ -111,5 +111,5 @@ index b8a1479..408bf2f 100644
  
  define Kernel/Configure/Default
 -- 
-2.39.3
+2.43.5
 

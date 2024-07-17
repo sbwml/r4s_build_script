@@ -1,7 +1,7 @@
-From 7273b6009d71769f8d8e5e9cb475ee7f65385573 Mon Sep 17 00:00:00 2001
+From b9575ea4cfe2acf4e7e19635f7bf6a5a40ea75ca Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
-Date: Wed, 1 May 2024 07:07:01 +0800
-Subject: [PATCH 8/8] tools/mold: update to 2.30.0
+Date: Wed, 17 Jul 2024 08:51:39 +0800
+Subject: [PATCH 8/8] tools/mold: update to 2.32.1
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
@@ -9,7 +9,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/tools/mold/Makefile b/tools/mold/Makefile
-index e8fcecbfed..8effd08aa1 100644
+index e8fcecb..f6efb80 100644
 --- a/tools/mold/Makefile
 +++ b/tools/mold/Makefile
 @@ -3,12 +3,11 @@
@@ -17,17 +17,17 @@ index e8fcecbfed..8effd08aa1 100644
  
  PKG_NAME:=mold
 -PKG_VERSION:=1.11.0
-+PKG_VERSION:=2.31.0
++PKG_VERSION:=2.32.1
  
  PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 -PKG_SOURCE_URL_FILE:=v$(PKG_VERSION).tar.gz
 -PKG_SOURCE_URL:=https://github.com/rui314/mold/archive/refs/tags
 -PKG_HASH:=99318eced81b09a77e4c657011076cc8ec3d4b6867bd324b8677974545bc4d6f
 +PKG_SOURCE_URL:=https://codeload.github.com/rui314/mold/tar.gz/v$(PKG_VERSION)?
-+PKG_HASH:=3dc3af83a5d22a4b29971bfad17261851d426961c665480e2ca294e5c74aa1e5
++PKG_HASH:=f3c9a527d884c635834fe7d79b3de959b00783bf9446280ea274d996f0335825
  
  include $(INCLUDE_DIR)/host-build.mk
  include $(INCLUDE_DIR)/cmake.mk
 -- 
-2.39.3
+2.43.5
 

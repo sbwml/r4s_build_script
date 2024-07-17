@@ -96,7 +96,7 @@ sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages
 
 # vim - fix E1187: Failed to source defaults.vim
 pushd feeds/packages
-    curl -s https://github.com/openwrt/packages/commit/699d3fbee266b676e21b7ed310471c0ed74012c9.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/vim/0001-vim-fix-renamed-defaults-config-file.patch | patch -p1
 popd
 
 # bpf - add host clang-15/17 support

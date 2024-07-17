@@ -1,0 +1,75 @@
+From 7388298a7c008c1b999ae3f819ad6308738ea733 Mon Sep 17 00:00:00 2001
+From: Leonard de Vries <leonard@envitron.com>
+Date: Thu, 21 Sep 2023 09:40:12 +0200
+Subject: [PATCH] vim: fix renamed defaults config file
+
+Since vim version 9 the config file has been renamed from vimrc to defaults.vim.
+The syntax also has been changed however this new version is not the default,
+therefore the config doesn't need a change.
+
+Signed-off-by: Leonard de Vries <leonard@envitron.com>
+---
+ utils/vim/Makefile                                | 10 +++++-----
+ utils/vim/files/{vimrc => defaults.vim}           |  0
+ utils/vim/files/{vimrc.full => defaults.vim.full} |  0
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+ rename utils/vim/files/{vimrc => defaults.vim} (100%)
+ rename utils/vim/files/{vimrc.full => defaults.vim.full} (100%)
+
+diff --git a/utils/vim/Makefile b/utils/vim/Makefile
+index 125acbf99..59ae674fa 100644
+--- a/utils/vim/Makefile
++++ b/utils/vim/Makefile
+@@ -73,12 +73,12 @@ define Package/xxd
+ endef
+ 
+ define Package/vim-full/conffiles
+-/usr/share/vim/vimrc
++/usr/share/vim/defaults.vim
+ /root/.vimrc
+ endef
+ 
+ define Package/vim/conffiles
+-/usr/share/vim/vimrc
++/usr/share/vim/defaults.vim
+ /root/.vimrc
+ endef
+ 
+@@ -208,7 +208,7 @@ define Package/vim/install
+ 	$(INSTALL_DIR) $(1)/usr/bin
+ 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/vim_tiny $(1)/usr/bin/vim
+ 	$(INSTALL_DIR) $(1)/usr/share/vim
+-	$(INSTALL_CONF) ./files/vimrc $(1)/usr/share/vim/
++	$(INSTALL_CONF) ./files/defaults.vim $(1)/usr/share/vim/
+ endef
+ 
+ define Package/vim-full/install
+@@ -216,7 +216,7 @@ define Package/vim-full/install
+ 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/vim_normal $(1)/usr/bin/vim
+ 	$(INSTALL_DIR) $(1)/usr/share/vim
+ 	$(LN) vim $(1)/usr/bin/vimdiff
+-	$(INSTALL_CONF) ./files/vimrc.full $(1)/usr/share/vim/vimrc
++	$(INSTALL_CONF) ./files/defaults.vim.full $(1)/usr/share/vim/defaults.vim
+ endef
+ 
+ 
+@@ -226,7 +226,7 @@ define Package/vim-fuller/install
+ 	$(INSTALL_DIR) $(1)/usr/share/vim
+ 	$(LN) vim $(1)/usr/bin/vimdiff
+ 	$(CP) $(PKG_INSTALL_DIR)/usr/share/vim/vim$(VIMVER) $(1)/usr/share/vim
+-	$(INSTALL_CONF) ./files/vimrc.full $(1)/usr/share/vim/vimrc
++	$(INSTALL_CONF) ./files/defaults.vim.full $(1)/usr/share/vim/defaults.vim
+ endef
+ 
+ 
+diff --git a/utils/vim/files/vimrc b/utils/vim/files/defaults.vim
+similarity index 100%
+rename from utils/vim/files/vimrc
+rename to utils/vim/files/defaults.vim
+diff --git a/utils/vim/files/vimrc.full b/utils/vim/files/defaults.vim.full
+similarity index 100%
+rename from utils/vim/files/vimrc.full
+rename to utils/vim/files/defaults.vim.full
+-- 
+2.43.5
+

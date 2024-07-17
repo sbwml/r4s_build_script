@@ -1,7 +1,7 @@
-From 2d904d33f186881bfd14aec41a72e3e29004842a Mon Sep 17 00:00:00 2001
+From 910f99cb7ede0303321b1062507681685b660925 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Sun, 14 Jul 2024 12:43:06 +0800
-Subject: [PATCH] rootfs: Add support for local kmod installation sources
+Subject: [PATCH 7/7] rootfs: Add support for local kmod installation sources
 
 * CONFIG_TARGET_ROOTFS_LOCAL_PACKAGES=y
 
@@ -12,10 +12,10 @@ Signed-off-by: sbwml <admin@cooluc.com>
  2 files changed, 14 insertions(+)
 
 diff --git a/config/Config-images.in b/config/Config-images.in
-index ea7b3d3..09bfc3e 100644
+index c32fa00..79d89f5 100644
 --- a/config/Config-images.in
 +++ b/config/Config-images.in
-@@ -317,4 +317,12 @@ menu "Target Images"
+@@ -318,4 +318,12 @@ menu "Target Images"
  		  across reboots. When enabled, /var/run will still be linked
  		  to /tmp/run.
  
@@ -46,5 +46,5 @@ index f8bc2ed..06662d4 100644
  	$(call mklibs,$(1))
  	$(if $(SOURCE_DATE_EPOCH),find $(1)/ -mindepth 1 -execdir touch -hcd "@$(SOURCE_DATE_EPOCH)" "{}" +)
 -- 
-2.39.3
+2.43.5
 

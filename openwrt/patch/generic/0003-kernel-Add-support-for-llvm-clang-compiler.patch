@@ -1,7 +1,7 @@
-From 565a2dcf90271ab7494c744a20f21097f60de0b8 Mon Sep 17 00:00:00 2001
+From 59e101ebf7ac9ffe7b9dfd82a6e41050dbc5d13f Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Mon, 6 May 2024 03:21:07 +0800
-Subject: [PATCH] kernel: Add support for llvm/clang compiler
+Subject: [PATCH 3/7] kernel: Add support for llvm/clang compiler
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
@@ -98,5 +98,5 @@ index c391d32..802e33a 100644
  __unknown_flags=$(filter-out no-iremap no-mips16 gc-sections no-gc-sections lto no-lto,$(PKG_BUILD_FLAGS))
  ifneq ($(__unknown_flags),)
 -- 
-2.42.0
+2.43.5
 

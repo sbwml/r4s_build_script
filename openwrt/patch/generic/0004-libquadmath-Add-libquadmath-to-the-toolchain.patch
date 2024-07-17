@@ -1,7 +1,7 @@
-From 76c863fe607d7f457f6d1e9ca26f634383fb5f57 Mon Sep 17 00:00:00 2001
+From 6547a0bb12550411d4bf880e718759d5ea81db1e Mon Sep 17 00:00:00 2001
 From: Carlos Miguel Ferreira <carlosmf.pt@gmail.com>
 Date: Wed, 12 Jun 2024 01:20:59 +0100
-Subject: [PATCH] libquadmath: Add libquadmath to the toolchain
+Subject: [PATCH 4/7] libquadmath: Add libquadmath to the toolchain
 
 This commit makes the libquadmath library available to the GCC
 toolchain. This library is important for libraries such as
@@ -87,3 +87,6 @@ index f9f8ac9..8066e35 100644
  $(eval $(call BuildPackage,libstdcpp))
  $(eval $(call BuildPackage,libasan))
  $(eval $(call BuildPackage,libtsan))
+-- 
+2.43.5
+

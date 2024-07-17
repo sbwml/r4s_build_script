@@ -1,7 +1,7 @@
-From 1ef366ede35af39fab592543f3d9faa63f90ecb8 Mon Sep 17 00:00:00 2001
+From 79765552324d8c08e31e7ab80a53b1a29654d473 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Sun, 7 Apr 2024 04:08:40 +0800
-Subject: [PATCH] rootfs: add upx compression support
+Subject: [PATCH 2/7] rootfs: add upx compression support
 
 * When the upx_list.txt file exists in the source code root directory,
   it will be compressed by upx.
@@ -34,5 +34,5 @@ index f2ed648..eb69a99 100644
  	$(call mklibs,$(1))
  	$(if $(SOURCE_DATE_EPOCH),find $(1)/ -mindepth 1 -execdir touch -hcd "@$(SOURCE_DATE_EPOCH)" "{}" +)
 -- 
-2.39.3
+2.43.5
 
