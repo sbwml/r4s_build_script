@@ -152,6 +152,7 @@ cp -a ../master/openwrt/package/kernel/rtl8812au-ct package/kernel/rtl8812au-ct
 git clone https://$github/sbwml/package_kernel_rtl8812au-ac package/kernel/rtl8812au-ac
 
 # mt76 - 2024-05-17
+rm -rf package/kernel/mt76/patches
 curl -s https://$mirror/openwrt/patch/mt76/Makefile > package/kernel/mt76/Makefile
 
 # iwinfo: add mt7922 device id
