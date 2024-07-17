@@ -85,6 +85,8 @@ if [ "$USE_GCC15" = y ]; then
     curl -s https://$mirror/openwrt/patch/gcc-15-dev/mbedtls/901-tests-fix-string-initialization-error-on-gcc15.patch > package/libs/mbedtls/patches/901-tests-fix-string-initialization-error-on-gcc15.patch
     # elfutils
     curl -s https://$mirror/openwrt/patch/gcc-15-dev/elfutils/901-backends-fix-string-initialization-error-on-gcc15.patch > package/libs/elfutils/patches/901-backends-fix-string-initialization-error-on-gcc15.patch
+    # libwebsockets
+    curl -s https://$mirror/openwrt/patch/gcc-15-dev/libwebsockets/901-fix-string-initialization-error-on-gcc15.patch > feeds/packages/libs/libwebsockets/patches/901-fix-string-initialization-error-on-gcc15.patch
 fi
 
 # xdp-tools
