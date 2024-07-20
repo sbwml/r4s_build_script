@@ -1,0 +1,28 @@
+From 174eb9e201f84530d22c98c21e0c6a9d8d86dfac Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Wed, 17 Jul 2024 17:18:48 +0800
+Subject: [PATCH] tests fix string initialization error on gcc15
+
+Increase the size of the unsigned char ciphertext array from 32 to 34 to accommodate the full string and the null terminator, thereby fixing the initializer-string for array error in psa_exercise_key.c.
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ tests/src/psa_exercise_key.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/src/psa_exercise_key.c b/tests/src/psa_exercise_key.c
+index 7105324..c1751d7 100644
+--- a/tests/src/psa_exercise_key.c
++++ b/tests/src/psa_exercise_key.c
+@@ -150,7 +150,7 @@ static int exercise_cipher_key(mbedtls_svc_key_id_t key,
+     psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+     psa_key_type_t key_type;
+     const unsigned char plaintext[16] = "Hello, world...";
+-    unsigned char ciphertext[32] = "(wabblewebblewibblewobblewubble)";
++    unsigned char ciphertext[34] = "(wabblewebblewibblewobblewubble)";
+     size_t ciphertext_length = sizeof(ciphertext);
+     unsigned char decrypted[sizeof(ciphertext)];
+     size_t part_length;
+-- 
+2.43.5
+
