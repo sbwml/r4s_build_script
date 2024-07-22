@@ -43,7 +43,7 @@ index f5db99f..24c6535 100644
  
 -PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
 +ifeq ($(PKG_VERSION),15.0.0)
-+  PKG_SOURCE_URL:=https://us.cooluc.com/gcc/gcc-$(PKG_VERSION)
++  PKG_SOURCE_URL:=https://us.cooluc.com/gcc
 +else
 +  PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
 +endif
