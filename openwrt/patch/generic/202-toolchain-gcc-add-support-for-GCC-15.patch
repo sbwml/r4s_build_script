@@ -43,7 +43,7 @@ index f5db99f..24c6535 100644
  
 -PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
 +ifeq ($(PKG_VERSION),15.0.0)
-+  PKG_SOURCE_URL:=https://github.com/sbwml/gcc/releases/download/gcc-$(PKG_VERSION)
++  PKG_SOURCE_URL:=https://us.cooluc.com/gcc
 +else
 +  PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
 +endif
@@ -55,7 +55,7 @@ index f5db99f..24c6535 100644
  endif
  
 +ifeq ($(PKG_VERSION),15.0.0)
-+  PKG_HASH:=fc150b3d089a0d944096f4ec3e059811f6922e5888e5bac7d516de9fc5cf402b
++  PKG_HASH:=29281a902c3011a7ab3899f1102bb9aff9ad7a0e8f92262472f00f2fcfe72d3b
 +endif
 +
  PATCH_DIR=../patches-$(GCC_MAJOR_VERSION).x

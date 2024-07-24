@@ -442,30 +442,37 @@ start_seconds=$(date --date="$starttime" +%s);
 end_seconds=$(date --date="$endtime" +%s);
 SEC=$((end_seconds-start_seconds));
 
+if [ -f bin/targets/*/*/sha256sums ]; then
+    echo -e "${GREEN_COLOR} Build success! ${RES}"
+    echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
+else
+    echo -e "\n${RED_COLOR} Build error... ${RES}"
+    echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
+    echo
+    exit 1
+fi
+
 if [ "$platform" = "x86_64" ]; then
-    if [ -f bin/targets/x86/64*/*-ext4-combined-efi.img.gz ]; then
-        echo -e "${GREEN_COLOR} Build success! ${RES}"
-        echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
-        if [ "$ALL_KMODS" = y ]; then
-            cp -a bin/targets/x86/*/packages $kmodpkg_name
-            rm -f $kmodpkg_name/Packages*
-            # driver firmware
-            cp -a bin/packages/x86_64/base/*firmware*.ipk $kmodpkg_name/
-            bash kmod-sign $kmodpkg_name
-            tar zcf x86_64-$kmodpkg_name.tar.gz $kmodpkg_name
-            rm -rf $kmodpkg_name
+    if [ "$ALL_KMODS" = y ]; then
+        cp -a bin/targets/x86/*/packages $kmodpkg_name
+        rm -f $kmodpkg_name/Packages*
+        # driver firmware
+        cp -a bin/packages/x86_64/base/*firmware*.ipk $kmodpkg_name/
+        bash kmod-sign $kmodpkg_name
+        tar zcf x86_64-$kmodpkg_name.tar.gz $kmodpkg_name
+        rm -rf $kmodpkg_name
+    fi
+    # OTA json
+    if [ "$1" = "rc2" ]; then
+        mkdir -p ota
+        if [ "$MINIMAL_BUILD" = "y" ]; then
+            BUILD_TYPE=minimal
+        else
+            BUILD_TYPE=releases
         fi
-        # OTA json
-        if [ "$1" = "rc2" ]; then
-            mkdir -p ota
-            if [ "$MINIMAL_BUILD" = "y" ]; then
-                BUILD_TYPE=minimal
-            else
-                BUILD_TYPE=releases
-            fi
-            VERSION=$(sed 's/v//g' version.txt)
-            SHA256=$(sha256sum bin/targets/x86/64*/*-generic-squashfs-combined-efi.img.gz | awk '{print $1}')
-            cat > ota/fw.json <<EOF
+        VERSION=$(sed 's/v//g' version.txt)
+        SHA256=$(sha256sum bin/targets/x86/64*/*-generic-squashfs-combined-efi.img.gz | awk '{print $1}')
+        cat > ota/fw.json <<EOF
 {
   "x86_64": [
     {
@@ -476,38 +483,29 @@ if [ "$platform" = "x86_64" ]; then
   ]
 }
 EOF
-        fi
-        # Backup download cache
-        if [ "$isCN" = "CN" ] && [ "$1" = "rc2" ]; then
-            rm -rf dl/geo* dl/go-mod-cache
-            tar cf ../dl.gz dl
-        fi
-        exit 0
-    else
-        echo -e "\n${RED_COLOR} Build error... ${RES}"
-        echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
-        echo
-        exit 1
     fi
+    # Backup download cache
+    if [ "$isCN" = "CN" ] && [ "$1" = "rc2" ]; then
+        rm -rf dl/geo* dl/go-mod-cache
+        tar cf ../dl.gz dl
+    fi
+    exit 0
 elif [ "$platform" = "armv8" ]; then
-    if [ -f bin/targets/armsr/armv8*/*-generic-squashfs-combined-efi.img.gz ]; then
-        echo -e "${GREEN_COLOR} Build success! ${RES}"
-        echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
-        if [ "$ALL_KMODS" = y ]; then
-            cp -a bin/targets/armsr/armv8*/packages $kmodpkg_name
-            rm -f $kmodpkg_name/Packages*
-            # driver firmware
-            cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
-            bash kmod-sign $kmodpkg_name
-            tar zcf armv8-$kmodpkg_name.tar.gz $kmodpkg_name
-            rm -rf $kmodpkg_name
-        fi
-        # OTA json
-        if [ "$1" = "rc2" ]; then
-            mkdir -p ota
-            VERSION=$(sed 's/v//g' version.txt)
-            SHA256=$(sha256sum bin/targets/armsr/armv8*/*-generic-squashfs-combined-efi.img.gz | awk '{print $1}')
-            cat > ota/fw.json <<EOF
+    if [ "$ALL_KMODS" = y ]; then
+        cp -a bin/targets/armsr/armv8*/packages $kmodpkg_name
+        rm -f $kmodpkg_name/Packages*
+        # driver firmware
+        cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
+        bash kmod-sign $kmodpkg_name
+        tar zcf armv8-$kmodpkg_name.tar.gz $kmodpkg_name
+        rm -rf $kmodpkg_name
+    fi
+    # OTA json
+    if [ "$1" = "rc2" ]; then
+        mkdir -p ota
+        VERSION=$(sed 's/v//g' version.txt)
+        SHA256=$(sha256sum bin/targets/armsr/armv8*/*-generic-squashfs-combined-efi.img.gz | awk '{print $1}')
+        cat > ota/fw.json <<EOF
 {
   "armsr,armv8": [
     {
@@ -518,38 +516,29 @@ elif [ "$platform" = "armv8" ]; then
   ]
 }
 EOF
-        fi
-        exit 0
-    else
-        echo -e "\n${RED_COLOR} Build error... ${RES}"
-        echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
-        echo
-        exit 1
     fi
+    exit 0
 elif [ "$platform" = "bcm53xx" ]; then
-    if [ -f bin/targets/bcm53xx/generic/*netgear_r8500-squashfs.chk ]; then
-        echo -e "${GREEN_COLOR} Build success! ${RES}"
-        echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
-        if [ "$ALL_KMODS" = y ]; then
-            cp -a bin/targets/bcm53xx/generic/packages $kmodpkg_name
-            rm -f $kmodpkg_name/Packages*
-            # driver firmware
-            cp -a bin/packages/arm_cortex-a9/base/*firmware*.ipk $kmodpkg_name/
-            bash kmod-sign $kmodpkg_name
-            tar zcf bcm53xx-$kmodpkg_name.tar.gz $kmodpkg_name
-            rm -rf $kmodpkg_name
+    if [ "$ALL_KMODS" = y ]; then
+        cp -a bin/targets/bcm53xx/generic/packages $kmodpkg_name
+        rm -f $kmodpkg_name/Packages*
+        # driver firmware
+        cp -a bin/packages/arm_cortex-a9/base/*firmware*.ipk $kmodpkg_name/
+        bash kmod-sign $kmodpkg_name
+        tar zcf bcm53xx-$kmodpkg_name.tar.gz $kmodpkg_name
+        rm -rf $kmodpkg_name
+    fi
+    # OTA json
+    if [ "$1" = "rc2" ]; then
+        mkdir -p ota
+        if [ "$MINIMAL_BUILD" = "y" ]; then
+            BUILD_TYPE=minimal
+        else
+            BUILD_TYPE=releases
         fi
-        # OTA json
-        if [ "$1" = "rc2" ]; then
-            mkdir -p ota
-            if [ "$MINIMAL_BUILD" = "y" ]; then
-                BUILD_TYPE=minimal
-            else
-                BUILD_TYPE=releases
-            fi
-            VERSION=$(sed 's/v//g' version.txt)
-            SHA256=$(sha256sum bin/targets/bcm53xx/generic/*-bcm53xx-generic-netgear_r8500-squashfs.chk | awk '{print $1}')
-            cat > ota/fw.json <<EOF
+        VERSION=$(sed 's/v//g' version.txt)
+        SHA256=$(sha256sum bin/targets/bcm53xx/generic/*-bcm53xx-generic-netgear_r8500-squashfs.chk | awk '{print $1}')
+        cat > ota/fw.json <<EOF
 {
   "netgear,r8500": [
     {
@@ -560,39 +549,30 @@ elif [ "$platform" = "bcm53xx" ]; then
   ]
 }
 EOF
-        fi
-        exit 0
-    else
-        echo -e "\n${RED_COLOR} Build error... ${RES}"
-        echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
-        echo
-        exit 1
     fi
+    exit 0
 else
-    if [ -f bin/targets/rockchip/armv8*/*-r5s-ext4-sysupgrade.img.gz ] || [ -f bin/targets/rockchip/armv8*/*-r5c-ext4-sysupgrade.img.gz ] || [ -f bin/targets/rockchip/armv8*/*-r4s-ext4-sysupgrade.img.gz ]; then
-        if [ "$ALL_KMODS" = y ]; then
-            cp -a bin/targets/rockchip/armv8*/packages $kmodpkg_name
-            rm -f $kmodpkg_name/Packages*
-            # driver firmware
-            cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
-            bash kmod-sign $kmodpkg_name
-            tar zcf aarch64-$kmodpkg_name.tar.gz $kmodpkg_name
-            rm -rf $kmodpkg_name
+    if [ "$ALL_KMODS" = y ]; then
+        cp -a bin/targets/rockchip/armv8*/packages $kmodpkg_name
+        rm -f $kmodpkg_name/Packages*
+        # driver firmware
+        cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
+        bash kmod-sign $kmodpkg_name
+        tar zcf aarch64-$kmodpkg_name.tar.gz $kmodpkg_name
+        rm -rf $kmodpkg_name
+    fi
+    # OTA json
+    if [ "$1" = "rc2" ]; then
+        mkdir -p ota
+        if [ "$MINIMAL_BUILD" = "y" ]; then
+            BUILD_TYPE=minimal
+        else
+            BUILD_TYPE=releases
         fi
-        echo -e "${GREEN_COLOR} Build success! ${RES}"
-        echo -e " Build time: ${GREEN_COLOR}$(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s${RES}"
-        # OTA json
-        if [ "$1" = "rc2" ]; then
-            mkdir -p ota
-            if [ "$MINIMAL_BUILD" = "y" ]; then
-                BUILD_TYPE=minimal
-            else
-                BUILD_TYPE=releases
-            fi
-            VERSION=$(sed 's/v//g' version.txt)
-            if [ "$model" = "nanopi-r4s" ]; then
-                SHA256=$(sha256sum bin/targets/rockchip/armv8*/*-squashfs-sysupgrade.img.gz | awk '{print $1}')
-                cat > ota/fw.json <<EOF
+        VERSION=$(sed 's/v//g' version.txt)
+        if [ "$model" = "nanopi-r4s" ]; then
+            SHA256=$(sha256sum bin/targets/rockchip/armv8*/*-squashfs-sysupgrade.img.gz | awk '{print $1}')
+            cat > ota/fw.json <<EOF
 {
   "friendlyarm,nanopi-r4s": [
     {
@@ -603,10 +583,10 @@ else
   ]
 }
 EOF
-            elif [ "$model" = "nanopi-r5s" ]; then
-                SHA256_R5C=$(sha256sum bin/targets/rockchip/armv8*/*-r5c-squashfs-sysupgrade.img.gz | awk '{print $1}')
-                SHA256_R5S=$(sha256sum bin/targets/rockchip/armv8*/*-r5s-squashfs-sysupgrade.img.gz | awk '{print $1}')
-                cat > ota/fw.json <<EOF
+        elif [ "$model" = "nanopi-r5s" ]; then
+            SHA256_R5C=$(sha256sum bin/targets/rockchip/armv8*/*-r5c-squashfs-sysupgrade.img.gz | awk '{print $1}')
+            SHA256_R5S=$(sha256sum bin/targets/rockchip/armv8*/*-r5s-squashfs-sysupgrade.img.gz | awk '{print $1}')
+            cat > ota/fw.json <<EOF
 {
   "friendlyarm,nanopi-r5c": [
     {
@@ -624,20 +604,14 @@ EOF
   ]
 }
 EOF
-            fi
         fi
-        # Backup download cache
-        if [ "$isCN" = "CN" ] && [ "$version" = "rc2" ]; then
-            rm -rf dl/geo* dl/go-mod-cache
-            tar -cf ../dl.gz dl
-        fi
-        exit 0
-    else
-        echo -e "\n${RED_COLOR} Build error... ${RES}"
-        echo -e " Build time: ${RED_COLOR}$(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s${RES}"
-        echo
-        exit 1
     fi
+    # Backup download cache
+    if [ "$isCN" = "CN" ] && [ "$version" = "rc2" ]; then
+        rm -rf dl/geo* dl/go-mod-cache
+        tar -cf ../dl.gz dl
+    fi
+    exit 0
 fi
 
 # 很少有人会告诉你为什么要这样做，而是会要求你必须要这样做。
