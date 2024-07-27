@@ -180,3 +180,6 @@ git clone https://$github/sbwml/feeds_packages_utils_unzip feeds/packages/utils/
 
 # tcp-brutal
 git clone https://$github/sbwml/package_kernel_tcp-brutal package/kernel/tcp-brutal
+
+# watchcat - clean config
+true > feeds/packages/utils/watchcat/files/watchcat.config
