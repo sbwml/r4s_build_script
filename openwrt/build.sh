@@ -466,9 +466,9 @@ if [ "$platform" = "x86_64" ]; then
     if [ "$1" = "rc2" ]; then
         mkdir -p ota
         if [ "$MINIMAL_BUILD" = "y" ]; then
-            BUILD_TYPE=minimal
+            OTA_URL="https://x86.cooluc.com/d/minimal/openwrt-23.05"
         else
-            BUILD_TYPE=releases
+            OTA_URL="https://github.com/sbwml/builder/releases/download"
         fi
         VERSION=$(sed 's/v//g' version.txt)
         SHA256=$(sha256sum bin/targets/x86/64*/*-generic-squashfs-combined-efi.img.gz | awk '{print $1}')
@@ -478,7 +478,7 @@ if [ "$platform" = "x86_64" ]; then
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
-      "url": "https://github.com/sbwml/builder/releases/download/v$VERSION/openwrt-$VERSION-x86-64-generic-squashfs-combined-efi.img.gz"
+      "url": "$OTA_URL/v$VERSION/openwrt-$VERSION-x86-64-generic-squashfs-combined-efi.img.gz"
     }
   ]
 }
@@ -532,9 +532,9 @@ elif [ "$platform" = "bcm53xx" ]; then
     if [ "$1" = "rc2" ]; then
         mkdir -p ota
         if [ "$MINIMAL_BUILD" = "y" ]; then
-            BUILD_TYPE=minimal
+            OTA_URL="https://r8500.cooluc.com/d/minimal/openwrt-23.05"
         else
-            BUILD_TYPE=releases
+            OTA_URL="https://github.com/sbwml/builder/releases/download"
         fi
         VERSION=$(sed 's/v//g' version.txt)
         SHA256=$(sha256sum bin/targets/bcm53xx/generic/*-bcm53xx-generic-netgear_r8500-squashfs.chk | awk '{print $1}')
@@ -544,7 +544,7 @@ elif [ "$platform" = "bcm53xx" ]; then
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
-      "url": "https://github.com/sbwml/builder/releases/download/v$VERSION/openwrt-$VERSION-bcm53xx-generic-netgear_r8500-squashfs.chk"
+      "url": "$OTA_URL/v$VERSION/openwrt-$VERSION-bcm53xx-generic-netgear_r8500-squashfs.chk"
     }
   ]
 }
@@ -564,13 +564,10 @@ else
     # OTA json
     if [ "$1" = "rc2" ]; then
         mkdir -p ota
-        if [ "$MINIMAL_BUILD" = "y" ]; then
-            BUILD_TYPE=minimal
-        else
-            BUILD_TYPE=releases
-        fi
+        OTA_URL="https://github.com/sbwml/builder/releases/download"
         VERSION=$(sed 's/v//g' version.txt)
         if [ "$model" = "nanopi-r4s" ]; then
+            [ "$MINIMAL_BUILD" = "y" ] && OTA_URL="https://r4s.cooluc.com/d/minimal/openwrt-23.05"
             SHA256=$(sha256sum bin/targets/rockchip/armv8*/*-squashfs-sysupgrade.img.gz | awk '{print $1}')
             cat > ota/fw.json <<EOF
 {
@@ -578,12 +575,13 @@ else
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
-      "url": "https://github.com/sbwml/builder/releases/download/v$VERSION/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz"
+      "url": "$OTA_URL/v$VERSION/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz"
     }
   ]
 }
 EOF
         elif [ "$model" = "nanopi-r5s" ]; then
+            [ "$MINIMAL_BUILD" = "y" ] && OTA_URL="https://r5s.cooluc.com/d/minimal/openwrt-23.05"
             SHA256_R5C=$(sha256sum bin/targets/rockchip/armv8*/*-r5c-squashfs-sysupgrade.img.gz | awk '{print $1}')
             SHA256_R5S=$(sha256sum bin/targets/rockchip/armv8*/*-r5s-squashfs-sysupgrade.img.gz | awk '{print $1}')
             cat > ota/fw.json <<EOF
@@ -592,14 +590,14 @@ EOF
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256_R5C",
-      "url": "https://github.com/sbwml/builder/releases/download/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5c-squashfs-sysupgrade.img.gz"
+      "url": "$OTA_URL/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5c-squashfs-sysupgrade.img.gz"
     }
   ],
   "friendlyarm,nanopi-r5s": [
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256_R5S",
-      "url": "https://github.com/sbwml/builder/releases/download/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5s-squashfs-sysupgrade.img.gz"
+      "url": "$OTA_URL/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5s-squashfs-sysupgrade.img.gz"
     }
   ]
 }
