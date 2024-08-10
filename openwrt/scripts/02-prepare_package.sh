@@ -68,9 +68,6 @@ sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/smb.conf.te
 # rk3568 bind cpus
 [ "$platform" = "rk3568" ] && sed -i 's#/usr/sbin/smbd -F#/usr/bin/taskset -c 1,0 /usr/sbin/smbd -F#' feeds/packages/net/samba4/files/samba.init
 
-# samba4 user management
-git clone https://github.com/sbwml/luci-app-smbuser package/new/luci-app-smbuser
-
 # autoCore
 git clone https://$github/sbwml/autocore-arm -b openwrt-23.05 package/new/autocore
 
@@ -140,6 +137,9 @@ sed -i "s/D_GNU_SOURCE/D_GNU_SOURCE -funroll-loops/g" feeds/packages/net/iperf3/
 # nlbwmon
 sed -i 's/services/network/g' feeds/luci/applications/luci-app-nlbwmon/root/usr/share/luci/menu.d/luci-app-nlbwmon.json
 sed -i 's/services/network/g' feeds/luci/applications/luci-app-nlbwmon/htdocs/luci-static/resources/view/nlbw/config.js
+
+# mentohust
+git clone https://github.com/sbwml/luci-app-mentohust package/new/mentohust
 
 # custom packages
 rm -rf feeds/packages/utils/coremark

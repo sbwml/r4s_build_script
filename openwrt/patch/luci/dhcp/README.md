@@ -1,1 +1,1 @@
-### LuCI DHCP COMMIT: https://github.com/openwrt/luci/commit/89a9b5884fc205fc764d1771a9c6410bba74574a
+### LuCI DHCP COMMIT: https://github.com/openwrt/luci/commit/1f36628bc60f6e1f33667b025917eebec19d3162
