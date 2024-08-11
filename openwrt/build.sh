@@ -575,7 +575,7 @@ else
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
-      "url": "$OTA_URL/v$VERSION/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz"
+      "url": "$OTA_URL/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz"
     }
   ]
 }
