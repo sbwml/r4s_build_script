@@ -28,7 +28,7 @@ index 200a356..5675b9a 100644
  	string
  	default "11.3.0"	if GCC_VERSION_11
  	default "13.2.0"	if GCC_VERSION_13
- 	default "14.1.0"	if GCC_VERSION_14
+ 	default "14.2.0"	if GCC_VERSION_14
 +	default "15.0.0"	if GCC_VERSION_15
  	default "12.3.0"
  
@@ -50,12 +50,12 @@ index f5db99f..24c6535 100644
  PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
  PKG_CPE_ID:=cpe:/a:gnu:gcc
  
-@@ -46,6 +50,10 @@ ifeq ($(PKG_VERSION),14.1.0)
+@@ -46,6 +50,10 @@ ifeq ($(PKG_VERSION),14.2.0)
    PKG_HASH:=e283c654987afe3de9d8080bc0bd79534b5ca0d681a73a11ff2b5d3767426840
  endif
  
 +ifeq ($(PKG_VERSION),15.0.0)
-+  PKG_HASH:=29281a902c3011a7ab3899f1102bb9aff9ad7a0e8f92262472f00f2fcfe72d3b
++  PKG_HASH:=1be70eb828b6a0e8e6292e4a0ba27a5e8b5c920c5d5aa5ec88d7c3a53a2e398f
 +endif
 +
  PATCH_DIR=../patches-$(GCC_MAJOR_VERSION).x
