@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-# golang 1.22
+# golang 1.23
 rm -rf feeds/packages/lang/golang
 git clone https://$github/sbwml/packages_lang_golang -b 23.x feeds/packages/lang/golang
 
@@ -93,11 +93,6 @@ git clone https://$github/sbwml/openwrt_helloworld package/new/helloworld -b v5
 
 # DAED
 git clone https://$github/sbwml/luci-app-daed package/new/daed
-
-# immortalwrt homeproxy
-git clone https://$github/immortalwrt/homeproxy package/new/homeproxy
-sed -i "s/ImmortalWrt/OpenWrt/g" package/new/homeproxy/po/zh_Hans/homeproxy.po
-sed -i "s/ImmortalWrt proxy/OpenWrt proxy/g" package/new/homeproxy/htdocs/luci-static/resources/view/homeproxy/{client.js,server.js}
 
 # alist
 git clone https://$github/sbwml/openwrt-alist package/new/alist
