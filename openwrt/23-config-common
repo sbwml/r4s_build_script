@@ -92,6 +92,7 @@ CONFIG_PACKAGE_luci-app-diskman=y
 # CONFIG_PACKAGE_luci-app-filebrowser=y
 # CONFIG_PACKAGE_luci-app-frpc=y
 # CONFIG_PACKAGE_luci-app-gowebdav=y
+CONFIG_PACKAGE_luci-app-homeassistant=y
 # CONFIG_PACKAGE_luci-app-mentohust=y
 CONFIG_PACKAGE_luci-app-mosdns=y
 CONFIG_PACKAGE_luci-app-natmap=y
