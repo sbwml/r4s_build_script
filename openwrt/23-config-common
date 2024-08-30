@@ -115,6 +115,7 @@ CONFIG_PACKAGE_luci-app-vlmcsd=y
 CONFIG_PACKAGE_luci-app-wolplus=y
 # CONFIG_PACKAGE_luci-app-zerotier=y
 CONFIG_PACKAGE_ariang-nginx=y
+CONFIG_PACKAGE_luci-app-v2raya=y
 
 ### ImmortalWrt Proxy - nft
 # CONFIG_PACKAGE_luci-app-homeproxy=y
