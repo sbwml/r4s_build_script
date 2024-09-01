@@ -32,3 +32,6 @@ CONFIG_PACKAGE_rtl8851be-firmware=m
 CONFIG_PACKAGE_rtl8852ae-firmware=m
 CONFIG_PACKAGE_rtl8852be-firmware=m
 CONFIG_PACKAGE_rtl8852ce-firmware=m
+
+### MT76 firmware
+CONFIG_PACKAGE_mt7925-firmware=m

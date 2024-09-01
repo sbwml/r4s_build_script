@@ -169,17 +169,11 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.x/500-world-regd-5GHz.patch > pa
 
 # mac80211 - fix linux 6.6 & add rtw89
 rm -rf package/kernel/mac80211
-git clone https://$github/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b v6.6.15
+git clone https://$github/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b v6.9.9
 
-# mac80211/patches/rtl - rtw88
-mkdir -p package/kernel/mac80211/patches/rtl
-pushd package/kernel/mac80211/patches/rtl
-    curl -Os https://$mirror/openwrt/patch/mac80211/900-hack-rtw88-phy.patch
-    curl -Os https://$mirror/openwrt/patch/mac80211/901-wifi-rtw88-8822b-disable-call-trace-when-write-RF-mo.patch
-    curl -Os https://$mirror/openwrt/patch/mac80211/905-wifi-rtw88-add-missing-call-to-cancel_work_sync.patch
-    curl -Os https://$mirror/openwrt/patch/mac80211/906-wifi-rtw88-8821c-Fix-beacon-loss-and-disconnect.patch
-    curl -Os https://$mirror/openwrt/patch/mac80211/907-wifi-rtw88-usb-Add-magic-missing-from-register-acces.patch
-popd
+# ath10k-ct
+rm -rf package/kernel/ath10k-ct
+git clone https://$github/sbwml/package_kernel_ath10k-ct package/kernel/ath10k-ct
 
 # kernel patch
 # btf: silence btf module warning messages
