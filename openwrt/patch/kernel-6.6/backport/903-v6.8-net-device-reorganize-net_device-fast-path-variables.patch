@@ -237,7 +237,7 @@ Signed-off-by: Jakub Kicinski <kuba@kernel.org>
  #if IS_ENABLED(CONFIG_FCOE)
 --- a/net/core/dev.c
 +++ b/net/core/dev.c
-@@ -11618,6 +11618,60 @@ static struct pernet_operations __net_in
+@@ -11626,6 +11626,60 @@ static struct pernet_operations __net_in
  	.exit_batch = default_device_exit_batch,
  };
  
@@ -298,7 +298,7 @@ Signed-off-by: Jakub Kicinski <kuba@kernel.org>
  /*
   *	Initialize the DEV module. At boot time this walks the device list and
   *	unhooks any devices that fail to initialise (normally hardware not
-@@ -11667,6 +11721,8 @@ static int __init net_dev_init(void)
+@@ -11675,6 +11729,8 @@ static int __init net_dev_init(void)
  
  	BUG_ON(!dev_boot_phase);
  

@@ -31,7 +31,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -1198,6 +1198,21 @@ static inline bool tcp_skb_sent_after(u6
+@@ -1199,6 +1199,21 @@ static inline bool tcp_skb_sent_after(u6
  	return t1 > t2 || (t1 == t2 && after(seq1, seq2));
  }
  
@@ -55,7 +55,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
   * between different flows.
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -1546,7 +1546,7 @@ int tcp_fragment(struct sock *sk, enum t
+@@ -1548,7 +1548,7 @@ int tcp_fragment(struct sock *sk, enum t
  {
  	struct tcp_sock *tp = tcp_sk(sk);
  	struct sk_buff *buff;
@@ -64,7 +64,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	long limit;
  	int nlen;
  	u8 flags;
-@@ -1621,6 +1621,30 @@ int tcp_fragment(struct sock *sk, enum t
+@@ -1623,6 +1623,30 @@ int tcp_fragment(struct sock *sk, enum t
  
  		if (diff)
  			tcp_adjust_pcount(sk, skb, diff);

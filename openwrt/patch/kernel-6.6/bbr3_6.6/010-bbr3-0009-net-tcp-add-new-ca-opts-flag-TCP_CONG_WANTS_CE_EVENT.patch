@@ -23,7 +23,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -1034,7 +1034,11 @@ enum tcp_ca_ack_event_flags {
+@@ -1035,7 +1035,11 @@ enum tcp_ca_ack_event_flags {
  #define TCP_CONG_NON_RESTRICTED 0x1
  /* Requires ECN/ECT set on all packets */
  #define TCP_CONG_NEEDS_ECN	0x2
@@ -36,7 +36,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  
  union tcp_cc_info;
  
-@@ -1166,6 +1170,14 @@ static inline char *tcp_ca_get_name_by_k
+@@ -1167,6 +1171,14 @@ static inline char *tcp_ca_get_name_by_k
  }
  #endif
  
@@ -53,7 +53,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	const struct inet_connection_sock *icsk = inet_csk(sk);
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
-@@ -371,7 +371,7 @@ static void __tcp_ecn_check_ce(struct so
+@@ -376,7 +376,7 @@ static void __tcp_ecn_check_ce(struct so
  			tcp_enter_quickack_mode(sk, 2);
  		break;
  	case INET_ECN_CE:
@@ -62,7 +62,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  			tcp_ca_event(sk, CA_EVENT_ECN_IS_CE);
  
  		if (!(tp->ecn_flags & TCP_ECN_DEMAND_CWR)) {
-@@ -382,7 +382,7 @@ static void __tcp_ecn_check_ce(struct so
+@@ -387,7 +387,7 @@ static void __tcp_ecn_check_ce(struct so
  		tp->ecn_flags |= TCP_ECN_SEEN;
  		break;
  	default:
