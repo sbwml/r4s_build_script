@@ -27,6 +27,7 @@ CONFIG_LIBCURL_OPENSSL=y
 
 ### Firewall
 CONFIG_PACKAGE_nat6=y
+CONFIG_PACKAGE_natflow=y
 CONFIG_PACKAGE_ip6tables-nft=y
 CONFIG_PACKAGE_iptables-mod-conntrack-extra=y
 CONFIG_PACKAGE_iptables-mod-iprange=y

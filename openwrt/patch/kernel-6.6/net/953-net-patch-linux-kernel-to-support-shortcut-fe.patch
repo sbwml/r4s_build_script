@@ -108,7 +108,7 @@ Signed-off-by: Xiaoping Fan <xfan@codeaurora.org>
  	struct net_bridge_port *p;
 --- a/net/core/dev.c
 +++ b/net/core/dev.c
-@@ -3568,8 +3568,17 @@ static int xmit_one(struct sk_buff *skb,
+@@ -3594,8 +3594,17 @@ static int xmit_one(struct sk_buff *skb,
  	unsigned int len;
  	int rc;
  
@@ -126,7 +126,7 @@ Signed-off-by: Xiaoping Fan <xfan@codeaurora.org>
  
  #ifdef CONFIG_ETHERNET_PACKET_MANGLE
  	if (dev->eth_mangle_tx && !(skb = dev->eth_mangle_tx(dev, skb)))
-@@ -5308,6 +5317,11 @@ void netdev_rx_handler_unregister(struct
+@@ -5355,6 +5364,11 @@ void netdev_rx_handler_unregister(struct
  }
  EXPORT_SYMBOL_GPL(netdev_rx_handler_unregister);
  
@@ -138,7 +138,7 @@ Signed-off-by: Xiaoping Fan <xfan@codeaurora.org>
  /*
   * Limit the use of PFMEMALLOC reserves to those protocols that implement
   * the special handling of PFMEMALLOC skbs.
-@@ -5356,6 +5370,10 @@ static int __netif_receive_skb_core(stru
+@@ -5403,6 +5417,10 @@ static int __netif_receive_skb_core(stru
  	int ret = NET_RX_DROP;
  	__be16 type;
  
@@ -149,7 +149,7 @@ Signed-off-by: Xiaoping Fan <xfan@codeaurora.org>
  	net_timestamp_check(!READ_ONCE(netdev_tstamp_prequeue), skb);
  
  	trace_netif_receive_skb(skb);
-@@ -5393,6 +5411,15 @@ another_round:
+@@ -5440,6 +5458,15 @@ another_round:
  			goto out;
  	}
  

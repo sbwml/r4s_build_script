@@ -12,10 +12,6 @@ curl -s https://$mirror/openwrt/patch/packages-patches/gpio-button-hotplug/fix-l
 # gpio-nct5104d
 curl -s https://$mirror/openwrt/patch/packages-patches/gpio-nct5104d/fix-build-for-linux-6.6.patch | patch -p1
 
-# rtl8812au-ct
-sed -i 's/stringop-overread/stringop-overread \\/' package/kernel/rtl8812au-ct/Makefile
-sed -i '/stringop-overread/a \     -Wno-error=enum-conversion' package/kernel/rtl8812au-ct/Makefile
-
 # dmx_usb_module
 mkdir -p feeds/packages/libs/dmx_usb_module/patches
 curl -s https://$mirror/openwrt/patch/packages-patches/dmx_usb_module/900-fix-linux-6.6.patch > feeds/packages/libs/dmx_usb_module/patches/900-fix-linux-6.6.patch

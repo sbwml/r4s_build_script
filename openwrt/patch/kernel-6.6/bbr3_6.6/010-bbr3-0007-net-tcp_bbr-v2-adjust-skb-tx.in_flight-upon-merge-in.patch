@@ -39,7 +39,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
-@@ -1482,6 +1482,17 @@ static bool tcp_shifted_skb(struct sock
+@@ -1489,6 +1489,17 @@ static bool tcp_shifted_skb(struct sock
  	WARN_ON_ONCE(tcp_skb_pcount(skb) < pcount);
  	tcp_skb_pcount_add(skb, -pcount);
  

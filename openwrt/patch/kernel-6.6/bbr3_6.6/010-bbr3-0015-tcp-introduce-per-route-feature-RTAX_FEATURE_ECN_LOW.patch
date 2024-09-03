@@ -41,7 +41,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  
  enum tcp_tw_status {
  	TCP_TW_SUCCESS = 0,
-@@ -725,6 +726,15 @@ static inline void tcp_fast_path_check(s
+@@ -726,6 +727,15 @@ static inline void tcp_fast_path_check(s
  
  u32 tcp_delack_max(const struct sock *sk);
  
@@ -74,7 +74,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	__u8	proto;
 --- a/net/ipv4/tcp_minisocks.c
 +++ b/net/ipv4/tcp_minisocks.c
-@@ -435,6 +435,8 @@ void tcp_ca_openreq_child(struct sock *s
+@@ -434,6 +434,8 @@ void tcp_ca_openreq_child(struct sock *s
  	u32 ca_key = dst_metric(dst, RTAX_CC_ALGO);
  	bool ca_got_dst = false;
  
@@ -85,7 +85,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -332,10 +332,9 @@ static void tcp_ecn_send_syn(struct sock
+@@ -334,10 +334,9 @@ static void tcp_ecn_send_syn(struct sock
  	bool bpf_needs_ecn = tcp_bpf_ca_needs_ecn(sk);
  	bool use_ecn = READ_ONCE(sock_net(sk)->ipv4.sysctl_tcp_ecn) == 1 ||
  		tcp_ca_needs_ecn(sk) || bpf_needs_ecn;
@@ -97,7 +97,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  		if (dst && dst_feature(dst, RTAX_FEATURE_ECN))
  			use_ecn = true;
  	}
-@@ -347,6 +346,9 @@ static void tcp_ecn_send_syn(struct sock
+@@ -349,6 +348,9 @@ static void tcp_ecn_send_syn(struct sock
  		tp->ecn_flags = TCP_ECN_OK;
  		if (tcp_ca_needs_ecn(sk) || bpf_needs_ecn)
  			INET_ECN_xmit(sk);

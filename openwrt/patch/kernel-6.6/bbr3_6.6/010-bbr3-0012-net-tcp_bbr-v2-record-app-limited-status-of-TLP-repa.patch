@@ -35,7 +35,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	u8	chrono_type:2,	/* current chronograph type */
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -2938,6 +2938,7 @@ void tcp_send_loss_probe(struct sock *sk
+@@ -2940,6 +2940,7 @@ void tcp_send_loss_probe(struct sock *sk
  	if (WARN_ON(!skb || !tcp_skb_pcount(skb)))
  		goto rearm_timer;
  

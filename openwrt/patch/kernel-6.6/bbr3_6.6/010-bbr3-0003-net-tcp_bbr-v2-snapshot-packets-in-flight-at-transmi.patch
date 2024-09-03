@@ -27,7 +27,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -904,6 +904,10 @@ struct tcp_skb_cb {
+@@ -905,6 +905,10 @@ struct tcp_skb_cb {
  			u32 first_tx_mstamp;
  			/* when we reached the "delivered" count */
  			u32 delivered_mstamp;
@@ -38,7 +38,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  		} tx;   /* only used for outgoing skbs */
  		union {
  			struct inet_skb_parm	h4;
-@@ -1051,6 +1055,7 @@ struct rate_sample {
+@@ -1052,6 +1056,7 @@ struct rate_sample {
  	u64  prior_mstamp; /* starting timestamp for interval */
  	u32  prior_delivered;	/* tp->delivered at "prior_mstamp" */
  	u32  prior_delivered_ce;/* tp->delivered_ce at "prior_mstamp" */
@@ -46,7 +46,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	s32  delivered;		/* number of packets delivered over interval */
  	s32  delivered_ce;	/* number of packets delivered w/ CE marks*/
  	long interval_us;	/* time for tp->delivered to incr "delivered" */
-@@ -1173,6 +1178,7 @@ static inline void tcp_ca_event(struct s
+@@ -1174,6 +1179,7 @@ static inline void tcp_ca_event(struct s
  void tcp_set_ca_state(struct sock *sk, const u8 ca_state);
  
  /* From tcp_rate.c */
@@ -56,7 +56,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  			    struct rate_sample *rs);
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -2701,6 +2701,7 @@ static bool tcp_write_xmit(struct sock *
+@@ -2703,6 +2703,7 @@ static bool tcp_write_xmit(struct sock *
  			skb_set_delivery_time(skb, tp->tcp_wstamp_ns, true);
  			list_move_tail(&skb->tcp_tsorted_anchor, &tp->tsorted_sent_queue);
  			tcp_init_tso_segs(skb, mss_now);
