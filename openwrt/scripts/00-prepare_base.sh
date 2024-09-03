@@ -208,6 +208,7 @@ pushd feeds/luci
     curl -s https://$mirror/openwrt/patch/firewall4/03-luci-app-firewall_add_ipv6-nat.patch | patch -p1
     curl -s https://$mirror/openwrt/patch/firewall4/04-luci-add-firewall4-nft-rules-file.patch | patch -p1
     curl -s https://$mirror/openwrt/patch/firewall4/05-luci-app-firewall-add-natflow-option.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/firewall4/06-luci-app-firewall-optimize-Routing-NAT-Offloading-op.patch | patch -p1
 popd
 
 # openssl - quictls

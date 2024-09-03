@@ -1,0 +1,62 @@
+From 3cd1d1de6dcbbad0439cb1e334e4aaafa05d34c4 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Tue, 3 Sep 2024 17:45:30 +0800
+Subject: [PATCH] luci-app-firewall: optimize Routing/NAT Offloading options
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ .../resources/view/firewall/zones.js          | 24 +++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
+
+diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
+index 7ae011974c..339b17e37e 100644
+--- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
++++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
+@@ -112,7 +112,7 @@ return view.extend({
+ 			_('Shortcut-FE flow offloading'),
+ 			_('Shortcut-FE based offloading for routing/NAT'));
+ 			o.optional = true;
+-			o.depends('flow_offloading', '0');
++			// o.depends('flow_offloading', '0');
+ 
+ 			o = s.option(form.ListValue, 'shortcut_fe_module',
+ 			_('Connection Manager'),
+@@ -129,7 +129,7 @@ return view.extend({
+ 			_('Fast natflow offloading'),
+ 			_('Natflow based offloading for routing/NAT'));
+ 			o.optional = true;
+-			o.depends({ 'flow_offloading': '0', 'shortcut_fe': '0' });
++			// o.depends({ 'flow_offloading': '0', 'shortcut_fe': '0' });
+ 
+ 			o = s.option(form.Value, 'natflow_delay_pkts',
+ 			_('Natflow delay packet'),
+@@ -431,6 +431,26 @@ return view.extend({
+ 		o.filter = out.filter;
+ 		o.cfgvalue = out.cfgvalue;
+ 
++		setTimeout(function() {
++			const checkboxes = document.querySelectorAll('.cbi-checkbox input[type="checkbox"]');
++			checkboxes.forEach((checkbox) => {
++				const widgetId = checkbox.getAttribute('data-widget-id');
++				if ((widgetId.includes('flow_offloading') && !widgetId.includes('flow_offloading_hw')) || widgetId.includes('shortcut_fe') || widgetId.includes('natflow')) {
++					checkbox.addEventListener('change', function() {
++						if (this.checked) {
++							checkboxes.forEach((cb) => {
++								if (cb !== this && (cb.getAttribute('data-widget-id').includes('flow_offloading') ||
++									cb.getAttribute('data-widget-id').includes('shortcut_fe') ||
++									cb.getAttribute('data-widget-id').includes('natflow'))) {
++									cb.checked = false;
++								}
++							});
++						}
++					});
++				}
++			});
++		}, 200);
++
+ 		return m.render();
+ 	}
+ });
+-- 
+2.43.5
+
