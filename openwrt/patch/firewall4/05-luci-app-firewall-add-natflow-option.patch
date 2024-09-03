@@ -1,0 +1,40 @@
+From 22704004c6f0b1a17c086de149a6ed1bc5325bbc Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Tue, 3 Sep 2024 13:16:45 +0800
+Subject: [PATCH] luci-app-firewall: add natflow option
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ .../luci-static/resources/view/firewall/zones.js | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
+index a6995e3618..7ae011974c 100644
+--- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
++++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
+@@ -123,6 +123,22 @@ return view.extend({
+ 			o.depends('shortcut_fe', '1');
+ 		}
+ 
++		/* Fast natflow offload support */
++		if (L.hasSystemFeature('natflow')) {
++			o = s.option(form.Flag, 'natflow',
++			_('Fast natflow offloading'),
++			_('Natflow based offloading for routing/NAT'));
++			o.optional = true;
++			o.depends({ 'flow_offloading': '0', 'shortcut_fe': '0' });
++
++			o = s.option(form.Value, 'natflow_delay_pkts',
++			_('Natflow delay packet'),
++			_('Set up the natflow delay packet'));
++			o.datatype = 'and(uinteger,min(0))';
++			o.default = 0;
++			o.depends('natflow', '1');
++		}
++
+ 		s = m.section(form.GridSection, 'zone', _('Zones'));
+ 		s.addremove = true;
+ 		s.anonymous = true;
+-- 
+2.43.5
+
