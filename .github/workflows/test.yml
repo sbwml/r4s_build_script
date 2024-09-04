@@ -1,12 +1,19 @@
-name: Build releases
+name: show-env
 
 on:
   workflow_dispatch:
     inputs:
       device:
         description: 'Select device to build'
-        required: false
+        required: true
         default: 'x86_64'
+        type: choice
+        options:
+          - 'armv8'
+          - 'nanopi-r4s'
+          - 'nanopi-r5s'
+          - 'netgear_r8500'
+          - 'x86_64'
       build_options:
         description: 'Build options (separate multiple options with spaces)'
         required: false
@@ -25,7 +32,22 @@ jobs:
     - name: Setup variables
       run: |
         sudo timedatectl set-timezone 'Asia/Shanghai'
-        echo $GITHUB_ENV
         git config --global user.name 'actions'
         git config --global user.email 'action@github.com'
         echo WORKDIR="/builder" >> "$GITHUB_ENV"
+
+    - name: Show system
+      run: |
+        echo -e "\n\e[1;32mCPU:\e[0m"
+        echo "$(grep 'model name' /proc/cpuinfo | head -1 | awk -F ': ' '{print $2}') ($(grep 'cpu MHz' /proc/cpuinfo | head -1 | awk -F ': ' '{print $2}')MHz) x $(grep processor /proc/cpuinfo  | wc -l)"
+        echo -e "\n\e[1;32mMemory:\e[0m"
+        free -h
+        echo -e "\n\e[1;32menv:\e[0m"
+        echo $GITHUB_ENV
+        echo -e "\n\e[1;32mStorage:\e[0m"
+        df -Th / /mnt
+        echo -e "\n\e[1;32mSystem:\e[0m"
+        lsb_release -a
+        echo -e "\n\e[1;32mKernel:\e[0m"
+        uname -a
+        echo
