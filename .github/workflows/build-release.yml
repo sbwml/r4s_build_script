@@ -72,6 +72,9 @@ jobs:
         cd openwrt
         tags=$(git describe --abbrev=0 --tags)
         echo "latest_release=$tags" >>$GITHUB_ENV
+        
+    - name: ssh
+      uses: mxschmitt/action-tmate@v3
 
     - name: Extensive logs after a failed compilation
       working-directory: /builder
