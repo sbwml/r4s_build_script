@@ -61,8 +61,6 @@ jobs:
     - name: Install LLVM
       uses: sbwml/actions@install-llvm
       
-    - name: ssh
-      uses: mxschmitt/action-tmate@v3
       
     - name: Compile OpenWrt
       working-directory: /builder
@@ -76,7 +74,8 @@ jobs:
         tags=$(git describe --abbrev=0 --tags)
         echo "latest_release=$tags" >>$GITHUB_ENV
         
-
+    - name: ssh
+      uses: mxschmitt/action-tmate@v3
 
     - name: Extensive logs after a failed compilation
       working-directory: /builder
