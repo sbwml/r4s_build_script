@@ -76,6 +76,7 @@ jobs:
         
     - name: ssh
       uses: mxschmitt/action-tmate@v3
+      timeout-minutes: 300
 
     - name: Extensive logs after a failed compilation
       working-directory: /builder
