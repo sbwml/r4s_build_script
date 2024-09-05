@@ -17,7 +17,7 @@ on:
       build_options:
         description: 'Build options (separate multiple options with spaces)'
         required: false
-        default: 'ENABLE_MOLD=y KERNEL_CLANG_LTO=y ENABLE_LTO=y ENABLE_LTO=y ENABLE_BPF=y ENABLE_LRNG=y ENABLE_LOCAL_KMOD=y ENABLE_DPDK=y BUILD_FAST=y LAN=10.0.50.1'
+        default: 'USE_GCC14=y ENABLE_MOLD=y KERNEL_CLANG_LTO=y ENABLE_LTO=y ENABLE_LTO=y ENABLE_BPF=y ENABLE_LRNG=y ENABLE_LOCAL_KMOD=y ENABLE_DPDK=y BUILD_FAST=y LAN=10.0.50.1'
         type: string
 
 jobs:
