@@ -1,0 +1,65 @@
+From e62768ea9de7fcf554bce7ba8ed2e1f301863006 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Wed, 4 Sep 2024 12:34:17 +0800
+Subject: [PATCH 2/4] luci-app-firewall: add shortcut-fe option
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ .../resources/view/firewall/zones.js          | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
+index ac720831ef..f7c64e4379 100644
+--- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
++++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
+@@ -100,6 +100,21 @@ return view.extend({
+ 			o.depends('flow_offloading', '1');
+ 		}
+ 
++		/* Shortcut-FE flow offload support */
++		if (L.hasSystemFeature('shortcutfe')) {
++			o = s.option(form.Flag, 'shortcut_fe',
++			_('Shortcut-FE flow offloading'),
++			_('Shortcut-FE based offloading for routing/NAT'));
++			o.optional = true;
++
++			o = s.option(form.ListValue, 'shortcut_fe_module',
++			_('Connection Manager'),
++			_('Set up the Shortcut-FE engine connection manager'));
++			o.value('shortcut-fe-cm', _('shortcut-fe-cm'));
++			o.value('fast-classifier', _('fast-classifier'));
++			o.default = 'shortcut-fe-cm';
++			o.depends('shortcut_fe', '1');
++		}
+ 
+ 		s = m.section(form.GridSection, 'zone', _('Zones'));
+ 		s.addremove = true;
+@@ -393,6 +408,25 @@ return view.extend({
+ 		o.filter = out.filter;
+ 		o.cfgvalue = out.cfgvalue;
+ 
++		setTimeout(function() {
++			const checkboxes = document.querySelectorAll('.cbi-checkbox input[type="checkbox"]');
++			checkboxes.forEach((checkbox) => {
++				const widgetId = checkbox.getAttribute('data-widget-id');
++				if ((widgetId.includes('flow_offloading') && !widgetId.includes('flow_offloading_hw')) || widgetId.includes('shortcut_fe')) {
++					checkbox.addEventListener('change', function() {
++						if (this.checked) {
++							checkboxes.forEach((cb) => {
++								if (cb !== this && (cb.getAttribute('data-widget-id').includes('flow_offloading') ||
++									cb.getAttribute('data-widget-id').includes('shortcut_fe'))) {
++									cb.checked = false;
++								}
++							});
++						}
++					});
++				}
++			});
++		}, 500);
++
+ 		return m.render();
+ 	}
+ });
+-- 
+2.43.5
+
