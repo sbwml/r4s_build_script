@@ -21,6 +21,9 @@ CONFIG_PACKAGE_iptables-nft=y
 CONFIG_PACKAGE_xtables-nft=y
 # CONFIG_PACKAGE_iptables-legacy is not set
 
+# Natflow
+CONFIG_PACKAGE_natflow=m
+
 # SFE
 CONFIG_PACKAGE_kmod-fast-classifier=y
 CONFIG_PACKAGE_kmod-shortcut-fe-cm=y
