@@ -1,0 +1,18 @@
+#!/bin/sh
+
+device=`basename $DEVPATH`
+point=$device
+
+case "$ACTION" in
+	add)
+		mkdir -p /usb/$point
+		mount -o rw,noatime,discard /dev/$device /usb/$point
+		if [ -f "/usb/$point/recovery.txt" ]; then
+			echo y | firstboot
+			sleep 2
+			reboot
+		else
+			umount -l /usb/$point
+		fi
+		;;
+esac
