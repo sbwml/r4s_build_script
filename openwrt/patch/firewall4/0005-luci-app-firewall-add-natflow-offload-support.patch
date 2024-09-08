@@ -1,0 +1,55 @@
+From 518eadc602c8e61621c8c1091585a134d978d596 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Sun, 8 Sep 2024 03:40:30 +0800
+Subject: [PATCH] luci-app-firewall: add natflow offload support
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ .../resources/view/firewall/zones.js          | 20 +++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
+
+diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
+index 1bedd2c..522d001 100644
+--- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
++++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
+@@ -122,6 +122,21 @@ return view.extend({
+ 			o.depends('shortcut_fe', '1');
+ 		}
+ 
++		/* Natflow offload support */
++		if (L.hasSystemFeature('natflow')) {
++			o = s.option(form.Flag, 'natflow',
++			_('Natflow offloading'),
++			_('Natflow based offloading for routing/NAT'));
++			o.optional = true;
++
++			o = s.option(form.Value, 'natflow_delay_pkts',
++			_('Natflow delay packet'),
++			_('Set up the natflow delay packet'));
++			o.datatype = 'and(uinteger,min(0))';
++			o.default = 0;
++			o.depends('natflow', '1');
++		}
++
+ 		s = m.section(form.GridSection, 'zone', _('Zones'));
+ 		s.addremove = true;
+ 		s.anonymous = true;
+@@ -418,12 +433,13 @@ return view.extend({
+ 			const checkboxes = document.querySelectorAll('.cbi-checkbox input[type="checkbox"]');
+ 			checkboxes.forEach((checkbox) => {
+ 				const widgetId = checkbox.getAttribute('data-widget-id');
+-				if ((widgetId.includes('flow_offloading') && !widgetId.includes('flow_offloading_hw')) || widgetId.includes('shortcut_fe')) {
++				if ((widgetId.includes('flow_offloading') && !widgetId.includes('flow_offloading_hw')) || widgetId.includes('shortcut_fe') || widgetId.includes('natflow')) {
+ 					checkbox.addEventListener('change', function() {
+ 						if (this.checked) {
+ 							checkboxes.forEach((cb) => {
+ 								if (cb !== this && (cb.getAttribute('data-widget-id').includes('flow_offloading') ||
+-									cb.getAttribute('data-widget-id').includes('shortcut_fe'))) {
++									cb.getAttribute('data-widget-id').includes('shortcut_fe') ||
++									cb.getAttribute('data-widget-id').includes('natflow'))) {
+ 									cb.checked = false;
+ 								}
+ 							});
+-- 
+2.42.0
+
