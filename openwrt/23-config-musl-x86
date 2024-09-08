@@ -58,6 +58,8 @@ CONFIG_PACKAGE_kmod-sound-hda-intel=y
 CONFIG_PACKAGE_kmod-video-pwc=y
 CONFIG_PACKAGE_kmod-video-uvc=y
 CONFIG_PACKAGE_kmod-video-videobuf2=y
+CONFIG_PACKAGE_kmod-netem=y
+CONFIG_PACKAGE_kmod-sched-ctinfo=y
 
 ### Utilities
 CONFIG_PACKAGE_qemu-ga=y
