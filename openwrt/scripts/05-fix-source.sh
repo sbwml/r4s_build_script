@@ -30,9 +30,6 @@ if [ "$USE_GCC14" = y ] || [ "$USE_GCC15" = y ]; then
     # libunwind
     rm -rf package/libs/libunwind
     git clone https://$github/sbwml/package_libs_libunwind package/libs/libunwind
-    # lrzsz
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/lrzsz/900-lrzsz-fix-gcc14.patch > package/new/lrzsz/patches/900-lrzsz-fix-gcc14.patch
-    sed -i '/lrzsz\/install/iTARGET_CFLAGS += -Wno-implicit-function-declaration -Wno-builtin-declaration-mismatch -Wno-incompatible-pointer-types' package/new/lrzsz/Makefile
     # mbedtls
     curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/mbedtls/900-tests-fix-calloc-argument-list-gcc-14-fix.patch > package/libs/mbedtls/patches/900-tests-fix-calloc-argument-list-gcc-14-fix.patch
     # linux-atm
