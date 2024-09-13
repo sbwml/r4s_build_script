@@ -241,10 +241,11 @@ bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_scri
 ### 一、Fork 本仓库到自己 GitHub 存储库
 
 ### 二、构建固件
-- 在存储库名称下，单击（<img src="https://camo.githubusercontent.com/392391d290482f9c4881912eec0700ec2acef8e0d5d2e24b3f8b23d9354fa73e/68747470733a2f2f66696c652e636f6f6c75632e636f6d2f323232322e737667" alt="Actions"> Actions）。
+
+- 在存储库名称下，单击（<img src="https://github.com/user-attachments/assets/f1db14da-2dd9-4f10-8e37-d92ef9651912" alt="Actions"> Actions）。
   
 - 在左侧边栏中，单击要运行的工作流的名称：**Build releases**。
   
 - 在工作流运行的列表上方，单击“**Run workflow**”按钮，选择要构建的设备固件并运行工作流。
   
-  ![image](https://github.com/sbwml/r4s_build_script/assets/16485166/136abcd1-ecf3-4e6d-aa1a-5393a75a25cc)
+  ![image](https://github.com/user-attachments/assets/0c2eb064-a130-47b3-a5a3-1e9a9bb6f50d)

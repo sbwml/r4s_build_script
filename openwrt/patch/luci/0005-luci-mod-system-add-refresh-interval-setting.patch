@@ -1,3 +1,13 @@
+From 8596f6d48c24c063fd75f007b8e24cd011ac93fb Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Fri, 13 Sep 2024 19:47:13 +0800
+Subject: [PATCH 5/5] luci-mod-system: add refresh interval setting
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ .../htdocs/luci-static/resources/view/system/system.js    | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
 diff --git a/modules/luci-mod-system/htdocs/luci-static/resources/view/system/system.js b/modules/luci-mod-system/htdocs/luci-static/resources/view/system/system.js
 index 767bc8c..c8969ac 100644
 --- a/modules/luci-mod-system/htdocs/luci-static/resources/view/system/system.js
@@ -17,3 +27,6 @@ index 767bc8c..c8969ac 100644
  		/*
  		 * NTP
  		 */
+-- 
+2.42.0
+
