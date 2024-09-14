@@ -255,7 +255,7 @@ Subject: [PATCH 25/43] QUIC: add v1 quic_transport_parameters
          TLSEXT_TYPE_quic_transport_parameters,
          SSL_EXT_CLIENT_HELLO | SSL_EXT_TLS1_3_ENCRYPTED_EXTENSIONS
          | SSL_EXT_TLS_IMPLEMENTATION_ONLY | SSL_EXT_TLS1_3_ONLY,
-@@ -1752,8 +1762,37 @@ static int init_quic_transport_params(SS
+@@ -1746,8 +1756,37 @@ static int init_quic_transport_params(SS
      return 1;
  }
  
@@ -332,7 +332,7 @@ Subject: [PATCH 25/43] QUIC: add v1 quic_transport_parameters
          return EXT_RETURN_NOT_SENT;
      }
  
-@@ -2013,7 +2033,23 @@ int tls_parse_stoc_psk(SSL *s, PACKET *p
+@@ -2038,7 +2058,23 @@ int tls_parse_stoc_psk(SSL *s, PACKET *p
      return 1;
  }
  #ifndef OPENSSL_NO_QUIC
@@ -359,7 +359,7 @@ Subject: [PATCH 25/43] QUIC: add v1 quic_transport_parameters
  {
 --- a/ssl/statem/extensions_srvr.c
 +++ b/ssl/statem/extensions_srvr.c
-@@ -1233,7 +1233,22 @@ int tls_parse_ctos_post_handshake_auth(S
+@@ -1238,7 +1238,22 @@ int tls_parse_ctos_post_handshake_auth(S
  }
  
  #ifndef OPENSSL_NO_QUIC
@@ -383,7 +383,7 @@ Subject: [PATCH 25/43] QUIC: add v1 quic_transport_parameters
  int tls_parse_ctos_quic_transport_params(SSL *s, PACKET *pkt, unsigned int context,
                                           X509 *x, size_t chainidx)
  {
-@@ -1943,13 +1958,36 @@ EXT_RETURN tls_construct_stoc_psk(SSL *s
+@@ -1949,13 +1964,36 @@ EXT_RETURN tls_construct_stoc_psk(SSL *s
  }
  
  #ifndef OPENSSL_NO_QUIC
@@ -472,7 +472,7 @@ Subject: [PATCH 25/43] QUIC: add v1 quic_transport_parameters
  #endif
 --- a/test/sslapitest.c
 +++ b/test/sslapitest.c
-@@ -10816,7 +10816,13 @@ static SSL_QUIC_METHOD quic_method = {
+@@ -10815,7 +10815,13 @@ static SSL_QUIC_METHOD quic_method = {
      test_quic_send_alert,
  };
  
@@ -487,7 +487,7 @@ Subject: [PATCH 25/43] QUIC: add v1 quic_transport_parameters
  {
      SSL_CTX *cctx = NULL, *sctx = NULL;
      SSL *clientssl = NULL, *serverssl = NULL;
-@@ -10827,29 +10833,7 @@ static int test_quic_api(void)
+@@ -10826,29 +10832,7 @@ static int test_quic_api(void)
      const uint8_t *peer_str;
      size_t peer_str_len;
  
@@ -518,7 +518,7 @@ Subject: [PATCH 25/43] QUIC: add v1 quic_transport_parameters
  
      if (!TEST_true(create_ssl_ctx_pair(libctx,
                                         TLS_server_method(),
-@@ -10868,6 +10852,8 @@ static int test_quic_api(void)
+@@ -10867,6 +10851,8 @@ static int test_quic_api(void)
                                                          sizeof(client_str)))
              || !TEST_true(SSL_set_app_data(serverssl, clientssl))
              || !TEST_true(SSL_set_app_data(clientssl, serverssl))
@@ -527,7 +527,7 @@ Subject: [PATCH 25/43] QUIC: add v1 quic_transport_parameters
              || !TEST_true(create_ssl_connection(serverssl, clientssl,
                                                  SSL_ERROR_NONE))
              || !TEST_true(SSL_version(serverssl) == TLS1_3_VERSION)
-@@ -10901,11 +10887,85 @@ static int test_quic_api(void)
+@@ -10900,11 +10886,85 @@ static int test_quic_api(void)
              || !TEST_int_le(SSL_do_handshake(serverssl), 0))
          goto end;
  
@@ -612,10 +612,10 @@ Subject: [PATCH 25/43] QUIC: add v1 quic_transport_parameters
 +}
  #endif /* OPENSSL_NO_QUIC */
  
- OPT_TEST_DECLARE_USAGE("certfile privkeyfile srpvfile tmpfile provider config dhfile\n")
-@@ -11185,7 +11245,7 @@ int setup_tests(void)
-     ADD_ALL_TESTS(test_handshake_retry, 16);
-     ADD_ALL_TESTS(test_multi_resume, 5);
+ static struct next_proto_st {
+@@ -11550,7 +11610,7 @@ int setup_tests(void)
+ #endif
+     ADD_ALL_TESTS(test_alpn, 4);
  #ifndef OPENSSL_NO_QUIC
 -    ADD_TEST(test_quic_api);
 +    ADD_ALL_TESTS(test_quic_api, 9);

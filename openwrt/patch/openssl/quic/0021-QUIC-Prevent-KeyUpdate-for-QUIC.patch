@@ -40,7 +40,7 @@ input to the TLS layer for a QUIC connection).
          if (qd == NULL) {
 --- a/ssl/statem/statem_lib.c
 +++ b/ssl/statem/statem_lib.c
-@@ -662,6 +662,13 @@ int tls_construct_finished(SSL *s, WPACK
+@@ -666,6 +666,13 @@ int tls_construct_finished(SSL *s, WPACK
  
  int tls_construct_key_update(SSL *s, WPACKET *pkt)
  {
@@ -54,7 +54,7 @@ input to the TLS layer for a QUIC connection).
      if (!WPACKET_put_bytes_u8(pkt, s->key_update)) {
          SSLfatal(s, SSL_AD_INTERNAL_ERROR, ERR_R_INTERNAL_ERROR);
          return 0;
-@@ -684,6 +691,13 @@ MSG_PROCESS_RETURN tls_process_key_updat
+@@ -688,6 +695,13 @@ MSG_PROCESS_RETURN tls_process_key_updat
          return MSG_PROCESS_ERROR;
      }
  

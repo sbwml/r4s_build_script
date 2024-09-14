@@ -179,7 +179,7 @@ Update referenced I-D versions.
 +#endif
 --- a/ssl/ssl_lib.c
 +++ b/ssl/ssl_lib.c
-@@ -4264,7 +4264,7 @@ EVP_PKEY *SSL_CTX_get0_privatekey(const
+@@ -4281,7 +4281,7 @@ EVP_PKEY *SSL_CTX_get0_privatekey(const
  
  const SSL_CIPHER *SSL_get_current_cipher(const SSL *s)
  {
@@ -304,7 +304,7 @@ Update referenced I-D versions.
 -#endif
 --- a/ssl/statem/extensions_clnt.c
 +++ b/ssl/statem/extensions_clnt.c
-@@ -1922,7 +1922,7 @@ int tls_parse_stoc_early_data(SSL *s, PA
+@@ -1947,7 +1947,7 @@ int tls_parse_stoc_early_data(SSL *s, PA
  #ifndef OPENSSL_NO_QUIC
          /*
           * QUIC server must send 0xFFFFFFFF or it's a PROTOCOL_VIOLATION
@@ -315,7 +315,7 @@ Update referenced I-D versions.
              SSLfatal(s, SSL_AD_ILLEGAL_PARAMETER, SSL_R_INVALID_MAX_EARLY_DATA);
 --- a/ssl/statem/extensions_srvr.c
 +++ b/ssl/statem/extensions_srvr.c
-@@ -1896,7 +1896,7 @@ EXT_RETURN tls_construct_stoc_early_data
+@@ -1902,7 +1902,7 @@ EXT_RETURN tls_construct_stoc_early_data
              return EXT_RETURN_NOT_SENT;
  
  #ifndef OPENSSL_NO_QUIC
@@ -378,7 +378,7 @@ Update referenced I-D versions.
          }
      } else
  #endif
-@@ -1183,7 +1190,6 @@ int tls_get_message_header(SSL *s, int *
+@@ -1187,7 +1194,6 @@ int tls_get_message_header(SSL *s, int *
  
      do {
          while (s->init_num < SSL3_HM_HEADER_LENGTH) {
@@ -598,9 +598,9 @@ Update referenced I-D versions.
      unsigned char *iv;
 --- a/test/sslapitest.c
 +++ b/test/sslapitest.c
-@@ -10766,9 +10766,11 @@ static int test_multi_resume(int idx)
+@@ -10765,9 +10765,11 @@ static int test_multi_resume(int idx)
+     return testresult;
  }
- 
  #ifndef OPENSSL_NO_QUIC
 -static int test_quic_set_encryption_secrets(SSL *ssl, OSSL_ENCRYPTION_LEVEL level,
 +static int test_quic_set_encryption_secrets(SSL *ssl,
@@ -612,7 +612,7 @@ Update referenced I-D versions.
  {
      test_printf_stderr("quic_set_encryption_secrets() %s, lvl=%d, len=%zd\n",
                         ssl->server ? "server" : "client", level, secret_len);
-@@ -10780,11 +10782,12 @@ static int test_quic_add_handshake_data(
+@@ -10779,11 +10781,12 @@ static int test_quic_add_handshake_data(
  {
      SSL *peer = (SSL*)SSL_get_app_data(ssl);
  
