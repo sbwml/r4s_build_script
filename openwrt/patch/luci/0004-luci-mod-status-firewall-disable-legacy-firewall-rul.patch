@@ -1,5 +1,17 @@
+From 44cb42a004b8334d784814c5f616c8d8ceda6b22 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Fri, 13 Sep 2024 19:44:52 +0800
+Subject: [PATCH 4/5] luci-mod-status: firewall: disable legacy firewall rule
+ warning
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ .../resources/view/status/nftables.js         | 14 --------------
+ .../share/luci/menu.d/luci-mod-status.json    | 19 ++++++++++++++++---
+ 2 files changed, 16 insertions(+), 17 deletions(-)
+
 diff --git a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
-index d891526..04fd5af 100644
+index be62d91..1718494 100644
 --- a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
 +++ b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
 @@ -672,26 +672,12 @@ return view.extend({
@@ -70,3 +82,6 @@ index 190eef0..e9cf485 100644
  		"action": {
  			"type": "view",
  			"path": "status/iptables"
+-- 
+2.42.0
+

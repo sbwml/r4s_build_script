@@ -1,18 +1,24 @@
 #!/bin/sh
 
 device=`basename $DEVPATH`
-point=$device
+
+case $device in
+	mtdblock*|ubiblock*|zram*)
+		exit 0
+		;;
+esac
 
 case "$ACTION" in
 	add)
-		mkdir -p /usb/$point
-		mount -o rw,noatime,discard /dev/$device /usb/$point
-		if [ -f "/usb/$point/recovery.txt" ]; then
+		mkdir -p /usb/$device
+		mount -o rw,noatime,discard /dev/$device /usb/$device
+		if [ -f "/usb/$device/recovery.txt" ]; then
 			echo y | firstboot
 			sleep 2
 			reboot
 		else
-			umount -l /usb/$point
+			umount -l /usb/$device
+			rm -rf /usb
 		fi
 		;;
 esac

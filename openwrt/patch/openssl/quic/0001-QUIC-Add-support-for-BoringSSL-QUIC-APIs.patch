@@ -42,7 +42,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
  ssl/statem/statem_quic.c             | 106 ++++++++++++
  ssl/tls13_enc.c                      |  59 +++++++
  test/helpers/ssltestlib.c            |   5 +
- test/sslapitest.c                    | 132 ++++++++++++++
+ test/sslapitest.c                    | 131 ++++++++++++++
  test/tls13secretstest.c              |   7 +
  util/libssl.num                      |  11 ++
  util/other.syms                      |   2 +
@@ -53,7 +53,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
 
 --- a/Configure
 +++ b/Configure
-@@ -468,6 +468,7 @@ my @disablables = (
+@@ -467,6 +467,7 @@ my @disablables = (
      "poly1305",
      "posix-io",
      "psk",
@@ -61,7 +61,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
      "rc2",
      "rc4",
      "rc5",
-@@ -636,6 +637,7 @@ my @disable_cascades = (
+@@ -635,6 +636,7 @@ my @disable_cascades = (
      "legacy"            => [ "md2" ],
  
      "cmp"               => [ "crmf" ],
@@ -645,7 +645,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
      if (s->handshake_func == NULL) {
          ERR_raise(ERR_LIB_SSL, SSL_R_UNINITIALIZED);
          return -1;
-@@ -3858,6 +3892,11 @@ int SSL_get_error(const SSL *s, int i)
+@@ -3875,6 +3909,11 @@ int SSL_get_error(const SSL *s, int i)
      }
  
      if (SSL_want_read(s)) {
@@ -657,7 +657,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
          bio = SSL_get_rbio(s);
          if (BIO_should_read(bio))
              return SSL_ERROR_WANT_READ;
-@@ -4225,7 +4264,7 @@ EVP_PKEY *SSL_CTX_get0_privatekey(const
+@@ -4242,7 +4281,7 @@ EVP_PKEY *SSL_CTX_get0_privatekey(const
  
  const SSL_CIPHER *SSL_get_current_cipher(const SSL *s)
  {
@@ -1023,7 +1023,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
      {
          /* Must be immediately before pre_shared_key */
          TLSEXT_TYPE_padding,
-@@ -1728,3 +1745,15 @@ static int final_psk(SSL *s, unsigned in
+@@ -1722,3 +1739,15 @@ static int final_psk(SSL *s, unsigned in
  
      return 1;
  }
@@ -1071,7 +1071,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
  /*
   * Parse the server's renegotiation binding and abort if it's not right
   */
-@@ -1981,3 +2003,29 @@ int tls_parse_stoc_psk(SSL *s, PACKET *p
+@@ -2006,3 +2028,29 @@ int tls_parse_stoc_psk(SSL *s, PACKET *p
  
      return 1;
  }
@@ -1103,7 +1103,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
 +#endif
 --- a/ssl/statem/extensions_srvr.c
 +++ b/ssl/statem/extensions_srvr.c
-@@ -1232,6 +1232,33 @@ int tls_parse_ctos_post_handshake_auth(S
+@@ -1237,6 +1237,33 @@ int tls_parse_ctos_post_handshake_auth(S
      return 1;
  }
  
@@ -1137,7 +1137,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
  /*
   * Add the server's renegotiation binding
   */
-@@ -1914,3 +1941,27 @@ EXT_RETURN tls_construct_stoc_psk(SSL *s
+@@ -1920,3 +1947,27 @@ EXT_RETURN tls_construct_stoc_psk(SSL *s
  
      return EXT_RETURN_SENT;
  }
@@ -1243,7 +1243,7 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
      if (ret <= 0)
          return -1;
      if (type == SSL3_RT_HANDSHAKE)
-@@ -1169,6 +1183,7 @@ int tls_get_message_header(SSL *s, int *
+@@ -1173,6 +1187,7 @@ int tls_get_message_header(SSL *s, int *
  
      do {
          while (s->init_num < SSL3_HM_HEADER_LENGTH) {
@@ -1554,10 +1554,10 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
       * This will ensure we have received the NewSessionTicket in TLSv1.3 where
 --- a/test/sslapitest.c
 +++ b/test/sslapitest.c
-@@ -10765,6 +10765,135 @@ static int test_multi_resume(int idx)
+@@ -10764,6 +10764,134 @@ static int test_multi_resume(int idx)
+     SSL_SESSION_free(sess);
      return testresult;
  }
- 
 +#ifndef OPENSSL_NO_QUIC
 +static int test_quic_set_encryption_secrets(SSL *ssl, OSSL_ENCRYPTION_LEVEL level,
 +                                            const uint8_t *read_secret,
@@ -1686,14 +1686,13 @@ Based on BoringSSL commit b1b76aee3cb43ce11889403c5334283d951ebd37
 +    return testresult;
 +}
 +#endif /* OPENSSL_NO_QUIC */
-+
- OPT_TEST_DECLARE_USAGE("certfile privkeyfile srpvfile tmpfile provider config dhfile\n")
  
- int setup_tests(void)
-@@ -11041,6 +11170,9 @@ int setup_tests(void)
+ static struct next_proto_st {
+     int serverlen;
+@@ -11407,6 +11535,9 @@ int setup_tests(void)
+     ADD_ALL_TESTS(test_npn, 5);
  #endif
-     ADD_ALL_TESTS(test_handshake_retry, 16);
-     ADD_ALL_TESTS(test_multi_resume, 5);
+     ADD_ALL_TESTS(test_alpn, 4);
 +#ifndef OPENSSL_NO_QUIC
 +    ADD_TEST(test_quic_api);
 +#endif
