@@ -368,9 +368,6 @@ elif [ ! "$ENABLE_GLIBC" = "y" ]; then
 fi
 [ "$(whoami)" = "runner" ] && endgroup
 
-# clean directory - github actions
-[ "$(whoami)" = "runner" ] && echo 'CONFIG_AUTOREMOVE=y' >> .config
-
 # uhttpd
 [ "$ENABLE_UHTTPD" = "y" ] && sed -i '/nginx/d' .config && echo 'CONFIG_PACKAGE_ariang=y' >> .config
 

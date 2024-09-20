@@ -119,6 +119,7 @@ if [ "$KERNEL_CLANG_LTO" = "y" ]; then
 else
     curl -s https://$mirror/openwrt/patch/openwrt-6.x/perf/Makefile > package/devel/perf/Makefile
 fi
+[ "$ENABLE_MOLD" != y ] && sed -i 's/no-mold//g' package/devel/perf/Makefile
 
 # kselftests-bpf
 curl -s https://$mirror/openwrt/patch/packages-patches/kselftests-bpf/Makefile > package/devel/kselftests-bpf/Makefile
