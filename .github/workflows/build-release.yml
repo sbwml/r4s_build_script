@@ -59,7 +59,7 @@ jobs:
       uses: sbwml/actions@openwrt-build-setup
 
     - name: Install LLVM
-      uses: sbwml/actions@install-llvm
+      uses: sbwml/actions@install-llvm-19
 
     - name: Compile OpenWrt
       working-directory: /builder
@@ -121,7 +121,7 @@ jobs:
 
     - name: Create release
       continue-on-error: true
-      uses: sbwml/release-action@main
+      uses: ncipollo/release-action@v1
       with:
         name: OpenWrt-${{ env.latest_release }}
         allowUpdates: true
