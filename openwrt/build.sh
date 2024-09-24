@@ -25,7 +25,7 @@ endgroup() {
 #####################################
 
 # IP Location
-ip_info=`curl -s https://ip.cooluc.com`;
+ip_info=`curl -sk https://ip.cooluc.com`;
 export isCN=`echo $ip_info | grep -Po 'country_code\":"\K[^"]+'`;
 
 # script url
@@ -39,6 +39,9 @@ fi
 if [ "$(whoami)" = "runner" ] && [ -n "$GITHUB_REPO" ]; then
     export mirror=raw.githubusercontent.com/$GITHUB_REPO/master
 fi
+
+# apply for sbwml/builder
+[ -n "$git_password" ] && export mirror=init2.cooluc.com
 
 # private gitea
 export gitea=git.cooluc.com
