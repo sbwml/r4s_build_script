@@ -1,0 +1,74 @@
+--- a/nat46/modules/nat46-netdev.c
++++ b/nat46/modules/nat46-netdev.c
+@@ -193,7 +193,11 @@ static struct net_device *find_dev(char
+ 		return NULL;
+ 	}
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 9, 0)
++	rcu_read_lock();
++#else
+ 	read_lock(&dev_base_lock);
++#endif
+ 	dev = first_net_device(&init_net);
+ 	while (dev) {
+ 		if((0 == strcmp(dev->name, name)) && is_nat46(dev)) {
+@@ -205,7 +209,11 @@ static struct net_device *find_dev(char
+ 		}
+ 		dev = next_net_device(dev);
+ 	}
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 9, 0)
++	rcu_read_unlock();
++#else
+ 	read_unlock(&dev_base_lock);
++#endif
+ 	return out;
+ }
+ 
+@@ -300,7 +308,11 @@ int nat46_remove(char *devname, char *bu
+ 
+ void nat64_show_all_configs(struct seq_file *m) {
+         struct net_device *dev;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 9, 0)
++	rcu_read_lock();
++#else
+ 	read_lock(&dev_base_lock);
++#endif
+ 	dev = first_net_device(&init_net);
+ 	while (dev) {
+ 		if(is_nat46(dev)) {
+@@ -323,7 +335,11 @@ void nat64_show_all_configs(struct seq_f
+ 		}
+ 		dev = next_net_device(dev);
+ 	}
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 9, 0)
++	rcu_read_unlock();
++#else
+ 	read_unlock(&dev_base_lock);
++#endif
+ 
+ }
+ 
+@@ -331,7 +347,11 @@ void nat46_destroy_all(void) {
+         struct net_device *dev;
+         struct net_device *nat46dev;
+ 	do {
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 9, 0)
++		rcu_read_lock();
++#else
+ 		read_lock(&dev_base_lock);
++#endif
+ 		nat46dev = NULL;
+ 		dev = first_net_device(&init_net);
+ 		while (dev) {
+@@ -340,7 +360,11 @@ void nat46_destroy_all(void) {
+ 			}
+ 			dev = next_net_device(dev);
+ 		}
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 9, 0)
++		rcu_read_unlock();
++#else
+ 		read_unlock(&dev_base_lock);
++#endif
+ 		if(nat46dev) {
+ 			nat46_netdev_destroy(nat46dev);
+ 		}

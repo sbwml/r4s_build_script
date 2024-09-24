@@ -39,6 +39,9 @@ curl -s https://$mirror/openwrt/patch/generic/0006-build-kernel-add-out-of-tree-
 # rootfs: Add support for local kmod installation sources
 curl -s https://$mirror/openwrt/patch/generic/0007-rootfs-Add-support-for-local-kmod-installation-sourc.patch | patch -p1
 
+# kernel: linux-6.11 config
+curl -s https://$mirror/openwrt/patch/generic/0008-include-kernel-add-miss-config-for-linux-6.11.patch | patch -p1
+
 # meson: add platform variable to cross-compilation file
 curl -s https://$mirror/openwrt/patch/generic/010-meson-add-platform-variable-to-cross-compilation-file.patch | patch -p1
 
@@ -161,6 +164,7 @@ if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     # firewall4 - master
     rm -rf package/network/config/firewall4
     cp -a ../master/openwrt/package/network/config/firewall4 package/network/config/firewall4
+    sed -i 's|$(PROJECT_GIT)/project|https://github.com/openwrt|g' package/network/config/firewall4/Makefile
     mkdir -p package/network/config/firewall4/patches
     # fix ct status dnat
     curl -s https://$mirror/openwrt/patch/firewall4/firewall4_patches/990-unconditionally-allow-ct-status-dnat.patch > package/network/config/firewall4/patches/990-unconditionally-allow-ct-status-dnat.patch

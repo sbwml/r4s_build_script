@@ -1,7 +1,7 @@
-From 6caa9d6b181856844e351866f186a1da3321c2b3 Mon Sep 17 00:00:00 2001
+From c0643f854de456c761c18b009af7537a74506724 Mon Sep 17 00:00:00 2001
 From: Neal Cardwell <ncardwell@google.com>
 Date: Tue, 11 Jun 2019 12:54:22 -0400
-Subject: [PATCH 16/18] net-tcp_bbr: v3: update TCP "bbr" congestion control
+Subject: [PATCH 16/19] net-tcp_bbr: v3: update TCP "bbr" congestion control
  module to BBRv3
 
 BBR v3 is an enhacement to the BBR v1 algorithm. It's designed to aim for lower
@@ -135,12 +135,12 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  include/net/tcp.h                  |    2 +-
  include/uapi/linux/inet_diag.h     |   23 +
  net/ipv4/Kconfig                   |   21 +-
- net/ipv4/tcp_bbr.c                 | 2217 +++++++++++++++++++++-------
- 5 files changed, 1742 insertions(+), 525 deletions(-)
+ net/ipv4/tcp_bbr.c                 | 2214 +++++++++++++++++++++-------
+ 5 files changed, 1740 insertions(+), 524 deletions(-)
 
 --- a/include/net/inet_connection_sock.h
 +++ b/include/net/inet_connection_sock.h
-@@ -135,8 +135,8 @@ struct inet_connection_sock {
+@@ -137,8 +137,8 @@ struct inet_connection_sock {
  	u32			  icsk_probes_tstamp;
  	u32			  icsk_user_timeout;
  
@@ -153,7 +153,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  #define ICSK_TIME_RETRANS	1	/* Retransmit timer */
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -2269,7 +2269,7 @@ struct tcp_plb_state {
+@@ -2473,7 +2473,7 @@ struct tcp_plb_state {
  	u8	consec_cong_rounds:5, /* consecutive congested rounds */
  		unused:3;
  	u32	pause_until; /* jiffies32 when PLB can resume rerouting */
@@ -650,7 +650,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 -	rate = bbr_rate_bytes_per_sec(sk, rate, gain);
 +	rate = bbr_rate_bytes_per_sec(sk, rate, gain,
 +				      bbr_pacing_margin_percent);
- 	rate = min_t(u64, rate, sk->sk_max_pacing_rate);
+ 	rate = min_t(u64, rate, READ_ONCE(sk->sk_max_pacing_rate));
  	return rate;
  }
  
@@ -659,24 +659,23 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  static void bbr_init_pacing_rate_from_rtt(struct sock *sk)
  {
  	struct tcp_sock *tp = tcp_sk(sk);
-@@ -278,7 +455,8 @@ static void bbr_init_pacing_rate_from_rt
- 	}
+@@ -279,7 +456,7 @@ static void bbr_init_pacing_rate_from_rt
  	bw = (u64)tcp_snd_cwnd(tp) * BW_UNIT;
  	do_div(bw, rtt_us);
--	sk->sk_pacing_rate = bbr_bw_to_pacing_rate(sk, bw, bbr_high_gain);
-+	sk->sk_pacing_rate =
-+	  bbr_bw_to_pacing_rate(sk, bw, bbr_param(sk, startup_pacing_gain));
+ 	WRITE_ONCE(sk->sk_pacing_rate,
+-		   bbr_bw_to_pacing_rate(sk, bw, bbr_high_gain));
++		   bbr_bw_to_pacing_rate(sk, bw, bbr_param(sk, startup_pacing_gain)));
  }
  
  /* Pace using current bw estimate and a gain factor. */
-@@ -294,31 +472,38 @@ static void bbr_set_pacing_rate(struct s
- 		sk->sk_pacing_rate = rate;
+@@ -295,31 +472,38 @@ static void bbr_set_pacing_rate(struct s
+ 		WRITE_ONCE(sk->sk_pacing_rate, rate);
  }
  
 -/* override sysctl_tcp_min_tso_segs */
 -__bpf_kfunc static u32 bbr_min_tso_segs(struct sock *sk)
 -{
--	return sk->sk_pacing_rate < (bbr_min_tso_rate >> 3) ? 1 : 2;
+-	return READ_ONCE(sk->sk_pacing_rate) < (bbr_min_tso_rate >> 3) ? 1 : 2;
 -}
 -
 -/* Return the number of segments BBR would like in a TSO/GSO skb, given
@@ -694,7 +693,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	u64 bytes;
  
  	/* Budget a TSO/GSO burst size allowance based on bw (pacing_rate). */
- 	bytes = sk->sk_pacing_rate >> sk->sk_pacing_shift;
+ 	bytes = READ_ONCE(sk->sk_pacing_rate) >> READ_ONCE(sk->sk_pacing_shift);
  
 +	/* Budget a TSO/GSO burst size allowance based on min_rtt. For every
 +	 * K = 2^tso_rtt_shift microseconds of min_rtt, halve the burst.
@@ -708,7 +707,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 +
  	bytes = min_t(u32, bytes, gso_max_size - 1 - MAX_TCP_HEADER);
 -	segs = max_t(u32, bytes / mss_now, bbr_min_tso_segs(sk));
-+	segs = max_t(u32, bytes / mss_now,
++	segs = max_t(u32, div_u64(bytes, mss_now),
 +		     sock_net(sk)->ipv4.sysctl_tcp_min_tso_segs);
  	return segs;
  }
@@ -719,16 +718,16 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  {
  	return bbr_tso_segs_generic(sk, mss_now, sk->sk_gso_max_size);
  }
-@@ -328,7 +513,7 @@ static u32 bbr_tso_segs_goal(struct sock
+@@ -329,7 +513,7 @@ static u32 bbr_tso_segs_goal(struct sock
  {
  	struct tcp_sock *tp = tcp_sk(sk);
  
--	return  bbr_tso_segs_generic(sk, tp->mss_cache, GSO_MAX_SIZE);
-+	return  bbr_tso_segs_generic(sk, tp->mss_cache, GSO_LEGACY_MAX_SIZE);
+-	return bbr_tso_segs_generic(sk, tp->mss_cache, GSO_MAX_SIZE);
++	return bbr_tso_segs_generic(sk, tp->mss_cache, GSO_LEGACY_MAX_SIZE);
  }
  
  /* Save "last known good" cwnd so we can restore it after losses or PROBE_RTT */
-@@ -348,7 +533,9 @@ __bpf_kfunc static void bbr_cwnd_event(s
+@@ -349,7 +533,9 @@ __bpf_kfunc static void bbr_cwnd_event(s
  	struct tcp_sock *tp = tcp_sk(sk);
  	struct bbr *bbr = inet_csk_ca(sk);
  
@@ -739,7 +738,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  		bbr->idle_restart = 1;
  		bbr->ack_epoch_mstamp = tp->tcp_mstamp;
  		bbr->ack_epoch_acked = 0;
-@@ -359,6 +546,16 @@ __bpf_kfunc static void bbr_cwnd_event(s
+@@ -360,6 +546,16 @@ __bpf_kfunc static void bbr_cwnd_event(s
  			bbr_set_pacing_rate(sk, bbr_bw(sk), BBR_UNIT);
  		else if (bbr->mode == BBR_PROBE_RTT)
  			bbr_check_probe_rtt_done(sk);
@@ -756,7 +755,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	}
  }
  
-@@ -381,10 +578,10 @@ static u32 bbr_bdp(struct sock *sk, u32
+@@ -382,10 +578,10 @@ static u32 bbr_bdp(struct sock *sk, u32
  	 * default. This should only happen when the connection is not using TCP
  	 * timestamps and has retransmitted all of the SYN/SYNACK/data packets
  	 * ACKed so far. In this case, an RTO can cut cwnd to 1, in which
@@ -769,7 +768,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  
  	w = (u64)bw * bbr->min_rtt_us;
  
-@@ -401,23 +598,23 @@ static u32 bbr_bdp(struct sock *sk, u32
+@@ -402,23 +598,23 @@ static u32 bbr_bdp(struct sock *sk, u32
   *   - one skb in sending host Qdisc,
   *   - one skb in sending host TSO/GSO engine
   *   - one skb being received by receiver host LRO/GRO/delayed-ACK engine
@@ -801,7 +800,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  		cwnd += 2;
  
  	return cwnd;
-@@ -472,10 +669,10 @@ static u32 bbr_ack_aggregation_cwnd(stru
+@@ -473,10 +669,10 @@ static u32 bbr_ack_aggregation_cwnd(stru
  {
  	u32 max_aggr_cwnd, aggr_cwnd = 0;
  
@@ -814,7 +813,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  			     >> BBR_SCALE;
  		aggr_cwnd = min(aggr_cwnd, max_aggr_cwnd);
  	}
-@@ -483,66 +680,27 @@ static u32 bbr_ack_aggregation_cwnd(stru
+@@ -484,66 +680,27 @@ static u32 bbr_ack_aggregation_cwnd(stru
  	return aggr_cwnd;
  }
  
@@ -888,7 +887,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	target_cwnd = bbr_bdp(sk, bw, gain);
  
  	/* Increment the cwnd to account for excess ACKed data that seems
-@@ -551,74 +709,26 @@ static void bbr_set_cwnd(struct sock *sk
+@@ -552,74 +709,26 @@ static void bbr_set_cwnd(struct sock *sk
  	target_cwnd += bbr_ack_aggregation_cwnd(sk);
  	target_cwnd = bbr_quantization_budget(sk, target_cwnd);
  
@@ -980,7 +979,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  }
  
  static void bbr_reset_startup_mode(struct sock *sk)
-@@ -628,191 +738,49 @@ static void bbr_reset_startup_mode(struc
+@@ -629,191 +738,49 @@ static void bbr_reset_startup_mode(struc
  	bbr->mode = BBR_STARTUP;
  }
  
@@ -1196,7 +1195,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  }
  
  /* Estimates the windowed max degree of ack aggregation.
-@@ -826,7 +794,7 @@ static void bbr_update_bw(struct sock *s
+@@ -827,7 +794,7 @@ static void bbr_update_bw(struct sock *s
   *
   * Max extra_acked is clamped by cwnd and bw * bbr_extra_acked_max_us (100 ms).
   * Max filter is an approximate sliding window of 5-10 (packet timed) round
@@ -1205,7 +1204,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
   */
  static void bbr_update_ack_aggregation(struct sock *sk,
  				       const struct rate_sample *rs)
-@@ -834,15 +802,19 @@ static void bbr_update_ack_aggregation(s
+@@ -835,15 +802,19 @@ static void bbr_update_ack_aggregation(s
  	u32 epoch_us, expected_acked, extra_acked;
  	struct bbr *bbr = inet_csk_ca(sk);
  	struct tcp_sock *tp = tcp_sk(sk);
@@ -1227,7 +1226,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  			bbr->extra_acked_win_rtts = 0;
  			bbr->extra_acked_win_idx = bbr->extra_acked_win_idx ?
  						   0 : 1;
-@@ -876,49 +848,6 @@ static void bbr_update_ack_aggregation(s
+@@ -877,49 +848,6 @@ static void bbr_update_ack_aggregation(s
  		bbr->extra_acked[bbr->extra_acked_win_idx] = extra_acked;
  }
  
@@ -1277,7 +1276,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  static void bbr_check_probe_rtt_done(struct sock *sk)
  {
  	struct tcp_sock *tp = tcp_sk(sk);
-@@ -928,9 +857,9 @@ static void bbr_check_probe_rtt_done(str
+@@ -929,9 +857,9 @@ static void bbr_check_probe_rtt_done(str
  	      after(tcp_jiffies32, bbr->probe_rtt_done_stamp)))
  		return;
  
@@ -1289,7 +1288,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  }
  
  /* The goal of PROBE_RTT mode is to have BBR flows cooperatively and
-@@ -956,23 +885,35 @@ static void bbr_update_min_rtt(struct so
+@@ -957,23 +885,35 @@ static void bbr_update_min_rtt(struct so
  {
  	struct tcp_sock *tp = tcp_sk(sk);
  	struct bbr *bbr = inet_csk_ca(sk);
@@ -1334,7 +1333,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	}
  
  	if (bbr->mode == BBR_PROBE_RTT) {
-@@ -981,9 +922,9 @@ static void bbr_update_min_rtt(struct so
+@@ -982,9 +922,9 @@ static void bbr_update_min_rtt(struct so
  			(tp->delivered + tcp_packets_in_flight(tp)) ? : 1;
  		/* Maintain min packets in flight for max(200 ms, 1 round). */
  		if (!bbr->probe_rtt_done_stamp &&
@@ -1346,7 +1345,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  			bbr->probe_rtt_round_done = 0;
  			bbr->next_rtt_delivered = tp->delivered;
  		} else if (bbr->probe_rtt_done_stamp) {
-@@ -1004,18 +945,20 @@ static void bbr_update_gains(struct sock
+@@ -1005,18 +945,20 @@ static void bbr_update_gains(struct sock
  
  	switch (bbr->mode) {
  	case BBR_STARTUP:
@@ -1375,7 +1374,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  		break;
  	case BBR_PROBE_RTT:
  		bbr->pacing_gain = BBR_UNIT;
-@@ -1027,27 +970,1108 @@ static void bbr_update_gains(struct sock
+@@ -1028,27 +970,1108 @@ static void bbr_update_gains(struct sock
  	}
  }
  
@@ -1723,7 +1722,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 +}
 +
 +/* How should we multiplicatively cut bw or inflight limits based on ECN? */
-+u32 bbr_ecn_cut(struct sock *sk)
++static u32 bbr_ecn_cut(struct sock *sk)
 +{
 +	struct bbr *bbr = inet_csk_ca(sk);
 +
@@ -2395,9 +2394,8 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 +	bbr_update_cycle_phase(sk, rs, ctx);
  	bbr_update_min_rtt(sk, rs);
 -	bbr_update_gains(sk);
- }
- 
--__bpf_kfunc static void bbr_main(struct sock *sk, const struct rate_sample *rs)
++}
++
 +/* Fast path for app-limited case.
 + *
 + * On each ack, we execute bbr state machine, which primarily consists of:
@@ -2447,9 +2445,9 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 +		*update_model = false;
 +	}
 +	return false;
-+}
-+
-+__bpf_kfunc void bbr_main(struct sock *sk, const struct rate_sample *rs)
+ }
+ 
+ __bpf_kfunc static void bbr_main(struct sock *sk, u32 ack, int flag, const struct rate_sample *rs)
  {
 +	struct tcp_sock *tp = tcp_sk(sk);
  	struct bbr *bbr = inet_csk_ca(sk);
@@ -2494,7 +2492,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  }
  
  __bpf_kfunc static void bbr_init(struct sock *sk)
-@@ -1055,20 +2079,21 @@ __bpf_kfunc static void bbr_init(struct
+@@ -1056,20 +2079,21 @@ __bpf_kfunc static void bbr_init(struct
  	struct tcp_sock *tp = tcp_sk(sk);
  	struct bbr *bbr = inet_csk_ca(sk);
  
@@ -2521,7 +2519,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	bbr->has_seen_rtt = 0;
  	bbr_init_pacing_rate_from_rtt(sk);
  
-@@ -1079,7 +2104,7 @@ __bpf_kfunc static void bbr_init(struct
+@@ -1080,7 +2104,7 @@ __bpf_kfunc static void bbr_init(struct
  	bbr->full_bw_cnt = 0;
  	bbr->cycle_mstamp = 0;
  	bbr->cycle_idx = 0;
@@ -2530,7 +2528,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	bbr_reset_startup_mode(sk);
  
  	bbr->ack_epoch_mstamp = tp->tcp_mstamp;
-@@ -1089,78 +2114,236 @@ __bpf_kfunc static void bbr_init(struct
+@@ -1090,78 +2114,236 @@ __bpf_kfunc static void bbr_init(struct
  	bbr->extra_acked[0] = 0;
  	bbr->extra_acked[1] = 0;
  
@@ -2795,7 +2793,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	.undo_cwnd	= bbr_undo_cwnd,
  	.cwnd_event	= bbr_cwnd_event,
  	.ssthresh	= bbr_ssthresh,
-@@ -1175,10 +2358,11 @@ BTF_SET8_START(tcp_bbr_check_kfunc_ids)
+@@ -1174,10 +2356,11 @@ BTF_KFUNCS_START(tcp_bbr_check_kfunc_ids
  BTF_ID_FLAGS(func, bbr_init)
  BTF_ID_FLAGS(func, bbr_main)
  BTF_ID_FLAGS(func, bbr_sndbuf_expand)
@@ -2806,9 +2804,9 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 -BTF_ID_FLAGS(func, bbr_min_tso_segs)
 +BTF_ID_FLAGS(func, bbr_tso_segs)
  BTF_ID_FLAGS(func, bbr_set_state)
- #endif
- #endif
-@@ -1213,5 +2397,12 @@ MODULE_AUTHOR("Van Jacobson <vanj@google
+ BTF_KFUNCS_END(tcp_bbr_check_kfunc_ids)
+ 
+@@ -1210,5 +2393,12 @@ MODULE_AUTHOR("Van Jacobson <vanj@google
  MODULE_AUTHOR("Neal Cardwell <ncardwell@google.com>");
  MODULE_AUTHOR("Yuchung Cheng <ycheng@google.com>");
  MODULE_AUTHOR("Soheil Hassas Yeganeh <soheil@google.com>");

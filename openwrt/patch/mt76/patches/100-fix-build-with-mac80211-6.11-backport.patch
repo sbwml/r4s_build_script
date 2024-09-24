@@ -1,0 +1,298 @@
+--- a/mac80211.c
++++ b/mac80211.c
+@@ -582,7 +582,7 @@ int mt76_create_page_pool(struct mt76_de
+ {
+ 	struct page_pool_params pp_params = {
+ 		.order = 0,
+-		.flags = PP_FLAG_PAGE_FRAG,
++		.flags = 0,
+ 		.nid = NUMA_NO_NODE,
+ 		.dev = dev->dma_dev,
+ 	};
+--- a/mt7603/main.c
++++ b/mt7603/main.c
+@@ -23,7 +23,7 @@ mt7603_start(struct ieee80211_hw *hw)
+ }
+ 
+ static void
+-mt7603_stop(struct ieee80211_hw *hw)
++mt7603_stop(struct ieee80211_hw *hw, bool suspend)
+ {
+ 	struct mt7603_dev *dev = hw->priv;
+ 
+--- a/mt7603/soc.c
++++ b/mt7603/soc.c
+@@ -52,15 +52,12 @@ error:
+ 	return ret;
+ }
+ 
+-static int
+-mt76_wmac_remove(struct platform_device *pdev)
++static void mt76_wmac_remove(struct platform_device *pdev)
+ {
+ 	struct mt76_dev *mdev = platform_get_drvdata(pdev);
+ 	struct mt7603_dev *dev = container_of(mdev, struct mt7603_dev, mt76);
+ 
+ 	mt7603_unregister_device(dev);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id of_wmac_match[] = {
+@@ -74,7 +71,7 @@ MODULE_FIRMWARE(MT7628_FIRMWARE_E2);
+ 
+ struct platform_driver mt76_wmac_driver = {
+ 	.probe		= mt76_wmac_probe,
+-	.remove		= mt76_wmac_remove,
++	.remove_new	= mt76_wmac_remove,
+ 	.driver = {
+ 		.name = "mt76_wmac",
+ 		.of_match_table = of_wmac_match,
+--- a/mt7615/main.c
++++ b/mt7615/main.c
+@@ -91,7 +91,7 @@ out:
+ 	return ret;
+ }
+ 
+-static void mt7615_stop(struct ieee80211_hw *hw)
++static void mt7615_stop(struct ieee80211_hw *hw, bool suspend)
+ {
+ 	struct mt7615_dev *dev = mt7615_hw_dev(hw);
+ 	struct mt7615_phy *phy = mt7615_hw_phy(hw);
+--- a/mt7615/mt7615_trace.h
++++ b/mt7615/mt7615_trace.h
+@@ -14,7 +14,7 @@
+ 
+ #define MAXNAME		32
+ #define DEV_ENTRY	__array(char, wiphy_name, 32)
+-#define DEV_ASSIGN	strlcpy(__entry->wiphy_name,	\
++#define DEV_ASSIGN	strscpy(__entry->wiphy_name,	\
+ 				wiphy_name(mt76_hw(dev)->wiphy), MAXNAME)
+ #define DEV_PR_FMT	"%s"
+ #define DEV_PR_ARG	__entry->wiphy_name
+--- a/mt7615/soc.c
++++ b/mt7615/soc.c
+@@ -45,13 +45,11 @@ static int mt7622_wmac_probe(struct plat
+ 	return mt7615_mmio_probe(&pdev->dev, mem_base, irq, mt7615e_reg_map);
+ }
+ 
+-static int mt7622_wmac_remove(struct platform_device *pdev)
++static void mt7622_wmac_remove(struct platform_device *pdev)
+ {
+ 	struct mt7615_dev *dev = platform_get_drvdata(pdev);
+ 
+ 	mt7615_unregister_device(dev);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id mt7622_wmac_of_match[] = {
+@@ -65,7 +63,7 @@ struct platform_driver mt7622_wmac_drive
+ 		.of_match_table = mt7622_wmac_of_match,
+ 	},
+ 	.probe = mt7622_wmac_probe,
+-	.remove = mt7622_wmac_remove,
++	.remove_new = mt7622_wmac_remove,
+ };
+ 
+ MODULE_FIRMWARE(MT7622_FIRMWARE_N9);
+--- a/mt7615/usb.c
++++ b/mt7615/usb.c
+@@ -79,7 +79,7 @@ static void mt7663u_copy(struct mt76_dev
+ 	mutex_unlock(&usb->usb_ctrl_mtx);
+ }
+ 
+-static void mt7663u_stop(struct ieee80211_hw *hw)
++static void mt7663u_stop(struct ieee80211_hw *hw, bool suspend)
+ {
+ 	struct mt7615_phy *phy = mt7615_hw_phy(hw);
+ 	struct mt7615_dev *dev = hw->priv;
+--- a/mt76x0/pci.c
++++ b/mt76x0/pci.c
+@@ -44,7 +44,7 @@ static void mt76x0e_stop_hw(struct mt76x
+ 	mt76_clear(dev, MT_WPDMA_GLO_CFG, MT_WPDMA_GLO_CFG_RX_DMA_EN);
+ }
+ 
+-static void mt76x0e_stop(struct ieee80211_hw *hw)
++static void mt76x0e_stop(struct ieee80211_hw *hw, bool suspend)
+ {
+ 	struct mt76x02_dev *dev = hw->priv;
+ 
+--- a/mt76x0/usb.c
++++ b/mt76x0/usb.c
+@@ -77,7 +77,7 @@ static void mt76x0u_cleanup(struct mt76x
+ 	mt76u_queues_deinit(&dev->mt76);
+ }
+ 
+-static void mt76x0u_stop(struct ieee80211_hw *hw)
++static void mt76x0u_stop(struct ieee80211_hw *hw, bool suspend)
+ {
+ 	struct mt76x02_dev *dev = hw->priv;
+ 
+--- a/mt76x02_trace.h
++++ b/mt76x02_trace.h
+@@ -14,7 +14,7 @@
+ 
+ #define MAXNAME		32
+ #define DEV_ENTRY	__array(char, wiphy_name, 32)
+-#define DEV_ASSIGN	strlcpy(__entry->wiphy_name,	\
++#define DEV_ASSIGN	strscpy(__entry->wiphy_name,	\
+ 				wiphy_name(mt76_hw(dev)->wiphy), MAXNAME)
+ #define DEV_PR_FMT	"%s"
+ #define DEV_PR_ARG	__entry->wiphy_name
+--- a/mt76x2/pci_main.c
++++ b/mt76x2/pci_main.c
+@@ -24,7 +24,7 @@ mt76x2_start(struct ieee80211_hw *hw)
+ }
+ 
+ static void
+-mt76x2_stop(struct ieee80211_hw *hw)
++mt76x2_stop(struct ieee80211_hw *hw, bool suspend)
+ {
+ 	struct mt76x02_dev *dev = hw->priv;
+ 
+--- a/mt76x2/usb_main.c
++++ b/mt76x2/usb_main.c
+@@ -22,7 +22,7 @@ static int mt76x2u_start(struct ieee8021
+ 	return 0;
+ }
+ 
+-static void mt76x2u_stop(struct ieee80211_hw *hw)
++static void mt76x2u_stop(struct ieee80211_hw *hw, bool suspend)
+ {
+ 	struct mt76x02_dev *dev = hw->priv;
+ 
+--- a/mt7915/main.c
++++ b/mt7915/main.c
+@@ -108,7 +108,7 @@ static int mt7915_start(struct ieee80211
+ 	return ret;
+ }
+ 
+-static void mt7915_stop(struct ieee80211_hw *hw)
++static void mt7915_stop(struct ieee80211_hw *hw, bool suspend)
+ {
+ 	struct mt7915_dev *dev = mt7915_hw_dev(hw);
+ 	struct mt7915_phy *phy = mt7915_hw_phy(hw);
+--- a/mt7915/mcu.c
++++ b/mt7915/mcu.c
+@@ -335,7 +335,7 @@ mt7915_mcu_cca_finish(void *priv, u8 *ma
+ 	if (!vif->bss_conf.color_change_active || vif->type == NL80211_IFTYPE_STATION)
+ 		return;
+ 
+-	ieee80211_color_change_finish(vif);
++	ieee80211_color_change_finish(vif, 0);
+ }
+ 
+ static void
+--- a/mt7921/main.c
++++ b/mt7921/main.c
+@@ -268,7 +268,7 @@ static int mt7921_start(struct ieee80211
+ 	return err;
+ }
+ 
+-static void mt7921_stop(struct ieee80211_hw *hw)
++static void mt7921_stop(struct ieee80211_hw *hw, bool suspend)
+ {
+ 	struct mt792x_dev *dev = mt792x_hw_dev(hw);
+ 	int err = 0;
+@@ -281,7 +281,7 @@ static void mt7921_stop(struct ieee80211
+ 			return;
+ 	}
+ 
+-	mt792x_stop(hw);
++	mt792x_stop(hw, false);
+ }
+ 
+ static int
+--- a/mt792x.h
++++ b/mt792x.h
+@@ -337,7 +337,7 @@ static inline bool mt792x_dma_need_reini
+ #define mt792x_mutex_release(dev)	\
+ 	mt76_connac_mutex_release(&(dev)->mt76, &(dev)->pm)
+ 
+-void mt792x_stop(struct ieee80211_hw *hw);
++void mt792x_stop(struct ieee80211_hw *hw, bool suspend);
+ void mt792x_pm_wake_work(struct work_struct *work);
+ void mt792x_pm_power_save_work(struct work_struct *work);
+ void mt792x_reset(struct mt76_dev *mdev);
+@@ -457,7 +457,7 @@ void mt792xu_wr(struct mt76_dev *dev, u3
+ u32 mt792xu_rmw(struct mt76_dev *dev, u32 addr, u32 mask, u32 val);
+ void mt792xu_copy(struct mt76_dev *dev, u32 offset, const void *data, int len);
+ void mt792xu_disconnect(struct usb_interface *usb_intf);
+-void mt792xu_stop(struct ieee80211_hw *hw);
++void mt792xu_stop(struct ieee80211_hw *hw, bool suspend);
+ 
+ static inline void
+ mt792x_skb_add_usb_sdio_hdr(struct mt792x_dev *dev, struct sk_buff *skb,
+--- a/mt792x_core.c
++++ b/mt792x_core.c
+@@ -113,7 +113,7 @@ void mt792x_tx(struct ieee80211_hw *hw,
+ }
+ EXPORT_SYMBOL_GPL(mt792x_tx);
+ 
+-void mt792x_stop(struct ieee80211_hw *hw)
++void mt792x_stop(struct ieee80211_hw *hw, bool suspend)
+ {
+ 	struct mt792x_dev *dev = mt792x_hw_dev(hw);
+ 	struct mt792x_phy *phy = mt792x_hw_phy(hw);
+--- a/mt792x_usb.c
++++ b/mt792x_usb.c
+@@ -285,12 +285,12 @@ int mt792xu_init_reset(struct mt792x_dev
+ }
+ EXPORT_SYMBOL_GPL(mt792xu_init_reset);
+ 
+-void mt792xu_stop(struct ieee80211_hw *hw)
++void mt792xu_stop(struct ieee80211_hw *hw, bool suspend)
+ {
+ 	struct mt792x_dev *dev = mt792x_hw_dev(hw);
+ 
+ 	mt76u_stop_tx(&dev->mt76);
+-	mt792x_stop(hw);
++	mt792x_stop(hw, false);
+ }
+ EXPORT_SYMBOL_GPL(mt792xu_stop);
+ 
+--- a/mt7996/main.c
++++ b/mt7996/main.c
+@@ -93,7 +93,7 @@ static int mt7996_start(struct ieee80211
+ 	return ret;
+ }
+ 
+-static void mt7996_stop(struct ieee80211_hw *hw)
++static void mt7996_stop(struct ieee80211_hw *hw, bool suspend)
+ {
+ 	struct mt7996_dev *dev = mt7996_hw_dev(hw);
+ 	struct mt7996_phy *phy = mt7996_hw_phy(hw);
+--- a/mt7996/mcu.c
++++ b/mt7996/mcu.c
+@@ -421,7 +421,7 @@ mt7996_mcu_cca_finish(void *priv, u8 *ma
+ 	if (!vif->bss_conf.color_change_active || vif->type == NL80211_IFTYPE_STATION)
+ 		return;
+ 
+-	ieee80211_color_change_finish(vif);
++	ieee80211_color_change_finish(vif, 0);
+ }
+ 
+ static void
+--- a/trace.h
++++ b/trace.h
+@@ -14,7 +14,7 @@
+ 
+ #define MAXNAME		32
+ #define DEV_ENTRY	__array(char, wiphy_name, 32)
+-#define DEVICE_ASSIGN	strlcpy(__entry->wiphy_name,	\
++#define DEVICE_ASSIGN	strscpy(__entry->wiphy_name,	\
+ 				wiphy_name(dev->hw->wiphy), MAXNAME)
+ #define DEV_PR_FMT	"%s"
+ #define DEV_PR_ARG	__entry->wiphy_name
+--- a/usb_trace.h
++++ b/usb_trace.h
+@@ -14,7 +14,7 @@
+ 
+ #define MAXNAME		32
+ #define DEV_ENTRY	__array(char, wiphy_name, 32)
+-#define DEV_ASSIGN	strlcpy(__entry->wiphy_name,	\
++#define DEV_ASSIGN	strscpy(__entry->wiphy_name,	\
+ 				wiphy_name(dev->hw->wiphy), MAXNAME)
+ #define DEV_PR_FMT	"%s "
+ #define DEV_PR_ARG	__entry->wiphy_name

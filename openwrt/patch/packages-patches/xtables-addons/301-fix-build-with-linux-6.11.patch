@@ -1,0 +1,15 @@
+--- a/extensions/rtsp/nf_conntrack_rtsp.c
++++ b/extensions/rtsp/nf_conntrack_rtsp.c
+@@ -735,8 +735,12 @@ init(void)
+ 		}
+ 
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 11, 0)
+ 		strlcpy(hlpr->name, tmpname, sizeof(hlpr->name));
+ #else
++		strscpy(hlpr->name, tmpname, sizeof(hlpr->name));
++#endif
++#else
+ 		hlpr->name = tmpname;
+ #endif
+ 		pr_debug("port #%d: %d\n", i, ports[i]);
