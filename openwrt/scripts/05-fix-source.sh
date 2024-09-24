@@ -58,6 +58,7 @@ if [ "$USE_GCC14" = y ] || [ "$USE_GCC15" = y ]; then
     if [ "$ENABLE_GLIBC" = "y" ]; then
         # perl
         sed -i "/Target perl/i\TARGET_CFLAGS_PERL += -Wno-implicit-function-declaration -Wno-int-conversion\n" feeds/packages/lang/perl/Makefile
+        sed -i '/HOST_BUILD_PARALLEL/aPKG_BUILD_FLAGS:=no-mold' feeds/packages/lang/perl/Makefile
         # lucihttp
         sed -i "/TARGET_CFLAGS/i\TARGET_CFLAGS += -Wno-implicit-function-declaration" feeds/luci/contrib/package/lucihttp/Makefile
         # rpcd
@@ -68,6 +69,9 @@ if [ "$USE_GCC14" = y ] || [ "$USE_GCC15" = y ]; then
         sed -i "s/-DNDEBUG/-DNDEBUG -Wno-implicit-function-declaration/g" feeds/luci/modules/luci-base/src/Makefile
         # uhttpd
         sed -i "/Package\/uhttpd\/install/i\TARGET_CFLAGS += -Wno-implicit-function-declaration\n" package/network/services/uhttpd/Makefile
+        # shadow
+        sed -i '/TARGET_LDFLAGS/d' feeds/packages/utils/shadow/Makefile
+        sed -i 's/libxcrypt/openssl/g' feeds/packages/utils/shadow/Makefile
     fi
     # openssh - 9.8p1
     if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
