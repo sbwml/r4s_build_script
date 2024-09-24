@@ -103,25 +103,27 @@ fi
 [ -n "$LAN" ] && export LAN=$LAN || export LAN=10.0.0.1
 
 # platform
-[ "$2" = "nanopi-r4s" ] && export platform="rk3399" toolchain_arch="nanopi-r4s"
-[ "$2" = "nanopi-r5s" ] && export platform="rk3568" toolchain_arch="nanopi-r5s"
+[ "$2" = "armv8" ] && export platform="armv8" toolchain_arch="aarch64_generic"
+[ "$2" = "nanopi-r4s" ] && export platform="rk3399" toolchain_arch="aarch64_generic"
+[ "$2" = "nanopi-r5s" ] && export platform="rk3568" toolchain_arch="aarch64_generic"
+[ "$2" = "netgear_r8500" ] && export platform="bcm53xx" toolchain_arch="arm_cortex-a9"
 [ "$2" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
-[ "$2" = "netgear_r8500" ] && export platform="bcm53xx" toolchain_arch="bcm53xx"
-[ "$2" = "armv8" ] && export platform="armv8" toolchain_arch="armsr-armv8"
 
 # gcc13 & 14 & 15
 if [ "$USE_GCC13" = y ]; then
-    export USE_GCC13=y
+    export USE_GCC13=y gcc_version=13
     # use mold
     [ "$ENABLE_MOLD" = y ] && export ENABLE_MOLD=y
 elif [ "$USE_GCC14" = y ]; then
-    export USE_GCC14=y
+    export USE_GCC14=y gcc_version=14
     # use mold
     [ "$ENABLE_MOLD" = y ] && export ENABLE_MOLD=y
 elif [ "$USE_GCC15" = y ]; then
-    export USE_GCC15=y
+    export USE_GCC15=y gcc_version=15
     # use mold
     [ "$ENABLE_MOLD" = y ] && export ENABLE_MOLD=y
+else
+    export gcc_version=11
 fi
 
 # build.sh flags
@@ -160,16 +162,7 @@ echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
 rm -f kernel.txt
 
 echo -e "${GREEN_COLOR}Date: $CURRENT_DATE${RES}\r\n"
-
-if [ "$USE_GCC13" = "y" ]; then
-    echo -e "${GREEN_COLOR}GCC VERSION: 13${RES}"
-elif [ "$USE_GCC14" = "y" ]; then
-    echo -e "${GREEN_COLOR}GCC VERSION: 14${RES}"
-elif [ "$USE_GCC15" = "y" ]; then
-    echo -e "${GREEN_COLOR}GCC VERSION: 15${RES}"
-else
-    echo -e "${GREEN_COLOR}GCC VERSION: 11${RES}"
-fi
+echo -e "${GREEN_COLOR}GCC VERSION: $gcc_version${RES}"
 [ -n "$LAN" ] && echo -e "${GREEN_COLOR}LAN: $LAN${RES}" || echo -e "${GREEN_COLOR}LAN: 10.0.0.1${RES}"
 [ "$ENABLE_GLIBC" = "y" ] && echo -e "${GREEN_COLOR}Standard C Library:${RES} ${BLUE_COLOR}glibc${RES}" || echo -e "${GREEN_COLOR}Standard C Library:${RES} ${BLUE_COLOR}musl${RES}"
 [ "$ENABLE_OTA" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_OTA: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_OTA:${RES} ${YELLOW_COLOR}false${RES}"
@@ -398,19 +391,12 @@ if [ "$BUILD_FAST" = "y" ]; then
     if [ "$PLATFORM_ID" = "platform:el9" ]; then
         TOOLCHAIN_URL="http://127.0.0.1:8080"
     else
-        TOOLCHAIN_URL="$github_proxy"https://github.com/sbwml/toolchain-cache/releases/latest/download
+        TOOLCHAIN_URL="$github_proxy"https://github.com/sbwml/openwrt_caches/releases/latest/download
     fi
-    if [ "$USE_GCC13" = "y" ]; then
-        curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_13.tar.gz -o toolchain.tar.gz $CURL_BAR
-    elif [ "$USE_GCC14" = "y" ]; then
-        curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_14.tar.gz -o toolchain.tar.gz $CURL_BAR
-    elif [ "$USE_GCC15" = "y" ]; then
-        curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_15.tar.gz -o toolchain.tar.gz $CURL_BAR
-    else
-        curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_11.tar.gz -o toolchain.tar.gz $CURL_BAR
-    fi
+    curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_gcc-"$gcc_version".tar.zst -o toolchain.tar.zst $CURL_BAR
     echo -e "\n${GREEN_COLOR}Process Toolchain ...${RES}"
-    tar -zxf toolchain.tar.gz && rm -f toolchain.tar.gz
+    tar -I "zstd" -xf toolchain.tar.zst
+    rm -f toolchain.tar.zst
     mkdir bin
     find ./staging_dir/ -name '*' -exec touch {} \; >/dev/null 2>&1
     find ./tmp/ -name '*' -exec touch {} \; >/dev/null 2>&1
@@ -430,15 +416,8 @@ if [ "$BUILD_TOOLCHAIN" = "y" ]; then
     make -j$cores toolchain/compile || make -j$cores toolchain/compile V=s || exit 1
     mkdir -p toolchain-cache
     [ "$ENABLE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
-    if [ "$USE_GCC13" = "y" ]; then
-        tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch"_13.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
-    elif [ "$USE_GCC14" = "y" ]; then
-        tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch"_14.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
-    elif [ "$USE_GCC15" = "y" ]; then
-        tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch"_15.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
-    else
-        tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch"_11.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
-    fi
+    tar -I "zstd -19 -T$(nproc --all)" toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch"_gcc-"$gcc_version".tar.zst ./{build_dir,dl,staging_dir,tmp}
+    echo -e "${GREEN_COLOR} Build success! ${RES}"
     exit 0
 else
     echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
