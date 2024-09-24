@@ -16,8 +16,8 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 ---
  drivers/char/lrng/Kconfig        | 172 +++++++--------
  drivers/char/lrng/Makefile       |   1 +
- drivers/char/lrng/lrng_es_jent.c | 356 +++++++++++++++++++++++++++++++
- 3 files changed, 443 insertions(+), 86 deletions(-)
+ drivers/char/lrng/lrng_es_jent.c | 358 +++++++++++++++++++++++++++++++
+ 3 files changed, 445 insertions(+), 86 deletions(-)
  create mode 100644 drivers/char/lrng/lrng_es_jent.c
 
 --- a/drivers/char/lrng/Kconfig
@@ -212,7 +212,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
  obj-$(CONFIG_LRNG_HEALTH_TESTS)		+= lrng_health.o
 --- /dev/null
 +++ b/drivers/char/lrng/lrng_es_jent.c
-@@ -0,0 +1,356 @@
+@@ -0,0 +1,358 @@
 +// SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
 +/*
 + * LRNG Fast Entropy Source: Jitter RNG
@@ -366,6 +366,8 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
 +
 +		pr_debug("Jitter RNG ES monitor: filled slot %u with %u bits of entropy\n",
 +			 i, requested_bits);
++
++		schedule();
 +	}
 +
 +	pr_debug("Jitter RNG block filling completed\n");
