@@ -341,6 +341,8 @@ fi
 if [ "$ENABLE_LRNG" = "y" ]; then
     echo -e "\n# Kernel - LRNG" >> .config
     echo "CONFIG_KERNEL_LRNG=y" >> .config
+    echo "# CONFIG_PACKAGE_urandom-seed is not set" >> .config
+    echo "# CONFIG_PACKAGE_urngd is not set" >> .config
 fi
 
 # local kmod
