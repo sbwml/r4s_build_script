@@ -59,6 +59,10 @@ if [ "$TESTING_KERNEL" = "y" ]; then
     sed -i '/ovs_kmod_openvswitch_depends/a\\t\ \ +kmod-sched-act-sample \\' feeds/packages/net/openvswitch/Makefile
 fi
 
+# ubootenv-nvram - 6.11 (openwrt-23.05.5)
+mkdir -p package/kernel/ubootenv-nvram/patches
+curl -s https://$mirror/openwrt/patch/packages-patches/ubootenv-nvram/010-make-ubootenv_remove-return-void-for-linux-6.11.patch > package/kernel/ubootenv-nvram/patches/010-make-ubootenv_remove-return-void-for-linux-6.11.patch
+
 # packages
 pushd feeds/packages
   # xr_usb_serial_common
