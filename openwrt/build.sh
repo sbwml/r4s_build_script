@@ -507,7 +507,7 @@ elif [ "$platform" = "armv8" ]; then
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
-      "url": "https://github.com/sbwml/builder/releases/download/v$VERSION/openwrt-$VERSION-armsr-armv8-generic-squashfs-combined-efi.img.gz"
+      "url": "https://github.com/sbwml/builder/releases/download/${OTA_PREFIX}v$VERSION/openwrt-$VERSION-armsr-armv8-generic-squashfs-combined-efi.img.gz"
     }
   ]
 }
