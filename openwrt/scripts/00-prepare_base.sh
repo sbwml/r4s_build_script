@@ -42,6 +42,11 @@ curl -s https://$mirror/openwrt/patch/generic/0007-rootfs-Add-support-for-local-
 # kernel: linux-6.11 config
 curl -s https://$mirror/openwrt/patch/generic/0008-include-kernel-add-miss-config-for-linux-6.11.patch | patch -p1
 
+# tools: add llvm/clang toolchain
+curl -s https://$mirror/openwrt/patch/generic/0009-tools-add-llvm-clang-toolchain.patch | patch -p1
+mkdir -p tools/clang
+curl -s https://$mirror/openwrt/patch/clang/Makefile > tools/clang/Makefile
+
 # meson: add platform variable to cross-compilation file
 curl -s https://$mirror/openwrt/patch/generic/010-meson-add-platform-variable-to-cross-compilation-file.patch | patch -p1
 
