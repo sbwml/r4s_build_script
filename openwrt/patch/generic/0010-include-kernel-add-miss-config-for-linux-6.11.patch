@@ -1,7 +1,7 @@
-From dfd7696d643a76cf94ba267f888c2f3dc59fd626 Mon Sep 17 00:00:00 2001
+From c6f2d815fb9c4ed906831fb89d4a0bac4c00df3f Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Sat, 21 Sep 2024 04:08:14 +0800
-Subject: [PATCH] include: kernel: add miss config for linux-6.11
+Subject: [PATCH 10/11] include: kernel: add miss config for linux-6.11
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
@@ -21,5 +21,5 @@ index 408bf2f..8422004 100644
  	mv $(LINUX_DIR)/.config.set $(LINUX_DIR)/.config.old
  	grep -v CONFIG_LTO $(LINUX_DIR)/.config.old > $(LINUX_DIR)/.config.set
 -- 
-2.42.0
+2.43.5
 

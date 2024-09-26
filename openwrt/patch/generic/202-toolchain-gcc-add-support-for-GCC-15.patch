@@ -1,3 +1,15 @@
+From 8d1db41ed127a9aa614dd5c1cb17c4bb8a7005a0 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Thu, 26 Sep 2024 07:12:34 +0800
+Subject: [PATCH 3/3] toolchain: gcc: add support for GCC 15
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ toolchain/gcc/Config.in      |  3 +++
+ toolchain/gcc/Config.version |  5 +++++
+ toolchain/gcc/common.mk      | 10 +++++++++-
+ 3 files changed, 17 insertions(+), 1 deletion(-)
+
 diff --git a/toolchain/gcc/Config.in b/toolchain/gcc/Config.in
 index ca89051..510c813 100644
 --- a/toolchain/gcc/Config.in
@@ -34,7 +46,7 @@ index 7ff5bc0..7d8ee09 100644
  
  config GCC_USE_DEFAULT_VERSION
 diff --git a/toolchain/gcc/common.mk b/toolchain/gcc/common.mk
-index a1a5108..7ec50ad 100644
+index a1a5108..feae36a 100644
 --- a/toolchain/gcc/common.mk
 +++ b/toolchain/gcc/common.mk
 @@ -26,7 +26,11 @@ PKG_VERSION:=$(firstword $(subst +, ,$(GCC_VERSION)))
@@ -61,3 +73,6 @@ index a1a5108..7ec50ad 100644
  PATCH_DIR=../patches-$(GCC_MAJOR_VERSION).x
  
  BUGURL=http://bugs.openwrt.org/
+-- 
+2.43.5
+

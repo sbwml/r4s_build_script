@@ -1,4 +1,4 @@
-From 6a9bd83f7b3f513bebb142ef07392cf5ed218a65 Mon Sep 17 00:00:00 2001
+From 0de92a05246317259aa4e071689b0fca26e108db Mon Sep 17 00:00:00 2001
 From: Andre Heider <a.heider@gmail.com>
 Date: Fri, 27 Jan 2023 17:53:02 +0100
 Subject: [PATCH 3/8] toolchain: add mold as additional linker

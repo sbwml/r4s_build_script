@@ -1,4 +1,4 @@
-From 9cadac681ca14daeb97a8ebfaa32d13c0a375ff2 Mon Sep 17 00:00:00 2001
+From a5f1c52a8ce42243323a9a79bbd29128af1920a2 Mon Sep 17 00:00:00 2001
 From: Andre Heider <a.heider@gmail.com>
 Date: Sat, 28 Jan 2023 21:16:16 +0100
 Subject: [PATCH 5/8] build: replace SSTRIP_ARGS with

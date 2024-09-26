@@ -10,45 +10,59 @@ else
     git clone https://$github/sbwml/arm-trusted-firmware-rockchip package/boot/arm-trusted-firmware-rockchip -b 0419
 fi
 
-# BTF: fix failed to validate module
-# config/Config-kernel.in patch
-curl -s https://$mirror/openwrt/patch/generic/0001-kernel-add-MODULE_ALLOW_BTF_MISMATCH-option.patch | patch -p1
+######## OpenWrt Patches ########
+
+# tools: add llvm/clang toolchain
+curl -s https://$mirror/openwrt/patch/generic/0001-tools-add-llvm-clang-toolchain.patch | patch -p1
 
 # tools: add upx tools
-mkdir -p tools/upx
-curl -s https://$mirror/openwrt/patch/upx/Makefile > tools/upx/Makefile
-sed -i "/tools-y += sstrip/atools-y += upx" tools/Makefile
+curl -s https://$mirror/openwrt/patch/generic/0002-tools-add-upx-tools.patch | patch -p1
 
 # rootfs: upx compression
 # include/rootfs.mk
-curl -s https://$mirror/openwrt/patch/generic/0002-rootfs-add-upx-compression-support.patch | patch -p1
-
-# kernel: Add support for llvm/clang compiler
-curl -s https://$mirror/openwrt/patch/generic/0003-kernel-Add-support-for-llvm-clang-compiler.patch | patch -p1
-
-# toolchain: Add libquadmath to the toolchain
-curl -s https://$mirror/openwrt/patch/generic/0004-libquadmath-Add-libquadmath-to-the-toolchain.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic/0003-rootfs-add-upx-compression-support.patch | patch -p1
 
 # rootfs: add r/w (0600) permissions for UCI configuration files
 # include/rootfs.mk
-curl -s https://$mirror/openwrt/patch/generic/0005-rootfs-add-r-w-permissions-for-UCI-configuration-fil.patch | patch -p1
-
-# build: kernel: add out-of-tree kernel config
-curl -s https://$mirror/openwrt/patch/generic/0006-build-kernel-add-out-of-tree-kernel-config.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic/0004-rootfs-add-r-w-permissions-for-UCI-configuration-fil.patch | patch -p1
 
 # rootfs: Add support for local kmod installation sources
-curl -s https://$mirror/openwrt/patch/generic/0007-rootfs-Add-support-for-local-kmod-installation-sourc.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic/0005-rootfs-Add-support-for-local-kmod-installation-sourc.patch | patch -p1
+
+# BTF: fix failed to validate module
+# config/Config-kernel.in patch
+curl -s https://$mirror/openwrt/patch/generic/0006-kernel-add-MODULE_ALLOW_BTF_MISMATCH-option.patch | patch -p1
+
+# kernel: Add support for llvm/clang compiler
+curl -s https://$mirror/openwrt/patch/generic/0007-kernel-Add-support-for-llvm-clang-compiler.patch | patch -p1
+
+# toolchain: Add libquadmath to the toolchain
+curl -s https://$mirror/openwrt/patch/generic/0008-libquadmath-Add-libquadmath-to-the-toolchain.patch | patch -p1
+
+# build: kernel: add out-of-tree kernel config
+curl -s https://$mirror/openwrt/patch/generic/0009-build-kernel-add-out-of-tree-kernel-config.patch | patch -p1
 
 # kernel: linux-6.11 config
-curl -s https://$mirror/openwrt/patch/generic/0008-include-kernel-add-miss-config-for-linux-6.11.patch | patch -p1
-
-# tools: add llvm/clang toolchain
-curl -s https://$mirror/openwrt/patch/generic/0009-tools-add-llvm-clang-toolchain.patch | patch -p1
-mkdir -p tools/clang
-curl -s https://$mirror/openwrt/patch/clang/Makefile > tools/clang/Makefile
+curl -s https://$mirror/openwrt/patch/generic/0010-include-kernel-add-miss-config-for-linux-6.11.patch | patch -p1
 
 # meson: add platform variable to cross-compilation file
-curl -s https://$mirror/openwrt/patch/generic/010-meson-add-platform-variable-to-cross-compilation-file.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic/0011-meson-add-platform-variable-to-cross-compilation-fil.patch | patch -p1
+
+# mold
+if [ "$ENABLE_MOLD" = "y" ]; then
+    curl -s https://$mirror/openwrt/patch/generic/mold/0001-build-add-support-to-use-the-mold-linker-for-package.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/mold/0002-treewide-opt-out-of-tree-wide-mold-usage.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/mold/0003-toolchain-add-mold-as-additional-linker.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/mold/0004-tools-add-mold-a-modern-linker.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/mold/0005-build-replace-SSTRIP_ARGS-with-SSTRIP_DISCARD_TRAILI.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/mold/0006-config-add-a-knob-to-use-the-mold-linker-for-package.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/mold/0007-rules-prepare-to-use-different-linkers.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/mold/0008-tools-mold-update-to-2.34.0.patch | patch -p1
+    # no-mold
+    sed -i '/PKG_BUILD_PARALLEL/aPKG_BUILD_FLAGS:=no-mold' feeds/packages/utils/attr/Makefile
+fi
+
+######## OpenWrt Patches End ########
 
 # dwarves: Fix a dwarf type DW_ATE_unsigned_1024 to btf encoding issue
 mkdir -p tools/dwarves/patches
@@ -91,6 +105,16 @@ else
     curl -s https://$mirror/openwrt/patch/target-modify_for_rockchip.patch | patch -p1
 fi
 
+# DPDK & NUMACTL
+if [ "$ENABLE_DPDK" = "y" ]; then
+    mkdir -p package/new/{dpdk/patches,numactl}
+    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/Makefile > package/new/dpdk/Makefile
+    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/Config.in > package/new/dpdk/Config.in
+    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/patches/010-dpdk_arm_build_platform_fix.patch > package/new/dpdk/patches/010-dpdk_arm_build_platform_fix.patch
+    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/patches/201-r8125-add-r8125-ethernet-poll-mode-driver.patch > package/new/dpdk/patches/201-r8125-add-r8125-ethernet-poll-mode-driver.patch
+    curl -s https://$mirror/openwrt/patch/dpdk/numactl/Makefile > package/new/numactl/Makefile
+fi
+
 # IF USE GLIBC
 if [ "$ENABLE_GLIBC" = "y" ]; then
     # musl-libc
@@ -109,30 +133,6 @@ if [ "$ENABLE_GLIBC" = "y" ]; then
     echo 'export LANG="en_US.UTF-8" I18NPATH="/usr/share/i18n"' > package/base-files/files/etc/profile.d/sys_locale.sh
     # build - drop `--disable-profile`
     sed -i "/disable-profile/d" toolchain/glibc/common.mk
-fi
-
-# DPDK & NUMACTL
-if [ "$ENABLE_DPDK" = "y" ]; then
-    mkdir -p package/new/{dpdk/patches,numactl}
-    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/Makefile > package/new/dpdk/Makefile
-    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/Config.in > package/new/dpdk/Config.in
-    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/patches/010-dpdk_arm_build_platform_fix.patch > package/new/dpdk/patches/010-dpdk_arm_build_platform_fix.patch
-    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/patches/201-r8125-add-r8125-ethernet-poll-mode-driver.patch > package/new/dpdk/patches/201-r8125-add-r8125-ethernet-poll-mode-driver.patch
-    curl -s https://$mirror/openwrt/patch/dpdk/numactl/Makefile > package/new/numactl/Makefile
-fi
-
-# mold
-if [ "$ENABLE_MOLD" = "y" ]; then
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0001-build-add-support-to-use-the-mold-linker-for-package.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0002-treewide-opt-out-of-tree-wide-mold-usage.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0003-toolchain-add-mold-as-additional-linker.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0004-tools-add-mold-a-modern-linker.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0005-build-replace-SSTRIP_ARGS-with-SSTRIP_DISCARD_TRAILI.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0006-config-add-a-knob-to-use-the-mold-linker-for-package.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0007-rules-prepare-to-use-different-linkers.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0008-tools-mold-update-to-2.30.0.patch | patch -p1
-    # no-mold
-    sed -i '/PKG_BUILD_PARALLEL/aPKG_BUILD_FLAGS:=no-mold' feeds/packages/utils/attr/Makefile
 fi
 
 # Mbedtls AES & GCM Crypto Extensions

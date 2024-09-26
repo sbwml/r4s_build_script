@@ -1,7 +1,7 @@
-From b0f013ccfa66842e9739c6e11b81eadc44a2f8eb Mon Sep 17 00:00:00 2001
+From a28478cd750d5295a80eb84d74522bbec5d25f1c Mon Sep 17 00:00:00 2001
 From: Tianling Shen <cnsztl@immortalwrt.org>
 Date: Tue, 16 May 2023 12:38:53 +0800
-Subject: [PATCH 1/7] kernel: add MODULE_ALLOW_BTF_MISMATCH option
+Subject: [PATCH 06/11] kernel: add MODULE_ALLOW_BTF_MISMATCH option
 
 BTF mismatch can occur for a separately-built module even when the ABI
 is otherwise compatible and nothing else would prevent successfully

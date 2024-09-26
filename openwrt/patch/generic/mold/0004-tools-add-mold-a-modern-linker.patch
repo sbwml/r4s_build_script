@@ -1,4 +1,4 @@
-From 5c32e0a110bd6269136ff90ade852c783d169ecf Mon Sep 17 00:00:00 2001
+From fdadb3131437c1f64d801ca7cf65c527f69a8a5f Mon Sep 17 00:00:00 2001
 From: Andre Heider <a.heider@gmail.com>
 Date: Fri, 27 Jan 2023 17:53:02 +0100
 Subject: [PATCH 4/8] tools: add mold, a modern linker
@@ -19,10 +19,10 @@ Signed-off-by: Andre Heider <a.heider@gmail.com>
  create mode 100644 tools/mold/Makefile
 
 diff --git a/tools/Makefile b/tools/Makefile
-index feae919..231706c 100644
+index e4afc87..6f27de5 100644
 --- a/tools/Makefile
 +++ b/tools/Makefile
-@@ -84,6 +84,7 @@ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(CONFIG_TARGET_tegra),y) += cbootimage
+@@ -91,6 +91,7 @@ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(CONFIG_TARGET_tegra),y) += cbootimage
  tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(CONFIG_USES_MINOR),y) += kernel2minor
  tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(CONFIG_USE_SPARSE),y) += sparse
  tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(CONFIG_USE_LLVM_BUILD),y) += llvm-bpf
@@ -30,7 +30,7 @@ index feae919..231706c 100644
  
  # builddir dependencies
  $(curdir)/autoconf/compile := $(curdir)/m4/compile
-@@ -115,6 +116,7 @@ $(curdir)/meson/compile := $(curdir)/ninja/compile
+@@ -122,6 +123,7 @@ $(curdir)/meson/compile := $(curdir)/ninja/compile
  $(curdir)/missing-macros/compile := $(curdir)/autoconf/compile
  $(curdir)/mkimage/compile += $(curdir)/bison/compile $(curdir)/libressl/compile
  $(curdir)/mklibs/compile := $(curdir)/libtool/compile

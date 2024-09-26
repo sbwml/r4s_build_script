@@ -1,7 +1,7 @@
-From 59e101ebf7ac9ffe7b9dfd82a6e41050dbc5d13f Mon Sep 17 00:00:00 2001
+From 57df3edf99312bbe39647d0dd9fd36896a9a3e09 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Mon, 6 May 2024 03:21:07 +0800
-Subject: [PATCH 3/7] kernel: Add support for llvm/clang compiler
+Subject: [PATCH 07/11] kernel: Add support for llvm/clang compiler
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---

@@ -1,4 +1,4 @@
-From 92b82f0545fa658e358a85db8c7acee706c5c520 Mon Sep 17 00:00:00 2001
+From 09a3ce6cd32555c06db829f5b56b23b0d47b5ebe Mon Sep 17 00:00:00 2001
 From: Andre Heider <a.heider@gmail.com>
 Date: Fri, 27 Jan 2023 16:35:46 +0100
 Subject: [PATCH 1/8] build: add support to use the mold linker for packages

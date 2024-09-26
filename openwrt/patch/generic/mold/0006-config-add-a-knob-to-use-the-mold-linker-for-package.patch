@@ -1,4 +1,4 @@
-From 9494bba487dc290f0fa3cf51f3deac8ea4bd8080 Mon Sep 17 00:00:00 2001
+From 5840abe142ba5e5e6bfcaa6435887990f2568cec Mon Sep 17 00:00:00 2001
 From: Andre Heider <a.heider@gmail.com>
 Date: Fri, 27 Jan 2023 17:13:15 +0100
 Subject: [PATCH 6/8] config: add a knob to use the mold linker for packages

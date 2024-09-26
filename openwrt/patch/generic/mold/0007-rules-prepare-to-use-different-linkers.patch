@@ -1,4 +1,4 @@
-From 8086e16507bf6e510c01f616a07282632bd97897 Mon Sep 17 00:00:00 2001
+From def4db1bbcef727db78dbce12dc95df9903f135f Mon Sep 17 00:00:00 2001
 From: Andre Heider <a.heider@gmail.com>
 Date: Fri, 27 Jan 2023 16:32:31 +0100
 Subject: [PATCH 7/8] rules: prepare to use different linkers

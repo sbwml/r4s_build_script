@@ -1,7 +1,7 @@
-From ff6ba001d151cf07a25af592e30a28df0b50ff19 Mon Sep 17 00:00:00 2001
+From dcdf87bf2596f1df7805390df133d429b74892ef Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Zbyn=C4=9Bk=20Kocur?= <zbynek.kocur@fel.cvut.cz>
 Date: Wed, 31 Jan 2024 15:17:51 +0100
-Subject: [PATCH] meson: add platform variable to cross-compilation file
+Subject: [PATCH 11/11] meson: add platform variable to cross-compilation file
 
 This patch adds the "platform" variable to the meson cross-compilation file for the ARM SoC. This variable is necessary to compile DPDK framework on ARM SoCs.(https://doc.dpdk.org/guides/linux_gsg/cross_build_dpdk_for_arm64.html)
 ---
@@ -10,7 +10,7 @@ This patch adds the "platform" variable to the meson cross-compilation file for 
  2 files changed, 2 insertions(+)
 
 diff --git a/include/meson.mk b/include/meson.mk
-index 7d67dcf298b3e..5a7c7a36fb4de 100644
+index 7d67dcf..5a7c7a3 100644
 --- a/include/meson.mk
 +++ b/include/meson.mk
 @@ -89,6 +89,7 @@ define Meson/CreateCrossFile
@@ -22,7 +22,7 @@ index 7d67dcf298b3e..5a7c7a36fb4de 100644
  		< $(MESON_DIR)/openwrt-cross.txt.in \
  		> $(1)
 diff --git a/tools/meson/files/openwrt-cross.txt.in b/tools/meson/files/openwrt-cross.txt.in
-index ec4b027f1b783..e7cbcd0872111 100644
+index ec4b027..e7cbcd0 100644
 --- a/tools/meson/files/openwrt-cross.txt.in
 +++ b/tools/meson/files/openwrt-cross.txt.in
 @@ -22,4 +22,5 @@ cpu = '@CPU@'
@@ -31,3 +31,6 @@ index ec4b027f1b783..e7cbcd0872111 100644
  [properties]
 +platform = '@PLAT@'
  needs_exe_wrapper = true
+-- 
+2.43.5
+

@@ -1,7 +1,7 @@
-From 79765552324d8c08e31e7ab80a53b1a29654d473 Mon Sep 17 00:00:00 2001
+From 986b21972b58606f861d284f370c35bffa9b51b8 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Sun, 7 Apr 2024 04:08:40 +0800
-Subject: [PATCH 2/7] rootfs: add upx compression support
+Subject: [PATCH 03/11] rootfs: add upx compression support
 
 * When the upx_list.txt file exists in the source code root directory,
   it will be compressed by upx.

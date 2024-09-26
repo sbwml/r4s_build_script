@@ -1,0 +1,88 @@
+From bc462181d8f9d64841f5a68625070efd116bc655 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Thu, 26 Sep 2024 06:32:20 +0800
+Subject: [PATCH 01/11] tools: add llvm/clang toolchain
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ tools/Makefile       |  7 +++++++
+ tools/clang/Makefile | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 49 insertions(+)
+ create mode 100644 tools/clang/Makefile
+
+diff --git a/tools/Makefile b/tools/Makefile
+index 40c3ec1..88250b3 100644
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -29,6 +29,12 @@ endif
+ ifneq ($(CONFIG_SDK)$(CONFIG_TARGET_INITRAMFS_COMPRESSION_LZO),)
+   BUILD_LZO_TOOLS = y
+ endif
++ifeq ($(CONFIG_KERNEL_CC),clang)
++  BUILD_CLANG_HOST = y
++endif
++ifeq ($(CONFIG_BPF_TOOLCHAIN_HOST),y)
++  BUILD_CLANG_HOST = y
++endif
+ 
+ tools-y += autoconf
+ tools-y += autoconf-archive
+@@ -68,6 +74,7 @@ tools-y += sstrip
+ tools-y += zip
+ tools-y += zlib
+ tools-y += zstd
++tools-$(if $(BUILD_CLANG_HOST),y) += clang
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS),y) += liblzo
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_B43_TOOLS),y) += b43-tools
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_BZIP2_TOOLS),y) += bzip2
+diff --git a/tools/clang/Makefile b/tools/clang/Makefile
+new file mode 100644
+index 0000000..20927f7
+--- /dev/null
++++ b/tools/clang/Makefile
+@@ -0,0 +1,42 @@
++#
++# Copyright (C) 2006-2017 OpenWrt.org
++#
++# This is free software, licensed under the GNU General Public License v2.
++# See /LICENSE for more information.
++#
++
++include $(TOPDIR)/rules.mk
++
++PKG_NAME:=clang
++PKG_VERSION:=19.1.0
++
++PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-x86_64-redhat-linux.tar.xz
++PKG_SOURCE_URL:=https://github.com/sbwml/redhat-llvm-project/releases/download/$(PKG_VERSION)/
++PKG_HASH:=21c9d10911eeccd31ab648da1beabe94048ecda441149bbba0a12302f105f337
++
++PKG_MAINTAINER:=sbwml <admin@cooluc.com>
++PKG_LICENSE:=Apache-2.0
++PKG_LICENSE_FILES:=LICENSE
++
++include $(INCLUDE_DIR)/host-build.mk
++
++define Host/Prepare
++	$(TAR) --strip-components=1 -C $(HOST_BUILD_DIR) -xf $(DL_DIR)/$(PKG_NAME)-$(PKG_VERSION)-x86_64-redhat-linux.tar.xz
++endef
++
++define Host/Compile
++endef
++
++define Host/Install
++	$(CP) $(HOST_BUILD_DIR)/{bin,include,lib,share} $(STAGING_DIR_HOST)/
++endef
++
++define Host/Uninstall
++	( \
++		rm -rf $(STAGING_DIR_HOST)/bin/{FileCheck,clang*,dsymutil,git-clang-format,*lld*,llc,llvm*,merge-fdata,opt,perf2bolt,run-clang-tidy,wasm-ld,yaml2obj} ; \
++		rm -rf $(STAGING_DIR_HOST)/include/{c++,clang,clang-c,__libunwind_config.h,libunwind.h,libunwind.modulemap,lld,llvm,llvm-c,mach-o,unwind_arm_ehabi.h,unwind.h,unwind_itanium.h,x86_64-redhat-linux-gnu} ; \
++		rm -rf $(STAGING_DIR_HOST)/lib/{bfd-plugins,clang,cmake,x86_64-redhat-linux-gnu,LLVMgold.so,libLLVM*,libLTO*,libPolly.a,libRemarks.so*,libclang*,libedit*,libfindAllSymbols.a,liblld*,liblzma*,libncurses*,libxml2*} ; \
++	)
++endef
++
++$(eval $(call HostBuild))
+-- 
+2.43.5
+
