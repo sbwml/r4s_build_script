@@ -6,8 +6,8 @@ Subject: [PATCH 01/11] tools: add llvm/clang toolchain
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
  tools/Makefile       |  7 +++++++
- tools/clang/Makefile | 42 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 49 insertions(+)
+ tools/clang/Makefile | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 50 insertions(+)
  create mode 100644 tools/clang/Makefile
 
 diff --git a/tools/Makefile b/tools/Makefile
@@ -37,10 +37,10 @@ index 40c3ec1..88250b3 100644
  tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_BZIP2_TOOLS),y) += bzip2
 diff --git a/tools/clang/Makefile b/tools/clang/Makefile
 new file mode 100644
-index 0000000..20927f7
+index 0000000..0fcd4d0
 --- /dev/null
 +++ b/tools/clang/Makefile
-@@ -0,0 +1,42 @@
+@@ -0,0 +1,43 @@
 +#
 +# Copyright (C) 2006-2017 OpenWrt.org
 +#
@@ -71,7 +71,8 @@ index 0000000..20927f7
 +endef
 +
 +define Host/Install
-+	$(CP) $(HOST_BUILD_DIR)/{bin,include,lib,share} $(STAGING_DIR_HOST)/
++	$(CP) -a $(HOST_BUILD_DIR)/{bin,include,lib,share} $(STAGING_DIR_HOST)/
++	$(RM) -rf $(HOST_BUILD_DIR)/{bin,include,lib,share}
 +endef
 +
 +define Host/Uninstall
