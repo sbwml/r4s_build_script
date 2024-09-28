@@ -46,12 +46,11 @@ grep HASH include/kernel-$kernel_version | awk -F'HASH-' '{print $2}' | awk '{pr
 rm -rf target/linux/generic
 local_kernel_version=$(sed -n 's/^LINUX_KERNEL_HASH-\([0-9.]\+\) = .*/\1/p' include/kernel-$kernel_version)
 release_kernel_version=$(curl -sL https://raw.githubusercontent.com/sbwml/r4s_build_script/master/tags/kernel-$kernel_version | sed -n 's/^LINUX_KERNEL_HASH-\([0-9.]\+\) = .*/\1/p')
-if [ "$local_kernel_version" = "$release_kernel_version" ]; then
+if [ "$local_kernel_version" = "$release_kernel_version" ] && [ -z "$git_password" ]; then
     git clone https://$github/sbwml/target_linux_generic -b main target/linux/generic --depth=1
 else
     if [ "$(whoami)" = "runner" ]; then
         git_name=private
-        git_password="$git_password"
         git clone https://"$git_name":"$git_password"@$gitea/sbwml/target_linux_generic -b main target/linux/generic --depth=1
     elif [ "$(whoami)" = "sbwml" ]; then
         git clone https://$gitea/sbwml/target_linux_generic -b main target/linux/generic --depth=1
