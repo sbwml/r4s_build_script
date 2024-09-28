@@ -1,0 +1,63 @@
+From a5f1c52a8ce42243323a9a79bbd29128af1920a2 Mon Sep 17 00:00:00 2001
+From: Andre Heider <a.heider@gmail.com>
+Date: Sat, 28 Jan 2023 21:16:16 +0100
+Subject: [PATCH 5/8] build: replace SSTRIP_ARGS with
+ SSTRIP_DISCARD_TRAILING_ZEROES
+
+sstrip only has one functional arg. Make that a bool option, which can
+easily depend on other knobs then.
+
+This is required to be disabled for the mold linker.
+
+Signed-off-by: Andre Heider <a.heider@gmail.com>
+---
+ config/Config-build.in | 10 ++++------
+ rules.mk               |  2 +-
+ 2 files changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/config/Config-build.in b/config/Config-build.in
+index fe16d81..a96ed2f 100644
+--- a/config/Config-build.in
++++ b/config/Config-build.in
+@@ -190,7 +190,6 @@ menu "Global build settings"
+ 			help
+ 			  This will install binaries stripped using strip from binutils.
+ 
+-
+ 		config USE_SSTRIP
+ 			bool "sstrip"
+ 			depends on !USE_GLIBC
+@@ -207,13 +206,12 @@ menu "Global build settings"
+ 		help
+ 		  Specifies arguments passed to the strip command when stripping binaries.
+ 
+-	config SSTRIP_ARGS
+-		string
+-		prompt "Sstrip arguments"
++	config SSTRIP_DISCARD_TRAILING_ZEROES
++		bool "Strip trailing zero bytes"
+ 		depends on USE_SSTRIP
+-		default "-z"
++		default y
+ 		help
+-		  Specifies arguments passed to the sstrip command when stripping binaries.
++		  Use sstrip's -z option to discard trailing zero bytes
+ 
+ 	config STRIP_KERNEL_EXPORTS
+ 		bool "Strip unnecessary exports from the kernel image"
+diff --git a/rules.mk b/rules.mk
+index 58c5370..c768ccc 100644
+--- a/rules.mk
++++ b/rules.mk
+@@ -325,7 +325,7 @@ else
+     STRIP:=$(TARGET_CROSS)strip $(call qstrip,$(CONFIG_STRIP_ARGS))
+   else
+     ifneq ($(CONFIG_USE_SSTRIP),)
+-      STRIP:=$(STAGING_DIR_HOST)/bin/sstrip $(call qstrip,$(CONFIG_SSTRIP_ARGS))
++      STRIP:=$(STAGING_DIR_HOST)/bin/sstrip $(if $(CONFIG_SSTRIP_DISCARD_TRAILING_ZEROES),-z)
+     endif
+   endif
+   RSTRIP= \
+-- 
+2.43.5
+

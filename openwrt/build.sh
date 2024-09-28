@@ -25,7 +25,7 @@ endgroup() {
 #####################################
 
 # IP Location
-ip_info=`curl -s https://ip.cooluc.com`;
+ip_info=`curl -sk https://ip.cooluc.com`;
 export isCN=`echo $ip_info | grep -Po 'country_code\":"\K[^"]+'`;
 
 # script url
@@ -40,12 +40,15 @@ if [ "$(whoami)" = "runner" ] && [ -n "$GITHUB_REPO" ]; then
     export mirror=raw.githubusercontent.com/$GITHUB_REPO/master
 fi
 
+# apply for sbwml/builder
+[ -n "$git_password" ] && export mirror=init2.cooluc.com
+
 # private gitea
 export gitea=git.cooluc.com
 
 # github mirror
 if [ "$isCN" = "CN" ]; then
-    export github="github.com"
+    export github="ghp.ci/github.com"
 else
     export github="github.com"
 fi
@@ -100,25 +103,27 @@ fi
 [ -n "$LAN" ] && export LAN=$LAN || export LAN=10.0.0.1
 
 # platform
-[ "$2" = "nanopi-r4s" ] && export platform="rk3399" toolchain_arch="nanopi-r4s"
-[ "$2" = "nanopi-r5s" ] && export platform="rk3568" toolchain_arch="nanopi-r5s"
+[ "$2" = "armv8" ] && export platform="armv8" toolchain_arch="aarch64_generic"
+[ "$2" = "nanopi-r4s" ] && export platform="rk3399" toolchain_arch="aarch64_generic"
+[ "$2" = "nanopi-r5s" ] && export platform="rk3568" toolchain_arch="aarch64_generic"
+[ "$2" = "netgear_r8500" ] && export platform="bcm53xx" toolchain_arch="arm_cortex-a9"
 [ "$2" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
-[ "$2" = "netgear_r8500" ] && export platform="bcm53xx" toolchain_arch="bcm53xx"
-[ "$2" = "armv8" ] && export platform="armv8" toolchain_arch="armsr-armv8"
 
 # gcc13 & 14 & 15
 if [ "$USE_GCC13" = y ]; then
-    export USE_GCC13=y
+    export USE_GCC13=y gcc_version=13
     # use mold
     [ "$ENABLE_MOLD" = y ] && export ENABLE_MOLD=y
 elif [ "$USE_GCC14" = y ]; then
-    export USE_GCC14=y
+    export USE_GCC14=y gcc_version=14
     # use mold
     [ "$ENABLE_MOLD" = y ] && export ENABLE_MOLD=y
 elif [ "$USE_GCC15" = y ]; then
-    export USE_GCC15=y
+    export USE_GCC15=y gcc_version=15
     # use mold
     [ "$ENABLE_MOLD" = y ] && export ENABLE_MOLD=y
+else
+    export gcc_version=11
 fi
 
 # build.sh flags
@@ -128,6 +133,10 @@ export \
     ENABLE_GLIBC=$ENABLE_GLIBC \
     ENABLE_LRNG=$ENABLE_LRNG \
     KERNEL_CLANG_LTO=$KERNEL_CLANG_LTO \
+    TESTING_KERNEL=$TESTING_KERNEL \
+
+# kernel version
+[ "$TESTING_KERNEL" = "y" ] && export kernel_version=6.11 || export kernel_version=6.6
 
 # print version
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
@@ -146,23 +155,14 @@ else
     echo -e "${GREEN_COLOR}Model: nanopi-r4s${RES}"
     [ "$1" = "rc2" ] && model="nanopi-r4s"
 fi
-curl -s https://$mirror/tags/kernel-6.6 > kernel.txt
+curl -s https://$mirror/tags/kernel-$kernel_version > kernel.txt
 kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
 kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
 echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
 rm -f kernel.txt
 
 echo -e "${GREEN_COLOR}Date: $CURRENT_DATE${RES}\r\n"
-
-if [ "$USE_GCC13" = "y" ]; then
-    echo -e "${GREEN_COLOR}GCC VERSION: 13${RES}"
-elif [ "$USE_GCC14" = "y" ]; then
-    echo -e "${GREEN_COLOR}GCC VERSION: 14${RES}"
-elif [ "$USE_GCC15" = "y" ]; then
-    echo -e "${GREEN_COLOR}GCC VERSION: 15${RES}"
-else
-    echo -e "${GREEN_COLOR}GCC VERSION: 11${RES}"
-fi
+echo -e "${GREEN_COLOR}GCC VERSION: $gcc_version${RES}"
 [ -n "$LAN" ] && echo -e "${GREEN_COLOR}LAN: $LAN${RES}" || echo -e "${GREEN_COLOR}LAN: 10.0.0.1${RES}"
 [ "$ENABLE_GLIBC" = "y" ] && echo -e "${GREEN_COLOR}Standard C Library:${RES} ${BLUE_COLOR}glibc${RES}" || echo -e "${GREEN_COLOR}Standard C Library:${RES} ${BLUE_COLOR}musl${RES}"
 [ "$ENABLE_OTA" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_OTA: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_OTA:${RES} ${YELLOW_COLOR}false${RES}"
@@ -341,6 +341,8 @@ fi
 if [ "$ENABLE_LRNG" = "y" ]; then
     echo -e "\n# Kernel - LRNG" >> .config
     echo "CONFIG_KERNEL_LRNG=y" >> .config
+    echo "# CONFIG_PACKAGE_urandom-seed is not set" >> .config
+    echo "# CONFIG_PACKAGE_urngd is not set" >> .config
 fi
 
 # local kmod
@@ -368,14 +370,18 @@ elif [ ! "$ENABLE_GLIBC" = "y" ]; then
 fi
 [ "$(whoami)" = "runner" ] && endgroup
 
-# clean directory - github actions
-[ "$(whoami)" = "runner" ] && echo 'CONFIG_AUTOREMOVE=y' >> .config
-
 # uhttpd
 [ "$ENABLE_UHTTPD" = "y" ] && sed -i '/nginx/d' .config && echo 'CONFIG_PACKAGE_ariang=y' >> .config
 
 # bcm53xx: upx_list.txt
 # [ "$platform" = "bcm53xx" ] && curl -s https://$mirror/openwrt/generic/upx_list.txt > upx_list.txt
+
+# test kernel
+[ "$TESTING_KERNEL" = "y" ] && [ "$platform" = "bcm53xx" ] && sed -i '1i\# CONFIG_PACKAGE_kselftests-bpf is not set\n# CONFIG_PACKAGE_perf is not set\n' .config
+[ "$TESTING_KERNEL" = "y" ] && sed -i '1i\# Test kernel\nCONFIG_TESTING_KERNEL=y\n' .config
+
+# not all kmod
+[ "$NO_KMOD" = "y" ] && sed -i '/CONFIG_ALL_KMODS=y/d; /CONFIG_ALL_NONSHARED=y/d' .config
 
 # Toolchain Cache
 if [ "$BUILD_FAST" = "y" ]; then
@@ -387,19 +393,12 @@ if [ "$BUILD_FAST" = "y" ]; then
     if [ "$PLATFORM_ID" = "platform:el9" ]; then
         TOOLCHAIN_URL="http://127.0.0.1:8080"
     else
-        TOOLCHAIN_URL="$github_proxy"https://github.com/sbwml/toolchain-cache/releases/latest/download
+        TOOLCHAIN_URL="$github_proxy"https://github.com/sbwml/openwrt_caches/releases/latest/download
     fi
-    if [ "$USE_GCC13" = "y" ]; then
-        curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_13.tar.gz -o toolchain.tar.gz $CURL_BAR
-    elif [ "$USE_GCC14" = "y" ]; then
-        curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_14.tar.gz -o toolchain.tar.gz $CURL_BAR
-    elif [ "$USE_GCC15" = "y" ]; then
-        curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_15.tar.gz -o toolchain.tar.gz $CURL_BAR
-    else
-        curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_11.tar.gz -o toolchain.tar.gz $CURL_BAR
-    fi
+    curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_gcc-"$gcc_version".tar.zst -o toolchain.tar.zst $CURL_BAR
     echo -e "\n${GREEN_COLOR}Process Toolchain ...${RES}"
-    tar -zxf toolchain.tar.gz && rm -f toolchain.tar.gz
+    tar -I "zstd" -xf toolchain.tar.zst
+    rm -f toolchain.tar.zst
     mkdir bin
     find ./staging_dir/ -name '*' -exec touch {} \; >/dev/null 2>&1
     find ./tmp/ -name '*' -exec touch {} \; >/dev/null 2>&1
@@ -419,15 +418,8 @@ if [ "$BUILD_TOOLCHAIN" = "y" ]; then
     make -j$cores toolchain/compile || make -j$cores toolchain/compile V=s || exit 1
     mkdir -p toolchain-cache
     [ "$ENABLE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
-    if [ "$USE_GCC13" = "y" ]; then
-        tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch"_13.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
-    elif [ "$USE_GCC14" = "y" ]; then
-        tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch"_14.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
-    elif [ "$USE_GCC15" = "y" ]; then
-        tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch"_15.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
-    else
-        tar -zcf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch"_11.tar.gz ./{build_dir,dl,staging_dir,tmp} && echo -e "${GREEN_COLOR} Build success! ${RES}"
-    fi
+    tar -I "zstd -19 -T$(nproc --all)" -cf toolchain-cache/toolchain_"$LIBC"_"$toolchain_arch"_gcc-"$gcc_version".tar.zst ./{build_dir,dl,staging_dir,tmp}
+    echo -e "${GREEN_COLOR} Build success! ${RES}"
     exit 0
 else
     echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
@@ -451,6 +443,8 @@ else
     echo
     exit 1
 fi
+
+[ "$TESTING_KERNEL" = "y" ] && OTA_PREFIX="test-" || OTA_PREFIX=""
 
 if [ "$platform" = "x86_64" ]; then
     if [ "$ALL_KMODS" = y ]; then
@@ -479,7 +473,7 @@ if [ "$platform" = "x86_64" ]; then
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
-      "url": "$OTA_URL/v$VERSION/openwrt-$VERSION-x86-64-generic-squashfs-combined-efi.img.gz"
+      "url": "$OTA_URL/${OTA_PREFIX}v$VERSION/openwrt-$VERSION-x86-64-generic-squashfs-combined-efi.img.gz"
     }
   ]
 }
@@ -513,7 +507,7 @@ elif [ "$platform" = "armv8" ]; then
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
-      "url": "https://github.com/sbwml/builder/releases/download/v$VERSION/openwrt-$VERSION-armsr-armv8-generic-squashfs-combined-efi.img.gz"
+      "url": "https://github.com/sbwml/builder/releases/download/${OTA_PREFIX}v$VERSION/openwrt-$VERSION-armsr-armv8-generic-squashfs-combined-efi.img.gz"
     }
   ]
 }
@@ -547,7 +541,7 @@ elif [ "$platform" = "bcm53xx" ]; then
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
-      "url": "$OTA_URL/v$VERSION/openwrt-$VERSION-bcm53xx-generic-netgear_r8500-squashfs.chk"
+      "url": "$OTA_URL/${OTA_PREFIX}v$VERSION/openwrt-$VERSION-bcm53xx-generic-netgear_r8500-squashfs.chk"
     }
   ]
 }
@@ -579,7 +573,7 @@ else
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
-      "url": "$OTA_URL/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz"
+      "url": "$OTA_URL/${OTA_PREFIX}v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz"
     }
   ]
 }
@@ -594,14 +588,14 @@ EOF
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256_R5C",
-      "url": "$OTA_URL/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5c-squashfs-sysupgrade.img.gz"
+      "url": "$OTA_URL/${OTA_PREFIX}v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5c-squashfs-sysupgrade.img.gz"
     }
   ],
   "friendlyarm,nanopi-r5s": [
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256_R5S",
-      "url": "$OTA_URL/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5s-squashfs-sysupgrade.img.gz"
+      "url": "$OTA_URL/${OTA_PREFIX}v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5s-squashfs-sysupgrade.img.gz"
     }
   ]
 }

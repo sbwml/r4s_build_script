@@ -1,3 +1,15 @@
+From 8d1db41ed127a9aa614dd5c1cb17c4bb8a7005a0 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Thu, 26 Sep 2024 07:12:34 +0800
+Subject: [PATCH 3/3] toolchain: gcc: add support for GCC 15
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ toolchain/gcc/Config.in      |  3 +++
+ toolchain/gcc/Config.version |  5 +++++
+ toolchain/gcc/common.mk      | 10 +++++++++-
+ 3 files changed, 17 insertions(+), 1 deletion(-)
+
 diff --git a/toolchain/gcc/Config.in b/toolchain/gcc/Config.in
 index ca89051..510c813 100644
 --- a/toolchain/gcc/Config.in
@@ -13,7 +25,7 @@ index ca89051..510c813 100644
  
  config GCC_USE_GRAPHITE
 diff --git a/toolchain/gcc/Config.version b/toolchain/gcc/Config.version
-index 200a356..5675b9a 100644
+index 7ff5bc0..7d8ee09 100644
 --- a/toolchain/gcc/Config.version
 +++ b/toolchain/gcc/Config.version
 @@ -10,11 +10,16 @@ config GCC_VERSION_14
@@ -34,7 +46,7 @@ index 200a356..5675b9a 100644
  
  config GCC_USE_DEFAULT_VERSION
 diff --git a/toolchain/gcc/common.mk b/toolchain/gcc/common.mk
-index f5db99f..24c6535 100644
+index a1a5108..feae36a 100644
 --- a/toolchain/gcc/common.mk
 +++ b/toolchain/gcc/common.mk
 @@ -26,7 +26,11 @@ PKG_VERSION:=$(firstword $(subst +, ,$(GCC_VERSION)))
@@ -51,13 +63,16 @@ index f5db99f..24c6535 100644
  PKG_CPE_ID:=cpe:/a:gnu:gcc
  
 @@ -46,6 +50,10 @@ ifeq ($(PKG_VERSION),14.2.0)
-   PKG_HASH:=e283c654987afe3de9d8080bc0bd79534b5ca0d681a73a11ff2b5d3767426840
+   PKG_HASH:=a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9
  endif
  
 +ifeq ($(PKG_VERSION),15.0.0)
-+  PKG_HASH:=4633621d7edc84b5e13c02c0d5f78a098e612321581b098319486b768055c7d9
++  PKG_HASH:=56d5e11d0c75077f8c556e57f2f317d9d324b28070a868fc85dc1108bd0508b3
 +endif
 +
  PATCH_DIR=../patches-$(GCC_MAJOR_VERSION).x
  
  BUGURL=http://bugs.openwrt.org/
+-- 
+2.43.5
+

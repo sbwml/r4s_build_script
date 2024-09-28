@@ -22,32 +22,10 @@ sudo apt-get update
 sudo apt-get install -y build-essential flex bison g++ gawk gcc-multilib g++-multilib gettext git libfuse-dev libncurses5-dev libssl-dev python3 python3-pip python3-ply python3-distutils python3-pyelftools rsync unzip zlib1g-dev file wget subversion patch upx-ucl autoconf automake curl asciidoc binutils bzip2 lib32gcc-s1 libc6-dev-i386 uglifyjs msmtp texinfo libreadline-dev libglib2.0-dev xmlto libelf-dev libtool autopoint antlr3 gperf ccache swig coreutils haveged scons libpython3-dev jq
 ```
 
-##### 安装 [LLVM/CLANG](https://github.com/sbwml/redhat-llvm-project) - 启用 `ENABLE_BPF` / `KERNEL_CLANG_LTO` 时需要
-
-```shell
-# 下载并解压
-sudo mkdir -p /opt/clang
-curl -LO https://github.com/sbwml/redhat-llvm-project/releases/download/18.1.8/clang-18.1.8-x86_64-redhat-linux.tar.xz
-sudo tar --strip-components=1 -C /opt/clang -xf clang-18.1.8-x86_64-redhat-linux.tar.xz
-rm -rf clang-18.1.8-x86_64-redhat-linux.tar.xz
-
-# 添加 BIN 到系统变量
-export PATH="/opt/clang/bin:$PATH"
-
-# clang 版本验证
-clang --version
-
- clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
- Target: x86_64-redhat-linux-gnu
- Thread model: posix
- InstalledDir: /opt/clang/bin
-```
-
 ---------------
 
 ### 启用 [Clang/LLVM](https://docs.kernel.org/kbuild/llvm.html) 构建内核
 ##### 脚本支持使用 Clang/LLVM 构建内核，NanoPi & X86_64 设备将同时启用 LLVM LTO 链接时优化，这会增加编译的时间，但会获得更优的性能
-##### 编译环境需要安装 Clang/LLVM 工具链，推荐使用 clang 16~18 版本
 ##### 只需在构建固件前执行以下命令即可启用 Clang/LLVM 构建内核与内核模块
 
 ```
@@ -241,10 +219,11 @@ bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_scri
 ### 一、Fork 本仓库到自己 GitHub 存储库
 
 ### 二、构建固件
-- 在存储库名称下，单击（<img src="https://camo.githubusercontent.com/392391d290482f9c4881912eec0700ec2acef8e0d5d2e24b3f8b23d9354fa73e/68747470733a2f2f66696c652e636f6f6c75632e636f6d2f323232322e737667" alt="Actions"> Actions）。
+
+- 在存储库名称下，单击（<img src="https://github.com/user-attachments/assets/f1db14da-2dd9-4f10-8e37-d92ef9651912" alt="Actions"> Actions）。
   
 - 在左侧边栏中，单击要运行的工作流的名称：**Build releases**。
   
 - 在工作流运行的列表上方，单击“**Run workflow**”按钮，选择要构建的设备固件并运行工作流。
   
-  ![image](https://github.com/sbwml/r4s_build_script/assets/16485166/136abcd1-ecf3-4e6d-aa1a-5393a75a25cc)
+  ![image](https://github.com/user-attachments/assets/0c2eb064-a130-47b3-a5a3-1e9a9bb6f50d)

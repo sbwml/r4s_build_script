@@ -5,12 +5,15 @@
 # cryptodev-linux
 mkdir -p package/kernel/cryptodev-linux/patches
 curl -s https://$mirror/openwrt/patch/packages-patches/cryptodev-linux/001-Fix-build-for-Linux-6.3-rc1.patch > package/kernel/cryptodev-linux/patches/001-Fix-build-for-Linux-6.3-rc1.patch
+curl -s https://$mirror/openwrt/patch/packages-patches/cryptodev-linux/002-fix-build-for-linux-6.7-rc1.patch > package/kernel/cryptodev-linux/patches/002-fix-build-for-linux-6.7-rc1.patch
 
 # gpio-button-hotplug
 curl -s https://$mirror/openwrt/patch/packages-patches/gpio-button-hotplug/fix-linux-6.6.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/packages-patches/gpio-button-hotplug/fix-linux-6.11.patch | patch -p1
 
 # gpio-nct5104d
 curl -s https://$mirror/openwrt/patch/packages-patches/gpio-nct5104d/fix-build-for-linux-6.6.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/packages-patches/gpio-nct5104d/fix-build-for-linux-6.11.patch | patch -p1
 
 # dmx_usb_module
 mkdir -p feeds/packages/libs/dmx_usb_module/patches
@@ -27,6 +30,7 @@ curl -s https://$mirror/openwrt/patch/packages-patches/mdio-netlink/001-mdio-net
 mkdir -p feeds/packages/kernel/ovpn-dco/patches
 curl -s https://$mirror/openwrt/patch/packages-patches/ovpn-dco/100-ovpn-dco-adapt-pre-post_doit-CBs-to-new-signature.patch > feeds/packages/kernel/ovpn-dco/patches/100-ovpn-dco-adapt-pre-post_doit-CBs-to-new-signature.patch
 curl -s https://$mirror/openwrt/patch/packages-patches/ovpn-dco/900-fix-linux-6.6.patch > feeds/packages/kernel/ovpn-dco/patches/900-fix-linux-6.6.patch
+curl -s https://$mirror/openwrt/patch/packages-patches/ovpn-dco/901-fix-linux-6.11.patch > feeds/packages/kernel/ovpn-dco/patches/901-fix-linux-6.11.patch
 
 # siit
 rm -rf feeds/packages/net/siit
@@ -42,6 +46,23 @@ pushd feeds/packages/libs/libpfring/patches
   curl -Os https://$mirror/openwrt/patch/packages-patches/libpfring/patches/900-fix-linux-6.6.patch
 popd
 
+# nat46
+mkdir -p package/kernel/nat46/patches
+curl -s https://$mirror/openwrt/patch/packages-patches/nat46/100-fix-build-with-kernel-6.9.patch > package/kernel/nat46/patches/100-fix-build-with-kernel-6.9.patch
+
+# v4l2loopback - 6.11
+mkdir -p feeds/packages/kernel/v4l2loopback/patches
+curl -s https://$mirror/openwrt/patch/packages-patches/v4l2loopback/100-fix-build-with-linux-6.11.patch > feeds/packages/kernel/v4l2loopback/patches/100-fix-build-with-linux-6.11.patch
+
+# openvswitch
+if [ "$TESTING_KERNEL" = "y" ]; then
+    sed -i '/ovs_kmod_openvswitch_depends/a\\t\ \ +kmod-sched-act-sample \\' feeds/packages/net/openvswitch/Makefile
+fi
+
+# ubootenv-nvram - 6.11 (openwrt-23.05.5)
+mkdir -p package/kernel/ubootenv-nvram/patches
+curl -s https://$mirror/openwrt/patch/packages-patches/ubootenv-nvram/010-make-ubootenv_remove-return-void-for-linux-6.11.patch > package/kernel/ubootenv-nvram/patches/010-make-ubootenv_remove-return-void-for-linux-6.11.patch
+
 # packages
 pushd feeds/packages
   # xr_usb_serial_common
@@ -56,6 +77,7 @@ popd
 # xtables-addons
 rm -rf feeds/packages/net/xtables-addons
 cp -a ../master/packages/net/xtables-addons feeds/packages/net/xtables-addons
+curl -s https://$mirror/openwrt/patch/packages-patches/xtables-addons/301-fix-build-with-linux-6.11.patch > feeds/packages/net/xtables-addons/patches/301-fix-build-with-linux-6.11.patch
 
 # telephony
 pushd feeds/telephony

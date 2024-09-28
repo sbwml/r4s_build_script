@@ -1,3 +1,15 @@
+From 9e5c2ff4ad3358ff9ef7584c8a315ddd4995ffe8 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Thu, 26 Sep 2024 07:11:19 +0800
+Subject: [PATCH 2/3] toolchain: gcc: add support for GCC 14
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ toolchain/gcc/Config.in      | 3 +++
+ toolchain/gcc/Config.version | 5 +++++
+ toolchain/gcc/common.mk      | 4 ++++
+ 3 files changed, 12 insertions(+)
+
 diff --git a/toolchain/gcc/Config.in b/toolchain/gcc/Config.in
 index 9156f9c..ca89051 100644
 --- a/toolchain/gcc/Config.in
@@ -13,7 +25,7 @@ index 9156f9c..ca89051 100644
  
  config GCC_USE_GRAPHITE
 diff --git a/toolchain/gcc/Config.version b/toolchain/gcc/Config.version
-index 92033af..200a356 100644
+index 92033af..7ff5bc0 100644
 --- a/toolchain/gcc/Config.version
 +++ b/toolchain/gcc/Config.version
 @@ -6,10 +6,15 @@ config GCC_VERSION_13
@@ -33,7 +45,7 @@ index 92033af..200a356 100644
  
  config GCC_USE_DEFAULT_VERSION
 diff --git a/toolchain/gcc/common.mk b/toolchain/gcc/common.mk
-index cdbf9fa..f5db99f 100644
+index cdbf9fa..a1a5108 100644
 --- a/toolchain/gcc/common.mk
 +++ b/toolchain/gcc/common.mk
 @@ -42,6 +42,10 @@ ifeq ($(PKG_VERSION),13.2.0)
@@ -47,3 +59,6 @@ index cdbf9fa..f5db99f 100644
  PATCH_DIR=../patches-$(GCC_MAJOR_VERSION).x
  
  BUGURL=http://bugs.openwrt.org/
+-- 
+2.43.5
+

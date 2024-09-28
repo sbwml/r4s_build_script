@@ -1,0 +1,25 @@
+From c6f2d815fb9c4ed906831fb89d4a0bac4c00df3f Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Sat, 21 Sep 2024 04:08:14 +0800
+Subject: [PATCH 10/11] include: kernel: add miss config for linux-6.11
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ include/kernel-defaults.mk | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/kernel-defaults.mk b/include/kernel-defaults.mk
+index 408bf2f..8422004 100644
+--- a/include/kernel-defaults.mk
++++ b/include/kernel-defaults.mk
+@@ -110,6 +110,7 @@ define Kernel/SetNoInitramfs
+ 	grep -v INITRAMFS $(LINUX_DIR)/.config.old > $(LINUX_DIR)/.config.set
+ 	echo 'CONFIG_INITRAMFS_SOURCE=""' >> $(LINUX_DIR)/.config.set
+ 	echo '# CONFIG_INITRAMFS_FORCE is not set' >> $(LINUX_DIR)/.config.set
++	echo '# CONFIG_FSCACHE is not set' >> $(LINUX_DIR)/.config.set
+ # CLANG
+ 	mv $(LINUX_DIR)/.config.set $(LINUX_DIR)/.config.old
+ 	grep -v CONFIG_LTO $(LINUX_DIR)/.config.old > $(LINUX_DIR)/.config.set
+-- 
+2.43.5
+

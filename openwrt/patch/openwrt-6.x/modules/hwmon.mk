@@ -10,6 +10,7 @@ HWMON_MENU:=Hardware Monitoring Support
 define KernelPackage/hwmon-core
   SUBMENU:=$(HWMON_MENU)
   TITLE:=Hardware monitoring support
+  DEPENDS:=+LINUX_6_11:kmod-i2c-core
   KCONFIG:= \
 	CONFIG_HWMON \
 	CONFIG_HWMON_DEBUG_CHIP=n
@@ -34,7 +35,7 @@ define KernelPackage/hwmon-ad7418
   KCONFIG:=CONFIG_SENSORS_AD7418
   FILES:=$(LINUX_DIR)/drivers/hwmon/ad7418.ko
   AUTOLOAD:=$(call AutoLoad,60,ad7418 ad7418)
-  $(call AddDepends/hwmon,+kmod-i2c-core +LINUX_6_6:kmod-regmap-core)
+  $(call AddDepends/hwmon,+kmod-i2c-core +kmod-regmap-core)
 endef
 
 define KernelPackage/hwmon-ad7418/description
@@ -130,7 +131,7 @@ define KernelPackage/hwmon-emc2305
   KCONFIG:=CONFIG_SENSORS_EMC2305
   FILES:=$(LINUX_DIR)/drivers/hwmon/emc2305.ko
   AUTOLOAD:=$(call AutoProbe,emc2305)
-  $(call AddDepends/hwmon,+kmod-i2c-core +PACKAGE_kmod-thermal:kmod-thermal +kmod-regmap-i2c @LINUX_6_1||LINUX_6_6)
+  $(call AddDepends/hwmon,+kmod-i2c-core +PACKAGE_kmod-thermal:kmod-thermal +kmod-regmap-i2c)
 endef
 
 define KernelPackage/hwmon-emc2305/description

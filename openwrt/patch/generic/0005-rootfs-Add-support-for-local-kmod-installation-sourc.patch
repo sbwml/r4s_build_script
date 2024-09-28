@@ -1,0 +1,50 @@
+From 8125e1abca321f218b90c797b0cc887d418f055c Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Sun, 14 Jul 2024 12:43:06 +0800
+Subject: [PATCH 05/11] rootfs: Add support for local kmod installation sources
+
+* CONFIG_TARGET_ROOTFS_LOCAL_PACKAGES=y
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ config/Config-images.in | 8 ++++++++
+ include/rootfs.mk       | 6 ++++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/config/Config-images.in b/config/Config-images.in
+index c32fa00..79d89f5 100644
+--- a/config/Config-images.in
++++ b/config/Config-images.in
+@@ -318,4 +318,12 @@ menu "Target Images"
+ 		  across reboots. When enabled, /var/run will still be linked
+ 		  to /tmp/run.
+ 
++	config TARGET_ROOTFS_LOCAL_PACKAGES
++		bool "Create a local target package opkg installation source"
++		select ALL_KMODS
++		default n
++		help
++		  Copy target packages to rootfs and overwrite the original
++		  openwrt_core installation source with local files.
++
+ endmenu
+diff --git a/include/rootfs.mk b/include/rootfs.mk
+index f8bc2ed..06662d4 100644
+--- a/include/rootfs.mk
++++ b/include/rootfs.mk
+@@ -101,6 +101,12 @@ define prepare_rootfs
+ 		done < "$(TOPDIR)/upx_list.txt"; \
+ 	fi
+ 	chmod 600 $(1)/etc/config/*
++	@( \
++		if [ "$(call qstrip,$(CONFIG_TARGET_ROOTFS_LOCAL_PACKAGES))" = y ]; then \
++			$(CP) $(TOPDIR)/bin/targets/$(BOARD)/$(SUBTARGET)/packages $(1)/usr/share/openwrt_core; \
++			$(SED) "/openwrt_core/c\src/gz openwrt_core file:///usr/share/openwrt_core" $(1)/etc/opkg/distfeeds.conf; \
++		fi; \
++	)
+ 	$(call clean_ipkg,$(1))
+ 	$(call mklibs,$(1))
+ 	$(if $(SOURCE_DATE_EPOCH),find $(1)/ -mindepth 1 -execdir touch -hcd "@$(SOURCE_DATE_EPOCH)" "{}" +)
+-- 
+2.43.5
+

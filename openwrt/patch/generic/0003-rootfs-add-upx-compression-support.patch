@@ -1,0 +1,38 @@
+From 986b21972b58606f861d284f370c35bffa9b51b8 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Sun, 7 Apr 2024 04:08:40 +0800
+Subject: [PATCH 03/11] rootfs: add upx compression support
+
+* When the upx_list.txt file exists in the source code root directory,
+  it will be compressed by upx.
+
+* fill in the binary path with rootfs as the absolute path, like this:
+
+/usr/bin/xray
+/usr/bin/xray-plugin
+/usr/sbin/haproxy
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ include/rootfs.mk | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/include/rootfs.mk b/include/rootfs.mk
+index f2ed648..eb69a99 100644
+--- a/include/rootfs.mk
++++ b/include/rootfs.mk
+@@ -95,6 +95,11 @@ define prepare_rootfs
+ 		$(1)/usr/lib/opkg/info/*.postinst* \
+ 		$(1)/usr/lib/opkg/lists/* \
+ 		$(1)/var/lock/*.lock
++	@if [ -f "$(TOPDIR)/upx_list.txt" ]; then \
++		while IFS= read -r file; do \
++			$(STAGING_DIR_HOST)/bin/upx --lzma --best "$(1)$$file" || true; \
++		done < "$(TOPDIR)/upx_list.txt"; \
++	fi
+ 	$(call clean_ipkg,$(1))
+ 	$(call mklibs,$(1))
+ 	$(if $(SOURCE_DATE_EPOCH),find $(1)/ -mindepth 1 -execdir touch -hcd "@$(SOURCE_DATE_EPOCH)" "{}" +)
+-- 
+2.43.5
+

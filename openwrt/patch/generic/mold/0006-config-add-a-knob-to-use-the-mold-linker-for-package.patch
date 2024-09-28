@@ -1,0 +1,71 @@
+From 5840abe142ba5e5e6bfcaa6435887990f2568cec Mon Sep 17 00:00:00 2001
+From: Andre Heider <a.heider@gmail.com>
+Date: Fri, 27 Jan 2023 17:13:15 +0100
+Subject: [PATCH 6/8] config: add a knob to use the mold linker for packages
+
+Building it requires gcc >= 10.2 or clang >= 12.
+
+Using sstrip with its -z argument can produce non-working binaries, like
+a segfaulting `getrandom`, so don't allow that combination.
+
+Signed-off-by: Andre Heider <a.heider@gmail.com>
+---
+ config/Config-build.in  | 15 ++++++++++++++-
+ config/check-hostcxx.sh | 12 ++++++++++++
+ 2 files changed, 26 insertions(+), 1 deletion(-)
+ create mode 100755 config/check-hostcxx.sh
+
+diff --git a/config/Config-build.in b/config/Config-build.in
+index a96ed2f..ebfce8a 100644
+--- a/config/Config-build.in
++++ b/config/Config-build.in
+@@ -167,6 +167,19 @@ menu "Global build settings"
+ 		  Adds LTO flags to the CFLAGS and LDFLAGS.
+ 		  Packages can choose to opt-out via setting PKG_BUILD_FLAGS:=no-lto
+ 
++	config MOLD
++		depends on (aarch64 || arm || i386 || i686 || m68k || powerpc || powerpc64 || sh4 || x86_64)
++		depends on !GCC_USE_VERSION_11
++		def_bool $(shell, ./config/check-hostcxx.sh 10 2 12)
++
++	config USE_MOLD
++		bool
++		prompt "Use the mold linker for all packages"
++		depends on MOLD
++		help
++		  Link packages with mold, a modern linker
++		  Packages can opt-out via setting PKG_BUILD_FLAGS:=no-mold
++
+ 	config IPV6
+ 		def_bool y
+ 
+@@ -208,7 +221,7 @@ menu "Global build settings"
+ 
+ 	config SSTRIP_DISCARD_TRAILING_ZEROES
+ 		bool "Strip trailing zero bytes"
+-		depends on USE_SSTRIP
++		depends on USE_SSTRIP && !USE_MOLD
+ 		default y
+ 		help
+ 		  Use sstrip's -z option to discard trailing zero bytes
+diff --git a/config/check-hostcxx.sh b/config/check-hostcxx.sh
+new file mode 100755
+index 0000000..442f4cf
+--- /dev/null
++++ b/config/check-hostcxx.sh
+@@ -0,0 +1,12 @@
++cat << EOF | "$STAGING_DIR_HOST/bin/g++" -c -x c++ -o /dev/null - >/dev/null 2>&1
++#if __clang__
++  #if __clang_major__ < $3
++    #error "clang too old"
++  #endif
++#else
++  #if __GNUC__ < $1 || (__GNUC__ == $1 && (__GNUC_MINOR__ < $2))
++    #error "gcc too old"
++  #endif
++#endif
++EOF
++[ $? -eq 0 ] && echo y || echo n
+-- 
+2.43.5
+

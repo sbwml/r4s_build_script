@@ -30,9 +30,6 @@ if [ "$USE_GCC14" = y ] || [ "$USE_GCC15" = y ]; then
     # libunwind
     rm -rf package/libs/libunwind
     git clone https://$github/sbwml/package_libs_libunwind package/libs/libunwind
-    # lrzsz
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/lrzsz/900-lrzsz-fix-gcc14.patch > package/new/lrzsz/patches/900-lrzsz-fix-gcc14.patch
-    sed -i '/lrzsz\/install/iTARGET_CFLAGS += -Wno-implicit-function-declaration -Wno-builtin-declaration-mismatch -Wno-incompatible-pointer-types' package/new/lrzsz/Makefile
     # mbedtls
     curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-14/mbedtls/900-tests-fix-calloc-argument-list-gcc-14-fix.patch > package/libs/mbedtls/patches/900-tests-fix-calloc-argument-list-gcc-14-fix.patch
     # linux-atm
@@ -61,6 +58,7 @@ if [ "$USE_GCC14" = y ] || [ "$USE_GCC15" = y ]; then
     if [ "$ENABLE_GLIBC" = "y" ]; then
         # perl
         sed -i "/Target perl/i\TARGET_CFLAGS_PERL += -Wno-implicit-function-declaration -Wno-int-conversion\n" feeds/packages/lang/perl/Makefile
+        sed -i '/HOST_BUILD_PARALLEL/aPKG_BUILD_FLAGS:=no-mold' feeds/packages/lang/perl/Makefile
         # lucihttp
         sed -i "/TARGET_CFLAGS/i\TARGET_CFLAGS += -Wno-implicit-function-declaration" feeds/luci/contrib/package/lucihttp/Makefile
         # rpcd
@@ -71,6 +69,9 @@ if [ "$USE_GCC14" = y ] || [ "$USE_GCC15" = y ]; then
         sed -i "s/-DNDEBUG/-DNDEBUG -Wno-implicit-function-declaration/g" feeds/luci/modules/luci-base/src/Makefile
         # uhttpd
         sed -i "/Package\/uhttpd\/install/i\TARGET_CFLAGS += -Wno-implicit-function-declaration\n" package/network/services/uhttpd/Makefile
+        # shadow
+        sed -i '/TARGET_LDFLAGS/d' feeds/packages/utils/shadow/Makefile
+        sed -i 's/libxcrypt/openssl/g' feeds/packages/utils/shadow/Makefile
     fi
     # openssh - 9.8p1
     if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
@@ -122,6 +123,7 @@ if [ "$KERNEL_CLANG_LTO" = "y" ]; then
 else
     curl -s https://$mirror/openwrt/patch/openwrt-6.x/perf/Makefile > package/devel/perf/Makefile
 fi
+[ "$ENABLE_MOLD" != y ] && sed -i 's/no-mold//g' package/devel/perf/Makefile
 
 # kselftests-bpf
 curl -s https://$mirror/openwrt/patch/packages-patches/kselftests-bpf/Makefile > package/devel/kselftests-bpf/Makefile

@@ -1,0 +1,41 @@
+From a28478cd750d5295a80eb84d74522bbec5d25f1c Mon Sep 17 00:00:00 2001
+From: Tianling Shen <cnsztl@immortalwrt.org>
+Date: Tue, 16 May 2023 12:38:53 +0800
+Subject: [PATCH 06/11] kernel: add MODULE_ALLOW_BTF_MISMATCH option
+
+BTF mismatch can occur for a separately-built module even when the ABI
+is otherwise compatible and nothing else would prevent successfully
+loading. Add a new config to control how mismatches are handled. By
+default, preserve the current behavior of refusing to load the
+module. If MODULE_ALLOW_BTF_MISMATCH is enabled, load the module but
+ignore its BTF information.
+
+Signed-off-by: Tianling Shen <cnsztl@immortalwrt.org>
+---
+ config/Config-kernel.in | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/config/Config-kernel.in b/config/Config-kernel.in
+index ea828ae..a262d59 100644
+--- a/config/Config-kernel.in
++++ b/config/Config-kernel.in
+@@ -364,6 +364,16 @@ config KERNEL_DEBUG_INFO_BTF
+ 
+ 	  Required to run BPF CO-RE applications.
+ 
++config KERNEL_MODULE_ALLOW_BTF_MISMATCH
++	bool "Allow loading modules with non-matching BTF type info"
++	depends on KERNEL_DEBUG_INFO_BTF
++	help
++	  For modules whose split BTF does not match vmlinux, load without
++	  BTF rather than refusing to load. The default behavior with
++	  module BTF enabled is to reject modules with such mismatches;
++	  this option will still load module BTF where possible but ignore
++	  it when a mismatch is found.
++
+ config KERNEL_DEBUG_INFO_REDUCED
+ 	bool "Reduce debugging information"
+ 	default y
+-- 
+2.43.5
+

@@ -378,7 +378,8 @@ define KernelPackage/sound-hda-codec-realtek
   KCONFIG:= \
 	CONFIG_SND_HDA_CODEC_REALTEK
   FILES:= \
-	$(LINUX_DIR)/sound/pci/hda/snd-hda-codec-realtek.ko
+	$(LINUX_DIR)/sound/pci/hda/snd-hda-codec-realtek.ko \
+	$(LINUX_DIR)/sound/pci/hda/snd-hda-scodec-component.ko@ge6.11
   AUTOLOAD:=$(call AutoProbe,snd-hda-codec-realtek)
   $(call AddDepends/sound,kmod-sound-hda-core)
 endef

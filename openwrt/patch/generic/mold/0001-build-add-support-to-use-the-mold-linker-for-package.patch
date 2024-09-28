@@ -1,0 +1,32 @@
+From 09a3ce6cd32555c06db829f5b56b23b0d47b5ebe Mon Sep 17 00:00:00 2001
+From: Andre Heider <a.heider@gmail.com>
+Date: Fri, 27 Jan 2023 16:35:46 +0100
+Subject: [PATCH 1/8] build: add support to use the mold linker for packages
+
+If CONFIG_USE_MOLD is set, all target packages will use the mold linker.
+Except the ones which opted-out via setting PKG_BUILD_FLAGS:=no-mold.
+
+Signed-off-by: Andre Heider <a.heider@gmail.com>
+---
+ include/package.mk | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/include/package.mk b/include/package.mk
+index 802e33a..6988e5f 100644
+--- a/include/package.mk
++++ b/include/package.mk
+@@ -59,6 +59,11 @@ ifeq ($(call pkg_build_flag,lto,$(if $(CONFIG_USE_LTO),1,0)),1)
+   TARGET_CXXFLAGS+= -flto=auto -fno-fat-lto-objects
+   TARGET_LDFLAGS+= -flto=auto -fuse-linker-plugin
+ endif
++ifdef CONFIG_USE_MOLD
++  ifeq ($(call pkg_build_flag,mold,1),1)
++    TARGET_LINKER:=mold
++  endif
++endif
+ 
+ include $(INCLUDE_DIR)/hardening.mk
+ include $(INCLUDE_DIR)/prereq.mk
+-- 
+2.43.5
+

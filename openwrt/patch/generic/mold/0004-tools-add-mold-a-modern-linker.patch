@@ -1,0 +1,71 @@
+From fdadb3131437c1f64d801ca7cf65c527f69a8a5f Mon Sep 17 00:00:00 2001
+From: Andre Heider <a.heider@gmail.com>
+Date: Fri, 27 Jan 2023 17:53:02 +0100
+Subject: [PATCH 4/8] tools: add mold, a modern linker
+
+mold is a faster drop-in replacement for existing Unix linkers.
+
+A single binary is able to link various targets, which is why this lives
+in tools/.
+
+All toolchain builds then just need to copy the linker over, hence avoiding
+multiple builds with the same outcome.
+
+Signed-off-by: Andre Heider <a.heider@gmail.com>
+---
+ tools/Makefile      |  2 ++
+ tools/mold/Makefile | 22 ++++++++++++++++++++++
+ 2 files changed, 24 insertions(+)
+ create mode 100644 tools/mold/Makefile
+
+diff --git a/tools/Makefile b/tools/Makefile
+index e4afc87..6f27de5 100644
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -91,6 +91,7 @@ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(CONFIG_TARGET_tegra),y) += cbootimage
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(CONFIG_USES_MINOR),y) += kernel2minor
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(CONFIG_USE_SPARSE),y) += sparse
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(CONFIG_USE_LLVM_BUILD),y) += llvm-bpf
++tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(CONFIG_USE_MOLD),y) += mold
+ 
+ # builddir dependencies
+ $(curdir)/autoconf/compile := $(curdir)/m4/compile
+@@ -122,6 +123,7 @@ $(curdir)/meson/compile := $(curdir)/ninja/compile
+ $(curdir)/missing-macros/compile := $(curdir)/autoconf/compile
+ $(curdir)/mkimage/compile += $(curdir)/bison/compile $(curdir)/libressl/compile
+ $(curdir)/mklibs/compile := $(curdir)/libtool/compile
++$(curdir)/mold/compile := $(curdir)/cmake/compile $(curdir)/zlib/compile $(curdir)/zstd/compile
+ $(curdir)/mpc/compile := $(curdir)/mpfr/compile $(curdir)/gmp/compile
+ $(curdir)/mpfr/compile := $(curdir)/gmp/compile
+ $(curdir)/mtd-utils/compile := $(curdir)/libtool/compile $(curdir)/e2fsprogs/compile $(curdir)/zlib/compile
+diff --git a/tools/mold/Makefile b/tools/mold/Makefile
+new file mode 100644
+index 0000000..e8fcecb
+--- /dev/null
++++ b/tools/mold/Makefile
+@@ -0,0 +1,22 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++include $(TOPDIR)/rules.mk
++
++PKG_NAME:=mold
++PKG_VERSION:=1.11.0
++
++PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
++PKG_SOURCE_URL_FILE:=v$(PKG_VERSION).tar.gz
++PKG_SOURCE_URL:=https://github.com/rui314/mold/archive/refs/tags
++PKG_HASH:=99318eced81b09a77e4c657011076cc8ec3d4b6867bd324b8677974545bc4d6f
++
++include $(INCLUDE_DIR)/host-build.mk
++include $(INCLUDE_DIR)/cmake.mk
++
++CMAKE_HOST_OPTIONS += \
++	-DMOLD_LTO=ON \
++	-DMOLD_MOSTLY_STATIC=ON \
++	-DMOLD_USE_SYSTEM_MIMALLOC=OFF \
++	-DMOLD_USE_SYSTEM_TBB=OFF
++
++$(eval $(call HostBuild))
+-- 
+2.43.5
+

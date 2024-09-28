@@ -10,37 +10,59 @@ else
     git clone https://$github/sbwml/arm-trusted-firmware-rockchip package/boot/arm-trusted-firmware-rockchip -b 0419
 fi
 
-# BTF: fix failed to validate module
-# config/Config-kernel.in patch
-curl -s https://$mirror/openwrt/patch/generic/0001-kernel-add-MODULE_ALLOW_BTF_MISMATCH-option.patch | patch -p1
+######## OpenWrt Patches ########
+
+# tools: add llvm/clang toolchain
+curl -s https://$mirror/openwrt/patch/generic/0001-tools-add-llvm-clang-toolchain.patch | patch -p1
 
 # tools: add upx tools
-mkdir -p tools/upx
-curl -s https://$mirror/openwrt/patch/upx/Makefile > tools/upx/Makefile
-sed -i "/tools-y += sstrip/atools-y += upx" tools/Makefile
+curl -s https://$mirror/openwrt/patch/generic/0002-tools-add-upx-tools.patch | patch -p1
 
 # rootfs: upx compression
 # include/rootfs.mk
-curl -s https://$mirror/openwrt/patch/generic/0002-rootfs-add-upx-compression-support.patch | patch -p1
-
-# kernel: Add support for llvm/clang compiler
-curl -s https://$mirror/openwrt/patch/generic/0003-kernel-Add-support-for-llvm-clang-compiler.patch | patch -p1
-
-# toolchain: Add libquadmath to the toolchain
-curl -s https://$mirror/openwrt/patch/generic/0004-libquadmath-Add-libquadmath-to-the-toolchain.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic/0003-rootfs-add-upx-compression-support.patch | patch -p1
 
 # rootfs: add r/w (0600) permissions for UCI configuration files
 # include/rootfs.mk
-curl -s https://$mirror/openwrt/patch/generic/0005-rootfs-add-r-w-permissions-for-UCI-configuration-fil.patch | patch -p1
-
-# build: kernel: add out-of-tree kernel config
-curl -s https://$mirror/openwrt/patch/generic/0006-build-kernel-add-out-of-tree-kernel-config.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic/0004-rootfs-add-r-w-permissions-for-UCI-configuration-fil.patch | patch -p1
 
 # rootfs: Add support for local kmod installation sources
-curl -s https://$mirror/openwrt/patch/generic/0007-rootfs-Add-support-for-local-kmod-installation-sourc.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic/0005-rootfs-Add-support-for-local-kmod-installation-sourc.patch | patch -p1
+
+# BTF: fix failed to validate module
+# config/Config-kernel.in patch
+curl -s https://$mirror/openwrt/patch/generic/0006-kernel-add-MODULE_ALLOW_BTF_MISMATCH-option.patch | patch -p1
+
+# kernel: Add support for llvm/clang compiler
+curl -s https://$mirror/openwrt/patch/generic/0007-kernel-Add-support-for-llvm-clang-compiler.patch | patch -p1
+
+# toolchain: Add libquadmath to the toolchain
+curl -s https://$mirror/openwrt/patch/generic/0008-libquadmath-Add-libquadmath-to-the-toolchain.patch | patch -p1
+
+# build: kernel: add out-of-tree kernel config
+curl -s https://$mirror/openwrt/patch/generic/0009-build-kernel-add-out-of-tree-kernel-config.patch | patch -p1
+
+# kernel: linux-6.11 config
+curl -s https://$mirror/openwrt/patch/generic/0010-include-kernel-add-miss-config-for-linux-6.11.patch | patch -p1
 
 # meson: add platform variable to cross-compilation file
-curl -s https://$mirror/openwrt/patch/generic/010-meson-add-platform-variable-to-cross-compilation-file.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic/0011-meson-add-platform-variable-to-cross-compilation-fil.patch | patch -p1
+
+# mold
+if [ "$ENABLE_MOLD" = "y" ]; then
+    curl -s https://$mirror/openwrt/patch/generic/mold/0001-build-add-support-to-use-the-mold-linker-for-package.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/mold/0002-treewide-opt-out-of-tree-wide-mold-usage.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/mold/0003-toolchain-add-mold-as-additional-linker.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/mold/0004-tools-add-mold-a-modern-linker.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/mold/0005-build-replace-SSTRIP_ARGS-with-SSTRIP_DISCARD_TRAILI.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/mold/0006-config-add-a-knob-to-use-the-mold-linker-for-package.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/mold/0007-rules-prepare-to-use-different-linkers.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/generic/mold/0008-tools-mold-update-to-2.34.0.patch | patch -p1
+    # no-mold
+    sed -i '/PKG_BUILD_PARALLEL/aPKG_BUILD_FLAGS:=no-mold' feeds/packages/utils/attr/Makefile
+fi
+
+######## OpenWrt Patches End ########
 
 # dwarves: Fix a dwarf type DW_ATE_unsigned_1024 to btf encoding issue
 mkdir -p tools/dwarves/patches
@@ -67,6 +89,7 @@ if [ "$ENABLE_UHTTPD" != "y" ]; then
 fi
 
 # Realtek driver - R8168 & R8125 & R8126 & R8152 & R8101
+rm -rf package/kernel/r8168 package/kernel/r8101 package/kernel/r8125 package/kernel/r8126
 git clone https://$github/sbwml/package_kernel_r8168 package/kernel/r8168
 git clone https://$github/sbwml/package_kernel_r8152 package/kernel/r8152
 git clone https://$github/sbwml/package_kernel_r8101 package/kernel/r8101
@@ -80,6 +103,16 @@ elif [ "$platform" = "armv8" ]; then
     curl -s https://$mirror/openwrt/patch/target-modify_for_armsr.patch | patch -p1
 else
     curl -s https://$mirror/openwrt/patch/target-modify_for_rockchip.patch | patch -p1
+fi
+
+# DPDK & NUMACTL
+if [ "$ENABLE_DPDK" = "y" ]; then
+    mkdir -p package/new/{dpdk/patches,numactl}
+    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/Makefile > package/new/dpdk/Makefile
+    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/Config.in > package/new/dpdk/Config.in
+    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/patches/010-dpdk_arm_build_platform_fix.patch > package/new/dpdk/patches/010-dpdk_arm_build_platform_fix.patch
+    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/patches/201-r8125-add-r8125-ethernet-poll-mode-driver.patch > package/new/dpdk/patches/201-r8125-add-r8125-ethernet-poll-mode-driver.patch
+    curl -s https://$mirror/openwrt/patch/dpdk/numactl/Makefile > package/new/numactl/Makefile
 fi
 
 # IF USE GLIBC
@@ -102,30 +135,6 @@ if [ "$ENABLE_GLIBC" = "y" ]; then
     sed -i "/disable-profile/d" toolchain/glibc/common.mk
 fi
 
-# DPDK & NUMACTL
-if [ "$ENABLE_DPDK" = "y" ]; then
-    mkdir -p package/new/{dpdk/patches,numactl}
-    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/Makefile > package/new/dpdk/Makefile
-    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/Config.in > package/new/dpdk/Config.in
-    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/patches/010-dpdk_arm_build_platform_fix.patch > package/new/dpdk/patches/010-dpdk_arm_build_platform_fix.patch
-    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/patches/201-r8125-add-r8125-ethernet-poll-mode-driver.patch > package/new/dpdk/patches/201-r8125-add-r8125-ethernet-poll-mode-driver.patch
-    curl -s https://$mirror/openwrt/patch/dpdk/numactl/Makefile > package/new/numactl/Makefile
-fi
-
-# mold
-if [ "$ENABLE_MOLD" = "y" ]; then
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0001-build-add-support-to-use-the-mold-linker-for-package.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0002-treewide-opt-out-of-tree-wide-mold-usage.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0003-toolchain-add-mold-as-additional-linker.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0004-tools-add-mold-a-modern-linker.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0005-build-replace-SSTRIP_ARGS-with-SSTRIP_DISCARD_TRAILI.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0006-config-add-a-knob-to-use-the-mold-linker-for-package.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0007-rules-prepare-to-use-different-linkers.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/openwrt-6.x/mold/0008-tools-mold-update-to-2.30.0.patch | patch -p1
-    # no-mold
-    sed -i '/PKG_BUILD_PARALLEL/aPKG_BUILD_FLAGS:=no-mold' feeds/packages/utils/attr/Makefile
-fi
-
 # Mbedtls AES & GCM Crypto Extensions
 if [ ! "$platform" = "x86_64" ]; then
     curl -s https://$mirror/openwrt/patch/mbedtls-23.05/200-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch > package/libs/mbedtls/patches/200-Implements-AES-and-GCM-with-ARMv8-Crypto-Extensions.patch
@@ -138,6 +147,7 @@ curl -s https://$mirror/openwrt/patch/fstools/ntfs3.patch > package/system/fstoo
 curl -s https://$mirror/openwrt/patch/util-linux/util-linux_ntfs3.patch > package/utils/util-linux/patches/util-linux_ntfs3.patch
 
 # fstools - enable any device with non-MTD rootfs_data volume
+sed -i 's|$(PROJECT_GIT)/project|https://github.com/openwrt|g' package/system/fstools/Makefile
 curl -s https://$mirror/openwrt/patch/fstools/block-mount-add-fstools-depends.patch | patch -p1
 if [ "$ENABLE_GLIBC" = "y" ]; then
     curl -s https://$mirror/openwrt/patch/fstools/fstools-set-ntfs3-utf8-new.patch > package/system/fstools/patches/ntfs3-utf8.patch
@@ -160,6 +170,7 @@ if [ "$version" = "snapshots-23.05" ] || [ "$version" = "rc2" ]; then
     # firewall4 - master
     rm -rf package/network/config/firewall4
     cp -a ../master/openwrt/package/network/config/firewall4 package/network/config/firewall4
+    sed -i 's|$(PROJECT_GIT)/project|https://github.com/openwrt|g' package/network/config/firewall4/Makefile
     mkdir -p package/network/config/firewall4/patches
     # fix ct status dnat
     curl -s https://$mirror/openwrt/patch/firewall4/firewall4_patches/990-unconditionally-allow-ct-status-dnat.patch > package/network/config/firewall4/patches/990-unconditionally-allow-ct-status-dnat.patch
@@ -390,12 +401,13 @@ sed -i 's/cheaper = 1/cheaper = 2/g' feeds/packages/net/uwsgi/files-luci-support
 sed -i 's/option timeout 30/option timeout 60/g' package/system/rpcd/files/rpcd.config
 sed -i 's#20) \* 1000#60) \* 1000#g' feeds/luci/modules/luci-base/htdocs/luci-static/resources/rpc.js
 
-# luci - 20_memory & 25_storage & refresh interval
+# luci-mod extra
 pushd feeds/luci
-    curl -s https://$mirror/openwrt/patch/luci/20_memory.js.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/luci/luci-refresh-interval.patch | patch -p1
-    # luci-mod-status: storage index applicable only to valid
-    curl -s https://$mirror/openwrt/patch/luci/luci-mod-status-storage-index-applicable-only-to-val.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/luci/0001-luci-mod-system-add-modal-overlay-dialog-to-reboot.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/luci/0002-luci-mod-status-displays-actual-process-memory-usage.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/luci/0003-luci-mod-status-storage-index-applicable-only-to-val.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/luci/0004-luci-mod-status-firewall-disable-legacy-firewall-rul.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/luci/0005-luci-mod-system-add-refresh-interval-setting.patch | patch -p1
 popd
 
 # Luci diagnostics.js

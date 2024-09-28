@@ -22,7 +22,7 @@ Subject: [PATCH 39/43] QUIC: use SSL_IS_QUIC() in more places
  SSL_set_quic_early_data_enabled() enables QUIC early data if a nonzero
 --- a/ssl/statem/extensions_clnt.c
 +++ b/ssl/statem/extensions_clnt.c
-@@ -1944,7 +1944,7 @@ int tls_parse_stoc_early_data(SSL *s, PA
+@@ -1969,7 +1969,7 @@ int tls_parse_stoc_early_data(SSL *s, PA
           * QUIC server must send 0xFFFFFFFF or it's a PROTOCOL_VIOLATION
           * per RFC9001 S4.6.1
           */

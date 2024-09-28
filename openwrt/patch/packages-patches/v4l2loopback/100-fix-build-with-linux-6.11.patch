@@ -1,0 +1,50 @@
+--- a/v4l2loopback.c
++++ b/v4l2loopback.c
+@@ -714,7 +714,11 @@ static int vidioc_querycap(struct file *
+ 			->devicenr;
+ 	__u32 capabilities = V4L2_CAP_STREAMING | V4L2_CAP_READWRITE;
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 11, 0)
+ 	strlcpy(cap->driver, "v4l2 loopback", sizeof(cap->driver));
++#else
++	strscpy(cap->driver, "v4l2 loopback", sizeof(cap->driver));
++#endif
+ 	vidioc_fill_name(cap->card, sizeof(cap->card), devnr);
+ 	snprintf(cap->bus_info, sizeof(cap->bus_info),
+ 		 "platform:v4l2loopback-%03d", devnr);
+@@ -1220,7 +1224,11 @@ static int vidioc_queryctrl(struct file
+ 	if (!cnf)
+ 		BUG();
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 11, 0)
+ 	strlcpy(q->name, cnf->name, sizeof(q->name));
++#else
++	strscpy(q->name, cnf->name, sizeof(q->name));
++#endif
+ 	q->default_value = cnf->def;
+ 	q->type = cnf->type;
+ 	q->minimum = cnf->min;
+@@ -1325,7 +1333,11 @@ static int vidioc_enum_output(struct fil
+ 	memset(outp, 0, sizeof(*outp));
+ 
+ 	outp->index = index;
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 11, 0)
+ 	strlcpy(outp->name, "loopback in", sizeof(outp->name));
++#else
++	strscpy(outp->name, "loopback in", sizeof(outp->name));
++#endif
+ 	outp->type = V4L2_OUTPUT_TYPE_ANALOG;
+ 	outp->audioset = 0;
+ 	outp->modulator = 0;
+@@ -1384,7 +1396,11 @@ static int vidioc_enum_input(struct file
+ 	memset(inp, 0, sizeof(*inp));
+ 
+ 	inp->index = index;
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 11, 0)
+ 	strlcpy(inp->name, "loopback", sizeof(inp->name));
++#else
++	strscpy(inp->name, "loopback", sizeof(inp->name));
++#endif
+ 	inp->type = V4L2_INPUT_TYPE_CAMERA;
+ 	inp->audioset = 0;
+ 	inp->tuner = 0;

@@ -1,0 +1,81 @@
+From 9a4fc4505a6cd8e74bd05df02ef8cc88662a8be7 Mon Sep 17 00:00:00 2001
+From: Andre Heider <a.heider@gmail.com>
+Date: Fri, 27 Jan 2023 18:22:43 +0100
+Subject: [PATCH 2/8] treewide: opt-out of tree-wide mold usage
+
+These use linker scripts, which mold doesn't support.
+
+Signed-off-by: Andre Heider <a.heider@gmail.com>
+---
+ include/package.mk                               | 2 +-
+ package/boot/grub2/Makefile                      | 2 +-
+ package/kernel/lantiq/ltq-ifxos/Makefile         | 1 +
+ package/kernel/lantiq/ltq-vdsl-vr11-mei/Makefile | 1 +
+ package/kernel/lantiq/ltq-vdsl-vr11/Makefile     | 1 +
+ 5 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/include/package.mk b/include/package.mk
+index 6988e5f..e992f37 100644
+--- a/include/package.mk
++++ b/include/package.mk
+@@ -28,7 +28,7 @@ ifneq (,$(findstring clang,$(KERNEL_CC)))
+ endif
+ 
+ PKG_BUILD_FLAGS?=
+-__unknown_flags=$(filter-out no-iremap no-mips16 gc-sections no-gc-sections lto no-lto,$(PKG_BUILD_FLAGS))
++__unknown_flags=$(filter-out no-iremap no-mips16 gc-sections no-gc-sections lto no-lto no-mold,$(PKG_BUILD_FLAGS))
+ ifneq ($(__unknown_flags),)
+   $(error unknown PKG_BUILD_FLAGS: $(__unknown_flags))
+ endif
+diff --git a/package/boot/grub2/Makefile b/package/boot/grub2/Makefile
+index 865feee..44dafe1 100644
+--- a/package/boot/grub2/Makefile
++++ b/package/boot/grub2/Makefile
+@@ -25,7 +25,7 @@ ifneq ($(BUILD_VARIANT),none)
+ endif
+ 
+ PKG_FLAGS:=nonshared
+-PKG_BUILD_FLAGS:=no-lto
++PKG_BUILD_FLAGS:=no-lto no-mold
+ 
+ include $(INCLUDE_DIR)/host-build.mk
+ include $(INCLUDE_DIR)/package.mk
+diff --git a/package/kernel/lantiq/ltq-ifxos/Makefile b/package/kernel/lantiq/ltq-ifxos/Makefile
+index d941a9d..97f7ca7 100644
+--- a/package/kernel/lantiq/ltq-ifxos/Makefile
++++ b/package/kernel/lantiq/ltq-ifxos/Makefile
+@@ -23,6 +23,7 @@ PKG_LICENSE_FILES:=LICENSE
+ PKG_EXTMOD_SUBDIRS:=src
+ 
+ PKG_FIXUP:=autoreconf
++PKG_BUILD_FLAGS:=no-mold
+ 
+ include $(INCLUDE_DIR)/package.mk
+ 
+diff --git a/package/kernel/lantiq/ltq-vdsl-vr11-mei/Makefile b/package/kernel/lantiq/ltq-vdsl-vr11-mei/Makefile
+index f2dcf8d..7b8a948 100644
+--- a/package/kernel/lantiq/ltq-vdsl-vr11-mei/Makefile
++++ b/package/kernel/lantiq/ltq-vdsl-vr11-mei/Makefile
+@@ -25,6 +25,7 @@ PKG_EXTMOD_SUBDIRS:=src
+ 
+ PKG_FIXUP:=autoreconf
+ PKG_FLAGS:=nonshared
++PKG_BUILD_FLAGS:=no-mold
+ 
+ include $(INCLUDE_DIR)/package.mk
+ 
+diff --git a/package/kernel/lantiq/ltq-vdsl-vr11/Makefile b/package/kernel/lantiq/ltq-vdsl-vr11/Makefile
+index 8284cba..11f96d7 100644
+--- a/package/kernel/lantiq/ltq-vdsl-vr11/Makefile
++++ b/package/kernel/lantiq/ltq-vdsl-vr11/Makefile
+@@ -23,6 +23,7 @@ PKG_LICENSE:=GPL-2.0 BSD-2-Clause
+ PKG_LICENSE_FILES:=LICENSE
+ 
+ PKG_FIXUP:=autoreconf
++PKG_BUILD_FLAGS:=no-mold
+ 
+ include $(INCLUDE_DIR)/package.mk
+ 
+-- 
+2.43.5
+

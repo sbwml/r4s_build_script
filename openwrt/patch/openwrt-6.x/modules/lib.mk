@@ -385,7 +385,7 @@ $(eval $(call KernelPackage,lib-parman))
 define KernelPackage/libwx
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Wangxun(R) Ethernet driver common library
-  DEPENDS:=@PCI_SUPPORT @LINUX_6_6
+  DEPENDS:=@PCI_SUPPORT +kmod-phylink
   KCONFIG:=CONFIG_LIBWX
   FILES:=$(LINUX_DIR)/drivers/net/ethernet/wangxun/libwx/libwx.ko
   AUTOLOAD:=$(call AutoProbe,libwx)

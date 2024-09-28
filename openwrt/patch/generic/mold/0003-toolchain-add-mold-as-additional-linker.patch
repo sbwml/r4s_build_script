@@ -1,0 +1,58 @@
+From 0de92a05246317259aa4e071689b0fca26e108db Mon Sep 17 00:00:00 2001
+From: Andre Heider <a.heider@gmail.com>
+Date: Fri, 27 Jan 2023 17:53:02 +0100
+Subject: [PATCH 3/8] toolchain: add mold as additional linker
+
+Install it as $tripple-ld.mold in order to use -fuse-ld=mold.
+
+Signed-off-by: Andre Heider <a.heider@gmail.com>
+---
+ toolchain/Makefile      |  2 +-
+ toolchain/mold/Makefile | 22 ++++++++++++++++++++++
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+ create mode 100644 toolchain/mold/Makefile
+
+diff --git a/toolchain/Makefile b/toolchain/Makefile
+index c004629..09c16f7 100644
+--- a/toolchain/Makefile
++++ b/toolchain/Makefile
+@@ -27,7 +27,7 @@
+ curdir:=toolchain
+ 
+ # subdirectories to descend into
+-$(curdir)/builddirs := $(if $(CONFIG_GDB),gdb) $(if $(CONFIG_EXTERNAL_TOOLCHAIN),wrapper,kernel-headers binutils gcc/initial gcc/final $(LIBC) fortify-headers) $(if $(CONFIG_NASM),nasm)
++$(curdir)/builddirs := $(if $(CONFIG_GDB),gdb) $(if $(CONFIG_EXTERNAL_TOOLCHAIN),wrapper,kernel-headers binutils gcc/initial gcc/final $(LIBC) fortify-headers) $(if $(CONFIG_NASM),nasm) $(if $(CONFIG_USE_MOLD),mold)
+ 
+ # builddir dependencies
+ ifeq ($(CONFIG_EXTERNAL_TOOLCHAIN),)
+diff --git a/toolchain/mold/Makefile b/toolchain/mold/Makefile
+new file mode 100644
+index 0000000..a2acba8
+--- /dev/null
++++ b/toolchain/mold/Makefile
+@@ -0,0 +1,22 @@
++#
++# This is free software, licensed under the GNU General Public License v2.
++# See /LICENSE for more information.
++#
++include $(TOPDIR)/rules.mk
++include $(INCLUDE_DIR)/toolchain-build.mk
++
++define Host/Configure
++endef
++
++define Host/Compile
++endef
++
++define Host/Install
++	$(INSTALL_DIR) $(TOOLCHAIN_DIR)/bin
++	$(INSTALL_BIN) $(STAGING_DIR_HOST)/bin/mold $(TOOLCHAIN_DIR)/bin/$(REAL_GNU_TARGET_NAME)-ld.mold
++endef
++
++define Host/Clean
++endef
++
++$(eval $(call HostBuild))
+-- 
+2.43.5
+
