@@ -163,14 +163,11 @@ else
     git clone https://$github/sbwml/package_kernel_rtl8812au-ac package/kernel/rtl8812au-ac
 fi
 
-# mt76 - 2024-05-17
-rm -rf package/kernel/mt76/patches
+# mt76 - 2024-09-29
+rm -rf package/kernel/mt76
 mkdir -p package/kernel/mt76/patches
 curl -s https://$mirror/openwrt/patch/mt76/Makefile > package/kernel/mt76/Makefile
-[ "$TESTING_KERNEL" = "y" ] && {
-    mkdir -p package/kernel/mt76/patches ; \
-    curl -s https://$mirror/openwrt/patch/mt76/patches/100-fix-build-with-mac80211-6.11-backport.patch > package/kernel/mt76/patches/100-fix-build-with-mac80211-6.11-backport.patch
-}
+curl -s https://$mirror/openwrt/patch/mt76/patches/100-fix-build-with-mac80211-6.11-backport.patch > package/kernel/mt76/patches/100-fix-build-with-mac80211-6.11-backport.patch
 
 # iwinfo: add mt7922 device id
 mkdir -p package/network/utils/iwinfo/patches
