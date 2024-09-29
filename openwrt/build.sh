@@ -277,20 +277,16 @@ rm -rf ../master
 # Load devices Config
 if [ "$platform" = "x86_64" ]; then
     curl -s https://$mirror/openwrt/23-config-musl-x86 > .config
-    ALL_KMODS=y
 elif [ "$platform" = "bcm53xx" ]; then
     if [ "$MINIMAL_BUILD" = "y" ]; then
         curl -s https://$mirror/openwrt/23-config-musl-r8500-minimal > .config
     else
         curl -s https://$mirror/openwrt/23-config-musl-r8500 > .config
     fi
-    ALL_KMODS=y
 elif [ "$platform" = "rk3568" ]; then
     curl -s https://$mirror/openwrt/23-config-musl-r5s > .config
-    ALL_KMODS=y
 elif [ "$platform" = "armv8" ]; then
     curl -s https://$mirror/openwrt/23-config-musl-armsr-armv8 > .config
-    ALL_KMODS=y
 else
     curl -s https://$mirror/openwrt/23-config-musl-r4s > .config
 fi
@@ -303,6 +299,9 @@ else
     [ "$platform" != "bcm53xx" ] && curl -s https://$mirror/openwrt/23-config-common >> .config
     [ "$platform" = "armv8" ] && sed -i '/DOCKER/Id' .config
 fi
+
+# config-firmware
+[ "$NO_KMOD" != "y" ] && [ "$platform" != "rk3399" ] && curl -s https://$mirror/openwrt/generic/config-firmware >> .config
 
 # ota
 [ "$ENABLE_OTA" = "y" ] && [ "$version" = "rc2" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
@@ -453,7 +452,7 @@ fi
 [ "$TESTING_KERNEL" = "y" ] && OTA_PREFIX="test-" || OTA_PREFIX=""
 
 if [ "$platform" = "x86_64" ]; then
-    if [ "$ALL_KMODS" = y ]; then
+    if [ "$NO_KMOD" != "y" ]; then
         cp -a bin/targets/x86/*/packages $kmodpkg_name
         rm -f $kmodpkg_name/Packages*
         # driver firmware
@@ -492,7 +491,7 @@ EOF
     fi
     exit 0
 elif [ "$platform" = "armv8" ]; then
-    if [ "$ALL_KMODS" = y ]; then
+    if [ "$NO_KMOD" != "y" ]; then
         cp -a bin/targets/armsr/armv8*/packages $kmodpkg_name
         rm -f $kmodpkg_name/Packages*
         # driver firmware
@@ -521,7 +520,7 @@ EOF
     fi
     exit 0
 elif [ "$platform" = "bcm53xx" ]; then
-    if [ "$ALL_KMODS" = y ]; then
+    if [ "$NO_KMOD" != "y" ]; then
         cp -a bin/targets/bcm53xx/generic/packages $kmodpkg_name
         rm -f $kmodpkg_name/Packages*
         # driver firmware
@@ -555,7 +554,7 @@ EOF
     fi
     exit 0
 else
-    if [ "$ALL_KMODS" = y ]; then
+    if [ "$NO_KMOD" != "y" ] && [ "$platform" != "rk3399" ]; then
         cp -a bin/targets/rockchip/armv8*/packages $kmodpkg_name
         rm -f $kmodpkg_name/Packages*
         # driver firmware

@@ -1,0 +1,11 @@
+
+### RTL Firmware
+CONFIG_PACKAGE_rtl8723de-firmware=m
+CONFIG_PACKAGE_rtl8821ce-firmware=m
+CONFIG_PACKAGE_rtl8851be-firmware=m
+CONFIG_PACKAGE_rtl8852ae-firmware=m
+CONFIG_PACKAGE_rtl8852be-firmware=m
+CONFIG_PACKAGE_rtl8852ce-firmware=m
+
+### MT76 Firmware
+CONFIG_PACKAGE_mt7988-2p5g-phy-firmware=m
