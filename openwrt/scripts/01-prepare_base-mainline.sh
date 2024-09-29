@@ -186,19 +186,12 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.x/500-world-regd-5GHz.patch > pa
 
 # mac80211 - fix linux 6.6 & add rtw89
 rm -rf package/kernel/mac80211
-if [ "$TESTING_KERNEL" = "y" ]; then
-    git clone https://$github/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b v6.11
-else
-    git clone https://$github/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b v6.9.9
-fi
+git clone https://$github/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b v6.11
+[ "$TESTING_KERNEL" = "y" ] && rm -f package/kernel/mac80211/patches/build/140-trace_backport.patch
 
 # ath10k-ct
 rm -rf package/kernel/ath10k-ct
-if [ "$TESTING_KERNEL" = "y" ]; then
-    git clone https://$github/sbwml/package_kernel_ath10k-ct package/kernel/ath10k-ct -b v6.11
-else
-    git clone https://$github/sbwml/package_kernel_ath10k-ct package/kernel/ath10k-ct
-fi
+git clone https://$github/sbwml/package_kernel_ath10k-ct package/kernel/ath10k-ct -b v6.11
 
 # kernel patch
 # btf: silence btf module warning messages
