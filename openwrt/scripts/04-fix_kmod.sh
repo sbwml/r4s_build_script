@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-# Fix build for linux-6.6
+# Fix build for linux-6.6/6.12
 
 # cryptodev-linux
 mkdir -p package/kernel/cryptodev-linux/patches
@@ -9,11 +9,11 @@ curl -s https://$mirror/openwrt/patch/packages-patches/cryptodev-linux/002-fix-b
 
 # gpio-button-hotplug
 curl -s https://$mirror/openwrt/patch/packages-patches/gpio-button-hotplug/fix-linux-6.6.patch | patch -p1
-curl -s https://$mirror/openwrt/patch/packages-patches/gpio-button-hotplug/fix-linux-6.11.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/packages-patches/gpio-button-hotplug/fix-linux-6.12.patch | patch -p1
 
 # gpio-nct5104d
 curl -s https://$mirror/openwrt/patch/packages-patches/gpio-nct5104d/fix-build-for-linux-6.6.patch | patch -p1
-curl -s https://$mirror/openwrt/patch/packages-patches/gpio-nct5104d/fix-build-for-linux-6.11.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/packages-patches/gpio-nct5104d/fix-build-for-linux-6.12.patch | patch -p1
 
 # dmx_usb_module
 mkdir -p feeds/packages/libs/dmx_usb_module/patches
@@ -31,6 +31,7 @@ mkdir -p feeds/packages/kernel/ovpn-dco/patches
 curl -s https://$mirror/openwrt/patch/packages-patches/ovpn-dco/100-ovpn-dco-adapt-pre-post_doit-CBs-to-new-signature.patch > feeds/packages/kernel/ovpn-dco/patches/100-ovpn-dco-adapt-pre-post_doit-CBs-to-new-signature.patch
 curl -s https://$mirror/openwrt/patch/packages-patches/ovpn-dco/900-fix-linux-6.6.patch > feeds/packages/kernel/ovpn-dco/patches/900-fix-linux-6.6.patch
 curl -s https://$mirror/openwrt/patch/packages-patches/ovpn-dco/901-fix-linux-6.11.patch > feeds/packages/kernel/ovpn-dco/patches/901-fix-linux-6.11.patch
+curl -s https://$mirror/openwrt/patch/packages-patches/ovpn-dco/902-fix-linux-6.12.patch > feeds/packages/kernel/ovpn-dco/patches/902-fix-linux-6.12.patch
 
 # siit
 rm -rf feeds/packages/net/siit
@@ -49,19 +50,20 @@ popd
 # nat46
 mkdir -p package/kernel/nat46/patches
 curl -s https://$mirror/openwrt/patch/packages-patches/nat46/100-fix-build-with-kernel-6.9.patch > package/kernel/nat46/patches/100-fix-build-with-kernel-6.9.patch
+curl -s https://$mirror/openwrt/patch/packages-patches/nat46/101-fix-build-with-kernel-6.12.patch > package/kernel/nat46/patches/101-fix-build-with-kernel-6.12.patch
 
-# v4l2loopback - 6.11
+# v4l2loopback - 6.12
 mkdir -p feeds/packages/kernel/v4l2loopback/patches
-curl -s https://$mirror/openwrt/patch/packages-patches/v4l2loopback/100-fix-build-with-linux-6.11.patch > feeds/packages/kernel/v4l2loopback/patches/100-fix-build-with-linux-6.11.patch
+curl -s https://$mirror/openwrt/patch/packages-patches/v4l2loopback/100-fix-build-with-linux-6.12.patch > feeds/packages/kernel/v4l2loopback/patches/100-fix-build-with-linux-6.12.patch
 
 # openvswitch
 if [ "$TESTING_KERNEL" = "y" ]; then
     sed -i '/ovs_kmod_openvswitch_depends/a\\t\ \ +kmod-sched-act-sample \\' feeds/packages/net/openvswitch/Makefile
 fi
 
-# ubootenv-nvram - 6.11 (openwrt-23.05.5)
+# ubootenv-nvram - 6.12 (openwrt-23.05.5)
 mkdir -p package/kernel/ubootenv-nvram/patches
-curl -s https://$mirror/openwrt/patch/packages-patches/ubootenv-nvram/010-make-ubootenv_remove-return-void-for-linux-6.11.patch > package/kernel/ubootenv-nvram/patches/010-make-ubootenv_remove-return-void-for-linux-6.11.patch
+curl -s https://$mirror/openwrt/patch/packages-patches/ubootenv-nvram/010-make-ubootenv_remove-return-void-for-linux-6.12.patch > package/kernel/ubootenv-nvram/patches/010-make-ubootenv_remove-return-void-for-linux-6.12.patch
 
 # packages
 pushd feeds/packages
@@ -77,7 +79,7 @@ popd
 # xtables-addons
 rm -rf feeds/packages/net/xtables-addons
 cp -a ../master/packages/net/xtables-addons feeds/packages/net/xtables-addons
-curl -s https://$mirror/openwrt/patch/packages-patches/xtables-addons/301-fix-build-with-linux-6.11.patch > feeds/packages/net/xtables-addons/patches/301-fix-build-with-linux-6.11.patch
+curl -s https://$mirror/openwrt/patch/packages-patches/xtables-addons/301-fix-build-with-linux-6.12.patch > feeds/packages/net/xtables-addons/patches/301-fix-build-with-linux-6.12.patch
 
 # telephony
 pushd feeds/telephony
@@ -89,6 +91,8 @@ popd
 # routing - batman-adv
 rm -rf feeds/routing/batman-adv
 cp -a ../master/routing/batman-adv feeds/routing/batman-adv
+# fix build with linux-6.12
+curl -s https://$mirror/openwrt/patch/packages-patches/batman-adv/900-netdev_features-convert-NETIF_F_NETNS_LOCAL-to-dev-netns_local.patch > feeds/routing/batman-adv/patches/900-netdev_features-convert-NETIF_F_NETNS_LOCAL-to-dev-netns_local.patch
 
 # bcm53xx
 if [ "$platform" = "bcm53xx" ]; then

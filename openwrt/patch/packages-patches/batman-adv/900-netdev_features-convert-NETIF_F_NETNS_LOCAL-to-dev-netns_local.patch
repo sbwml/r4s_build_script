@@ -1,0 +1,16 @@
+--- a/net/batman-adv/soft-interface.c
++++ b/net/batman-adv/soft-interface.c
+@@ -1020,8 +1020,13 @@ static void batadv_softif_init_early(str
+ 	dev->netdev_ops = &batadv_netdev_ops;
+ 	dev->needs_free_netdev = true;
+ 	dev->priv_destructor = batadv_softif_free;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0)
++	dev->features |= NETIF_F_HW_VLAN_CTAG_FILTER | dev->netns_local;
++	dev->features |= dev->lltx;
++#else
+ 	dev->features |= NETIF_F_HW_VLAN_CTAG_FILTER | NETIF_F_NETNS_LOCAL;
+ 	dev->features |= NETIF_F_LLTX;
++#endif
+ 	dev->priv_flags |= IFF_NO_QUEUE;
+ 
+ 	/* can't call min_mtu, because the needed variables

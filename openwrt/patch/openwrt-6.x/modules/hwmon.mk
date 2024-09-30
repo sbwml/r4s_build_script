@@ -10,7 +10,7 @@ HWMON_MENU:=Hardware Monitoring Support
 define KernelPackage/hwmon-core
   SUBMENU:=$(HWMON_MENU)
   TITLE:=Hardware monitoring support
-  DEPENDS:=+LINUX_6_11:kmod-i2c-core
+  DEPENDS:=+LINUX_6_12:kmod-i2c-core
   KCONFIG:= \
 	CONFIG_HWMON \
 	CONFIG_HWMON_DEBUG_CHIP=n
@@ -422,7 +422,7 @@ define KernelPackage/hwmon-max6697
   KCONFIG:=CONFIG_SENSORS_MAX6697
   FILES:=$(LINUX_DIR)/drivers/hwmon/max6697.ko
   AUTOLOAD:=$(call AutoProbe,max6697)
-  $(call AddDepends/hwmon,+kmod-i2c-core)
+  $(call AddDepends/hwmon,+kmod-i2c-core +kmod-regmap-i2c)
 endef
 
 define KernelPackage/hwmon-max6697/description

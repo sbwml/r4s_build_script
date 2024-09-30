@@ -12,15 +12,15 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/config-6.6 > target/linux/
 mkdir -p target/linux/x86/patches-6.6
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/patches-6.6/100-fix_cs5535_clockevt.patch > target/linux/x86/patches-6.6/100-fix_cs5535_clockevt.patch
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/patches-6.6/103-pcengines_apu6_platform.patch > target/linux/x86/patches-6.6/103-pcengines_apu6_platform.patch
-# x86_64 - target 6.11
-curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/64/config-6.11 > target/linux/x86/64/config-6.11
-curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/config-6.11 > target/linux/x86/config-6.11
-mkdir -p target/linux/x86/patches-6.11
-curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/patches-6.11/100-fix_cs5535_clockevt.patch > target/linux/x86/patches-6.11/100-fix_cs5535_clockevt.patch
-curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/patches-6.11/103-pcengines_apu6_platform.patch > target/linux/x86/patches-6.11/103-pcengines_apu6_platform.patch
+# x86_64 - target 6.12
+curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/64/config-6.12 > target/linux/x86/64/config-6.12
+curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/config-6.12 > target/linux/x86/config-6.12
+mkdir -p target/linux/x86/patches-6.12
+curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/patches-6.12/100-fix_cs5535_clockevt.patch > target/linux/x86/patches-6.12/100-fix_cs5535_clockevt.patch
+curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/patches-6.12/103-pcengines_apu6_platform.patch > target/linux/x86/patches-6.12/103-pcengines_apu6_platform.patch
 # x86_64 - target
 sed -ri "s/(KERNEL_PATCHVER:=)[^\"]*/\16.6/" target/linux/x86/Makefile
-sed -i '/KERNEL_PATCHVER/a\KERNEL_TESTING_PATCHVER:=6.11' target/linux/x86/Makefile
+sed -i '/KERNEL_PATCHVER/a\KERNEL_TESTING_PATCHVER:=6.12' target/linux/x86/Makefile
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/base-files/etc/board.d/01_leds > target/linux/x86/base-files/etc/board.d/01_leds
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/base-files/etc/board.d/02_network > target/linux/x86/base-files/etc/board.d/02_network
 
@@ -36,7 +36,7 @@ git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_armsr target/linux/arm
 
 # kernel - 6.x
 curl -s https://$mirror/tags/kernel-6.6 > include/kernel-6.6
-curl -s https://$mirror/tags/kernel-6.11 > include/kernel-6.11
+curl -s https://$mirror/tags/kernel-6.12 > include/kernel-6.12
 
 # kenrel Vermagic
 sed -ie 's/^\(.\).*vermagic$/\1cp $(TOPDIR)\/.vermagic $(LINUX_DIR)\/.vermagic/' include/kernel-defaults.mk
@@ -46,7 +46,7 @@ grep HASH include/kernel-$kernel_version | awk -F'HASH-' '{print $2}' | awk '{pr
 rm -rf target/linux/generic
 local_kernel_version=$(sed -n 's/^LINUX_KERNEL_HASH-\([0-9.]\+\) = .*/\1/p' include/kernel-$kernel_version)
 release_kernel_version=$(curl -sL https://raw.githubusercontent.com/sbwml/r4s_build_script/master/tags/kernel-$kernel_version | sed -n 's/^LINUX_KERNEL_HASH-\([0-9.]\+\) = .*/\1/p')
-if [ "$local_kernel_version" = "$release_kernel_version" ] && [ -z "$git_password" ]; then
+if [ "$local_kernel_version" = "$release_kernel_version" ] && [ -z "$git_password" ] && [ "$(whoami)" != "sbwml" ]; then
     git clone https://$github/sbwml/target_linux_generic -b main target/linux/generic --depth=1
 else
     if [ "$(whoami)" = "runner" ]; then
@@ -58,7 +58,7 @@ else
 fi
 
 # bcm53xx - fix build kernel with clang
-[ "$platform" = "bcm53xx" ] && [ "$KERNEL_CLANG_LTO" = "y" ] && rm -f target/linux/generic/hack-6.6/220-arm-gc_sections.patch target/linux/generic/hack-6.11/220-arm-gc_sections.patch
+[ "$platform" = "bcm53xx" ] && [ "$KERNEL_CLANG_LTO" = "y" ] && rm -f target/linux/generic/hack-6.6/220-arm-gc_sections.patch target/linux/generic/hack-6.12/220-arm-gc_sections.patch
 
 # kernel modules
 rm -rf package/kernel/linux
@@ -93,7 +93,7 @@ pushd package/kernel/linux/modules
     curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/wpan.mk
 popd
 
-# BBRv3 - linux-6.6/6.11
+# BBRv3 - linux-6.6/6.12
 pushd target/linux/generic/backport-"$kernel_version"
     curl -Os https://$mirror/openwrt/patch/kernel-"$kernel_version"/bbr3/010-bbr3-0001-net-tcp_bbr-broaden-app-limited-rate-sample-detectio.patch
     curl -Os https://$mirror/openwrt/patch/kernel-"$kernel_version"/bbr3/010-bbr3-0002-net-tcp_bbr-v2-shrink-delivered_mstamp-first_tx_msta.patch
@@ -116,7 +116,7 @@ pushd target/linux/generic/backport-"$kernel_version"
     [ "$TESTING_KERNEL" = "y" ] && curl -Os https://$mirror/openwrt/patch/kernel-"$kernel_version"/bbr3/010-bbr3-0019-x86-cfi-bpf-Add-tso_segs-and-skb_marked_lost-to-bpf_.patch
 popd
 
-# LRNG v54/56 - linux-6.6/6.11
+# LRNG v54/56 - linux-6.6/6.12
 pushd target/linux/generic/hack-$kernel_version
     curl -Os https://$mirror/openwrt/patch/kernel-"$kernel_version"/lrng/011-LRNG-0001-LRNG-Entropy-Source-and-DRNG-Manager.patch
     curl -Os https://$mirror/openwrt/patch/kernel-"$kernel_version"/lrng/011-LRNG-0002-LRNG-allocate-one-DRNG-instance-per-NUMA-node.patch
@@ -150,7 +150,7 @@ rm -rf package/firmware/linux-firmware
 git clone https://$github/sbwml/package_firmware_linux-firmware package/firmware/linux-firmware
 
 if [ "$TESTING_KERNEL" = "y" ]; then
-    # rtl8812au-ct - fix linux-6.11
+    # rtl8812au-ct - fix linux-6.12
     rm -rf package/kernel/rtl8812au-ct
     git clone https://$github/sbwml/package_kernel_rtl8812au-ct package/kernel/rtl8812au-ct -b v6.11
     # add rtl8812au-ac
