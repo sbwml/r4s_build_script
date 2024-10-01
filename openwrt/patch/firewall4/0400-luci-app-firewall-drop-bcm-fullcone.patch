@@ -1,0 +1,29 @@
+From a98c7f7c38228f17813744c0c4b82b3e92ee4654 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Tue, 1 Oct 2024 22:54:31 +0800
+Subject: [PATCH] luci-app-firewall: drop bcm-fullcone
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ .../htdocs/luci-static/resources/view/firewall/zones.js      | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
+index 522d001..9e86b35 100644
+--- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
++++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
+@@ -60,11 +60,6 @@ return view.extend({
+ 
+ 		if (L.hasSystemFeature('fullcone')) {
+ 			o = s.option(form.Flag, 'fullcone', _('Enable FullCone NAT'));
+-
+-			o = s.option(form.Flag, 'brcmfullcone', _('BCM FullCone NAT scheme'),
+-			_('Use the Broadcom FullCone NAT scheme if enabled, and use the NFT FullCone scheme if the option is disabled.'));
+-			o.modalonly = true;
+-			o.depends('fullcone', '1');
+ 		};
+ 
+ 		if (L.hasSystemFeature('ipv6')) {
+-- 
+2.42.0
+
