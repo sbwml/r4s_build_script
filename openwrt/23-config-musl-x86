@@ -56,7 +56,3 @@ CONFIG_PACKAGE_kmod-sound-hda-intel=y
 CONFIG_PACKAGE_kmod-video-pwc=y
 CONFIG_PACKAGE_kmod-video-uvc=y
 CONFIG_PACKAGE_kmod-video-videobuf2=y
-
-### Virtualization
-CONFIG_PACKAGE_kmod-kvm-intel=y
-CONFIG_PACKAGE_kmod-kvm-x86=y
