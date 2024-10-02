@@ -2,7 +2,10 @@
 
 #################################################################
 
-# Rockchip - target - r4s/r5s only
+# autocore
+git clone https://$github/sbwml/autocore-arm -b openwrt-23.05 package/system/autocore
+
+# rockchip - target - r4s/r5s only
 rm -rf target/linux/rockchip
 git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip-6.x target/linux/rockchip -b linux-6.6
 
@@ -198,8 +201,10 @@ curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/arm64/312-arm64-cpu
 # fullcone
 curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/952-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-$kernel_version/952-net-conntrack-events-support-multiple-registrant.patch
 # bcm-fullcone
-curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/982-add-bcm-fullcone-support.patch > target/linux/generic/hack-$kernel_version/982-add-bcm-fullcone-support.patch
-curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/983-add-bcm-fullcone-nft_masq-support.patch > target/linux/generic/hack-$kernel_version/983-add-bcm-fullcone-nft_masq-support.patch
+[ "$TESTING_KERNEL" != "y" ] && {
+    curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/982-add-bcm-fullcone-support.patch > target/linux/generic/hack-$kernel_version/982-add-bcm-fullcone-support.patch
+    curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/983-add-bcm-fullcone-nft_masq-support.patch > target/linux/generic/hack-$kernel_version/983-add-bcm-fullcone-nft_masq-support.patch
+}
 # shortcut-fe
 curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/601-netfilter-export-udp_get_timeouts-function.patch > target/linux/generic/hack-$kernel_version/601-netfilter-export-udp_get_timeouts-function.patch
 curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/953-net-patch-linux-kernel-to-support-shortcut-fe.patch > target/linux/generic/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
