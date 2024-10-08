@@ -50,9 +50,6 @@ curl -s https://$mirror/openwrt/patch/$generic/0010-include-kernel-add-miss-conf
 # meson: add platform variable to cross-compilation file
 curl -s https://$mirror/openwrt/patch/$generic/0011-meson-add-platform-variable-to-cross-compilation-fil.patch | patch -p1
 
-# bpf-headers-6.12
-#[ "$version" = "snapshots-24.10" ] && curl -s https://$mirror/openwrt/patch/$generic/900-bpf-headers-6.12rc.patch | patch -p1
-
 # mold
 if [ "$ENABLE_MOLD" = "y" ] && [ "$version" = "rc2" ]; then
     curl -s https://$mirror/openwrt/patch/generic/mold/0001-build-add-support-to-use-the-mold-linker-for-package.patch | patch -p1
@@ -442,7 +439,7 @@ popd
 sed -i "s/openwrt.org/www.qq.com/g" feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/diagnostics.js
 
 # luci - drop ethernet port status
-rm -f feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js
+[ "$version" = "rc2" ] && rm -f feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js
 
 # luci - rollback dhcp.js
 curl -s https://$mirror/openwrt/patch/luci/dhcp/${openwrt_version}-dhcp.js > feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/dhcp.js

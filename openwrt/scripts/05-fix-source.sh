@@ -14,7 +14,7 @@ sed -i '/PKG_BUILD_FLAGS/ s/$/ no-gc-sections/' package/boot/grub2/Makefile
 
 # xdp-tools
 rm -rf package/network/utils/xdp-tools
-git clone https://$github/sbwml/package_network_utils_xdp-tools package/network/utils/xdp-tools -b openwrt-23.05
+git clone https://$github/sbwml/package_network_utils_xdp-tools package/network/utils/xdp-tools -b $openwrt_version
 
 # fix gcc13
 if [ "$USE_GCC13" = "y" ] || [ "$USE_GCC14" = y ] || [ "$USE_GCC15" = y ]; then

@@ -1,0 +1,42 @@
+--- a/mt76x0/eeprom.c
++++ b/mt76x0/eeprom.c
+@@ -10,7 +10,11 @@
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/partitions.h>
+ #include <linux/etherdevice.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0)
++#include <linux/unaligned.h>
++#else
+ #include <asm/unaligned.h>
++#endif
+ #include "mt76x0.h"
+ #include "eeprom.h"
+ #include "../mt76x02_phy.h"
+--- a/mt76x02_eeprom.c
++++ b/mt76x02_eeprom.c
+@@ -4,7 +4,11 @@
+  * Copyright (C) 2018 Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>
+  */
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0)
++#include <linux/unaligned.h>
++#else
+ #include <asm/unaligned.h>
++#endif
+ 
+ #include "mt76x02_eeprom.h"
+ 
+--- a/mt76x2/eeprom.c
++++ b/mt76x2/eeprom.c
+@@ -5,7 +5,11 @@
+ 
+ #include <linux/module.h>
+ #include <linux/of.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0)
++#include <linux/unaligned.h>
++#else
+ #include <asm/unaligned.h>
++#endif
+ #include "mt76x2.h"
+ #include "eeprom.h"
+ 

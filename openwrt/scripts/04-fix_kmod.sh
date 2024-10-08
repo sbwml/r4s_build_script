@@ -90,6 +90,8 @@ pushd feeds/packages
   [ "$version" = "rc2" ] && curl -s https://github.com/openwrt/packages/commit/23a3ea2d6b3779cd48d318b95a3c72cad9433d50.patch | patch -p1
   # fix linux-6.6
   [ "$version" = "rc2" ] && curl -s https://$mirror/openwrt/patch/packages-patches/xr_usb_serial_common/900-fix-linux-6.6.patch > libs/xr_usb_serial_common/patches/900-fix-linux-6.6.patch
+  # fix linux-6.12
+  [ "$TESTING_KERNEL" = "y" ] && curl -s https://$mirror/openwrt/patch/packages-patches/xr_usb_serial_common/0002-fix-kernel-6.12-builds.patch > libs/xr_usb_serial_common/patches/0002-fix-kernel-6.12-builds.patch
   # coova-chilli
   [ "$version" = "rc2" ] && curl -s https://github.com/openwrt/packages/commit/9975e855adcfc24939080a5e0279e0a90553347b.patch | patch -p1
   [ "$version" = "rc2" ] && curl -s https://github.com/openwrt/packages/commit/c0683d3f012096fc7b2fbe8b8dc81ea424945e9b.patch | patch -p1
@@ -101,6 +103,7 @@ if [ "$version" = "rc2" ]; then
     cp -a ../master/packages/net/xtables-addons feeds/packages/net/xtables-addons
 fi
 curl -s https://$mirror/openwrt/patch/packages-patches/xtables-addons/301-fix-build-with-linux-6.12.patch > feeds/packages/net/xtables-addons/patches/301-fix-build-with-linux-6.12.patch
+curl -s https://$mirror/openwrt/patch/packages-patches/xtables-addons/302-fix-build-for-linux-6.12rc2.patch > feeds/packages/net/xtables-addons/patches/302-fix-build-for-linux-6.12rc2.patch
 
 # telephony
 pushd feeds/telephony
@@ -116,6 +119,7 @@ if [ "$version" = "rc2" ]; then
 fi
 # fix build with linux-6.12
 curl -s https://$mirror/openwrt/patch/packages-patches/batman-adv/900-netdev_features-convert-NETIF_F_NETNS_LOCAL-to-dev-netns_local.patch > feeds/routing/batman-adv/patches/900-netdev_features-convert-NETIF_F_NETNS_LOCAL-to-dev-netns_local.patch
+curl -s https://$mirror/openwrt/patch/packages-patches/batman-adv/901-fix-linux-6.12rc2-builds.patch > feeds/routing/batman-adv/patches/901-fix-linux-6.12rc2-builds.patch
 
 # bcm53xx
 if [ "$platform" = "bcm53xx" ]; then
