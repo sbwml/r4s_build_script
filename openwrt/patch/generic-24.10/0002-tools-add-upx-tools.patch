@@ -1,0 +1,63 @@
+From 7b122fef7e663cdcca2a0f027a9abeddf28ac6fd Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Fri, 4 Oct 2024 10:39:25 +0800
+Subject: [PATCH 02/11] tools: add upx tools
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ tools/Makefile     |  1 +
+ tools/upx/Makefile | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+)
+ create mode 100644 tools/upx/Makefile
+
+diff --git a/tools/Makefile b/tools/Makefile
+index 7937334..0ab5956 100644
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -72,6 +72,7 @@ tools-y += pkgconf
+ tools-y += quilt
+ tools-y += squashfs4
+ tools-y += sstrip
++tools-y += upx
+ tools-y += util-linux
+ tools-y += xz
+ tools-y += zip
+diff --git a/tools/upx/Makefile b/tools/upx/Makefile
+new file mode 100644
+index 0000000..9004514
+--- /dev/null
++++ b/tools/upx/Makefile
+@@ -0,0 +1,30 @@
++include $(TOPDIR)/rules.mk
++
++PKG_NAME:=upx
++PKG_VERSION:=4.2.4
++
++PKG_SOURCE:=upx-$(PKG_VERSION)-src.tar.xz
++PKG_SOURCE_URL:=https://github.com/upx/upx/releases/download/v$(PKG_VERSION)/
++PKG_HASH:=5ed6561607d27fb4ef346fc19f08a93696fa8fa127081e7a7114068306b8e1c4
++
++HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)-src
++HOST_BUILD_PARALLEL:=1
++
++include $(INCLUDE_DIR)/host-build.mk
++
++define Host/Compile
++	$(MAKE) -C $(HOST_BUILD_DIR)/src \
++		LDFLAGS="$(HOST_LDFLAGS)" \
++		CXX="$(HOSTCXX)"
++endef
++
++define Host/Install
++	$(INSTALL_DIR) $(STAGING_DIR_HOST)/bin
++	$(INSTALL_BIN) $(HOST_BUILD_DIR)/build/release/upx $(STAGING_DIR_HOST)/bin/upx
++endef
++
++define Host/Clean
++	rm -f $(STAGING_DIR_HOST)/bin/upx
++endef
++
++$(eval $(call HostBuild))
+-- 
+2.43.5
+

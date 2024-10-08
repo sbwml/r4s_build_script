@@ -1,0 +1,79 @@
+From b903fc6e637efd50ffba4269e019a44301e44bad Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Fri, 4 Oct 2024 11:07:07 +0800
+Subject: [PATCH] toolchain: gcc: add support for GCC 15
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ toolchain/gcc/Config.in      |  3 +++
+ toolchain/gcc/Config.version |  5 +++++
+ toolchain/gcc/common.mk      | 10 +++++++++-
+ 3 files changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/toolchain/gcc/Config.in b/toolchain/gcc/Config.in
+index b306040..3ab16a8 100644
+--- a/toolchain/gcc/Config.in
++++ b/toolchain/gcc/Config.in
+@@ -17,6 +17,9 @@ choice
+ 
+ 	config GCC_USE_VERSION_14
+ 		bool "gcc 14.x"
++
++	config GCC_USE_VERSION_15
++		bool "gcc 15.x"
+ endchoice
+ 
+ config GCC_USE_GRAPHITE
+diff --git a/toolchain/gcc/Config.version b/toolchain/gcc/Config.version
+index 49bb368..be06df2 100644
+--- a/toolchain/gcc/Config.version
++++ b/toolchain/gcc/Config.version
+@@ -10,12 +10,17 @@ config GCC_VERSION_14
+ 	default y if GCC_USE_VERSION_14
+ 	bool
+ 
++config GCC_VERSION_15
++	default y if GCC_USE_VERSION_15
++	bool
++
+ config GCC_VERSION
+ 	string
+ 	default EXTERNAL_GCC_VERSION	if EXTERNAL_TOOLCHAIN && !NATIVE_TOOLCHAIN
+ 	default "11.3.0"	if GCC_VERSION_11
+ 	default "12.3.0"	if GCC_VERSION_12
+ 	default "14.2.0"	if GCC_VERSION_14
++	default "15.0.0"	if GCC_VERSION_15
+ 	default "13.3.0"
+ 
+ config GCC_USE_DEFAULT_VERSION
+diff --git a/toolchain/gcc/common.mk b/toolchain/gcc/common.mk
+index 0ccf55b..e1b760d 100644
+--- a/toolchain/gcc/common.mk
++++ b/toolchain/gcc/common.mk
+@@ -26,7 +26,11 @@ PKG_VERSION:=$(firstword $(subst +, ,$(GCC_VERSION)))
+ GCC_MAJOR_VERSION:=$(word 1,$(subst ., ,$(PKG_VERSION)))
+ GCC_DIR:=$(PKG_NAME)-$(PKG_VERSION)
+ 
+-PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
++ifeq ($(PKG_VERSION),15.0.0)
++  PKG_SOURCE_URL:=https://us.cooluc.com/gcc
++else
++  PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
++endif
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+ PKG_CPE_ID:=cpe:/a:gnu:gcc
+ 
+@@ -46,6 +50,10 @@ ifeq ($(PKG_VERSION),14.2.0)
+   PKG_HASH:=a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9
+ endif
+ 
++ifeq ($(PKG_VERSION),15.0.0)
++  PKG_HASH:=56d5e11d0c75077f8c556e57f2f317d9d324b28070a868fc85dc1108bd0508b3
++endif
++
+ PATCH_DIR=../patches-$(GCC_MAJOR_VERSION).x
+ 
+ BUGURL=http://bugs.openwrt.org/
+-- 
+2.43.5
+

@@ -1,0 +1,26 @@
+From b7123fe13e05b078c978923bff06dfaa9cf41639 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Fri, 4 Oct 2024 10:50:08 +0800
+Subject: [PATCH 06/11] kernel: add MODULE_ALLOW_BTF_MISMATCH option
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ config/Config-kernel.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/config/Config-kernel.in b/config/Config-kernel.in
+index 4bd2cde..c83f2fb 100644
+--- a/config/Config-kernel.in
++++ b/config/Config-kernel.in
+@@ -448,7 +448,7 @@ config KERNEL_MODULE_ALLOW_BTF_MISMATCH
+ 	  BTF rather than refusing to load. The default behavior with
+ 	  module BTF enabled is to reject modules with such mismatches;
+ 	  this option will still load module BTF where possible but ignore
+-	  it when a mismatch is found.
++	  it when a mismatch is found. (skip patch)
+ 
+ config KERNEL_DEBUG_INFO_REDUCED
+ 	bool "Reduce debugging information"
+-- 
+2.43.5
+

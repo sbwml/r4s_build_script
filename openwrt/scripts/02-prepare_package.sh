@@ -8,7 +8,7 @@ git clone https://$github/sbwml/packages_lang_golang -b 23.x feeds/packages/lang
 rm -rf feeds/packages/lang/node
 git clone https://$github/sbwml/feeds_packages_lang_node-prebuilt feeds/packages/lang/node
 
-# Default settings
+# default settings
 git clone https://$github/sbwml/default-settings package/new/default-settings
 
 # ddns - fix boot
@@ -18,16 +18,27 @@ sed -i '/boot()/,+2d' feeds/packages/net/ddns-scripts/files/etc/init.d/ddns
 sed -i 's/stderr 1/stderr 0/g' feeds/packages/net/nlbwmon/files/nlbwmon.init
 
 # boost - bump version
-rm -rf feeds/packages/libs/boost
-cp -a ../master/packages/libs/boost feeds/packages/libs/boost
+if [ "$version" = "rc2" ]; then
+    rm -rf feeds/packages/libs/boost
+    cp -a ../master/packages/libs/boost feeds/packages/libs/boost
+fi
+
+# pcre - 8.45
+if [ "$version" = "snapshots-24.10" ]; then
+    mkdir -p package/libs/pcre
+    curl -s https://$mirror/openwrt/patch/pcre/Makefile > package/libs/pcre/Makefile
+    curl -s https://$mirror/openwrt/patch/pcre/Config.in > package/libs/pcre/Config.in
+fi
 
 # lrzsz - 0.12.20
 rm -rf feeds/packages/utils/lrzsz
 git clone https://$github/sbwml/packages_utils_lrzsz package/new/lrzsz
 
 # irqbalance - openwrt master
-rm -rf feeds/packages/utils/irqbalance
-cp -a ../master/packages/utils/irqbalance feeds/packages/utils/irqbalance
+if [ "$version" = "rc2" ]; then
+    rm -rf feeds/packages/utils/irqbalance
+    cp -a ../master/packages/utils/irqbalance feeds/packages/utils/irqbalance
+fi
 # irqbalance: disable build with numa
 if [ "$ENABLE_DPDK" = "y" ]; then
     curl -s https://$mirror/openwrt/patch/irqbalance/011-meson-numa.patch > feeds/packages/utils/irqbalance/patches/011-meson-numa.patch
@@ -35,8 +46,10 @@ if [ "$ENABLE_DPDK" = "y" ]; then
 fi
 
 # frpc
-rm -rf feeds/packages/net/frp
-cp -a ../master/packages/net/frp feeds/packages/net/frp
+if [ "$version" = "rc2" ]; then
+    rm -rf feeds/packages/net/frp
+    cp -a ../master/packages/net/frp feeds/packages/net/frp
+fi
 sed -i 's/procd_set_param stdout $stdout/procd_set_param stdout 0/g' feeds/packages/net/frp/files/frpc.init
 sed -i 's/procd_set_param stderr $stderr/procd_set_param stderr 0/g' feeds/packages/net/frp/files/frpc.init
 sed -i 's/stdout stderr //g' feeds/packages/net/frp/files/frpc.init
@@ -46,8 +59,8 @@ sed -i 's/env conf_inc/env conf_inc enable/g' feeds/packages/net/frp/files/frpc.
 sed -i "s/'conf_inc:list(string)'/& \\\\/" feeds/packages/net/frp/files/frpc.init
 sed -i "/conf_inc:list/a\\\t\t\'enable:bool:0\'" feeds/packages/net/frp/files/frpc.init
 sed -i '/procd_open_instance/i\\t\[ "$enable" -ne 1 \] \&\& return 1\n' feeds/packages/net/frp/files/frpc.init
-curl -s https://$mirror/openwrt/patch/luci/applications/001-luci-app-frpc-hide-token.patch | patch -p1
-curl -s https://$mirror/openwrt/patch/luci/applications/002-luci-app-frpc-add-enable-flag.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/luci/applications/luci-app-frpc/001-luci-app-frpc-hide-token-${openwrt_version}.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/luci/applications/luci-app-frpc/002-luci-app-frpc-add-enable-flag-${openwrt_version}.patch | patch -p1
 
 # samba4 - bump version
 rm -rf feeds/packages/net/samba4
@@ -92,11 +105,14 @@ rm -rf feeds/packages/net/{xray-core,v2ray-core,v2ray-geodata,sing-box}
 git clone https://$github/sbwml/openwrt_helloworld package/new/helloworld -b v5
 
 # alist
+rm -rf feeds/packages/net/alist feeds/luci/applications/luci-app-alist
 git clone https://$github/sbwml/openwrt-alist package/new/alist
 
 # netdata
-rm -rf feeds/packages/admin/netdata
-cp -a ../master/packages/admin/netdata feeds/packages/admin/netdata
+if [ "$version" = "rc2" ]; then
+    rm -rf feeds/packages/admin/netdata
+    cp -a ../master/packages/admin/netdata feeds/packages/admin/netdata
+fi
 sed -i 's/syslog/none/g' feeds/packages/admin/netdata/files/netdata.conf
 
 # qBittorrent
@@ -116,8 +132,10 @@ git clone https://$github/sbwml/luci-app-mosdns -b v5 package/new/mosdns
 git clone https://$github/sbwml/OpenAppFilter --depth=1 package/new/OpenAppFilter
 
 # iperf3
-rm -rf feeds/packages/net/iperf3
-cp -a ../master/packages/net/iperf3 feeds/packages/net/iperf3
+if [ "$version" = "rc2" ]; then
+    rm -rf feeds/packages/net/iperf3
+    cp -a ../master/packages/net/iperf3 feeds/packages/net/iperf3
+fi
 sed -i "s/D_GNU_SOURCE/D_GNU_SOURCE -funroll-loops/g" feeds/packages/net/iperf3/Makefile
 
 # nlbwmon
@@ -128,7 +146,7 @@ sed -i 's/services/network/g' feeds/luci/applications/luci-app-nlbwmon/htdocs/lu
 git clone https://github.com/sbwml/luci-app-mentohust package/new/mentohust
 
 # custom packages
-rm -rf feeds/packages/utils/coremark
+rm -rf feeds/packages/utils/coremark feeds/luci/applications/luci-app-filebrowser
 git clone https://$github/sbwml/openwrt_pkgs package/new/custom --depth=1
 # coremark - prebuilt with gcc15
 if [ "$platform" = "rk3568" ]; then

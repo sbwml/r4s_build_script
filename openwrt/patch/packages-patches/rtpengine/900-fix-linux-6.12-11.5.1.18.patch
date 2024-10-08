@@ -1,0 +1,13 @@
+diff --git a/kernel-module/xt_RTPENGINE.c b/kernel-module/xt_RTPENGINE.c
+index 2e5278a..7a3cb09 100644
+--- a/kernel-module/xt_RTPENGINE.c
++++ b/kernel-module/xt_RTPENGINE.c
+@@ -4017,7 +4017,7 @@ static int send_proxy_packet4(struct sk_buff *skb, struct re_address *src, struc
+ 	if (!net)
+ 		goto drop;
+ 
+-	rt = ip_route_output(net, dst->u.ipv4, src->u.ipv4, tos, 0);
++	rt = ip_route_output(net, dst->u.ipv4, src->u.ipv4, tos, 0, 0);
+ 	if (IS_ERR(rt))
+ 		goto drop;
+ 	skb_dst_drop(skb);

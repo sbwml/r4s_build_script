@@ -3,7 +3,11 @@
 #################################################################
 
 # autocore
-git clone https://$github/sbwml/autocore-arm -b openwrt-23.05 package/system/autocore
+if [ "$version" = "rc2" ]; then
+    git clone https://$github/sbwml/autocore-arm -b openwrt-23.05 package/system/autocore
+else
+    git clone https://$github/sbwml/autocore-arm -b openwrt-24.10 package/system/autocore
+fi
 
 # rockchip - target - r4s/r5s only
 rm -rf target/linux/rockchip
@@ -171,23 +175,32 @@ rm -rf package/kernel/mt76
 mkdir -p package/kernel/mt76/patches
 curl -s https://$mirror/openwrt/patch/mt76/Makefile > package/kernel/mt76/Makefile
 [ "$TESTING_KERNEL" = "y" ] && curl -s https://$mirror/openwrt/patch/mt76/patches/100-fix-build-with-mac80211-6.11-backport.patch > package/kernel/mt76/patches/100-fix-build-with-mac80211-6.11-backport.patch
+[ "$version" = "snapshots-24.10" ] && curl -s https://$mirror/openwrt/patch/mt76/patches/100-api_update.patch > package/kernel/mt76/patches/100-api_update.patch
 
 # iwinfo: add mt7922 device id
-mkdir -p package/network/utils/iwinfo/patches
-curl -s https://$mirror/openwrt/patch/openwrt-6.x/iwinfo/0001-devices-add-MediaTek-MT7922-device-id.patch > package/network/utils/iwinfo/patches/0001-devices-add-MediaTek-MT7922-device-id.patch
+if [ "$version" = "rc2" ]; then
+    mkdir -p package/network/utils/iwinfo/patches
+    curl -s https://$mirror/openwrt/patch/openwrt-6.x/iwinfo/0001-devices-add-MediaTek-MT7922-device-id.patch > package/network/utils/iwinfo/patches/0001-devices-add-MediaTek-MT7922-device-id.patch
+fi
 
 # iwinfo: add rtl8812/14/21au devices
-curl -s https://$mirror/openwrt/patch/openwrt-6.x/iwinfo/0004-add-rtl8812au-devices.patch > package/network/utils/iwinfo/patches/0004-add-rtl8812au-devices.patch
+[ "$version" = "rc2" ] && curl -s https://$mirror/openwrt/patch/openwrt-6.x/iwinfo/0004-add-rtl8812au-devices.patch > package/network/utils/iwinfo/patches/0004-add-rtl8812au-devices.patch
 
 # wireless-regdb
-rm -rf package/firmware/wireless-regdb
-cp -a ../master/openwrt/package/firmware/wireless-regdb package/firmware/wireless-regdb
+if [ "$version" = "rc2" ]; then
+    rm -rf package/firmware/wireless-regdb
+    cp -a ../master/openwrt/package/firmware/wireless-regdb package/firmware/wireless-regdb
+fi
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/500-world-regd-5GHz.patch > package/firmware/wireless-regdb/patches/500-world-regd-5GHz.patch
 
 # mac80211 - fix linux 6.6 & add rtw89
 rm -rf package/kernel/mac80211
-git clone https://$github/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b v6.11
-[ "$TESTING_KERNEL" = "y" ] && rm -f package/kernel/mac80211/patches/build/140-trace_backport.patch
+if [ "$version" = "rc2" ]; then
+    git clone https://$github/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b v6.11
+    [ "$TESTING_KERNEL" = "y" ] && rm -f package/kernel/mac80211/patches/build/140-trace_backport.patch
+else
+    git clone https://$github/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b openwrt-24.10
+fi
 
 # ath10k-ct
 rm -rf package/kernel/ath10k-ct
@@ -209,7 +222,7 @@ curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/952-net-conntra
 curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/601-netfilter-export-udp_get_timeouts-function.patch > target/linux/generic/hack-$kernel_version/601-netfilter-export-udp_get_timeouts-function.patch
 curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/953-net-patch-linux-kernel-to-support-shortcut-fe.patch > target/linux/generic/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
 # backport - 6.8 fast-path-variables
-if [ "$platform" != "bcm53xx" ] && [ "$TESTING_KERNEL" != "y" ]; then
+if [ "$version" = "rc2" ] && [ "$platform" != "bcm53xx" ] && [ "$TESTING_KERNEL" != "y" ]; then
     curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/901-v6.8-cache-enforce-cache-groups.patch > target/linux/generic/backport-6.6/901-v6.8-cache-enforce-cache-groups.patch
     curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/902-v6.8-netns-ipv4-reorganize-netns_ipv4-fast-path-variables.patch > target/linux/generic/backport-6.6/902-v6.8-netns-ipv4-reorganize-netns_ipv4-fast-path-variables.patch
     curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/903-v6.8-net-device-reorganize-net_device-fast-path-variables.patch > target/linux/generic/backport-6.6/903-v6.8-net-device-reorganize-net_device-fast-path-variables.patch
@@ -218,8 +231,10 @@ if [ "$platform" != "bcm53xx" ] && [ "$TESTING_KERNEL" != "y" ]; then
 fi
 
 # ubnt-ledbar - fix linux-6.x
-rm -rf package/kernel/ubnt-ledbar
-cp -a ../master/openwrt/package/kernel/ubnt-ledbar package/kernel/ubnt-ledbar
+if [ "$version" = "rc2" ]; then
+    rm -rf package/kernel/ubnt-ledbar
+    cp -a ../master/openwrt/package/kernel/ubnt-ledbar package/kernel/ubnt-ledbar
+fi
 
 # RTC
 if [ "$platform" = "rk3399" ] || [ "$platform" = "rk3568" ]; then

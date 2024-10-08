@@ -1,0 +1,89 @@
+From 441062a754bb94cace5e2bf700dc0b36c6bf2da7 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Fri, 4 Oct 2024 10:35:57 +0800
+Subject: [PATCH 01/11] tools: add llvm/clang toolchain
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ tools/Makefile       |  7 +++++++
+ tools/clang/Makefile | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 50 insertions(+)
+ create mode 100644 tools/clang/Makefile
+
+diff --git a/tools/Makefile b/tools/Makefile
+index b16c5d9..7937334 100644
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -29,6 +29,12 @@ endif
+ ifneq ($(CONFIG_SDK)$(CONFIG_TARGET_INITRAMFS_COMPRESSION_LZO),)
+   BUILD_LZO_TOOLS = y
+ endif
++ifeq ($(CONFIG_KERNEL_CC),clang)
++  BUILD_CLANG_HOST = y
++endif
++ifeq ($(CONFIG_BPF_TOOLCHAIN_HOST),y)
++  BUILD_CLANG_HOST = y
++endif
+ 
+ tools-y += autoconf
+ tools-y += autoconf-archive
+@@ -70,6 +76,7 @@ tools-y += util-linux
+ tools-y += xz
+ tools-y += zip
+ tools-y += zlib
++tools-$(if $(BUILD_CLANG_HOST),y) += clang
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS),y) += liblzo
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_B43_TOOLS),y) += b43-tools
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_BZIP2_TOOLS),y) += bzip2
+diff --git a/tools/clang/Makefile b/tools/clang/Makefile
+new file mode 100644
+index 0000000..2557a1d
+--- /dev/null
++++ b/tools/clang/Makefile
+@@ -0,0 +1,43 @@
++#
++# Copyright (C) 2006-2017 OpenWrt.org
++#
++# This is free software, licensed under the GNU General Public License v2.
++# See /LICENSE for more information.
++#
++
++include $(TOPDIR)/rules.mk
++
++PKG_NAME:=clang
++PKG_VERSION:=19.0.1
++
++PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-x86_64-unknown-linux-gnu.tar.xz
++PKG_SOURCE_URL:=https://github.com/sbwml/openwrt-llvm-toolchain/releases/download/$(PKG_VERSION)/
++PKG_HASH:=a73c5ec6d62e0f47fd3cf25e3904b5818b18695b7302a9b404e411f2085110a3
++
++PKG_MAINTAINER:=sbwml <admin@cooluc.com>
++PKG_LICENSE:=Apache-2.0
++PKG_LICENSE_FILES:=LICENSE
++
++include $(INCLUDE_DIR)/host-build.mk
++
++define Host/Prepare
++	$(TAR) --strip-components=1 -C $(HOST_BUILD_DIR) -xf $(DL_DIR)/$(PKG_NAME)-$(PKG_VERSION)-x86_64-unknown-linux-gnu.tar.xz
++endef
++
++define Host/Compile
++endef
++
++define Host/Install
++	$(CP) -a $(HOST_BUILD_DIR)/{bin,include,lib} $(STAGING_DIR_HOST)/
++	$(RM) -rf $(HOST_BUILD_DIR)/{bin,include,lib,libexec,share}
++endef
++
++define Host/Uninstall
++	( \
++		rm -rf $(STAGING_DIR_HOST)/bin/{*clang*,dsymutil,find-all-symbols,*lld*,llc,lli,llvm*,merge-fdata,opt,perf2bolt,wasm-ld} ; \
++		rm -rf $(STAGING_DIR_HOST)/include/{aarch64-unknown-linux-musl,arm-unknown-linux-musleabihf,c++,clang*,i386-unknown-linux-gnu,i686-unknown-linux-musl,lld,llvm*,mach-o,polly,x86_64-unknown-linux-gnu,x86_64-unknown-linux-musl} ; \
++		rm -rf $(STAGING_DIR_HOST)/lib/{aarch64-unknown-linux-musl,arm-unknown-linux-musleabihf,bfd-plugins,clang,cmake,i386-unknown-linux-gnu,i686-unknown-linux-musl,libbolt*,libfindAllSymbols.a,liblld*,*LLVM*,libPolly*,libRemarks.so,libxml2*,x86_64-unknown-linux-gnu,x86_64-unknown-linux-musl} ; \
++	)
++endef
++
++$(eval $(call HostBuild))
+-- 
+2.43.5
+

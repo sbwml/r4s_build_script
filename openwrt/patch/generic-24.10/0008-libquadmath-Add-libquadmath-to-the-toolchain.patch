@@ -1,0 +1,25 @@
+From 1754cecb299a3f83eb68dc777262c5f3d6e06dc3 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Fri, 4 Oct 2024 10:52:57 +0800
+Subject: [PATCH 08/11] libquadmath: Add libquadmath to the toolchain
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ package/libs/toolchain/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/package/libs/toolchain/Makefile b/package/libs/toolchain/Makefile
+index 7c117b1..f342368 100644
+--- a/package/libs/toolchain/Makefile
++++ b/package/libs/toolchain/Makefile
+@@ -4,6 +4,7 @@
+ # This is free software, licensed under the GNU General Public License v2.
+ # See /LICENSE for more information.
+ #
++# skip patch
+ 
+ include $(TOPDIR)/rules.mk
+ PKG_NAME:=toolchain
+-- 
+2.43.5
+

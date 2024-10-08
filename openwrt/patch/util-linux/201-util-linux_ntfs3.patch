@@ -1,8 +1,6 @@
-diff --git a/libblkid/src/superblocks/ntfs.c b/libblkid/src/superblocks/ntfs.c
-index be2e3d8..3019b10 100644
 --- a/libblkid/src/superblocks/ntfs.c
 +++ b/libblkid/src/superblocks/ntfs.c
-@@ -238,7 +238,7 @@ int blkid_probe_is_ntfs(blkid_probe pr)
+@@ -248,7 +248,7 @@ int blkid_probe_is_ntfs(blkid_probe pr)
  
  const struct blkid_idinfo ntfs_idinfo =
  {
@@ -11,11 +9,9 @@ index be2e3d8..3019b10 100644
  	.usage		= BLKID_USAGE_FILESYSTEM,
  	.probefunc	= probe_ntfs,
  	.magics		=
-diff --git a/libmount/src/utils.c b/libmount/src/utils.c
-index 7481505..587e657 100644
 --- a/libmount/src/utils.c
 +++ b/libmount/src/utils.c
-@@ -390,7 +390,7 @@ const char *mnt_statfs_get_fstype(struct statfs *vfs)
+@@ -436,7 +436,7 @@ const char *mnt_statfs_get_fstype(struct statfs *vfs)
  	case STATFS_NCP_MAGIC:		return "ncp";
  	case STATFS_NFS_MAGIC:		return "nfs";
  	case STATFS_NILFS_MAGIC:	return "nilfs2";

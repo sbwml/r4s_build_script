@@ -1,0 +1,25 @@
+From 046d307da1b54936b69c701bb3a3aa587853c65f Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Fri, 4 Oct 2024 10:58:29 +0800
+Subject: [PATCH 10/11] include: kernel: add miss config for linux-6.11
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ include/kernel-defaults.mk | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/kernel-defaults.mk b/include/kernel-defaults.mk
+index 2d6b968..36a1b30 100644
+--- a/include/kernel-defaults.mk
++++ b/include/kernel-defaults.mk
+@@ -119,6 +119,7 @@ define Kernel/SetNoInitramfs
+ 	echo 'CONFIG_INITRAMFS_SOURCE=""' >> $(LINUX_DIR)/.config.set
+ 	echo '# CONFIG_INITRAMFS_FORCE is not set' >> $(LINUX_DIR)/.config.set
+ 	echo "# CONFIG_INITRAMFS_PRESERVE_MTIME is not set" >> $(LINUX_DIR)/.config.set
++	echo '# CONFIG_FSCACHE is not set' >> $(LINUX_DIR)/.config.set
+ # CLANG
+ 	mv $(LINUX_DIR)/.config.set $(LINUX_DIR)/.config.old
+ 	grep -v CONFIG_LTO $(LINUX_DIR)/.config.old > $(LINUX_DIR)/.config.set
+-- 
+2.43.5
+

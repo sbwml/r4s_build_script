@@ -1,0 +1,33 @@
+From 0b193c7b7c908758a703245071068182b08b7ef2 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Sun, 6 Oct 2024 06:20:50 +0800
+Subject: [PATCH] tools/mold: update to 2.34.1
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ tools/mold/Makefile | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/tools/mold/Makefile b/tools/mold/Makefile
+index 28d760d..1a37b68 100644
+--- a/tools/mold/Makefile
++++ b/tools/mold/Makefile
+@@ -3,12 +3,11 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=mold
+-PKG_VERSION:=2.33.0
++PKG_VERSION:=2.34.1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+-PKG_SOURCE_URL_FILE:=v$(PKG_VERSION).tar.gz
+-PKG_SOURCE_URL:=https://github.com/rui314/mold/archive/refs/tags
+-PKG_HASH:=37b3aacbd9b6accf581b92ba1a98ca418672ae330b78fe56ae542c2dcb10a155
++PKG_SOURCE_URL:=https://codeload.github.com/rui314/mold/tar.gz/v$(PKG_VERSION)?
++PKG_HASH:=a8cf638045b4a4b2697d0bcc77fd96eae93d54d57ad3021bf03b0333a727a59d
+ 
+ include $(INCLUDE_DIR)/host-build.mk
+ include $(INCLUDE_DIR)/cmake.mk
+-- 
+2.43.5
+
