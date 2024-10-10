@@ -291,14 +291,8 @@ pushd package/libs/openssl/patches
     curl -sO https://$mirror/openwrt/patch/openssl/quic/0044-QUIC-Update-metadata-version.patch
 popd
 
-# openssl hwrng
-if [ "$platform" = "rk3399" ] || [ "$platform" = "rk3568" ]; then
-    sed -i "/-openwrt/iOPENSSL_OPTIONS += enable-ktls '-DDEVRANDOM=\"\\\\\"/dev/hwrng\\\\\"\"\'\n" package/libs/openssl/Makefile
-else
-    sed -i "/-openwrt/iOPENSSL_OPTIONS += enable-ktls '-DDEVRANDOM=\"\\\\\"/dev/urandom\\\\\"\"\'\n" package/libs/openssl/Makefile
-fi
-# openssl -Ofast
-sed -i "s/-O3/-Ofast/g" package/libs/openssl/Makefile
+# openssl urandom
+sed -i "/-openwrt/iOPENSSL_OPTIONS += enable-ktls '-DDEVRANDOM=\"\\\\\"/dev/urandom\\\\\"\"\'\n" package/libs/openssl/Makefile
 
 # openssl - lto
 if [ "$ENABLE_LTO" = "y" ]; then
