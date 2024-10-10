@@ -259,6 +259,11 @@ curl -sO https://$mirror/openwrt/scripts/03-convert_translation.sh
 curl -sO https://$mirror/openwrt/scripts/04-fix_kmod.sh
 curl -sO https://$mirror/openwrt/scripts/05-fix-source.sh
 curl -sO https://$mirror/openwrt/scripts/99_clean_build_cache.sh
+if [ -z "$git_password" ] && [ -z "$private_url" ]; then
+    curl -u openwrt:$git_password -sO "$private_url"
+else
+    curl -sO https://$mirror/openwrt/scripts/10-custom.sh
+fi
 chmod 0755 *sh
 [ "$(whoami)" = "runner" ] && group "patching openwrt"
 bash 00-prepare_base.sh
@@ -267,6 +272,7 @@ bash 02-prepare_package.sh
 bash 03-convert_translation.sh
 bash 04-fix_kmod.sh
 bash 05-fix-source.sh
+[ -f "10-custom.sh" ] && bash 10-custom.sh
 [ "$(whoami)" = "runner" ] && endgroup
 
 if [ "$USE_GCC14" = "y" ] || [ "$USE_GCC15" = "y" ] && [ "$version" = "rc2" ]; then
@@ -274,7 +280,7 @@ if [ "$USE_GCC14" = "y" ] || [ "$USE_GCC15" = "y" ] && [ "$version" = "rc2" ]; t
     cp -a ../master/openwrt/toolchain/binutils toolchain/binutils
 fi
 
-rm -f 0*-*.sh
+rm -f 0*-*.sh 10-custom.sh
 rm -rf ../master
 
 # Load devices Config
