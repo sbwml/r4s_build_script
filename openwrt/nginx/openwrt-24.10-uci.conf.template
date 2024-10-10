@@ -3,7 +3,7 @@
 # For details see: https://openwrt.org/docs/guide-user/services/webserver/nginx
 # UCI_CONF_VERSION=1.2
 
-worker_processes 1;
+worker_processes 2;
 
 user root;
 
