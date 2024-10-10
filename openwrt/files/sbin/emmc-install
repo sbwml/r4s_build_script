@@ -6,7 +6,7 @@
 # check
 commands=("bash" "parted" "awk" "sed" "grep" "zcat" "dd" "fdisk")
 for cmd in "${commands[@]}"; do
-    if command -v "$cmd" >/dev/null 2>&1; then
+    if ! which "$cmd" >/dev/null 2>&1; then
         echo "Command $cmd does not exist."
         exit 1
     fi
