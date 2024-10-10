@@ -259,7 +259,7 @@ curl -sO https://$mirror/openwrt/scripts/03-convert_translation.sh
 curl -sO https://$mirror/openwrt/scripts/04-fix_kmod.sh
 curl -sO https://$mirror/openwrt/scripts/05-fix-source.sh
 curl -sO https://$mirror/openwrt/scripts/99_clean_build_cache.sh
-if [ -z "$git_password" ] && [ -z "$private_url" ]; then
+if [ -n "$git_password" ] && [ -n "$private_url" ]; then
     curl -u openwrt:$git_password -sO "$private_url"
 else
     curl -sO https://$mirror/openwrt/scripts/10-custom.sh
