@@ -12,6 +12,7 @@ CONFIG_KERNEL_BUILD_DOMAIN="cooluc.com"
 CONFIG_KERNEL_BUILD_USER="admin"
 CONFIG_KERNEL_CFLAGS="-march=armv8.2-a+crypto+crc -mcpu=cortex-a55+crypto+crc -mtune=cortex-a55"
 CONFIG_KERNEL_MEMCG_V1=y
+CONFIG_KERNEL_PREEMPT_RT=y
 CONFIG_PACKAGE_autocore-arm=y
 CONFIG_PACKAGE_bind-host=y
 CONFIG_PACKAGE_block-mount=y
