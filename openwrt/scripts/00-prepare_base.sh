@@ -361,18 +361,9 @@ sed -i 's/procd_set_param stdout 1/procd_set_param stdout 0/g' feeds/packages/ut
 sed -i 's/procd_set_param stderr 1/procd_set_param stderr 0/g' feeds/packages/utils/ttyd/files/ttyd.init
 
 # UPnP
-rm -rf feeds/packages/net/miniupnpd
-git clone https://$gitea/sbwml/miniupnpd feeds/packages/net/miniupnpd -b v2.3.6
-rm -rf feeds/luci/applications/luci-app-upnp
-git clone https://$gitea/sbwml/luci-app-upnp feeds/luci/applications/luci-app-upnp
-pushd feeds/packages
-    curl -s https://$mirror/openwrt/patch/miniupnpd/01-set-presentation_url.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/miniupnpd/02-force_forwarding.patch | patch -p1
-    curl -s https://$mirror/openwrt/patch/miniupnpd/04-enable-force_forwarding-by-default.patch | patch -p1
-popd
-
-# UPnP - Move to network
-sed -i 's/services/network/g' feeds/luci/applications/luci-app-upnp/root/usr/share/luci/menu.d/luci-app-upnp.json
+rm -rf feeds/{packages/net/miniupnpd,luci/applications/luci-app-upnp}
+git clone https://$gitea/sbwml/miniupnpd feeds/packages/net/miniupnpd -b v2.3.7
+git clone https://$gitea/sbwml/luci-app-upnp feeds/luci/applications/luci-app-upnp -b main
 
 # nginx-util - fix gcc13
 if [ "$version" = "rc2" ]; then
