@@ -111,7 +111,7 @@ Signed-off-by: Xiaoping Fan <xfan@codeaurora.org>
  
  	len = skb->len;
  	trace_net_dev_start_xmit(skb, dev);
-@@ -5409,6 +5418,11 @@ void netdev_rx_handler_unregister(struct
+@@ -5413,6 +5422,11 @@ void netdev_rx_handler_unregister(struct
  }
  EXPORT_SYMBOL_GPL(netdev_rx_handler_unregister);
  
@@ -123,7 +123,7 @@ Signed-off-by: Xiaoping Fan <xfan@codeaurora.org>
  /*
   * Limit the use of PFMEMALLOC reserves to those protocols that implement
   * the special handling of PFMEMALLOC skbs.
-@@ -5457,6 +5471,10 @@ static int __netif_receive_skb_core(stru
+@@ -5461,6 +5475,10 @@ static int __netif_receive_skb_core(stru
  	int ret = NET_RX_DROP;
  	__be16 type;
  
@@ -134,7 +134,7 @@ Signed-off-by: Xiaoping Fan <xfan@codeaurora.org>
  	net_timestamp_check(!READ_ONCE(net_hotdata.tstamp_prequeue), skb);
  
  	trace_netif_receive_skb(skb);
-@@ -5495,6 +5513,16 @@ another_round:
+@@ -5499,6 +5517,16 @@ another_round:
  			goto out;
  	}
  

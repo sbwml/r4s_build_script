@@ -120,7 +120,7 @@ pushd target/linux/generic/backport-"$kernel_version"
     curl -Os https://$mirror/openwrt/patch/kernel-"$kernel_version"/bbr3/010-bbr3-0016-net-tcp_bbr-v3-update-TCP-bbr-congestion-control-mod.patch
     curl -Os https://$mirror/openwrt/patch/kernel-"$kernel_version"/bbr3/010-bbr3-0017-net-tcp_bbr-v3-ensure-ECN-enabled-BBR-flows-set-ECT-.patch
     curl -Os https://$mirror/openwrt/patch/kernel-"$kernel_version"/bbr3/010-bbr3-0018-tcp-export-TCPI_OPT_ECN_LOW-in-tcp_info-tcpi_options.patch
-    [ "$TESTING_KERNEL" = "y" ] && curl -Os https://$mirror/openwrt/patch/kernel-"$kernel_version"/bbr3/010-bbr3-0019-x86-cfi-bpf-Add-tso_segs-and-skb_marked_lost-to-bpf_.patch
+    [ "$version" = "snapshots-24.10" ] && curl -Os https://$mirror/openwrt/patch/kernel-"$kernel_version"/bbr3/010-bbr3-0019-x86-cfi-bpf-Add-tso_segs-and-skb_marked_lost-to-bpf_.patch
 popd
 
 # LRNG v54/56 - linux-6.6/6.12
@@ -153,7 +153,7 @@ pushd target/linux/generic/hack-$kernel_version
 popd
 
 # linux-rt - i915
-if [ "$TESTING_KERNEL" = "y" ]; then
+if [ "$version" = "snapshots-24.10" ]; then
     pushd target/linux/generic/hack-6.12
         curl -Os https://$mirror/openwrt/patch/kernel-6.12/linux-rt/012-0001-drm-i915-Use-preempt_disable-enable_rt-where-recomme.patch
         curl -Os https://$mirror/openwrt/patch/kernel-6.12/linux-rt/012-0002-drm-i915-Don-t-disable-interrupts-on-PREEMPT_RT-duri.patch
@@ -170,7 +170,7 @@ fi
 rm -rf package/firmware/linux-firmware
 git clone https://$github/sbwml/package_firmware_linux-firmware package/firmware/linux-firmware
 
-if [ "$TESTING_KERNEL" = "y" ]; then
+if [ "$version" = "snapshots-24.10" ]; then
     # rtl8812au-ct - fix linux-6.12
     rm -rf package/kernel/rtl8812au-ct
     git clone https://$github/sbwml/package_kernel_rtl8812au-ct package/kernel/rtl8812au-ct -b v6.11
@@ -188,7 +188,7 @@ fi
 rm -rf package/kernel/mt76
 mkdir -p package/kernel/mt76/patches
 curl -s https://$mirror/openwrt/patch/mt76/Makefile > package/kernel/mt76/Makefile
-[ "$TESTING_KERNEL" = "y" ] && {
+[ "$version" = "snapshots-24.10" ] && {
     curl -s https://$mirror/openwrt/patch/mt76/patches/100-fix-build-with-mac80211-6.11-backport.patch > package/kernel/mt76/patches/100-fix-build-with-mac80211-6.11-backport.patch
     curl -s https://$mirror/openwrt/patch/mt76/patches/101-fix-build-with-linux-6.12rc2.patch > package/kernel/mt76/patches/101-fix-build-with-linux-6.12rc2.patch
 }
@@ -214,7 +214,7 @@ curl -s https://$mirror/openwrt/patch/openwrt-6.x/500-world-regd-5GHz.patch > pa
 rm -rf package/kernel/mac80211
 if [ "$version" = "rc2" ]; then
     git clone https://$github/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b v6.11
-    [ "$TESTING_KERNEL" = "y" ] && rm -f package/kernel/mac80211/patches/build/140-trace_backport.patch
+    [ "$version" = "snapshots-24.10" ] && rm -f package/kernel/mac80211/patches/build/140-trace_backport.patch
 else
     git clone https://$github/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b openwrt-24.10
 fi
@@ -231,7 +231,7 @@ curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/arm64/312-arm64-cpu
 # fullcone
 curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/952-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-$kernel_version/952-net-conntrack-events-support-multiple-registrant.patch
 # bcm-fullcone
-[ "$TESTING_KERNEL" != "y" ] && {
+[ "$version" = "rc2" ] && {
     curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/982-add-bcm-fullcone-support.patch > target/linux/generic/hack-$kernel_version/982-add-bcm-fullcone-support.patch
     curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/983-add-bcm-fullcone-nft_masq-support.patch > target/linux/generic/hack-$kernel_version/983-add-bcm-fullcone-nft_masq-support.patch
 }
@@ -239,7 +239,7 @@ curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/952-net-conntra
 curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/601-netfilter-export-udp_get_timeouts-function.patch > target/linux/generic/hack-$kernel_version/601-netfilter-export-udp_get_timeouts-function.patch
 curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/953-net-patch-linux-kernel-to-support-shortcut-fe.patch > target/linux/generic/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
 # backport - 6.8 fast-path-variables
-if [ "$version" = "rc2" ] && [ "$platform" != "bcm53xx" ] && [ "$TESTING_KERNEL" != "y" ]; then
+if [ "$version" = "rc2" ] && [ "$platform" != "bcm53xx" ]; then
     curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/901-v6.8-cache-enforce-cache-groups.patch > target/linux/generic/backport-6.6/901-v6.8-cache-enforce-cache-groups.patch
     curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/902-v6.8-netns-ipv4-reorganize-netns_ipv4-fast-path-variables.patch > target/linux/generic/backport-6.6/902-v6.8-netns-ipv4-reorganize-netns_ipv4-fast-path-variables.patch
     curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/903-v6.8-net-device-reorganize-net_device-fast-path-variables.patch > target/linux/generic/backport-6.6/903-v6.8-net-device-reorganize-net_device-fast-path-variables.patch

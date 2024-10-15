@@ -129,11 +129,10 @@ export \
     ENABLE_DPDK=$ENABLE_DPDK \
     ENABLE_GLIBC=$ENABLE_GLIBC \
     ENABLE_LRNG=$ENABLE_LRNG \
-    KERNEL_CLANG_LTO=$KERNEL_CLANG_LTO \
-    TESTING_KERNEL=$TESTING_KERNEL \
+    KERNEL_CLANG_LTO=$KERNEL_CLANG_LTO
 
 # kernel version
-[ "$TESTING_KERNEL" = "y" ] && export kernel_version=6.12 || export kernel_version=6.6
+[ "$version" = "snapshots-24.10" ] && export kernel_version=6.12 || export kernel_version=6.6
 
 # print version
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
@@ -154,7 +153,7 @@ else
 fi
 get_kernel_version=$(curl -s https://$mirror/tags/kernel-$kernel_version)
 kmod_hash=$(echo -e "$get_kernel_version" | awk -F'HASH-' '{print $2}' | awk '{print $1}' | tail -1 | md5sum | awk '{print $1}')
-if [ "$TESTING_KERNEL" = "y" ]; then
+if [ "$version" = "snapshots-24.10" ]; then
     kmodpkg_name=$(echo $(echo -e "$get_kernel_version" | awk -F'HASH-' '{print $2}' | awk '{print $1}')~$(echo $kmod_hash)-r1)
 else
     kmodpkg_name=$(echo $(echo -e "$get_kernel_version" | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
@@ -386,9 +385,10 @@ fi
 # uhttpd
 [ "$ENABLE_UHTTPD" = "y" ] && sed -i '/nginx/d' .config && echo 'CONFIG_PACKAGE_ariang=y' >> .config
 
-# test kernel
-[ "$TESTING_KERNEL" = "y" ] && [ "$platform" = "bcm53xx" ] && sed -i '1i\# CONFIG_PACKAGE_kselftests-bpf is not set\n# CONFIG_PACKAGE_perf is not set\n' .config
-[ "$TESTING_KERNEL" = "y" ] && sed -i '1i\# Test kernel\nCONFIG_TESTING_KERNEL=y\n' .config
+# snapshots-24.10
+[ "$version" = "snapshots-24.10" ] && [ "$platform" = "bcm53xx" ] && sed -i '1i\# CONFIG_PACKAGE_kselftests-bpf is not set\n# CONFIG_PACKAGE_perf is not set\n' .config
+[ "$version" = "snapshots-24.10" ] && sed -i '1i\# Test kernel\nCONFIG_TESTING_KERNEL=y\n' .config
+[ "$version" = "rc2" ] && sed -i '/CONFIG_TESTING_KERNEL/d' .config
 
 # not all kmod
 [ "$NO_KMOD" = "y" ] && sed -i '/CONFIG_ALL_KMODS=y/d; /CONFIG_ALL_NONSHARED=y/d' .config
