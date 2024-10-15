@@ -129,6 +129,22 @@ export MINIMAL_BUILD=y
 export LAN=10.0.0.1
 ```
 
+### 使用 uhttpd 轻量 web 引擎
+##### 固件默认使用 Nginx（quic） 作为页面引擎，只需在构建固件前执行以下命令即可使用 uhttpd 取代 nginx
+##### Nginx 在具备公网的环境下可以提供更丰富的功能支持
+
+```
+export ENABLE_UHTTPD=y
+```
+
+### 禁用全模块编译（For developers）
+##### 启用该标志时，固件仅编译 config 指定的软件包和内核模块，但固件不再支持安装内核模块（opkg install kmod-xxx），强制安装模块将会导致内核崩溃
+##### 最大的可能性降低 OpenWrt 的编译耗时，适用于开发者调试构建
+
+```
+export NO_KMOD=y
+```
+
 ---------------
 
 ## 构建 OpenWrt 23.05 最新 Releases
