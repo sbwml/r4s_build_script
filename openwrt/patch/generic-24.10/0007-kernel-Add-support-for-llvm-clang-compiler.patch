@@ -1,15 +1,14 @@
-From ae3e66eb2cca2e1642d4a4816241bfffe488fff8 Mon Sep 17 00:00:00 2001
+From e13ed92005152ae050d4a35f6912547ebe259847 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 4 Oct 2024 10:51:22 +0800
-Subject: [PATCH 07/11] kernel: Add support for llvm/clang compiler
+Subject: [PATCH 07/13] kernel: Add support for llvm/clang compiler
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
- config/Config-devel.in     |  7 +++++++
- include/kernel-defaults.mk | 11 +++++++++++
- include/kernel.mk          | 13 ++++++++++++-
- include/package.mk         |  4 ++++
- 4 files changed, 34 insertions(+), 1 deletion(-)
+ config/Config-devel.in |  7 +++++++
+ include/kernel.mk      | 13 ++++++++++++-
+ include/package.mk     |  4 ++++
+ 3 files changed, 23 insertions(+), 1 deletion(-)
 
 diff --git a/config/Config-devel.in b/config/Config-devel.in
 index cbac91c..9079303 100644
@@ -29,30 +28,8 @@ index cbac91c..9079303 100644
  	config EXTERNAL_KERNEL_TREE
  		string "Use external kernel tree" if DEVEL
  		default ""
-diff --git a/include/kernel-defaults.mk b/include/kernel-defaults.mk
-index f94ed33..c4a042b 100644
---- a/include/kernel-defaults.mk
-+++ b/include/kernel-defaults.mk
-@@ -9,6 +9,17 @@ endif
- 
- INITRAMFS_EXTRA_FILES ?= $(GENERIC_PLATFORM_DIR)/image/initramfs-base-files.txt
- 
-+ifneq (,$(findstring clang,$(KERNEL_CC)))
-+  ifneq (,$(filter clang-%,$(KERNEL_CC)))
-+    LLVM := $(subst clang-,,$(KERNEL_CC))
-+    LLVM_LLD := ld.lld-$(subst clang-,,$(KERNEL_CC))
-+  else
-+    LLVM := 1
-+    LLVM_LLD := ld.lld
-+  endif
-+  KERNEL_MAKE_FLAGS += CC="$(KERNEL_CC)" LD="$(LLVM_LLD)" LD=ld.lld LLVM=$(LLVM) LLVM_IAS=1
-+endif
-+
- export HOST_EXTRACFLAGS=-I$(STAGING_DIR_HOST)/include
- 
- # defined in quilt.mk
 diff --git a/include/kernel.mk b/include/kernel.mk
-index 6ef7663..4f89d9f 100644
+index 6ef7663..1648a6f 100644
 --- a/include/kernel.mk
 +++ b/include/kernel.mk
 @@ -35,7 +35,7 @@ else
@@ -76,7 +53,7 @@ index 6ef7663..4f89d9f 100644
 +    LLVM := 1
 +    LLVM_LLD := ld.lld
 +  endif
-+  KERNEL_MAKE_FLAGS += CC="$(KERNEL_CC)" LD="$(LLVM_LLD)" LLVM=$(LLVM) LLVM_IAS=1
++  KERNEL_MAKE_FLAGS += LD="$(LLVM_LLD)" LLVM=$(LLVM) LLVM_IAS=1
 +endif
 +
  KERNEL_NOSTDINC_FLAGS = \
@@ -98,5 +75,5 @@ index 7fbecf9..3e988ed 100644
  __unknown_flags=$(filter-out no-iremap no-mips16 gc-sections no-gc-sections lto no-lto no-mold,$(PKG_BUILD_FLAGS))
  ifneq ($(__unknown_flags),)
 -- 
-2.43.5
+2.42.0
 

@@ -1,7 +1,7 @@
-From bd8a486bf2a805a7783b3a3e329b5756c1ff6127 Mon Sep 17 00:00:00 2001
+From 79b76c15bb981843e7a08f0c906c013e96a02d2e Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Sat, 12 Oct 2024 08:36:46 +0800
-Subject: [PATCH] kernel: add PREEMPT_RT support for aarch64/x86_64
+Subject: [PATCH 13/13] kernel: add PREEMPT_RT support for aarch64/x86_64
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
@@ -33,5 +33,5 @@ index 39a9730..5439219 100644
  	bool "Enable support for printk"
  	default y
 -- 
-2.43.5
+2.42.0
 

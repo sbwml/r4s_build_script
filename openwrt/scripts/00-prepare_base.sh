@@ -54,7 +54,7 @@ if [ "$version" = "snapshots-24.10" ]; then
     # kernel 6.12: add legacy cgroup v1 memory controller
     curl -s https://$mirror/openwrt/patch/$generic/0012-kernel-add-legacy-cgroup-v1-memory-controller.patch | patch -p1
     # kernel 6.12: add linux-rt support for aarch64/x86_64
-    curl -s https://$mirror/openwrt/patch/$generic/0013-kernel-add-linux-rt-support-for-aarch64-x86_64.patch | patch -p1
+    curl -s https://$mirror/openwrt/patch/$generic/0013-kernel-add-PREEMPT_RT-support-for-aarch64-x86_64.patch | patch -p1
 fi
 
 # mold
