@@ -114,7 +114,6 @@ if [ "$version" = "rc2" ]; then
     cp -a ../master/routing/batman-adv feeds/routing/batman-adv
 fi
 # fix build with linux-6.12
-curl -s https://$mirror/openwrt/patch/packages-patches/batman-adv/900-netdev_features-convert-NETIF_F_NETNS_LOCAL-to-dev-netns_local.patch > feeds/routing/batman-adv/patches/900-netdev_features-convert-NETIF_F_NETNS_LOCAL-to-dev-netns_local.patch
 curl -s https://$mirror/openwrt/patch/packages-patches/batman-adv/901-fix-linux-6.12rc2-builds.patch > feeds/routing/batman-adv/patches/901-fix-linux-6.12rc2-builds.patch
 
 # bcm53xx
