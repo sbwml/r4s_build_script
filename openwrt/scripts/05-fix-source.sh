@@ -6,9 +6,6 @@ sed -i "/CONFIGURE_ARGS/i\TARGET_CFLAGS += -ffat-lto-objects\n" feeds/packages/l
 # grub2 -  disable `gc-sections` flag
 sed -i '/PKG_BUILD_FLAGS/ s/$/ no-gc-sections/' package/boot/grub2/Makefile
 
-# mbedtls
-[ "$version" = "snapshots-24.10" ] && sed -i '/TARGET_CFLAGS/ s/$/ -Wno-error=unterminated-string-initialization/' package/libs/mbedtls/Makefile
-
 # haproxy - fix build with quictls
 [ "$version" = "snapshots-24.10" ] && sed -i '/USE_QUIC_OPENSSL_COMPAT/d' feeds/packages/net/haproxy/Makefile
 
@@ -96,6 +93,7 @@ fi
 if [ "$USE_GCC15" = y ]; then
     # Mbedtls
     curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-15/mbedtls/901-tests-fix-string-initialization-error-on-gcc15.patch > package/libs/mbedtls/patches/901-tests-fix-string-initialization-error-on-gcc15.patch
+    [ "$version" = "snapshots-24.10" ] && sed -i '/TARGET_CFLAGS/ s/$/ -Wno-error=unterminated-string-initialization/' package/libs/mbedtls/Makefile
     # elfutils
     curl -s https://$mirror/openwrt/patch/openwrt-6.x/gcc-15/elfutils/901-backends-fix-string-initialization-error-on-gcc15.patch > package/libs/elfutils/patches/901-backends-fix-string-initialization-error-on-gcc15.patch
     # libwebsockets
