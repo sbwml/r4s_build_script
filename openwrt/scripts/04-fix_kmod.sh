@@ -17,8 +17,7 @@ fi
 curl -s https://$mirror/openwrt/patch/packages-patches/gpio-button-hotplug/fix-linux-6.12.patch | patch -p1
 
 # gpio-nct5104d
-curl -s https://$mirror/openwrt/patch/packages-patches/gpio-nct5104d/fix-build-for-linux-6.6.patch | patch -p1
-curl -s https://$mirror/openwrt/patch/packages-patches/gpio-nct5104d/fix-build-for-linux-6.12.patch | patch -p1
+[ "$version" = "rc2" ] && curl -s https://$mirror/openwrt/patch/packages-patches/gpio-nct5104d/fix-build-for-linux-6.6.patch | patch -p1
 
 # dmx_usb_module
 if [ "$version" = "rc2" ]; then
