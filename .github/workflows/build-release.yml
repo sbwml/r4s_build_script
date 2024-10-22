@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       device:
-        description: 'Select device to build'
+        description: 'Select the build device'
         required: true
         default: 'x86_64'
         type: choice
@@ -14,6 +14,14 @@ on:
           - 'nanopi-r5s'
           - 'netgear_r8500'
           - 'x86_64'
+      version:
+        description: 'Select the build version'
+        required: true
+        default: 'release'
+        type: choice
+        options:
+          - 'release'
+          - 'snapshot'
       build_options:
         description: 'Build options (separate multiple options with spaces)'
         required: false
@@ -35,6 +43,7 @@ jobs:
         git config --global user.name 'actions'
         git config --global user.email 'action@github.com'
         echo WORKDIR="/builder" >> "$GITHUB_ENV"
+        [ "${{ github.event.inputs.version }}" = release ] && echo build_version="rc2" >> "$GITHUB_ENV" || echo build_version="dev" >> "$GITHUB_ENV"
 
     - name: Show system
       run: |
@@ -65,9 +74,13 @@ jobs:
       run: |
         export GITHUB_REPO=${{ github.repository }}
         export ${{ github.event.inputs.build_options }}
-        bash <(curl -sS https://raw.githubusercontent.com/${{ github.repository }}/master/openwrt/build.sh) rc2 ${{ github.event.inputs.device }}
+        bash <(curl -sS https://raw.githubusercontent.com/${{ github.repository }}/master/openwrt/build.sh) ${{ env.build_version }} ${{ github.event.inputs.device }}
         cd openwrt
-        tags=$(git describe --abbrev=0 --tags)
+        if [ "${{ github.event.inputs.version }}" = release ]; then
+          tags=$(git describe --abbrev=0 --tags)
+        else
+          tags=snapshot-$(git log -n 1 --date=format:"%Y%m%d" --format="%cd")-$(git log --pretty=format:"%h" -1)
+        fi
         echo "latest_release=$tags" >>$GITHUB_ENV
 
     - name: Extensive logs after a failed compilation
