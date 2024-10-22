@@ -189,6 +189,12 @@ fi
 # Shortcut Forwarding Engine
 git clone https://$gitea/sbwml/shortcut-fe package/new/shortcut-fe
 
+# dnsmasq
+if [ "$version" = "snapshots-24.10" ]; then
+    curl -s https://$mirror/openwrt/patch/dnsmasq/0001-dnsmasq-drop-extraconftext-parameter.patch | patch -p1
+    [ "$?" -ne 0 ] && curl -s https://init2.cooluc.com/openwrt/patch/dnsmasq/dnsmasq.init > package/network/services/dnsmasq/files/dnsmasq.init
+fi
+
 # Patch FireWall 4
 if [ "$version" = "snapshots-24.10" ] || [ "$version" = "rc2" ]; then
     # firewall4 - master
