@@ -154,6 +154,7 @@ MESON_ARGS+= \
 	$(if $(CONFIG_aarch64), -Dplatform=$(PLATFORM)) \
 	$(if $(CONFIG_x86_64),-Dplatform=generic -Dcpu_instruction_set=$(CPU_INST)) \
 	-Denable_drivers=$(subst $(SPACE),$(COMMA),$(strip $(DRIVERS))) \
+	-Ddefault_library=shared
 
 define Package/libdpdk
   SECTION:=libs
