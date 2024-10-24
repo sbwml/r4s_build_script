@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# openwrt-24.xx - temp fix
+if [ "$version" = "snapshots-24.10" ]; then
+    sed -i 's/luci-app-opkg/luci-app-package-manager/g' feeds/luci/collections/luci-nginx/Makefile
+fi
+
 # libsodium - fix build with lto (GNU BUG - 89147)
 sed -i "/CONFIGURE_ARGS/i\TARGET_CFLAGS += -ffat-lto-objects\n" feeds/packages/libs/libsodium/Makefile
 
