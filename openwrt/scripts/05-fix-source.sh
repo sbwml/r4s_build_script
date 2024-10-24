@@ -1,9 +1,13 @@
 #!/bin/bash
 
-# openwrt-24.xx - temp fix
+######################### temp fix ###########################
 if [ "$version" = "snapshots-24.10" ]; then
+    # luci-nginx
     sed -i 's/luci-app-opkg/luci-app-package-manager/g' feeds/luci/collections/luci-nginx/Makefile
+    # apk-tools
+    curl -s https://init2.cooluc.com/openwrt/patch/apk-tools/9999-hack-for-linux-pre-releases.patch > package/system/apk/patches/9999-hack-for-linux-pre-releases.patch
 fi
+######################### temp fix ###########################
 
 # libsodium - fix build with lto (GNU BUG - 89147)
 sed -i "/CONFIGURE_ARGS/i\TARGET_CFLAGS += -ffat-lto-objects\n" feeds/packages/libs/libsodium/Makefile
