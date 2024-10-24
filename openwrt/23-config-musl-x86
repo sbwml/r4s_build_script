@@ -41,7 +41,6 @@ CONFIG_PACKAGE_kmod-nvme=y
 ### Display & Extra Drivers
 CONFIG_PACKAGE_kmod-backlight-pwm=y
 CONFIG_PACKAGE_kmod-backlight=y
-CONFIG_PACKAGE_kmod-drm-amdgpu=y
 CONFIG_PACKAGE_kmod-drm-i915=y
 CONFIG_PACKAGE_kmod-drm-kms-helper=y
 CONFIG_PACKAGE_kmod-drm-radeon=y
