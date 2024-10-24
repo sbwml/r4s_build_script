@@ -15,7 +15,7 @@ Signed-off-by: Syrone Wong <wong.syrone@gmail.com>
 
 --- a/include/libnftnl/expr.h
 +++ b/include/libnftnl/expr.h
-@@ -245,6 +245,12 @@ enum {
+@@ -272,6 +272,12 @@ enum {
  };
  
  enum {
@@ -226,7 +226,7 @@ Signed-off-by: Syrone Wong <wong.syrone@gmail.com>
 +struct expr_ops expr_ops_fullcone = {
 +	.name		= "fullcone",
 +	.alloc_len	= sizeof(struct nftnl_expr_fullcone),
-+	.max_attr	= NFTA_FULLCONE_MAX,
++	.nftnl_max_attr	= NFTA_FULLCONE_MAX,
 +	.set		= nftnl_expr_fullcone_set,
 +	.get		= nftnl_expr_fullcone_get,
 +	.parse		= nftnl_expr_fullcone_parse,
