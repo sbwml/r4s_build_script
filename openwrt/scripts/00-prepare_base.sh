@@ -446,8 +446,10 @@ curl -s https://$mirror/openwrt/patch/luci/dhcp/${openwrt_version}-dhcp.js > fee
 [ "$platform" = "bcm53xx" ] && sed -i -e '/if (has_ap_sae || has_sta_sae) {/{N;N;N;N;d;}' feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js
 
 # ppp - 2.5.0
-rm -rf package/network/services/ppp
-git clone https://$github/sbwml/package_network_services_ppp package/network/services/ppp
+if [ "$version" = "rc2" ]; then
+    rm -rf package/network/services/ppp
+    git clone https://$github/sbwml/package_network_services_ppp package/network/services/ppp
+fi
 
 # odhcpd RFC-9096
 if [ "$version" = "rc2" ]; then
