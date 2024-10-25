@@ -248,8 +248,6 @@ pushd feeds/luci
     [ "$version" = "snapshots-24.10" ] && {
         curl -s https://$mirror/openwrt/patch/firewall4/$openwrt_version/0006-luci-app-firewall-enable-hardware-offload-only-on-de.patch | patch -p1
     }
-    # hide nftables warning message
-    curl -s https://$mirror/openwrt/patch/luci/luci-nftables.patch | patch -p1
 popd
 
 # openssl - quictls
