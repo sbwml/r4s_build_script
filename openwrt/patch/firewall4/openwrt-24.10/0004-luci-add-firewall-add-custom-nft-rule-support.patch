@@ -1,7 +1,7 @@
-From 8ff3c9caad7446d191c7d40575a55e7753bcdaf5 Mon Sep 17 00:00:00 2001
+From 523ec5d7928c348370e9de52adc6d14e5a13c63f Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Wed, 4 Sep 2024 12:36:11 +0800
-Subject: [PATCH 4/5] luci-add-firewall: add custom nft rule support
+Subject: [PATCH 4/6] luci-add-firewall: add custom nft rule support
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---

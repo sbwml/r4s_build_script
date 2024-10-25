@@ -1,7 +1,7 @@
-From f5532b047cbc0cc3fa4a9aa6ca8df7389ef85d51 Mon Sep 17 00:00:00 2001
+From 880db92c404fb4842fa31439c174224da4fd245d Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 25 Oct 2024 17:58:57 +0800
-Subject: [PATCH 5/5] luci-app-firewall: add natflow offload support
+Subject: [PATCH 5/6] luci-app-firewall: add natflow offload support
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
@@ -9,10 +9,10 @@ Signed-off-by: sbwml <admin@cooluc.com>
  1 file changed, 22 insertions(+), 1 deletion(-)
 
 diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-index f26dba0..39faff5 100644
+index a1fb06d..447c42b 100644
 --- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 +++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-@@ -101,25 +101,38 @@ return view.extend({
+@@ -113,25 +113,38 @@ return view.extend({
  			if (L.hasSystemFeature('shortcutfe')) {
  				o.value('3', _("Shortcut-FE flow offloading"), _('Shortcut-FE based offloading for routing/NAT'));
  			}
@@ -52,7 +52,7 @@ index f26dba0..39faff5 100644
  				}
  			};
  
-@@ -131,6 +144,14 @@ return view.extend({
+@@ -143,6 +156,14 @@ return view.extend({
  			o.value('fast-classifier', _('fast-classifier'));
  			o.default = 'shortcut-fe-cm';
  			o.depends('offloading_type', '3');

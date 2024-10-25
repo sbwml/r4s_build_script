@@ -1,7 +1,7 @@
-From fe9ef405cbaf838d3920dab9439ab28db2d832d1 Mon Sep 17 00:00:00 2001
+From fdf42e33bb356f2cf86edc42926f508a1c74624d Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
-Date: Wed, 4 Sep 2024 12:35:13 +0800
-Subject: [PATCH 3/5] luci-app-firewall: add ipv6 nat option
+Date: Sat, 26 Oct 2024 03:37:02 +0800
+Subject: [PATCH 3/6] luci-app-firewall: add ipv6 nat option
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
@@ -9,12 +9,12 @@ Signed-off-by: sbwml <admin@cooluc.com>
  1 file changed, 6 insertions(+)
 
 diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-index 396d61e..f26dba0 100644
+index 12626c5..a1fb06d 100644
 --- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 +++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-@@ -67,6 +67,12 @@ return view.extend({
- 			o.depends('fullcone', '1');
- 		};
+@@ -79,6 +79,12 @@ return view.extend({
+ 			};
+ 		}
  
 +		if (L.hasSystemFeature('ipv6')) {
 +			o = s.option(form.Flag, 'nat6',
