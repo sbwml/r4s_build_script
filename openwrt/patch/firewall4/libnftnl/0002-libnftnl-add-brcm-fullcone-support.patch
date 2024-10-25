@@ -1,3 +1,15 @@
+From 945f840452091ded57ed9db799991bde6b8f6fe3 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Sat, 26 Oct 2024 06:08:38 +0800
+Subject: [PATCH 2/2] libnftnl: add brcm fullcone support
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ include/libnftnl/expr.h             |  2 ++
+ include/linux/netfilter/nf_tables.h |  4 +++
+ src/expr/masq.c                     | 42 +++++++++++++++++++++++++++++
+ 3 files changed, 48 insertions(+)
+
 --- a/include/libnftnl/expr.h
 +++ b/include/libnftnl/expr.h
 @@ -268,6 +268,8 @@ enum {

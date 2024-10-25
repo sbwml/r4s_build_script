@@ -1,3 +1,18 @@
+From ae87b5c969b8020a229054493467b272a3f2a79d Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Sat, 26 Oct 2024 06:06:30 +0800
+Subject: [PATCH 2/2] nftables: add brcm fullconenat support
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ include/linux/netfilter/nf_tables.h |  4 ++++
+ src/netlink_delinearize.c           | 24 ++++++++++++++++++++++++
+ src/netlink_linearize.c             | 15 ++++++++++-----
+ src/parser_bison.y                  | 10 ++++++++++
+ src/scanner.l                       |  1 +
+ src/statement.c                     |  9 ++++++---
+ 6 files changed, 55 insertions(+), 8 deletions(-)
+
 --- a/include/linux/netfilter/nf_tables.h
 +++ b/include/linux/netfilter/nf_tables.h
 @@ -1474,12 +1474,16 @@ enum nft_tproxy_attributes {

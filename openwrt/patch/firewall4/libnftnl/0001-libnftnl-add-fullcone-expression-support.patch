@@ -1,7 +1,7 @@
-From 6c39f04febd7cfdbd474233379416babcd0fc341 Mon Sep 17 00:00:00 2001
+From d1fb9ccb094e6cb9d33c3eae427003c9aefb5c99 Mon Sep 17 00:00:00 2001
 From: Syrone Wong <wong.syrone@gmail.com>
 Date: Fri, 8 Apr 2022 23:52:11 +0800
-Subject: [PATCH] libnftnl: add fullcone expression support
+Subject: [PATCH 1/2] libnftnl: add fullcone expression support
 
 Signed-off-by: Syrone Wong <wong.syrone@gmail.com>
 ---
