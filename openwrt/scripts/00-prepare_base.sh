@@ -249,7 +249,10 @@ pushd feeds/luci
     curl -s https://$mirror/openwrt/patch/firewall4/$openwrt_version/0003-luci-app-firewall-add-ipv6-nat-option.patch | patch -p1
     curl -s https://$mirror/openwrt/patch/firewall4/$openwrt_version/0004-luci-add-firewall-add-custom-nft-rule-support.patch | patch -p1
     curl -s https://$mirror/openwrt/patch/firewall4/$openwrt_version/0005-luci-app-firewall-add-natflow-offload-support.patch | patch -p1
-    [ "$version" = "snapshots-24.10" ] && curl -s https://$mirror/openwrt/patch/firewall4/$openwrt_version/0400-luci-app-firewall-drop-bcm-fullcone.patch | patch -p1
+    [ "$version" = "snapshots-24.10" ] && {
+        curl -s https://$mirror/openwrt/patch/firewall4/$openwrt_version/0006-luci-app-firewall-enable-hardware-offload-only-on-de.patch | patch -p1
+        curl -s https://$mirror/openwrt/patch/firewall4/$openwrt_version/0400-luci-app-firewall-drop-bcm-fullcone.patch | patch -p1
+    }
 popd
 
 # openssl - quictls
