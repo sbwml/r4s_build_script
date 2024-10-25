@@ -225,13 +225,12 @@ curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/arm64/312-arm64-cpu
 # fullcone
 curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/952-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-$kernel_version/952-net-conntrack-events-support-multiple-registrant.patch
 # bcm-fullcone
-[ "$version" = "rc2" ] && {
-    curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/982-add-bcm-fullcone-support.patch > target/linux/generic/hack-$kernel_version/982-add-bcm-fullcone-support.patch
-    curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/983-add-bcm-fullcone-nft_masq-support.patch > target/linux/generic/hack-$kernel_version/983-add-bcm-fullcone-nft_masq-support.patch
-}
+curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/982-add-bcm-fullcone-support.patch > target/linux/generic/hack-$kernel_version/982-add-bcm-fullcone-support.patch
+curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/983-add-bcm-fullcone-nft_masq-support.patch > target/linux/generic/hack-$kernel_version/983-add-bcm-fullcone-nft_masq-support.patch
 # shortcut-fe
 curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/601-netfilter-export-udp_get_timeouts-function.patch > target/linux/generic/hack-$kernel_version/601-netfilter-export-udp_get_timeouts-function.patch
 curl -s https://$mirror/openwrt/patch/kernel-$kernel_version/net/953-net-patch-linux-kernel-to-support-shortcut-fe.patch > target/linux/generic/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
+
 # backport - 6.8 fast-path-variables
 if [ "$version" = "rc2" ] && [ "$platform" != "bcm53xx" ]; then
     curl -s https://$mirror/openwrt/patch/kernel-6.6/backport/901-v6.8-cache-enforce-cache-groups.patch > target/linux/generic/backport-6.6/901-v6.8-cache-enforce-cache-groups.patch

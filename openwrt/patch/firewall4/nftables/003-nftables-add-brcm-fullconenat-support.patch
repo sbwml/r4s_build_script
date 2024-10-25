@@ -19,7 +19,7 @@
  #define NFTA_MASQ_MAX		(__NFTA_MASQ_MAX - 1)
 --- a/src/netlink_delinearize.c
 +++ b/src/netlink_delinearize.c
-@@ -1430,6 +1430,7 @@ static void netlink_parse_masq(struct ne
+@@ -1426,6 +1426,7 @@ static void netlink_parse_masq(struct ne
  {
  	enum nft_registers reg1, reg2;
  	struct expr *proto;
@@ -27,7 +27,7 @@
  	struct stmt *stmt;
  	uint32_t flags = 0;
  
-@@ -1465,6 +1466,29 @@ static void netlink_parse_masq(struct ne
+@@ -1461,6 +1462,29 @@ static void netlink_parse_masq(struct ne
  		stmt->nat.proto = proto;
  	}
  
@@ -59,7 +59,7 @@
  out_err:
 --- a/src/netlink_linearize.c
 +++ b/src/netlink_linearize.c
-@@ -1201,7 +1201,10 @@ static void netlink_gen_nat_stmt(struct
+@@ -1205,7 +1205,10 @@ static void netlink_gen_nat_stmt(struct
  	int registers = 0;
  	int nftnl_flag_attr;
  	int nftnl_reg_pmin, nftnl_reg_pmax;
@@ -70,7 +70,7 @@
  	switch (stmt->nat.type) {
  	case NFT_NAT_SNAT:
  	case NFT_NAT_DNAT:
-@@ -1221,6 +1224,8 @@ static void netlink_gen_nat_stmt(struct
+@@ -1225,6 +1228,8 @@ static void netlink_gen_nat_stmt(struct
  		nftnl_flag_attr = NFTNL_EXPR_MASQ_FLAGS;
  		nftnl_reg_pmin = NFTNL_EXPR_MASQ_REG_PROTO_MIN;
  		nftnl_reg_pmax = NFTNL_EXPR_MASQ_REG_PROTO_MAX;
@@ -79,7 +79,7 @@
  		break;
  	case NFT_NAT_FULLCONE:
  		nle = alloc_nft_expr("fullcone");
-@@ -1254,13 +1259,13 @@ static void netlink_gen_nat_stmt(struct
+@@ -1258,13 +1263,13 @@ static void netlink_gen_nat_stmt(struct
  
  			netlink_gen_expr(ctx, stmt->nat.addr->left, amin_reg);
  			netlink_gen_expr(ctx, stmt->nat.addr->right, amax_reg);
@@ -96,7 +96,7 @@
  					     amin_reg);
  			if (stmt->nat.addr->etype == EXPR_MAP &&
  			    stmt->nat.addr->mappings->set->data->flags & EXPR_F_INTERVAL) {
-@@ -1269,7 +1274,7 @@ static void netlink_gen_nat_stmt(struct
+@@ -1273,7 +1278,7 @@ static void netlink_gen_nat_stmt(struct
  					netlink_put_register(nle, nftnl_reg_pmin,
  							     amin_reg);
  				} else {
@@ -105,7 +105,7 @@
  							     amin_reg);
  				}
  			}
-@@ -1285,7 +1290,7 @@ static void netlink_gen_nat_stmt(struct
+@@ -1289,7 +1294,7 @@ static void netlink_gen_nat_stmt(struct
  
  			if (stmt->nat.type_flags & STMT_NAT_F_INTERVAL) {
  				pmin_reg += netlink_register_space(nat_addrlen(family));
@@ -116,7 +116,7 @@
  
 --- a/src/parser_bison.y
 +++ b/src/parser_bison.y
-@@ -624,6 +624,7 @@ int nft_lex(void *, void *, void *);
+@@ -644,6 +644,7 @@ int nft_lex(void *, void *, void *);
  %token DNAT			"dnat"
  %token MASQUERADE		"masquerade"
  %token FULLCONE		"fullcone"
@@ -124,7 +124,7 @@
  %token REDIRECT			"redirect"
  %token RANDOM			"random"
  %token FULLY_RANDOM		"fully-random"
-@@ -3993,6 +3994,15 @@ masq_stmt_args		:	TO 	COLON	stmt_expr
+@@ -4010,6 +4011,15 @@ masq_stmt_args		:	TO 	COLON	stmt_expr
  			{
  				$<stmt>0->nat.flags = $1;
  			}
@@ -142,7 +142,7 @@
  fullcone_stmt		:	fullcone_stmt_alloc		fullcone_stmt_args
 --- a/src/scanner.l
 +++ b/src/scanner.l
-@@ -464,6 +464,7 @@ addrstring	({macaddr}|{ip4addr}|{ip6addr
+@@ -463,6 +463,7 @@ addrstring	({macaddr}|{ip4addr}|{ip6addr
  "dnat"			{ scanner_push_start_cond(yyscanner, SCANSTATE_STMT_NAT); return DNAT; }
  "masquerade"		{ scanner_push_start_cond(yyscanner, SCANSTATE_STMT_NAT); return MASQUERADE; }
  "fullcone"		{ scanner_push_start_cond(yyscanner, SCANSTATE_STMT_NAT); return FULLCONE; }
@@ -152,7 +152,7 @@
  <SCANSTATE_STMT_NAT>{
 --- a/src/statement.c
 +++ b/src/statement.c
-@@ -687,6 +687,7 @@ const char *nat_etype2str(enum nft_nat_e
+@@ -683,6 +683,7 @@ const char *nat_etype2str(enum nft_nat_e
  
  static void nat_stmt_print(const struct stmt *stmt, struct output_ctx *octx)
  {
@@ -160,7 +160,7 @@
  	nft_print(octx, "%s", nat_etype2str(stmt->nat.type));
  	if (stmt->nat.addr || stmt->nat.proto) {
  		switch (stmt->nat.family) {
-@@ -700,11 +701,13 @@ static void nat_stmt_print(const struct
+@@ -696,11 +697,13 @@ static void nat_stmt_print(const struct
  
  		if (stmt->nat.type_flags & STMT_NAT_F_PREFIX)
  			nft_print(octx, " prefix");
