@@ -57,6 +57,9 @@ if [ "$version" = "snapshots-24.10" ]; then
     curl -s https://$mirror/openwrt/patch/$generic/0013-kernel-add-PREEMPT_RT-support-for-aarch64-x86_64.patch | patch -p1
 fi
 
+# kernel: enable Multi-Path TCP
+curl -s https://$mirror/openwrt/patch/$generic/0014-kernel-enable-Multi-Path-TCP-for-SMALL_FLASH-targets.patch | patch -p1
+
 # mold
 if [ "$ENABLE_MOLD" = "y" ] && [ "$version" = "rc2" ]; then
     curl -s https://$mirror/openwrt/patch/generic/mold/0001-build-add-support-to-use-the-mold-linker-for-package.patch | patch -p1
