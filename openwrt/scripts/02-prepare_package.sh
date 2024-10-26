@@ -62,6 +62,11 @@ sed -i '/procd_open_instance/i\\t\[ "$enable" -ne 1 \] \&\& return 1\n' feeds/pa
 curl -s https://$mirror/openwrt/patch/luci/applications/luci-app-frpc/001-luci-app-frpc-hide-token-${openwrt_version}.patch | patch -p1
 curl -s https://$mirror/openwrt/patch/luci/applications/luci-app-frpc/002-luci-app-frpc-add-enable-flag-${openwrt_version}.patch | patch -p1
 
+# natmap
+pushd feeds/luci
+    curl -s https://$mirror/openwrt/patch/luci/applications/luci-app-natmap/0001-luci-app-natmap-add-default-STUN-server-lists.patch | patch -p1
+popd
+
 # samba4 - bump version
 rm -rf feeds/packages/net/samba4
 git clone https://$github/sbwml/feeds_packages_net_samba4 feeds/packages/net/samba4

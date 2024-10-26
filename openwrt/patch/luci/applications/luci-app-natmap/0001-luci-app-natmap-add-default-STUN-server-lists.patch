@@ -1,0 +1,44 @@
+From 9c27ce31bb6e561af47e2b6c1f47f1cbd96bdabd Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Sun, 27 Oct 2024 06:14:22 +0800
+Subject: [PATCH] luci-app-natmap: add default STUN server lists
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ .../htdocs/luci-static/resources/view/natmap.js    | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/applications/luci-app-natmap/htdocs/luci-static/resources/view/natmap.js b/applications/luci-app-natmap/htdocs/luci-static/resources/view/natmap.js
+index e837fbf..14451bf 100644
+--- a/applications/luci-app-natmap/htdocs/luci-static/resources/view/natmap.js
++++ b/applications/luci-app-natmap/htdocs/luci-static/resources/view/natmap.js
+@@ -80,12 +80,26 @@ return view.extend({
+ 		o.modalonly = true;
+ 
+ 		o = s.option(form.Value, 'stun_server', _('STUN server'));
++		o.value('stun.voipia.net');
++		o.value('stun.m-online.net');
++		o.value('stun.siptrunk.com');
++		o.value('stun.hot-chilli.net');
++		o.value('stun.fitauto.ru');
++		o.value('stun.cooluc.com');
++		o.default = 'stun.voipia.net';
+ 		o.datatype = 'host';
+ 		o.modalonly = true;
+ 		o.optional = false;
+ 		o.rmempty = false;
+ 
+ 		o = s.option(form.Value, 'http_server', _('HTTP server'), _('For TCP mode'));
++		o.value('stun.voipia.net');
++		o.value('stun.m-online.net');
++		o.value('stun.siptrunk.com');
++		o.value('stun.hot-chilli.net');
++		o.value('stun.fitauto.ru');
++		o.value('stun.cooluc.com');
++		o.default = 'stun.voipia.net';
+ 		o.datatype = 'host';
+ 		o.modalonly = true;
+ 		o.rmempty = false;
+-- 
+2.42.0
+
