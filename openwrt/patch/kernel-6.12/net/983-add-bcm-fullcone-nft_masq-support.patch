@@ -50,13 +50,13 @@
  	}
  
 +	if (tb[NFTA_MASQ_REG_ADDR_MIN]) {
-+		err = nft_parse_register_load(ctx, tb[NFTA_MASQ_REG_ADDR_MIN],
++		err = nft_parse_register_load(tb[NFTA_MASQ_REG_ADDR_MIN],
 +					      &priv->sreg_addr_min, alen);
 +		if (err < 0)
 +			return err;
 +
 +		if (tb[NFTA_MASQ_REG_ADDR_MAX]) {
-+			err = nft_parse_register_load(ctx, tb[NFTA_MASQ_REG_ADDR_MAX],
++			err = nft_parse_register_load(tb[NFTA_MASQ_REG_ADDR_MAX],
 +						      &priv->sreg_addr_max,
 +						      alen);
 +			if (err < 0)
