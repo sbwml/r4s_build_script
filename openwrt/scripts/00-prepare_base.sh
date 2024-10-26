@@ -58,7 +58,7 @@ if [ "$version" = "snapshots-24.10" ]; then
 fi
 
 # kernel: enable Multi-Path TCP
-curl -s https://$mirror/openwrt/patch/$generic/0014-kernel-enable-Multi-Path-TCP-for-SMALL_FLASH-targets.patch | patch -p1
+[ "$version" = "rc2" ] && curl -s https://$mirror/openwrt/patch/$generic/0014-kernel-enable-Multi-Path-TCP-for-SMALL_FLASH-targets.patch | patch -p1
 
 # mold
 if [ "$ENABLE_MOLD" = "y" ] && [ "$version" = "rc2" ]; then
