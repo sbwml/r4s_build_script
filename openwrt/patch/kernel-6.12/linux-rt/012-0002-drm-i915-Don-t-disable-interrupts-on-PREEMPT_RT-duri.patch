@@ -1,3 +1,4 @@
+From ae7629b5cddf2ab8b3400f1a71be97036577fcd1 Mon Sep 17 00:00:00 2001
 From: Mike Galbraith <umgwanakikbuti@gmail.com>
 Date: Sat, 27 Feb 2016 09:01:42 +0100
 Subject: [PATCH 2/8] drm/i915: Don't disable interrupts on PREEMPT_RT during
@@ -31,9 +32,9 @@ Don't disable interrupts on PREEMPT_RT during atomic updates.
 Signed-off-by: Mike Galbraith <umgwanakikbuti@gmail.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/gpu/drm/i915/display/intel_crtc.c   |    9 ++++++---
- drivers/gpu/drm/i915/display/intel_cursor.c |    9 ++++++---
- drivers/gpu/drm/i915/display/intel_vblank.c |    6 ++++--
+ drivers/gpu/drm/i915/display/intel_crtc.c   | 9 ++++++---
+ drivers/gpu/drm/i915/display/intel_cursor.c | 9 ++++++---
+ drivers/gpu/drm/i915/display/intel_vblank.c | 6 ++++--
  3 files changed, 16 insertions(+), 8 deletions(-)
 
 --- a/drivers/gpu/drm/i915/display/intel_crtc.c

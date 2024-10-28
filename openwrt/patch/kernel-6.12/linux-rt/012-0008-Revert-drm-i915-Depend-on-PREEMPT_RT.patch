@@ -1,3 +1,4 @@
+From d387c5c9e6666a0d14dafdb51675d583ab55e7d8 Mon Sep 17 00:00:00 2001
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Date: Mon, 21 Feb 2022 17:59:14 +0100
 Subject: [PATCH 8/8] Revert "drm/i915: Depend on !PREEMPT_RT."
@@ -8,7 +9,7 @@ driver.
 Acked-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/gpu/drm/i915/Kconfig |    1 -
+ drivers/gpu/drm/i915/Kconfig | 1 -
  1 file changed, 1 deletion(-)
 
 --- a/drivers/gpu/drm/i915/Kconfig

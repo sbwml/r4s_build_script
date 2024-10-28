@@ -1,3 +1,4 @@
+From 9c2e94663607f6db53df8f5a347a71e10ffa4dc3 Mon Sep 17 00:00:00 2001
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Date: Fri, 1 Oct 2021 20:01:03 +0200
 Subject: [PATCH 6/8] drm/i915: Drop the irqs_disabled() check
@@ -16,7 +17,7 @@ Reported-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 Acked-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/gpu/drm/i915/i915_request.c |    2 --
+ drivers/gpu/drm/i915/i915_request.c | 2 --
  1 file changed, 2 deletions(-)
 
 --- a/drivers/gpu/drm/i915/i915_request.c
