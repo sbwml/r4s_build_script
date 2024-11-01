@@ -86,7 +86,7 @@ fi
 
 # Source branch
 if [ "$1" = "dev" ]; then
-    export branch=master
+    export branch=openwrt-24.10
     export version=snapshots-24.10
     export openwrt_version=openwrt-24.10
 elif [ "$1" = "rc2" ]; then
@@ -200,7 +200,6 @@ git clone https://$github/immortalwrt/packages master/immortalwrt_packages --dep
 if [ -d openwrt ]; then
     cd openwrt
     [ "$1" = "rc2" ] && echo "$CURRENT_DATE" > version.date
-    [ "$1" = "dev" ] && sed -i 's/$(VERSION_NUMBER),SNAPSHOT/$(VERSION_NUMBER),24.10-SNAPSHOT/g' include/version.mk
     curl -Os https://$mirror/openwrt/patch/key.tar.gz && tar zxf key.tar.gz && rm -f key.tar.gz
 else
     echo -e "${RED_COLOR}Failed to download source code${RES}"

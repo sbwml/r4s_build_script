@@ -3,7 +3,7 @@
 ######################### temp fix ###########################
 if [ "$version" = "snapshots-24.10" ]; then
     # apk-tools
-    curl -s https://init2.cooluc.com/openwrt/patch/apk-tools/9999-hack-for-linux-pre-releases.patch > package/system/apk/patches/9999-hack-for-linux-pre-releases.patch
+    curl -s https://$mirror/openwrt/patch/apk-tools/9999-hack-for-linux-pre-releases.patch > package/system/apk/patches/9999-hack-for-linux-pre-releases.patch
 fi
 ######################### temp fix ###########################
 
