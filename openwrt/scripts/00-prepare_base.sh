@@ -452,13 +452,11 @@ if [ "$version" = "rc2" ]; then
 fi
 
 # odhcpd RFC-9096
-if [ "$version" = "rc2" ]; then
-    mkdir -p package/network/services/odhcpd/patches
-    curl -s https://$mirror/openwrt/patch/odhcpd/001-odhcpd-RFC-9096-compliance.patch > package/network/services/odhcpd/patches/001-odhcpd-RFC-9096-compliance.patch
-    pushd feeds/luci
-        curl -s https://$mirror/openwrt/patch/odhcpd/luci-mod-network-add-option-for-ipv6-max-plt-vlt.patch | patch -p1
-    popd
-fi
+mkdir -p package/network/services/odhcpd/patches
+curl -s https://$mirror/openwrt/patch/odhcpd/001-odhcpd-RFC-9096-compliance-$openwrt_version.patch > package/network/services/odhcpd/patches/001-odhcpd-RFC-9096-compliance.patch
+pushd feeds/luci
+    curl -s https://$mirror/openwrt/patch/odhcpd/luci-mod-network-add-option-for-ipv6-max-plt-vlt.patch | patch -p1
+popd
 
 # urngd - 2020-01-21
 rm -rf package/system/urngd
