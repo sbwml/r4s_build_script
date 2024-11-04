@@ -11,6 +11,9 @@ git clone https://$github/sbwml/feeds_packages_lang_node-prebuilt feeds/packages
 # default settings
 git clone https://$github/sbwml/default-settings package/new/default-settings
 
+# luci-app-filemanager
+git clone https://$github/sbwml/luci-app-filemanager package/new/luci-app-filemanager
+
 # ddns - fix boot
 sed -i '/boot()/,+2d' feeds/packages/net/ddns-scripts/files/etc/init.d/ddns
 
@@ -151,7 +154,6 @@ sed -i 's/services/network/g' feeds/luci/applications/luci-app-nlbwmon/htdocs/lu
 git clone https://github.com/sbwml/luci-app-mentohust package/new/mentohust
 
 # custom packages
-rm -rf feeds/packages/utils/coremark feeds/luci/applications/luci-app-filebrowser
 git clone https://$github/sbwml/openwrt_pkgs package/new/custom --depth=1
 # coremark - prebuilt with gcc15
 if [ "$platform" = "rk3568" ]; then
