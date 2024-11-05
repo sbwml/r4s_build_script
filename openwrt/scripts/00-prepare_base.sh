@@ -12,6 +12,13 @@ fi
 
 ######## OpenWrt Patches ########
 
+# source
+if [ "$version" = "rc2" ]; then
+    sed -i '/mirror2.openwrt.org/a\push @mirrors, '\''https://source.cooluc.com'\'';' scripts/download.pl
+else
+    sed -i '/@OPENWRT/a\\t\t"https://source.cooluc.com",' scripts/projectsmirrors.json
+fi
+
 [ "$version" = "rc2" ] && generic=generic || generic=generic-24.10
 
 # tools: add llvm/clang toolchain
