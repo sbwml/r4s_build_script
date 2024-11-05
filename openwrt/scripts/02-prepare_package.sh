@@ -14,6 +14,9 @@ git clone https://$github/sbwml/default-settings package/new/default-settings
 # luci-app-filemanager
 git clone https://$github/sbwml/luci-app-filemanager package/new/luci-app-filemanager
 
+# luci-app-webdav
+[ "$version" = "snapshots-24.10" ] && git clone https://$github/sbwml/luci-app-webdav package/new/luci-app-webdav
+
 # ddns - fix boot
 sed -i '/boot()/,+2d' feeds/packages/net/ddns-scripts/files/etc/init.d/ddns
 
