@@ -11,7 +11,7 @@ fi
 
 # rockchip - target - r4s/r5s only
 rm -rf target/linux/rockchip
-git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip-6.x target/linux/rockchip -b linux-6.6
+git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip-6.x target/linux/rockchip -b openwrt-23.05
 
 # x86_64 - target 6.6
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/x86/64/config-6.6 > target/linux/x86/64/config-6.6
@@ -39,7 +39,7 @@ git clone https://nanopi:nanopi@$gitea/sbwml/brcmfmac-firmware-4366b-pcie packag
 
 # armsr/armv8
 rm -rf target/linux/armsr
-git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_armsr target/linux/armsr
+git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_armsr target/linux/armsr -b openwrt-23.05
 
 # kernel - 6.x
 curl -s https://$mirror/tags/kernel-6.6 > include/kernel-6.6
@@ -54,13 +54,13 @@ rm -rf target/linux/generic
 local_kernel_version=$(sed -n 's/^LINUX_KERNEL_HASH-\([0-9.]\+\) = .*/\1/p' include/kernel-$kernel_version)
 release_kernel_version=$(curl -sL https://raw.githubusercontent.com/sbwml/r4s_build_script/master/tags/kernel-$kernel_version | sed -n 's/^LINUX_KERNEL_HASH-\([0-9.]\+\) = .*/\1/p')
 if [ "$local_kernel_version" = "$release_kernel_version" ] && [ -z "$git_password" ] && [ "$(whoami)" != "sbwml" ]; then
-    git clone https://$github/sbwml/target_linux_generic -b main target/linux/generic --depth=1
+    git clone https://$github/sbwml/target_linux_generic -b openwrt-23.05 target/linux/generic --depth=1
 else
     if [ "$(whoami)" = "runner" ]; then
         git_name=private
-        git clone https://"$git_name":"$git_password"@$gitea/sbwml/target_linux_generic -b main target/linux/generic --depth=1
+        git clone https://"$git_name":"$git_password"@$gitea/sbwml/target_linux_generic -b openwrt-23.05 target/linux/generic --depth=1
     elif [ "$(whoami)" = "sbwml" ]; then
-        git clone https://$gitea/sbwml/target_linux_generic -b main target/linux/generic --depth=1
+        git clone https://$gitea/sbwml/target_linux_generic -b openwrt-23.05 target/linux/generic --depth=1
     fi
 fi
 
