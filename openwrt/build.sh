@@ -373,7 +373,6 @@ if [ "$1" = "rc2" ]; then
         curl -s https://$mirror/openwrt/generic/config-gcc11 >> .config
     fi
 else
-    cp -a toolchain/gcc/patches-14.x toolchain/gcc/patches-15.x
     curl -s https://$mirror/openwrt/patch/generic-24.10/202-toolchain-gcc-add-support-for-GCC-15.patch | patch -p1
 fi
 [ "$USE_GCC13" = "y" ] && curl -s https://$mirror/openwrt/generic/config-gcc13 >> .config

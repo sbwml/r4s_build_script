@@ -55,7 +55,7 @@ index a1a5108..feae36a 100644
  
 -PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
 +ifeq ($(PKG_VERSION),15.0.0)
-+  PKG_SOURCE_URL:=https://us.cooluc.com/gcc
++  PKG_SOURCE_URL:=https://us.cooluc.com/gcc/20241103
 +else
 +  PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
 +endif
@@ -67,7 +67,7 @@ index a1a5108..feae36a 100644
  endif
  
 +ifeq ($(PKG_VERSION),15.0.0)
-+  PKG_HASH:=3683fe2ee97d41007fb5fc2f9eb1d4701715ee440920b5765e8c772e088e1021
++  PKG_HASH:=da4db21566241844d14b5b2caad4e2cfccbcbe656f10c0b929eea68dfe807ca3
 +endif
 +
  PATCH_DIR=../patches-$(GCC_MAJOR_VERSION).x
