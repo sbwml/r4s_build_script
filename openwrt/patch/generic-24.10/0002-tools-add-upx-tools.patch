@@ -1,4 +1,4 @@
-From 7b122fef7e663cdcca2a0f027a9abeddf28ac6fd Mon Sep 17 00:00:00 2001
+From a715edcd605ac305c60eace1e093abc5bf6d72c5 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 4 Oct 2024 10:39:25 +0800
 Subject: [PATCH 02/11] tools: add upx tools

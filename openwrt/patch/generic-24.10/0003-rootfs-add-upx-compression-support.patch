@@ -1,4 +1,4 @@
-From cd93413b2c4d79fd0596f2029d79a0cbda687d56 Mon Sep 17 00:00:00 2001
+From c0843979a428633598583cd8d53a073d59a24e95 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 4 Oct 2024 10:46:49 +0800
 Subject: [PATCH 03/11] rootfs: add upx compression support
@@ -18,10 +18,10 @@ Signed-off-by: sbwml <admin@cooluc.com>
  1 file changed, 5 insertions(+)
 
 diff --git a/include/rootfs.mk b/include/rootfs.mk
-index 554dd48..d16618f 100644
+index e6cadc5..574e3fe 100644
 --- a/include/rootfs.mk
 +++ b/include/rootfs.mk
-@@ -122,6 +122,11 @@ define prepare_rootfs
+@@ -120,6 +120,11 @@ define prepare_rootfs
  		$(1)/usr/lib/opkg/info/*.postinst* \
  		$(1)/usr/lib/opkg/lists/* \
  		$(1)/var/lock/*.lock

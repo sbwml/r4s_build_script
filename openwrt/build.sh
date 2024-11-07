@@ -84,16 +84,16 @@ if [ -z "$1" ] || [ "$2" != "nanopi-r4s" -a "$2" != "nanopi-r5s" -a "$2" != "x86
     exit 1
 fi
 
+[ "$1" = "rc2" ] && echo -e "\n${RED_COLOR}openwrt-24.10 release build is not available yet.${RES}\n" && exit 0
+
 # Source branch
 if [ "$1" = "dev" ]; then
     export branch=openwrt-24.10
-    export version=snapshots-24.10
-    export openwrt_version=openwrt-24.10
+    export version=dev
 elif [ "$1" = "rc2" ]; then
-    latest_release="v$(curl -s https://$mirror/tags/v23)"
+    latest_release="v$(curl -s https://$mirror/tags/v24)"
     export branch=$latest_release
     export version=rc2
-    export openwrt_version=openwrt-23.05
 fi
 
 # lan
@@ -106,22 +106,17 @@ fi
 [ "$2" = "netgear_r8500" ] && export platform="bcm53xx" toolchain_arch="arm_cortex-a9"
 [ "$2" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
 
-# gcc13 & 14 & 15
+# gcc14 & 15
 if [ "$USE_GCC13" = y ]; then
-    export USE_GCC13=y gcc_version=13
-    # use mold
-    [ "$ENABLE_MOLD" = y ] && export ENABLE_MOLD=y
+    export USE_GCC14=y gcc_version=13
 elif [ "$USE_GCC14" = y ]; then
     export USE_GCC14=y gcc_version=14
-    # use mold
-    [ "$ENABLE_MOLD" = y ] && export ENABLE_MOLD=y
 elif [ "$USE_GCC15" = y ]; then
     export USE_GCC15=y gcc_version=15
-    # use mold
-    [ "$ENABLE_MOLD" = y ] && export ENABLE_MOLD=y
 else
-    export gcc_version=11
+    export gcc_version=13
 fi
+[ "$ENABLE_MOLD" = y ] && export ENABLE_MOLD=y
 
 # build.sh flags
 export \
@@ -130,9 +125,6 @@ export \
     ENABLE_GLIBC=$ENABLE_GLIBC \
     ENABLE_LRNG=$ENABLE_LRNG \
     KERNEL_CLANG_LTO=$KERNEL_CLANG_LTO
-
-# kernel version
-[ "$version" = "snapshots-24.10" ] && export kernel_version=6.12 || export kernel_version=6.6
 
 # print version
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
@@ -151,13 +143,9 @@ else
     echo -e "${GREEN_COLOR}Model: nanopi-r4s${RES}"
     [ "$1" = "rc2" ] && model="nanopi-r4s"
 fi
-get_kernel_version=$(curl -s https://$mirror/tags/kernel-$kernel_version)
+get_kernel_version=$(curl -s https://$mirror/tags/kernel-6.12)
 kmod_hash=$(echo -e "$get_kernel_version" | awk -F'HASH-' '{print $2}' | awk '{print $1}' | tail -1 | md5sum | awk '{print $1}')
-if [ "$version" = "snapshots-24.10" ]; then
-    kmodpkg_name=$(echo $(echo -e "$get_kernel_version" | awk -F'HASH-' '{print $2}' | awk '{print $1}')~$(echo $kmod_hash)-r1)
-else
-    kmodpkg_name=$(echo $(echo -e "$get_kernel_version" | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
-fi
+kmodpkg_name=$(echo $(echo -e "$get_kernel_version" | awk -F'HASH-' '{print $2}' | awk '{print $1}')~$(echo $kmod_hash)-r1)
 echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
 
 echo -e "${GREEN_COLOR}Date: $CURRENT_DATE${RES}\r\n"
@@ -181,17 +169,6 @@ rm -rf openwrt master
 # openwrt - releases
 [ "$(whoami)" = "runner" ] && group "source code"
 git clone --depth=1 https://$github/openwrt/openwrt -b $branch
-
-# openwrt master
-if [ "$1" = "rc2" ]; then
-    git clone https://$github/openwrt/openwrt master/openwrt --depth=1
-    git clone https://$github/openwrt/packages master/packages --depth=1
-    git clone https://$github/openwrt/luci master/luci --depth=1
-    git clone https://$github/openwrt/routing master/routing --depth=1
-fi
-
-# openwrt-23.05
-[ "$1" = "rc2" ] && git clone https://$github/openwrt/openwrt -b openwrt-23.05 master/openwrt-23.05 --depth=1
 
 # immortalwrt master
 git clone https://$github/immortalwrt/packages master/immortalwrt_packages --depth=1
@@ -273,37 +250,33 @@ bash 05-fix-source.sh
 [ -f "10-custom.sh" ] && bash 10-custom.sh
 [ "$(whoami)" = "runner" ] && endgroup
 
-if [ "$USE_GCC14" = "y" ] || [ "$USE_GCC15" = "y" ] && [ "$version" = "rc2" ]; then
-    rm -rf toolchain/binutils
-    cp -a ../master/openwrt/toolchain/binutils toolchain/binutils
-fi
-
 rm -f 0*-*.sh 10-custom.sh
 rm -rf ../master
 
 # Load devices Config
 if [ "$platform" = "x86_64" ]; then
-    curl -s https://$mirror/openwrt/23-config-musl-x86 > .config
+    curl -s https://$mirror/openwrt/24-config-musl-x86 > .config
 elif [ "$platform" = "bcm53xx" ]; then
     if [ "$MINIMAL_BUILD" = "y" ]; then
-        curl -s https://$mirror/openwrt/23-config-musl-r8500-minimal > .config
+        curl -s https://$mirror/openwrt/24-config-musl-r8500-minimal > .config
     else
-        curl -s https://$mirror/openwrt/23-config-musl-r8500 > .config
+        curl -s https://$mirror/openwrt/24-config-musl-r8500 > .config
     fi
+    sed -i '1i\# CONFIG_PACKAGE_kselftests-bpf is not set\n# CONFIG_PACKAGE_perf is not set\n' .config
 elif [ "$platform" = "rk3568" ]; then
-    curl -s https://$mirror/openwrt/23-config-musl-r5s > .config
+    curl -s https://$mirror/openwrt/24-config-musl-r5s > .config
 elif [ "$platform" = "armv8" ]; then
-    curl -s https://$mirror/openwrt/23-config-musl-armsr-armv8 > .config
+    curl -s https://$mirror/openwrt/24-config-musl-armsr-armv8 > .config
 else
-    curl -s https://$mirror/openwrt/23-config-musl-r4s > .config
+    curl -s https://$mirror/openwrt/24-config-musl-r4s > .config
 fi
 
 # config-common
 if [ "$MINIMAL_BUILD" = "y" ]; then
-    [ "$platform" != "bcm53xx" ] && curl -s https://$mirror/openwrt/23-config-minimal-common >> .config
+    [ "$platform" != "bcm53xx" ] && curl -s https://$mirror/openwrt/24-config-minimal-common >> .config
     echo 'VERSION_TYPE="minimal"' >> package/base-files/files/usr/lib/os-release
 else
-    [ "$platform" != "bcm53xx" ] && curl -s https://$mirror/openwrt/23-config-common >> .config
+    [ "$platform" != "bcm53xx" ] && curl -s https://$mirror/openwrt/24-config-common >> .config
     [ "$platform" = "armv8" ] && sed -i '/DOCKER/Id' .config
 fi
 
@@ -357,24 +330,10 @@ if [ "$ENABLE_LOCAL_KMOD" = "y" ]; then
     echo "CONFIG_TARGET_ROOTFS_LOCAL_PACKAGES=y" >> .config
 fi
 
-# openwrt-23.05 gcc11/13/14/15
-[ "$(whoami)" = "runner" ] && group "patching toolchain"
-if [ "$1" = "rc2" ]; then
-    if [ "$USE_GCC13" = "y" ] || [ "$USE_GCC14" = "y" ] || [ "$USE_GCC15" = "y" ]; then
-        curl -s https://$mirror/openwrt/patch/generic/200-toolchain-gcc-update-to-13.2.patch | patch -p1
-        curl -s https://$mirror/openwrt/patch/generic/201-toolchain-gcc-add-support-for-GCC-14.patch | patch -p1
-        curl -s https://$mirror/openwrt/patch/generic/202-toolchain-gcc-add-support-for-GCC-15.patch | patch -p1
-        # gcc14/15 init
-        cp -a toolchain/gcc/patches-13.x toolchain/gcc/patches-14.x
-        curl -s https://$mirror/openwrt/patch/generic/gcc-14/910-mbsd_multi.patch > toolchain/gcc/patches-14.x/910-mbsd_multi.patch
-        cp -a toolchain/gcc/patches-14.x toolchain/gcc/patches-15.x
-        curl -s https://$mirror/openwrt/patch/generic/gcc-15/970-macos_arm64-building-fix.patch > toolchain/gcc/patches-15.x/970-macos_arm64-building-fix.patch
-    elif [ ! "$ENABLE_GLIBC" = "y" ]; then
-        curl -s https://$mirror/openwrt/generic/config-gcc11 >> .config
-    fi
-else
-    curl -s https://$mirror/openwrt/patch/generic-24.10/202-toolchain-gcc-add-support-for-GCC-15.patch | patch -p1
-fi
+# gcc15 patches
+curl -s https://$mirror/openwrt/patch/generic-24.10/202-toolchain-gcc-add-support-for-GCC-15.patch | patch -p1
+
+# gcc config
 [ "$USE_GCC13" = "y" ] && curl -s https://$mirror/openwrt/generic/config-gcc13 >> .config
 [ "$USE_GCC14" = "y" ] && curl -s https://$mirror/openwrt/generic/config-gcc14 >> .config
 [ "$USE_GCC15" = "y" ] && curl -s https://$mirror/openwrt/generic/config-gcc15 >> .config
@@ -382,11 +341,6 @@ fi
 
 # uhttpd
 [ "$ENABLE_UHTTPD" = "y" ] && sed -i '/nginx/d' .config && echo 'CONFIG_PACKAGE_ariang=y' >> .config
-
-# snapshots-24.10
-[ "$version" = "snapshots-24.10" ] && [ "$platform" = "bcm53xx" ] && sed -i '1i\# CONFIG_PACKAGE_kselftests-bpf is not set\n# CONFIG_PACKAGE_perf is not set\n' .config
-[ "$version" = "snapshots-24.10" ] && sed -i '1i\# Test kernel\nCONFIG_TESTING_KERNEL=y\n' .config
-[ "$version" = "rc2" ] && sed -i '/CONFIG_TESTING_KERNEL/d' .config
 
 # not all kmod
 [ "$NO_KMOD" = "y" ] && sed -i '/CONFIG_ALL_KMODS=y/d; /CONFIG_ALL_NONSHARED=y/d' .config
@@ -473,7 +427,7 @@ if [ "$platform" = "x86_64" ]; then
     if [ "$1" = "rc2" ]; then
         mkdir -p ota
         if [ "$MINIMAL_BUILD" = "y" ]; then
-            OTA_URL="https://x86.cooluc.com/d/minimal/openwrt-23.05"
+            OTA_URL="https://x86.cooluc.com/d/minimal/openwrt-24.10"
         else
             OTA_URL="https://github.com/sbwml/builder/releases/download"
         fi
@@ -541,7 +495,7 @@ elif [ "$platform" = "bcm53xx" ]; then
     if [ "$1" = "rc2" ]; then
         mkdir -p ota
         if [ "$MINIMAL_BUILD" = "y" ]; then
-            OTA_URL="https://r8500.cooluc.com/d/minimal/openwrt-23.05"
+            OTA_URL="https://r8500.cooluc.com/d/minimal/openwrt-24.10"
         else
             OTA_URL="https://github.com/sbwml/builder/releases/download"
         fi
@@ -577,7 +531,7 @@ else
         OTA_URL="https://github.com/sbwml/builder/releases/download"
         VERSION=$(sed 's/v//g' version.txt)
         if [ "$model" = "nanopi-r4s" ]; then
-            [ "$MINIMAL_BUILD" = "y" ] && OTA_URL="https://r4s.cooluc.com/d/minimal/openwrt-23.05"
+            [ "$MINIMAL_BUILD" = "y" ] && OTA_URL="https://r4s.cooluc.com/d/minimal/openwrt-24.10"
             SHA256=$(sha256sum bin/targets/rockchip/armv8*/*-squashfs-sysupgrade.img.gz | awk '{print $1}')
             cat > ota/fw.json <<EOF
 {
@@ -591,7 +545,7 @@ else
 }
 EOF
         elif [ "$model" = "nanopi-r5s" ]; then
-            [ "$MINIMAL_BUILD" = "y" ] && OTA_URL="https://r5s.cooluc.com/d/minimal/openwrt-23.05"
+            [ "$MINIMAL_BUILD" = "y" ] && OTA_URL="https://r5s.cooluc.com/d/minimal/openwrt-24.10"
             SHA256_R5C=$(sha256sum bin/targets/rockchip/armv8*/*-r5c-squashfs-sysupgrade.img.gz | awk '{print $1}')
             SHA256_R5S=$(sha256sum bin/targets/rockchip/armv8*/*-r5s-squashfs-sysupgrade.img.gz | awk '{print $1}')
             cat > ota/fw.json <<EOF

@@ -1,4 +1,4 @@
-From 441062a754bb94cace5e2bf700dc0b36c6bf2da7 Mon Sep 17 00:00:00 2001
+From a18334ecf9c643badcb33c034b59ea6c9c8fb323 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 4 Oct 2024 10:35:57 +0800
 Subject: [PATCH 01/11] tools: add llvm/clang toolchain

@@ -1,10 +1,10 @@
 diff --git a/include/target.mk b/include/target.mk
-index b5e3e7f..d655af9 100644
+index d13902a..1a85ede 100644
 --- a/include/target.mk
 +++ b/include/target.mk
-@@ -264,6 +264,10 @@ ifeq ($(DUMP),1)
-     CPU_TYPE ?= riscv64
-     CPU_CFLAGS_riscv64:=-mabi=lp64d -march=rv64imafdc
+@@ -294,6 +294,10 @@ ifeq ($(DUMP),1)
+     CPU_CFLAGS := -O2 -pipe
+     CPU_CFLAGS_generic:=-march=loongarch64
    endif
 +  ifeq ($(BOARD),rockchip)
 +    CPU_CFLAGS = -O3 -Wl,--gc-sections -pipe

@@ -1,4 +1,4 @@
-From c05c4c4a8765fc2dff676d38ee14319c8aee808e Mon Sep 17 00:00:00 2001
+From 38185cc7f8f6a6168fba302ba7268e7739b8c6be Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 4 Oct 2024 10:48:29 +0800
 Subject: [PATCH 05/11] rootfs: Add support for local kmod installation sources
@@ -29,10 +29,10 @@ index 47f3dfc..ed9ecb2 100644
 +
  endmenu
 diff --git a/include/rootfs.mk b/include/rootfs.mk
-index 02426c4..db19192 100644
+index 00203a4..0bea0c1 100644
 --- a/include/rootfs.mk
 +++ b/include/rootfs.mk
-@@ -128,6 +128,12 @@ define prepare_rootfs
+@@ -126,6 +126,12 @@ define prepare_rootfs
  		done < "$(TOPDIR)/upx_list.txt"; \
  	fi
  	chmod 600 $(1)/etc/config/*

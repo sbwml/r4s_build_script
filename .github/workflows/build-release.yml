@@ -17,10 +17,10 @@ on:
       version:
         description: 'Select the build version'
         required: true
-        default: 'release'
+        default: 'snapshot'
         type: choice
         options:
-          - 'release'
+        #  - 'release'
           - 'snapshot'
       build_options:
         description: 'Build options (separate multiple options with spaces)'
