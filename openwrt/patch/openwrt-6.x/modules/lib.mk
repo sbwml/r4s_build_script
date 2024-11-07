@@ -143,7 +143,7 @@ define KernelPackage/lib-zstd
 	CONFIG_ZSTD_DECOMPRESS
   FILES:= \
 	$(LINUX_DIR)/crypto/zstd.ko \
-	$(LINUX_DIR)/lib/zstd/zstd_common.ko@ge6.1 \
+	$(LINUX_DIR)/lib/zstd/zstd_common.ko \
 	$(LINUX_DIR)/lib/zstd/zstd_compress.ko \
 	$(LINUX_DIR)/lib/zstd/zstd_decompress.ko
   AUTOLOAD:=$(call AutoProbe,zstd zstd_compress zstd_decompress)
@@ -396,4 +396,35 @@ define KernelPackage/libwx/description
 endef
 
 $(eval $(call KernelPackage,libwx))
+
+
+define KernelPackage/libie
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  TITLE:=Intel Ethernet library
+  DEPENDS:=@LINUX_6_12
+  KCONFIG:=CONFIG_LIBIE
+  FILES:=$(LINUX_DIR)/drivers/net/ethernet/intel/libie/libie.ko
+  AUTOLOAD:=$(call AutoLoad,15,libie,1)
+endef
+
+define KernelPackage/libie/description
+ Intel Ethernet library
+endef
+
+$(eval $(call KernelPackage,libie))
+
+
+define KernelPackage/libeth
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  TITLE:=Intel Ethernet common library
+  DEPENDS:=@LINUX_6_12
+  KCONFIG:=CONFIG_LIBETH
+  FILES:=$(LINUX_DIR)/drivers/net/ethernet/intel/libeth/libeth.ko
+  AUTOLOAD:=$(call AutoLoad,15,libeth,1)
+endef
+
+define KernelPackage/libeth/description
+endef
+
+$(eval $(call KernelPackage,libeth))
 

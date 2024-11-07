@@ -39,11 +39,8 @@ define KernelPackage/crypto-aead
   TITLE:=CryptoAPI AEAD support
   KCONFIG:= \
 	CONFIG_CRYPTO_AEAD \
-	CONFIG_CRYPTO_AEAD2 \
-	CONFIG_CRYPTO_GENIV@lt6.6
-  FILES:= \
-	  $(LINUX_DIR)/crypto/aead.ko \
-	  $(LINUX_DIR)/crypto/geniv.ko@lt6.6
+	CONFIG_CRYPTO_AEAD2
+  FILES:=$(LINUX_DIR)/crypto/aead.ko
   AUTOLOAD:=$(call AutoLoad,09,aead,1)
   $(call AddDepends/crypto, +kmod-crypto-null)
 endef
@@ -305,9 +302,7 @@ define KernelPackage/crypto-gf128
   KCONFIG:= \
 	CONFIG_CRYPTO_GF128MUL \
 	CONFIG_CRYPTO_LIB_GF128MUL
-  FILES:= \
-	$(LINUX_DIR)/crypto/gf128mul.ko@lt6.2 \
-	$(LINUX_DIR)/lib/crypto/gf128mul.ko@ge6.2
+  FILES:=$(LINUX_DIR)/lib/crypto/gf128mul.ko
   AUTOLOAD:=$(call AutoLoad,09,gf128mul)
   $(call AddDepends/crypto)
 endef
@@ -863,8 +858,7 @@ define KernelPackage/crypto-rsa
   KCONFIG:= CONFIG_CRYPTO_RSA
   HIDDEN:=1
   FILES:= \
-	$(LINUX_DIR)/lib/mpi/mpi.ko@lt6.5 \
-	$(LINUX_DIR)/lib/crypto/mpi/mpi.ko@ge6.5 \
+	$(LINUX_DIR)/lib/crypto/mpi/mpi.ko \
 	$(LINUX_DIR)/crypto/akcipher.ko \
 	$(LINUX_DIR)/crypto/rsa_generic.ko
   AUTOLOAD:=$(call AutoLoad,10,rsa_generic)

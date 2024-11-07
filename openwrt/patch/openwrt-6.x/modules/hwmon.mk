@@ -53,7 +53,7 @@ define KernelPackage/hwmon-adt7410
 	$(LINUX_DIR)/drivers/hwmon/adt7x10.ko \
 	$(LINUX_DIR)/drivers/hwmon/adt7410.ko
   AUTOLOAD:=$(call AutoLoad,60,adt7x10 adt7410)
-  $(call AddDepends/hwmon,+kmod-i2c-core +!LINUX_5_15:kmod-regmap-core)
+  $(call AddDepends/hwmon,+kmod-i2c-core +kmod-regmap-core)
 endef
 
 define KernelPackage/hwmon-adt7410/description

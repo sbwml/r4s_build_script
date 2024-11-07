@@ -1362,7 +1362,7 @@ define KernelPackage/9pnet
   KCONFIG:= \
 	CONFIG_NET_9P \
 	CONFIG_NET_9P_DEBUG=n \
-	CONFIG_NET_9P_FD=n@ge5.17
+	CONFIG_NET_9P_FD=n
   FILES:= \
 	$(LINUX_DIR)/net/9p/9pnet.ko
   AUTOLOAD:=$(call AutoLoad,29,9pnet)
@@ -1504,10 +1504,12 @@ define KernelPackage/inet-mptcp-diag
   FILES:=$(LINUX_DIR)/net/mptcp/mptcp_diag.ko
   AUTOLOAD:=$(call AutoProbe,mptcp_diag)
 endef
+
 define KernelPackage/inet-mptcp-diag/description
 Support for INET (MultiPath TCP) socket monitoring interface used by
 native Linux tools such as ss.
 endef
+
 $(eval $(call KernelPackage,inet-mptcp-diag))
 
 

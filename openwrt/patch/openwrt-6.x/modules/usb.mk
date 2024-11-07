@@ -272,13 +272,13 @@ $(eval $(call KernelPackage,usb-uhci,1))
 define KernelPackage/usb-ohci
   TITLE:=Support for OHCI controllers
   DEPENDS:= \
+	+TARGET_ath79:kmod-phy-ath79-usb \
 	+TARGET_bcm53xx:kmod-usb-bcma \
 	+TARGET_bcm47xx:kmod-usb-bcma \
 	+TARGET_bcm47xx:kmod-usb-ssb
   KCONFIG:= \
 	CONFIG_USB_OHCI \
 	CONFIG_USB_OHCI_HCD \
-	CONFIG_USB_OHCI_ATH79=y \
 	CONFIG_USB_OHCI_HCD_AT91=y \
 	CONFIG_USB_OHCI_BCM63XX=y \
 	CONFIG_USB_OCTEON_OHCI=y \
@@ -572,7 +572,6 @@ $(eval $(call KernelPackage,usb-wdm))
 define KernelPackage/usb-audio
   TITLE:=Support for USB audio devices
   KCONFIG:= \
-	CONFIG_USB_AUDIO \
 	CONFIG_SND_USB=y \
 	CONFIG_SND_USB_AUDIO
   $(call AddDepends/usb)
@@ -1200,7 +1199,7 @@ define KernelPackage/usb-net-asix
   TITLE:=Kernel module for USB-to-Ethernet Asix convertors
   DEPENDS:= \
 	+kmod-libphy +kmod-net-selftests +kmod-mdio-devres +kmod-phy-ax88796b \
-	+LINUX_6_1:kmod-phylink +kmod-phylink
+	+kmod-phylink
   KCONFIG:=CONFIG_USB_NET_AX8817X
   FILES:=$(LINUX_DIR)/drivers/$(USBNET_DIR)/asix.ko
   AUTOLOAD:=$(call AutoProbe,asix)
@@ -1328,7 +1327,7 @@ $(eval $(call KernelPackage,usb-net-smsc75xx))
 
 define KernelPackage/usb-net-smsc95xx
   TITLE:=SMSC LAN95XX based USB 2.0 10/100 ethernet devices
-  DEPENDS:=+kmod-libphy +kmod-phy-smsc +!LINUX_5_15:kmod-net-selftests
+  DEPENDS:=+kmod-libphy +kmod-phy-smsc +kmod-net-selftests
   KCONFIG:=CONFIG_USB_NET_SMSC95XX
   FILES:=$(LINUX_DIR)/drivers/$(USBNET_DIR)/smsc95xx.ko
   AUTOLOAD:=$(call AutoProbe,smsc95xx)
@@ -1793,6 +1792,7 @@ define KernelPackage/usb3
 	+TARGET_ramips_mt7621:kmod-usb-xhci-mtk \
 	+TARGET_mediatek:kmod-usb-xhci-mtk \
 	+TARGET_apm821xx_nand:kmod-usb-xhci-pci-renesas \
+	+TARGET_lantiq_xrx200:kmod-usb-xhci-pci-renesas \
 	+TARGET_mvebu_cortexa9:kmod-usb-xhci-pci-renesas
   KCONFIG:= \
 	CONFIG_USB_PCI=y \
@@ -1845,9 +1845,7 @@ $(eval $(call KernelPackage,usb-roles))
 
 define KernelPackage/usb-xhci-hcd
   TITLE:=xHCI HCD (USB 3.0) support
-  KCONFIG:= \
-	  CONFIG_USB_XHCI_HCD \
-	  CONFIG_USB_XHCI_HCD_DEBUGGING=n
+  KCONFIG:= CONFIG_USB_XHCI_HCD
   HIDDEN:=1
   FILES:=$(LINUX_DIR)/drivers/usb/host/xhci-hcd.ko
   AUTOLOAD:=$(call AutoLoad,54,xhci-hcd,1)

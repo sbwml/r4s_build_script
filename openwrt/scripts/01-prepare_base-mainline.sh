@@ -67,7 +67,7 @@ pushd package/kernel/linux/modules
     curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/crypto.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/firewire.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/fs.mk
-    curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/gpio-cascade.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/gpio.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/hwmon.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/i2c.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/iio.mk
@@ -81,6 +81,7 @@ pushd package/kernel/linux/modules
     curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/nls.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/other.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/pcmcia.mk
+    curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/rtc.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/sound.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/spi.mk
     curl -Os https://$mirror/openwrt/patch/openwrt-6.x/modules/usb.mk
