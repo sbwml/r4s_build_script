@@ -419,6 +419,8 @@ if [ "$platform" = "x86_64" ]; then
         # driver firmware
         cp -a bin/packages/x86_64/base/*firmware*.ipk $kmodpkg_name/
         cp -a bin/packages/x86_64/base/*natflow*.ipk $kmodpkg_name/
+        cp -a bin/packages/x86_64/base/*dpdk*.ipk $kmodpkg_name/ || true
+        cp -a bin/packages/x86_64/base/*numa*.ipk $kmodpkg_name/ || true
         bash kmod-sign $kmodpkg_name
         tar zcf x86_64-$kmodpkg_name.tar.gz $kmodpkg_name
         rm -rf $kmodpkg_name
@@ -458,6 +460,8 @@ elif [ "$platform" = "armv8" ]; then
         # driver firmware
         cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
         cp -a bin/packages/aarch64_generic/base/*natflow*.ipk $kmodpkg_name/
+        cp -a bin/packages/aarch64_generic/base/*dpdk*.ipk $kmodpkg_name/ || true
+        cp -a bin/packages/aarch64_generic/base/*numa*.ipk $kmodpkg_name/ || true
         bash kmod-sign $kmodpkg_name
         tar zcf armv8-$kmodpkg_name.tar.gz $kmodpkg_name
         rm -rf $kmodpkg_name
@@ -521,6 +525,8 @@ else
         # driver firmware
         cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
         cp -a bin/packages/aarch64_generic/base/*natflow*.ipk $kmodpkg_name/
+        cp -a bin/packages/aarch64_generic/base/*dpdk*.ipk $kmodpkg_name/ || true
+        cp -a bin/packages/aarch64_generic/base/*numa*.ipk $kmodpkg_name/ || true
         bash kmod-sign $kmodpkg_name
         tar zcf aarch64-$kmodpkg_name.tar.gz $kmodpkg_name
         rm -rf $kmodpkg_name

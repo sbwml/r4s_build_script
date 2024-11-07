@@ -92,14 +92,12 @@ else
 fi
 
 # DPDK & NUMACTL
-if [ "$ENABLE_DPDK" = "y" ]; then
-    mkdir -p package/new/{dpdk/patches,numactl}
-    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/Makefile > package/new/dpdk/Makefile
-    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/Config.in > package/new/dpdk/Config.in
-    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/patches/010-dpdk_arm_build_platform_fix.patch > package/new/dpdk/patches/010-dpdk_arm_build_platform_fix.patch
-    curl -s https://$mirror/openwrt/patch/dpdk/dpdk/patches/201-r8125-add-r8125-ethernet-poll-mode-driver.patch > package/new/dpdk/patches/201-r8125-add-r8125-ethernet-poll-mode-driver.patch
-    curl -s https://$mirror/openwrt/patch/dpdk/numactl/Makefile > package/new/numactl/Makefile
-fi
+mkdir -p package/new/{dpdk/patches,numactl}
+curl -s https://$mirror/openwrt/patch/dpdk/dpdk/Makefile > package/new/dpdk/Makefile
+curl -s https://$mirror/openwrt/patch/dpdk/dpdk/Config.in > package/new/dpdk/Config.in
+curl -s https://$mirror/openwrt/patch/dpdk/dpdk/patches/010-dpdk_arm_build_platform_fix.patch > package/new/dpdk/patches/010-dpdk_arm_build_platform_fix.patch
+curl -s https://$mirror/openwrt/patch/dpdk/dpdk/patches/201-r8125-add-r8125-ethernet-poll-mode-driver.patch > package/new/dpdk/patches/201-r8125-add-r8125-ethernet-poll-mode-driver.patch
+curl -s https://$mirror/openwrt/patch/dpdk/numactl/Makefile > package/new/numactl/Makefile
 
 # IF USE GLIBC
 if [ "$ENABLE_GLIBC" = "y" ]; then

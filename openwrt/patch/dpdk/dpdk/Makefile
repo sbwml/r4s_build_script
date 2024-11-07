@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dpdk
-PKG_VERSION:=24.03
+PKG_VERSION:=24.07
 PKG_RELEASE:=1
 
 PKG_SOURCE_URL:=https://codeload.github.com/DPDK/dpdk/tar.gz/v$(PKG_VERSION)?
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_HASH:=1dcbddec31ea0abd1bb8fe9bed2187272fb8d719443332b5d6c36162c42120f8
+PKG_HASH:=f6963d4219019da6f05103ef91c38568f382a628dfda0aad1ffb0f6cd078b345
 
 PKG_MAINTAINER:=Zbynek Kocur <zbynek.kocur@fel.cvut.cz>
 PKG_LICENSE:=BSD-3-Clause
@@ -195,7 +195,6 @@ define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/libdpdk*.pc $(1)/usr/lib/pkgconfig/
 endef
-
 
 define Package/libdpdk/install
 	$(INSTALL_DIR) $(1)/usr/lib
