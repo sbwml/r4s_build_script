@@ -311,7 +311,11 @@ export ENABLE_LTO=$ENABLE_LTO
 # kernel - CLANG + LTO; Allow CONFIG_KERNEL_CC=clang / clang-18 / clang-xx
 if [ "$KERNEL_CLANG_LTO" = "y" ]; then
     echo '# Kernel - CLANG LTO' >> .config
-    echo 'CONFIG_KERNEL_CC="clang"' >> .config
+    if [ "$USE_GCC15" = "y" ] && [ "$ENABLE_CCACHE" = "y" ]; then
+        echo 'CONFIG_KERNEL_CC="ccache clang"' >> .config
+    else
+        echo 'CONFIG_KERNEL_CC="clang"' >> .config
+    fi
     echo 'CONFIG_EXTRA_OPTIMIZATION=""' >> .config
     echo '# CONFIG_PACKAGE_kselftests-bpf is not set' >> .config
 fi
