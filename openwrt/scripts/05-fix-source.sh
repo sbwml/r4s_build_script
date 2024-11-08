@@ -18,12 +18,6 @@ git clone https://$github/sbwml/package_network_utils_xdp-tools package/network/
 
 # fix gcc14
 if [ "$USE_GCC14" = y ] || [ "$USE_GCC15" = y ]; then
-    # iproute2
-    rm -rf package/network/utils/iproute2
-    git clone https://$github/sbwml/package_network_utils_iproute2 package/network/utils/iproute2
-    # libunwind
-    rm -rf package/libs/libunwind
-    git clone https://$github/sbwml/package_libs_libunwind package/libs/libunwind
     # linux-atm
     rm -rf package/network/utils/linux-atm
     git clone https://$github/sbwml/package_network_utils_linux-atm package/network/utils/linux-atm

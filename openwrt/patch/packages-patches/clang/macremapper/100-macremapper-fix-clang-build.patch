@@ -1,6 +1,6 @@
 --- a/feeds/packages/kernel/macremapper/Makefile
 +++ b/feeds/packages/kernel/macremapper/Makefile
-@@ -39,4 +39,13 @@ endef
+@@ -38,4 +38,13 @@ endef
  MAKE_FLAGS += KERNEL_SRC=$(LINUX_DIR) ARCH=$(LINUX_KARCH)
  MAKE_PATH:=kernelmod
  
