@@ -176,7 +176,7 @@ git clone https://$github/immortalwrt/packages master/immortalwrt_packages --dep
 
 if [ -d openwrt ]; then
     cd openwrt
-    [ "$1" = "rc2" ] && echo "$CURRENT_DATE" > version.date
+    echo "1730409337" > version.date # OpenWrt v24.10: set branch defaults
     curl -Os https://$mirror/openwrt/patch/key.tar.gz && tar zxf key.tar.gz && rm -f key.tar.gz
 else
     echo -e "${RED_COLOR}Failed to download source code${RES}"
