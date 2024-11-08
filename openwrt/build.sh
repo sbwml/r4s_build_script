@@ -386,18 +386,12 @@ fi
 if [ "$BUILD_TOOLCHAIN" = "y" ]; then
     echo -e "\r\n${GREEN_COLOR}Building Toolchain ...${RES}\r\n"
     make -j$cores toolchain/compile || make -j$cores toolchain/compile V=s || exit 1
-    make tools/clang/clean
-    rm -f dl/clang-*
     mkdir -p toolchain-cache
     [ "$ENABLE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
     tar -I "zstd -19 -T$(nproc --all)" -cf toolchain-cache/toolchain_${LIBC}_${toolchain_arch}_gcc-${gcc_version}${tools_suffix}.tar.zst ./{build_dir,dl,staging_dir,tmp}
     echo -e "\n${GREEN_COLOR} Build success! ${RES}"
     exit 0
 else
-    if [ "$BUILD_FAST" = "y" ]; then
-        echo -e "\r\n${GREEN_COLOR}Building tools/clang ...${RES}\r\n"
-        make tools/clang/compile -j$cores
-    fi
     echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
     sed -i "/BUILD_DATE/d" package/base-files/files/usr/lib/os-release
     sed -i "/BUILD_ID/aBUILD_DATE=\"$CURRENT_DATE\"" package/base-files/files/usr/lib/os-release

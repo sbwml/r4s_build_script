@@ -1,7 +1,7 @@
-From a715edcd605ac305c60eace1e093abc5bf6d72c5 Mon Sep 17 00:00:00 2001
+From 64bdd05856306c921523395f6c150d796eaa0c02 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 4 Oct 2024 10:39:25 +0800
-Subject: [PATCH 02/11] tools: add upx tools
+Subject: [PATCH 01/10] tools: add upx tools
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
@@ -11,10 +11,10 @@ Signed-off-by: sbwml <admin@cooluc.com>
  create mode 100644 tools/upx/Makefile
 
 diff --git a/tools/Makefile b/tools/Makefile
-index 7937334..0ab5956 100644
+index b16c5d9..702184a 100644
 --- a/tools/Makefile
 +++ b/tools/Makefile
-@@ -72,6 +72,7 @@ tools-y += pkgconf
+@@ -66,6 +66,7 @@ tools-y += pkgconf
  tools-y += quilt
  tools-y += squashfs4
  tools-y += sstrip

@@ -1,7 +1,7 @@
-From f1e4ddedeaae1b7bd8fb7e748f911c5d6b43cd92 Mon Sep 17 00:00:00 2001
+From 20ef2e23f6a2a4f4c7f6242486eca8c2b42d49c4 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 4 Oct 2024 10:58:29 +0800
-Subject: [PATCH 08/11] include: kernel: add miss config for linux-6.11
+Subject: [PATCH 07/10] include: kernel: add miss config for linux-6.11
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---

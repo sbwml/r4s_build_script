@@ -1,7 +1,7 @@
-From 1a29c74ae624f54ea9314f7ec1e629cdaa4a72e5 Mon Sep 17 00:00:00 2001
+From 8c80f36391472bb37848c1485b588dec2ab19a2c Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Thu, 10 Oct 2024 21:40:05 +0800
-Subject: [PATCH 10/11] kernel: add legacy cgroup v1 memory controller
+Subject: [PATCH 09/10] kernel: add legacy cgroup v1 memory controller
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---

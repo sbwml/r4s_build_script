@@ -5,50 +5,20 @@ rm -rf package/boot/rkbin package/boot/uboot-rockchip package/boot/arm-trusted-f
 git clone https://$github/sbwml/package_boot_uboot-rockchip package/boot/uboot-rockchip
 git clone https://$github/sbwml/arm-trusted-firmware-rockchip package/boot/arm-trusted-firmware-rockchip
 
-######## OpenWrt Patches ########
-
-# source
-sed -i '/@OPENWRT/a\\t\t"https://source.cooluc.com",' scripts/projectsmirrors.json
-
-# tools: add llvm/clang toolchain
-curl -s https://$mirror/openwrt/patch/generic-24.10/0001-tools-add-llvm-clang-toolchain.patch | patch -p1
-
-# tools: add upx tools
-curl -s https://$mirror/openwrt/patch/generic-24.10/0002-tools-add-upx-tools.patch | patch -p1
-
-# rootfs: upx compression
-# include/rootfs.mk
-curl -s https://$mirror/openwrt/patch/generic-24.10/0003-rootfs-add-upx-compression-support.patch | patch -p1
-
-# rootfs: add r/w (0600) permissions for UCI configuration files
-# include/rootfs.mk
-curl -s https://$mirror/openwrt/patch/generic-24.10/0004-rootfs-add-r-w-permissions-for-UCI-configuration-fil.patch | patch -p1
-
-# rootfs: Add support for local kmod installation sources
-curl -s https://$mirror/openwrt/patch/generic-24.10/0005-rootfs-Add-support-for-local-kmod-installation-sourc.patch | patch -p1
-
-# kernel: Add support for llvm/clang compiler
-curl -s https://$mirror/openwrt/patch/generic-24.10/0006-kernel-Add-support-for-llvm-clang-compiler.patch | patch -p1
-
-# build: kernel: add out-of-tree kernel config
-curl -s https://$mirror/openwrt/patch/generic-24.10/0007-build-kernel-add-out-of-tree-kernel-config.patch | patch -p1
-
-# kernel: linux-6.11 config
-curl -s https://$mirror/openwrt/patch/generic-24.10/0008-include-kernel-add-miss-config-for-linux-6.11.patch | patch -p1
-
-# meson: add platform variable to cross-compilation file
-curl -s https://$mirror/openwrt/patch/generic-24.10/0009-meson-add-platform-variable-to-cross-compilation-fil.patch | patch -p1
-
-# kernel 6.12: add legacy cgroup v1 memory controller
-curl -s https://$mirror/openwrt/patch/generic-24.10/0010-kernel-add-legacy-cgroup-v1-memory-controller.patch | patch -p1
-
-# kernel 6.12: add linux-rt support for aarch64/x86_64
-curl -s https://$mirror/openwrt/patch/generic-24.10/0011-kernel-add-PREEMPT_RT-support-for-aarch64-x86_64.patch | patch -p1
+# patch source
+curl -s https://$mirror/openwrt/patch/generic-24.10/0001-tools-add-upx-tools.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic-24.10/0002-rootfs-add-upx-compression-support.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic-24.10/0003-rootfs-add-r-w-permissions-for-UCI-configuration-fil.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic-24.10/0004-rootfs-Add-support-for-local-kmod-installation-sourc.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic-24.10/0005-kernel-Add-support-for-llvm-clang-compiler.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic-24.10/0006-build-kernel-add-out-of-tree-kernel-config.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic-24.10/0007-include-kernel-add-miss-config-for-linux-6.11.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic-24.10/0008-meson-add-platform-variable-to-cross-compilation-fil.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic-24.10/0009-kernel-add-legacy-cgroup-v1-memory-controller.patch | patch -p1
+curl -s https://$mirror/openwrt/patch/generic-24.10/0010-kernel-add-PREEMPT_RT-support-for-aarch64-x86_64.patch | patch -p1
 
 # attr no-mold
 [ "$ENABLE_MOLD" = "y" ] && sed -i '/PKG_BUILD_PARALLEL/aPKG_BUILD_FLAGS:=no-mold' feeds/packages/utils/attr/Makefile
-
-######## OpenWrt Patches End ########
 
 # dwarves 1.25
 rm -rf tools/dwarves

@@ -1,7 +1,7 @@
-From 38185cc7f8f6a6168fba302ba7268e7739b8c6be Mon Sep 17 00:00:00 2001
+From b6042a29a66bba6044982aab6c5f241ef45b10b4 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 4 Oct 2024 10:48:29 +0800
-Subject: [PATCH 05/11] rootfs: Add support for local kmod installation sources
+Subject: [PATCH 04/10] rootfs: Add support for local kmod installation sources
 
 * CONFIG_TARGET_ROOTFS_LOCAL_PACKAGES=y
 

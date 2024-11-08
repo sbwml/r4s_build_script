@@ -1,7 +1,7 @@
-From fccdd7ad134c215ddeed58239781db7666410b2a Mon Sep 17 00:00:00 2001
+From 8576944e698d42b96205e85fff003bd162c0f9c3 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Sat, 12 Oct 2024 08:36:46 +0800
-Subject: [PATCH 11/11] kernel: add PREEMPT_RT support for aarch64/x86_64
+Subject: [PATCH 10/10] kernel: add PREEMPT_RT support for aarch64/x86_64
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
