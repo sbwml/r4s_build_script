@@ -66,7 +66,7 @@ Signed-off-by: Howard Wang <pro_nic_dpdk@realtek.com>
 
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -1062,6 +1062,11 @@ F: drivers/net/memif/
+@@ -1076,6 +1076,11 @@ F: drivers/net/memif/
  F: doc/guides/nics/memif.rst
  F: doc/guides/nics/features/memif.ini
  
@@ -139,7 +139,7 @@ Signed-off-by: Howard Wang <pro_nic_dpdk@realtek.com>
 +* Jumbo frames supported
 --- a/drivers/net/meson.build
 +++ b/drivers/net/meson.build
-@@ -52,6 +52,7 @@ drivers = [
+@@ -53,6 +53,7 @@ drivers = [
          'pfe',
          'qede',
          'ring',

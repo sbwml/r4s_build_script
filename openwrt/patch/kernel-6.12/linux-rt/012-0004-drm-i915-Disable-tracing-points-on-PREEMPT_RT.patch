@@ -1,3 +1,4 @@
+From 7e6152f775a4a6f3e2b36898056252a639b60ec7 Mon Sep 17 00:00:00 2001
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Date: Thu, 6 Dec 2018 09:52:20 +0100
 Subject: [PATCH 4/8] drm/i915: Disable tracing points on PREEMPT_RT
@@ -27,8 +28,8 @@ Reported-by: Luca Abeni <lucabe72@gmail.com>
 Cc: Steven Rostedt <rostedt@goodmis.org>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/gpu/drm/i915/display/intel_display_trace.h |    4 ++++
- drivers/gpu/drm/i915/i915_trace.h                  |    4 ++++
+ drivers/gpu/drm/i915/display/intel_display_trace.h | 4 ++++
+ drivers/gpu/drm/i915/i915_trace.h                  | 4 ++++
  2 files changed, 8 insertions(+)
 
 --- a/drivers/gpu/drm/i915/display/intel_display_trace.h

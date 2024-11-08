@@ -1,0 +1,4 @@
+
+# DPDK
+CONFIG_PACKAGE_dpdk-tools=y
+CONFIG_PACKAGE_numactl=m

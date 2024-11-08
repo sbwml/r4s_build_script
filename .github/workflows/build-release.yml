@@ -17,10 +17,10 @@ on:
       version:
         description: 'Select the build version'
         required: true
-        default: 'release'
+        default: 'snapshot'
         type: choice
         options:
-          - 'release'
+        #  - 'release'
           - 'snapshot'
       build_options:
         description: 'Build options (separate multiple options with spaces)'
@@ -67,6 +67,9 @@ jobs:
     - name: Build System Setup
       uses: sbwml/actions@openwrt-build-setup
 
+    - name: Install LLVM
+      uses: sbwml/actions@install-llvm
+
     - name: Compile OpenWrt
       working-directory: /builder
       id: compile
@@ -77,9 +80,9 @@ jobs:
         bash <(curl -sS https://raw.githubusercontent.com/${{ github.repository }}/master/openwrt/build.sh) ${{ env.build_version }} ${{ github.event.inputs.device }}
         cd openwrt
         if [ "${{ github.event.inputs.version }}" = release ]; then
-          tags=$(git describe --abbrev=0 --tags)
+          tags=OpenWrt-$(git describe --abbrev=0 --tags)
         else
-          tags=snapshot-$(git log -n 1 --date=format:"%Y%m%d" --format="%cd")-$(git log --pretty=format:"%h" -1)
+          tags=snapshot-24.10-$(git log -n 1 --date=format:"%Y%m%d" --format="%cd")-$(git log --pretty=format:"%h" -1)
         fi
         echo "latest_release=$tags" >>$GITHUB_ENV
 
@@ -133,7 +136,7 @@ jobs:
       continue-on-error: true
       uses: ncipollo/release-action@v1
       with:
-        name: OpenWrt-${{ env.latest_release }}
+        name: ${{ env.latest_release }}
         allowUpdates: true
         tag: ${{ env.latest_release }}
         commit: master

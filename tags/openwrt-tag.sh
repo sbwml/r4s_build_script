@@ -8,5 +8,5 @@ else
     cat tags.json | jq . > jq.json 2>&1
 fi
 
-grep name jq.json | grep v23 | head -1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g' | sed 's/v//g' > v23
+grep name jq.json | grep v24 | head -1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g' | sed 's/v//g' > v24
 rm -f tags.json jq.json

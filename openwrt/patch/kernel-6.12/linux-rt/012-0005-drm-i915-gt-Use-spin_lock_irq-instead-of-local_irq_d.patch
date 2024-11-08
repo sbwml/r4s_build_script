@@ -1,3 +1,4 @@
+From 7b539177855a717a3ca6d18c67ca2370aff203cc Mon Sep 17 00:00:00 2001
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Date: Wed, 8 Sep 2021 19:03:41 +0200
 Subject: [PATCH 5/8] drm/i915/gt: Use spin_lock_irq() instead of
@@ -22,7 +23,7 @@ Reported-by: Clark Williams <williams@redhat.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 ---
- drivers/gpu/drm/i915/gt/intel_execlists_submission.c |   17 +++++------------
+ .../drm/i915/gt/intel_execlists_submission.c    | 17 +++++------------
  1 file changed, 5 insertions(+), 12 deletions(-)
 
 --- a/drivers/gpu/drm/i915/gt/intel_execlists_submission.c

@@ -1,3 +1,4 @@
+From 34a01264ed3fab72c699f6fa8c999bb4ed907931 Mon Sep 17 00:00:00 2001
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Date: Mon, 25 Oct 2021 15:05:18 +0200
 Subject: [PATCH 3/8] drm/i915: Don't check for atomic context on PREEMPT_RT
@@ -15,7 +16,7 @@ Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
 Link: https://lore.kernel.org/all/20211006164628.s2mtsdd2jdbfyf7g@linutronix.de/
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/gpu/drm/i915/i915_utils.h |    9 +++++++--
+ drivers/gpu/drm/i915/i915_utils.h | 9 +++++++--
  1 file changed, 7 insertions(+), 2 deletions(-)
 
 --- a/drivers/gpu/drm/i915/i915_utils.h

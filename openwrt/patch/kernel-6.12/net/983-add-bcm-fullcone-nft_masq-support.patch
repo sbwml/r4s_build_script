@@ -1,3 +1,14 @@
+--- a/include/net/netfilter/nf_tables.h
++++ b/include/net/netfilter/nf_tables.h
+@@ -256,6 +256,8 @@ static inline enum nft_registers nft_typ
+ int nft_parse_u32_check(const struct nlattr *attr, int max, u32 *dest);
+ int nft_dump_register(struct sk_buff *skb, unsigned int attr, unsigned int reg);
+ 
++int nft_parse_register_load_legacy(const struct nlattr *attr, u8 *sreg, u32 len);
++
+ int nft_parse_register_load(const struct nft_ctx *ctx,
+ 			    const struct nlattr *attr, u8 *sreg, u32 len);
+ int nft_parse_register_store(const struct nft_ctx *ctx,
 --- a/include/uapi/linux/netfilter/nf_tables.h
 +++ b/include/uapi/linux/netfilter/nf_tables.h
 @@ -1481,12 +1481,16 @@ enum nft_tproxy_attributes {
@@ -17,6 +28,33 @@
  	__NFTA_MASQ_MAX
  };
  #define NFTA_MASQ_MAX		(__NFTA_MASQ_MAX - 1)
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -11082,6 +11082,24 @@ static int nft_validate_register_load(en
+ 	return 0;
+ }
+ 
++int nft_parse_register_load_legacy(const struct nlattr *attr, u8 *sreg, u32 len)
++{
++	u32 reg;
++	int err;
++
++	err = nft_parse_register(attr, &reg);
++	if (err < 0)
++		return err;
++
++	err = nft_validate_register_load(reg, len);
++	if (err < 0)
++		return err;
++
++	*sreg = reg;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(nft_parse_register_load_legacy);
++
+ int nft_parse_register_load(const struct nft_ctx *ctx,
+ 			    const struct nlattr *attr, u8 *sreg, u32 len)
+ {
 --- a/net/netfilter/nft_masq.c
 +++ b/net/netfilter/nft_masq.c
 @@ -17,6 +17,8 @@ struct nft_masq {
@@ -50,13 +88,13 @@
  	}
  
 +	if (tb[NFTA_MASQ_REG_ADDR_MIN]) {
-+		err = nft_parse_register_load(ctx, tb[NFTA_MASQ_REG_ADDR_MIN],
++		err = nft_parse_register_load_legacy(tb[NFTA_MASQ_REG_ADDR_MIN],
 +					      &priv->sreg_addr_min, alen);
 +		if (err < 0)
 +			return err;
 +
 +		if (tb[NFTA_MASQ_REG_ADDR_MAX]) {
-+			err = nft_parse_register_load(ctx, tb[NFTA_MASQ_REG_ADDR_MAX],
++			err = nft_parse_register_load_legacy(tb[NFTA_MASQ_REG_ADDR_MAX],
 +						      &priv->sreg_addr_max,
 +						      alen);
 +			if (err < 0)
