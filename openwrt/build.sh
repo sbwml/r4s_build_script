@@ -345,6 +345,14 @@ curl -s https://$mirror/openwrt/patch/generic-24.10/202-toolchain-gcc-add-suppor
 # not all kmod
 [ "$NO_KMOD" = "y" ] && sed -i '/CONFIG_ALL_KMODS=y/d; /CONFIG_ALL_NONSHARED=y/d' .config
 
+# ccache
+if [ "$USE_GCC15" = "y" ] && [ "$ENABLE_CCACHE" = "y" ]; then
+    echo "CONFIG_CCACHE=y" >> .config
+    [ "$(whoami)" = "runner" ] && echo "CONFIG_CCACHE_DIR=\"/builder/.ccache\"" >> .config
+    [ "$(whoami)" = "sbwml" ] && echo "CONFIG_CCACHE_DIR=\"/home/sbwml/.ccache\"" >> .config
+    tools_suffix="_ccache"
+fi
+
 # Toolchain Cache
 if [ "$BUILD_FAST" = "y" ]; then
     [ "$ENABLE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
@@ -357,7 +365,7 @@ if [ "$BUILD_FAST" = "y" ]; then
     else
         TOOLCHAIN_URL=https://"$github_proxy"github.com/sbwml/openwrt_caches/releases/download/openwrt-24.10
     fi
-    curl -L ${TOOLCHAIN_URL}/toolchain_${LIBC}_${toolchain_arch}_gcc-${gcc_version}.tar.zst -o toolchain.tar.zst $CURL_BAR
+    curl -L ${TOOLCHAIN_URL}/toolchain_${LIBC}_${toolchain_arch}_gcc-${gcc_version}${tools_suffix}.tar.zst -o toolchain.tar.zst $CURL_BAR
     echo -e "\n${GREEN_COLOR}Process Toolchain ...${RES}"
     tar -I "zstd" -xf toolchain.tar.zst
     rm -f toolchain.tar.zst
@@ -382,7 +390,7 @@ if [ "$BUILD_TOOLCHAIN" = "y" ]; then
     rm -f dl/clang-*
     mkdir -p toolchain-cache
     [ "$ENABLE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
-    tar -I "zstd -19 -T$(nproc --all)" -cf toolchain-cache/toolchain_${LIBC}_${toolchain_arch}_gcc-${gcc_version}.tar.zst ./{build_dir,dl,staging_dir,tmp}
+    tar -I "zstd -19 -T$(nproc --all)" -cf toolchain-cache/toolchain_${LIBC}_${toolchain_arch}_gcc-${gcc_version}${tools_suffix}.tar.zst ./{build_dir,dl,staging_dir,tmp}
     echo -e "\n${GREEN_COLOR} Build success! ${RES}"
     exit 0
 else
