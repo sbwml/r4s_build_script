@@ -17,15 +17,24 @@ on:
       version:
         description: 'Select the build version'
         required: true
-        default: 'snapshot'
+        default: 'snapshot-24.10'
         type: choice
         options:
         #  - 'release'
-          - 'snapshot'
+          - 'snapshot-24.10'
+      ccache:
+        description: 'Enable ccache (Use Cache to speed up next build)'
+        type: boolean
+        default: false
+      lan_addr:
+        description: 'Setting default LAN address'
+        required: true
+        default: '10.0.0.1'
+        type: string
       build_options:
         description: 'Build options (separate multiple options with spaces)'
         required: false
-        default: 'BUILD_FAST=y ENABLE_BPF=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_MOLD=y KERNEL_CLANG_LTO=y USE_GCC14=y'
+        default: 'BUILD_FAST=y ENABLE_BPF=y ENABLE_LTO=y ENABLE_LRNG=y ENABLE_MOLD=y KERNEL_CLANG_LTO=y'
         type: string
 
 jobs:
@@ -42,7 +51,7 @@ jobs:
         sudo timedatectl set-timezone 'Asia/Shanghai'
         git config --global user.name 'actions'
         git config --global user.email 'action@github.com'
-        echo WORKDIR="/builder" >> "$GITHUB_ENV"
+        echo build_dir="/builder" >> "$GITHUB_ENV"
         [ "${{ github.event.inputs.version }}" = release ] && echo build_version="rc2" >> "$GITHUB_ENV" || echo build_version="dev" >> "$GITHUB_ENV"
 
     - name: Show system
@@ -70,13 +79,36 @@ jobs:
     - name: Install LLVM
       uses: sbwml/actions@install-llvm
 
+    - name: Restore Cached
+      if: ${{ github.event.inputs.ccache == 'true' && github.event.inputs.device != 'armv8' && github.event.inputs.device != 'nanopi-r4s' }}
+      uses: actions/cache/restore@v4
+      with:
+        path: /builder/.ccache
+        key: openwrt-24.10-${{ github.event.inputs.device }}-ccache
+
+    - name: Restore Cached (releases)
+      if: ${{ github.event.inputs.ccache == 'true' && github.event.inputs.device == 'armv8' || github.event.inputs.device == 'nanopi-r4s' }}
+      continue-on-error: true
+      working-directory: /builder
+      run: |
+        wget -q https://github.com/${{ github.repository }}/releases/download/ccache/${{ github.event.inputs.device }}.tar.00 || true
+        wget -q https://github.com/${{ github.repository }}/releases/download/ccache/${{ github.event.inputs.device }}.tar.01 || true
+        cat ${{ github.event.inputs.device }}.tar.* | tar -xf - || true
+        rm -rf ${{ github.event.inputs.device }}.tar.* || true
+        cache_size=$(du -sb .ccache | awk '{print $1}')
+        cache_size_mb=$(echo "scale=0; ${cache_size} / (1024 * 1024)" | bc)
+        echo "Cache Size: ~${cache_size_mb} MB (${cache_size} B)"
+        echo "Cache restored successfully"
+        echo "Cache restored from key: ${{ github.event.inputs.device }}"
+
     - name: Compile OpenWrt
       working-directory: /builder
       id: compile
       continue-on-error: true
       run: |
         export GITHUB_REPO=${{ github.repository }}
-        export ${{ github.event.inputs.build_options }}
+        export ${{ github.event.inputs.build_options }} LAN=${{ github.event.inputs.lan_addr }} USE_GCC15=y
+        [ ${{ github.event.inputs.ccache }} = 'true' ] && export ENABLE_CCACHE=y
         bash <(curl -sS https://raw.githubusercontent.com/${{ github.repository }}/master/openwrt/build.sh) ${{ env.build_version }} ${{ github.event.inputs.device }}
         cd openwrt
         if [ "${{ github.event.inputs.version }}" = release ]; then
@@ -92,6 +124,47 @@ jobs:
       run: |
         cd openwrt
         make V=s
+
+    - name: Delete Cached
+      if: ${{ github.event.inputs.ccache == 'true' && github.event.inputs.device != 'armv8' && github.event.inputs.device != 'nanopi-r4s' }}
+      continue-on-error: true
+      working-directory: /builder
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_REPO: ${{ github.repository }}
+      run: |
+        gh cache delete openwrt-24.10-${{ github.event.inputs.device }}-ccache || true
+
+    - name: Save Cached
+      if: ${{ github.event.inputs.ccache == 'true' && github.event.inputs.device != 'armv8' && github.event.inputs.device != 'nanopi-r4s' }}
+      continue-on-error: true
+      uses: actions/cache/save@v4
+      with:
+        path: /builder/.ccache
+        key: openwrt-24.10-${{ github.event.inputs.device }}-ccache
+
+    - name: Create ccache tar files
+      if: ${{ github.event.inputs.ccache == 'true' && github.event.inputs.device == 'armv8' || github.event.inputs.device == 'nanopi-r4s' }}
+      continue-on-error: true
+      working-directory: /builder
+      run: |
+        mkdir -p ccache
+        tar cf - .ccache | split -d -b 1800m - ccache/${{ github.event.inputs.device }}.tar.
+
+    - name: Upload Cached (releases - ccache)
+      if: ${{ github.event.inputs.ccache == 'true' && github.event.inputs.device == 'armv8' || github.event.inputs.device == 'nanopi-r4s' }}
+      continue-on-error: true
+      uses: ncipollo/release-action@v1.14.0
+      with:
+        name: ccache
+        allowUpdates: true
+        tag: ccache
+        commit: master
+        replacesArtifacts: true
+        prerelease: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: |
+          ${{ env.build_dir }}/ccache/*
 
     - name: Prepare Firmware Files
       working-directory: /builder
@@ -130,7 +203,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ${{ github.event.inputs.device }}-openwrt-${{ env.latest_release }}
-        path: ${{ env.WORKDIR }}/rom/*
+        path: ${{ env.build_dir }}/rom/*
 
     - name: Create release
       continue-on-error: true
@@ -142,4 +215,4 @@ jobs:
         commit: master
         replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}
-        artifacts: ${{ env.WORKDIR }}/rom/*
+        artifacts: ${{ env.build_dir }}/rom/*
