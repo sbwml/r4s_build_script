@@ -41,11 +41,11 @@ index f94ed33..8e9ed74 100644
 +ifneq (,$(findstring clang,$(KERNEL_CC)))
 +	echo 'CONFIG_LTO=y' >> $(LINUX_DIR)/.config.set
 +	echo 'CONFIG_LTO_CLANG=y' >> $(LINUX_DIR)/.config.set
-+	echo 'CONFIG_LTO_CLANG_FULL=y' >> $(LINUX_DIR)/.config.set
++	echo 'CONFIG_LTO_CLANG_THIN=y' >> $(LINUX_DIR)/.config.set
 +	echo 'CONFIG_HAS_LTO_CLANG=y' >> $(LINUX_DIR)/.config.set
 +	echo 'CONFIG_RANDSTRUCT_NONE=y' >> $(LINUX_DIR)/.config.set
 +	echo '# CONFIG_CFI_CLANG is not set' >> $(LINUX_DIR)/.config.set
-+	echo '# CONFIG_LTO_CLANG_THIN is not set' >> $(LINUX_DIR)/.config.set
++	echo '# CONFIG_LTO_CLANG_FULL is not set' >> $(LINUX_DIR)/.config.set
 +	echo '# CONFIG_LTO_NONE is not set' >> $(LINUX_DIR)/.config.set
 +	echo '# CONFIG_RANDSTRUCT_FULL is not set' >> $(LINUX_DIR)/.config.set
 +	echo '# CONFIG_RELR is not set' >> $(LINUX_DIR)/.config.set
