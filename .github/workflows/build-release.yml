@@ -91,11 +91,10 @@ jobs:
       continue-on-error: true
       working-directory: /builder
       run: |
-        wget -q https://github.com/${{ github.repository }}/releases/download/ccache/${{ github.event.inputs.device }}.tar.00 || true
-        wget -q https://github.com/${{ github.repository }}/releases/download/ccache/${{ github.event.inputs.device }}.tar.01 || true
+        curl -s https://api.github.com/repos/${{ github.repository }}/releases | grep 'browser_download_url' | grep ccache | grep ${{ github.event.inputs.device }} | awk -F '"' '{print $4}' | grep -v '^$' | xargs -n 1 wget -q
         cat ${{ github.event.inputs.device }}.tar.* | tar -xf - || true
         rm -rf ${{ github.event.inputs.device }}.tar.* || true
-        cache_size=$(du -sb .ccache | awk '{print $1}')
+        [ -d .ccache ] && cache_size=$(du -sb .ccache | awk '{print $1}') || cache_size=0
         cache_size_mb=$(echo "scale=0; ${cache_size} / (1024 * 1024)" | bc)
         echo "Cache Size: ~${cache_size_mb} MB (${cache_size} B)"
         echo "Cache restored successfully"
