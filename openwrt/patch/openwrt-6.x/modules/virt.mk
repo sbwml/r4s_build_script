@@ -80,10 +80,8 @@ define KernelPackage/vfio
   TITLE:=VFIO Non-Privileged userspace driver framework
   KCONFIG:= \
 	CONFIG_VFIO \
-	CONFIG_VFIO_AMBA=n \
 	CONFIG_VFIO_NOIOMMU=n \
-	CONFIG_VFIO_MDEV=n \
-	CONFIG_VFIO_PLATFORM=n
+	CONFIG_VFIO_MDEV=n
   FILES:= \
 	$(LINUX_DIR)/drivers/vfio/vfio.ko \
 	$(LINUX_DIR)/drivers/vfio/vfio_iommu_type1.ko

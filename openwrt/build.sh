@@ -160,7 +160,7 @@ echo -e "${GREEN_COLOR}GCC VERSION: $gcc_version${RES}"
 [ "$ENABLE_LRNG" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_LRNG: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_LRNG:${RES} ${RED_COLOR}false${RES}"
 [ "$ENABLE_LOCAL_KMOD" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_LOCAL_KMOD: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_LOCAL_KMOD: false${RES}"
 [ "$BUILD_FAST" = "y" ] && echo -e "${GREEN_COLOR}BUILD_FAST: true${RES}" || echo -e "${GREEN_COLOR}BUILD_FAST:${RES} ${YELLOW_COLOR}false${RES}"
-[ "$ENABLE_CCACHE" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_CCACHE: true${RES}" || echo -e "${YELLOW_COLOR}ENABLE_CCACHE:${RES} ${YELLOW_COLOR}false${RES}"
+[ "$ENABLE_CCACHE" = "y" ] && echo -e "${GREEN_COLOR}ENABLE_CCACHE: true${RES}" || echo -e "${GREEN_COLOR}ENABLE_CCACHE:${RES} ${YELLOW_COLOR}false${RES}"
 [ "$MINIMAL_BUILD" = "y" ] && echo -e "${GREEN_COLOR}MINIMAL_BUILD: true${RES}" || echo -e "${GREEN_COLOR}MINIMAL_BUILD: false${RES}"
 [ "$KERNEL_CLANG_LTO" = "y" ] && echo -e "${GREEN_COLOR}KERNEL_CLANG_LTO: true${RES}\r\n" || echo -e "${GREEN_COLOR}KERNEL_CLANG_LTO:${RES} ${YELLOW_COLOR}false${RES}\r\n"
 
@@ -280,9 +280,6 @@ else
     [ "$platform" != "bcm53xx" ] && curl -s https://$mirror/openwrt/24-config-common >> .config
     [ "$platform" = "armv8" ] && sed -i '/DOCKER/Id' .config
 fi
-
-# config-firmware
-[ "$NO_KMOD" != "y" ] && [ "$platform" != "rk3399" ] && curl -s https://$mirror/openwrt/generic/config-firmware >> .config
 
 # ota
 [ "$ENABLE_OTA" = "y" ] && [ "$version" = "rc2" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
@@ -423,8 +420,6 @@ if [ "$platform" = "x86_64" ]; then
     if [ "$NO_KMOD" != "y" ]; then
         cp -a bin/targets/x86/*/packages $kmodpkg_name
         rm -f $kmodpkg_name/Packages*
-        # driver firmware
-        cp -a bin/packages/x86_64/base/*firmware*.ipk $kmodpkg_name/
         cp -a bin/packages/x86_64/base/*natflow*.ipk $kmodpkg_name/
         [ "$ENABLE_DPDK" = "y" ] && {
             cp -a bin/packages/x86_64/base/*dpdk*.ipk $kmodpkg_name/ || true
@@ -466,8 +461,6 @@ elif [ "$platform" = "armv8" ]; then
     if [ "$NO_KMOD" != "y" ]; then
         cp -a bin/targets/armsr/armv8*/packages $kmodpkg_name
         rm -f $kmodpkg_name/Packages*
-        # driver firmware
-        cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
         cp -a bin/packages/aarch64_generic/base/*natflow*.ipk $kmodpkg_name/
         [ "$ENABLE_DPDK" = "y" ] && {
             cp -a bin/packages/aarch64_generic/base/*dpdk*.ipk $kmodpkg_name/ || true
@@ -499,8 +492,6 @@ elif [ "$platform" = "bcm53xx" ]; then
     if [ "$NO_KMOD" != "y" ]; then
         cp -a bin/targets/bcm53xx/generic/packages $kmodpkg_name
         rm -f $kmodpkg_name/Packages*
-        # driver firmware
-        cp -a bin/packages/arm_cortex-a9/base/*firmware*.ipk $kmodpkg_name/
         cp -a bin/packages/arm_cortex-a9/base/*natflow*.ipk $kmodpkg_name/
         bash kmod-sign $kmodpkg_name
         tar zcf bcm53xx-$kmodpkg_name.tar.gz $kmodpkg_name
@@ -533,8 +524,6 @@ else
     if [ "$NO_KMOD" != "y" ] && [ "$platform" != "rk3399" ]; then
         cp -a bin/targets/rockchip/armv8*/packages $kmodpkg_name
         rm -f $kmodpkg_name/Packages*
-        # driver firmware
-        cp -a bin/packages/aarch64_generic/base/*firmware*.ipk $kmodpkg_name/
         cp -a bin/packages/aarch64_generic/base/*natflow*.ipk $kmodpkg_name/
         [ "$ENABLE_DPDK" = "y" ] && {
             cp -a bin/packages/aarch64_generic/base/*dpdk*.ipk $kmodpkg_name/ || true
