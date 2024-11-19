@@ -35,8 +35,8 @@ else
     export mirror=https://init2.cooluc.com
 fi
 
-# github actions - automatically retrieve `github raw` links
-if [ "$(whoami)" = "runner" ]; then
+# github actions - caddy server
+if [ "$(whoami)" = "runner" ] && [ -z "$git_password" ]; then
     export mirror=http://127.0.0.1:8080
 fi
 
