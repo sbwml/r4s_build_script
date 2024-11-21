@@ -6,7 +6,7 @@ on:
       device:
         description: 'Select the build device'
         required: true
-        default: 'x86_64'
+        default: 'nanopi-r5s'
         type: choice
         options:
           - 'armv8'
@@ -29,7 +29,7 @@ on:
       lan_addr:
         description: 'Setting default LAN address'
         required: true
-        default: '10.0.0.1'
+        default: '172.17.10.254'
         type: string
       build_options:
         description: 'Build options (separate multiple options with spaces)'
