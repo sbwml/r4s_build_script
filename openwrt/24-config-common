@@ -343,5 +343,4 @@ CONFIG_PACKAGE_luci-app-xunlei=y
 # CONFIG_PACKAGE_luci-app-lucky=y
 
 ### 风扇控制
-# CONFIG_PACKAGE_fancontrol=y
-# CONFIG_PACKAGE_luci-app-fancontrol=y
+# CONFIG_PACKAGE_luci-app-fan=y
