@@ -11,7 +11,7 @@ git clone https://github.com/sbwml/luci-app-xunlei package/new/luci-app-xunlei
 # Lucky大吉
 git clone https://github.com/sirpdboy/luci-app-lucky package/new/luci-app-lucky
 #风扇控制
-git clone https://github.com/JiaY-shi/fancontrol package/new/luci-app-fancontrol
+git clone https://github.com/Turing-China/luci-app-fan package/new/luci-app-fan
 
 
 # 更新软件版本
