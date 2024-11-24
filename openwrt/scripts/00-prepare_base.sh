@@ -99,7 +99,7 @@ git clone https://$gitea/sbwml/shortcut-fe package/new/shortcut-fe
 # dnsmasq
 if [ "$version" = "dev" ]; then
     curl -s $mirror/openwrt/patch/dnsmasq/0001-dnsmasq-drop-extraconftext-parameter.patch | patch -p1
-    [ "$?" -ne 0 ] && curl -s https://init2.cooluc.com/openwrt/patch/dnsmasq/dnsmasq.init > package/network/services/dnsmasq/files/dnsmasq.init
+    [ "$?" -ne 0 ] && curl -s $mirror/openwrt/patch/dnsmasq/dnsmasq.init > package/network/services/dnsmasq/files/dnsmasq.init
 fi
 
 # Patch FireWall 4
