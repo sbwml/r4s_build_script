@@ -11,6 +11,9 @@ git clone https://$github/sbwml/feeds_packages_lang_node-prebuilt feeds/packages
 # default settings
 git clone https://$github/sbwml/default-settings package/new/default-settings -b openwrt-24.10
 
+# wwan
+git clone https://github.com/sbwml/wwan-packages package/new/wwan
+
 # luci-app-filemanager
 git clone https://$github/sbwml/luci-app-filemanager package/new/luci-app-filemanager
 
