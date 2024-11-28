@@ -335,10 +335,12 @@ fi
 # gcc15 patches
 [ "$(whoami)" = "runner" ] && group "patching toolchain"
 curl -s $mirror/openwrt/patch/generic-24.10/202-toolchain-gcc-add-support-for-GCC-15.patch | patch -p1
+
 # gcc config
-[ "$USE_GCC13" = "y" ] && curl -s $mirror/openwrt/generic/config-gcc13 >> .config
-[ "$USE_GCC14" = "y" ] && curl -s $mirror/openwrt/generic/config-gcc14 >> .config
-[ "$USE_GCC15" = "y" ] && curl -s $mirror/openwrt/generic/config-gcc15 >> .config
+echo -e "\n# gcc ${gcc_version}" >> .config
+echo -e "CONFIG_DEVEL=y" >> .config
+echo -e "CONFIG_TOOLCHAINOPTS=y" >> .config
+echo -e "CONFIG_GCC_USE_VERSION_${gcc_version}=y\n" >> .config
 [ "$(whoami)" = "runner" ] && endgroup
 
 # uhttpd
