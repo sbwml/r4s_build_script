@@ -197,16 +197,16 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) dev x86_64
 
 ### 二、修改构建脚本文件：`openwrt/build.sh`（使用 Github Actions 构建时无需更改）
 
-将 init.cooluc.com 脚本默认连接替换为你的 github raw 连接（不带 https://），像这样 `raw.githubusercontent.com/你的用户名/r4s_build_script/master`
+将 init.cooluc.com 脚本默认连接替换为你的 github raw 连接，像这样 `https://raw.githubusercontent.com/你的用户名/r4s_build_script/refs/heads/master`
 
 ```diff
  # script url
  if [ "$isCN" = "CN" ]; then
--    export mirror=init.cooluc.com
-+    export mirror=raw.githubusercontent.com/你的用户名/r4s_build_script/master
+-    export mirror=https://init.cooluc.com
++    export mirror=https://raw.githubusercontent.com/你的用户名/r4s_build_script/refs/heads/master
  else
--    export mirror=init2.cooluc.com
-+    export mirror=raw.githubusercontent.com/你的用户名/r4s_build_script/master
+-    export mirror=https://init2.cooluc.com
++    export mirror=https://raw.githubusercontent.com/你的用户名/r4s_build_script/refs/heads/master
  fi
 ```
 
@@ -215,19 +215,19 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) dev x86_64
 #### nanopi-r4s openwrt-24.10
 ```shell
 # linux-6.12
-bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc2 nanopi-r4s
+bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/refs/heads/master/openwrt/build.sh) rc2 nanopi-r4s
 ```
 
 #### nanopi-r5s/r5c openwrt-24.10
 ```shell
 # linux-6.12
-bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc2 nanopi-r5s
+bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/refs/heads/master/openwrt/build.sh) rc2 nanopi-r5s
 ```
 
 #### x86_64 openwrt-24.10
 ```shell
 # linux-6.12
-bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/master/openwrt/build.sh) rc2 x86_64
+bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/refs/heads/master/openwrt/build.sh) rc2 x86_64
 ```
 
 -----------------
