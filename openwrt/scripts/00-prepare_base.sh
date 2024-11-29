@@ -24,8 +24,8 @@ curl -s $mirror/openwrt/patch/generic-24.10/0010-kernel-add-PREEMPT_RT-support-f
 rm -rf tools/dwarves
 git clone https://$github/sbwml/tools_dwarves tools/dwarves
 
-# x86 - disable intel_pstate & mitigations
-sed -i 's/noinitrd/noinitrd intel_pstate=disable mitigations=off/g' target/linux/x86/image/grub-efi.cfg
+# x86 - disable mitigations
+sed -i 's/noinitrd/noinitrd mitigations=off/g' target/linux/x86/image/grub-efi.cfg
 
 # default LAN IP
 sed -i "s/192.168.1.1/$LAN/g" package/base-files/files/bin/config_generate
