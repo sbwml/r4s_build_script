@@ -24,9 +24,10 @@ sed -ri "s/(KERNEL_PATCHVER:=)[^\"]*/\16.12/" target/linux/x86/Makefile
 sed -i '/KERNEL_PATCHVER/a\KERNEL_TESTING_PATCHVER:=6.6' target/linux/x86/Makefile
 curl -s $mirror/openwrt/patch/openwrt-6.x/x86/base-files/etc/board.d/01_leds > target/linux/x86/base-files/etc/board.d/01_leds
 curl -s $mirror/openwrt/patch/openwrt-6.x/x86/base-files/etc/board.d/02_network > target/linux/x86/base-files/etc/board.d/02_network
-mkdir -p target/linux/x86/base-files/etc/init.d
+mkdir -p target/linux/x86/base-files/etc/{init.d,rc.d}
 curl -s $mirror/openwrt/patch/openwrt-6.x/x86/base-files/etc/init.d/scaling_governor > target/linux/x86/base-files/etc/init.d/scaling_governor
 chmod 755 target/linux/x86/base-files/etc/init.d/scaling_governor
+ln -sf ../init.d/scaling_governor target/linux/x86/base-files/etc/rc.d/S15scaling_governor
 
 # bcm53xx - target
 rm -rf target/linux/bcm53xx
