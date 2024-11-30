@@ -18,15 +18,11 @@ curl -s $mirror/openwrt/patch/openwrt-6.x/x86/config-6.12 > target/linux/x86/con
 mkdir -p target/linux/x86/patches-6.12
 curl -s $mirror/openwrt/patch/openwrt-6.x/x86/patches-6.12/100-fix_cs5535_clockevt.patch > target/linux/x86/patches-6.12/100-fix_cs5535_clockevt.patch
 curl -s $mirror/openwrt/patch/openwrt-6.x/x86/patches-6.12/103-pcengines_apu6_platform.patch > target/linux/x86/patches-6.12/103-pcengines_apu6_platform.patch
-
 # x86_64 - target
 sed -ri "s/(KERNEL_PATCHVER:=)[^\"]*/\16.12/" target/linux/x86/Makefile
 sed -i '/KERNEL_PATCHVER/a\KERNEL_TESTING_PATCHVER:=6.6' target/linux/x86/Makefile
 curl -s $mirror/openwrt/patch/openwrt-6.x/x86/base-files/etc/board.d/01_leds > target/linux/x86/base-files/etc/board.d/01_leds
 curl -s $mirror/openwrt/patch/openwrt-6.x/x86/base-files/etc/board.d/02_network > target/linux/x86/base-files/etc/board.d/02_network
-mkdir -p target/linux/x86/base-files/etc/init.d
-curl -s $mirror/openwrt/patch/openwrt-6.x/x86/base-files/etc/init.d/scaling_governor > target/linux/x86/base-files/etc/init.d/scaling_governor
-chmod 755 target/linux/x86/base-files/etc/init.d/scaling_governor
 
 # bcm53xx - target
 rm -rf target/linux/bcm53xx
