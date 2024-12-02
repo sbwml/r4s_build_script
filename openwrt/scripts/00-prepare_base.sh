@@ -2,8 +2,13 @@
 
 # Rockchip - rkbin & u-boot
 rm -rf package/boot/rkbin package/boot/uboot-rockchip package/boot/arm-trusted-firmware-rockchip
-git clone https://$github/sbwml/package_boot_uboot-rockchip package/boot/uboot-rockchip
-git clone https://$github/sbwml/arm-trusted-firmware-rockchip package/boot/arm-trusted-firmware-rockchip
+if [ "$platform" = "rk3568" ]; then
+    git clone https://$github/sbwml/package_boot_uboot-rockchip package/boot/uboot-rockchip
+    git clone https://$github/sbwml/arm-trusted-firmware-rockchip package/boot/arm-trusted-firmware-rockchip
+else
+    git clone https://$github/sbwml/package_boot_uboot-rockchip package/boot/uboot-rockchip -b v2023.04
+    git clone https://$github/sbwml/arm-trusted-firmware-rockchip package/boot/arm-trusted-firmware-rockchip -b 0419
+fi
 
 # patch source
 curl -s $mirror/openwrt/patch/generic-24.10/0001-tools-add-upx-tools.patch | patch -p1
