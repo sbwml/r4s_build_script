@@ -197,6 +197,8 @@ CONFIG_PACKAGE_kmod-tun=y
 CONFIG_PACKAGE_kmod-usb-audio=y
 CONFIG_PACKAGE_kmod-usb-storage=y
 CONFIG_PACKAGE_kmod-usb-storage-uas=y
+# CONFIG_PACKAGE_kmod-mhi-pcie is not set
+# CONFIG_PACKAGE_kmod-rtl8812au-ct is not set
 
 ### Utilities
 CONFIG_PACKAGE_bash=y
