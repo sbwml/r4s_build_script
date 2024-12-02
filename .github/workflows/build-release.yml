@@ -17,10 +17,10 @@ on:
       version:
         description: 'Select the build version'
         required: true
-        default: 'snapshot-24.10'
+        default: 'release'
         type: choice
         options:
-        #  - 'release'
+          - 'release'
           - 'snapshot-24.10'
       ccache:
         description: 'Enable ccache (Use Cache to speed up next build)'

@@ -84,8 +84,6 @@ if [ -z "$1" ] || [ "$2" != "nanopi-r4s" -a "$2" != "nanopi-r5s" -a "$2" != "x86
     exit 1
 fi
 
-[ "$1" = "rc2" ] && echo -e "\n${RED_COLOR}openwrt-24.10 release build is not available yet.${RES}\n" && exit 0
-
 # Source branch
 if [ "$1" = "dev" ]; then
     export branch=openwrt-24.10
@@ -177,7 +175,6 @@ git clone https://$github/immortalwrt/packages master/immortalwrt_packages --dep
 
 if [ -d openwrt ]; then
     cd openwrt
-    echo "1730409337" > version.date # OpenWrt v24.10: set branch defaults
     curl -Os $mirror/openwrt/patch/key.tar.gz && tar zxf key.tar.gz && rm -f key.tar.gz
 else
     echo -e "${RED_COLOR}Failed to download source code${RES}"
