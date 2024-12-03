@@ -72,12 +72,7 @@ popd
 
 # perf
 curl -s $mirror/openwrt/patch/openwrt-6.x/musl/990-add-typedefs-for-Elf64_Relr-and-Elf32_Relr.patch > toolchain/musl/patches/990-add-typedefs-for-Elf64_Relr-and-Elf32_Relr.patch
-if [ "$KERNEL_CLANG_LTO" = "y" ]; then
-    curl -s $mirror/openwrt/patch/openwrt-6.x/perf/Makefile.2 > package/devel/perf/Makefile
-else
-    curl -s $mirror/openwrt/patch/openwrt-6.x/perf/Makefile > package/devel/perf/Makefile
-fi
-[ "$ENABLE_MOLD" != y ] && sed -i 's/no-mold//g' package/devel/perf/Makefile
+curl -s $mirror/openwrt/patch/openwrt-6.x/perf/Makefile > package/devel/perf/Makefile
 
 # kselftests-bpf
 curl -s $mirror/openwrt/patch/packages-patches/kselftests-bpf/Makefile > package/devel/kselftests-bpf/Makefile
