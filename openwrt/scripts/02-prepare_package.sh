@@ -15,6 +15,7 @@ git clone https://$github/sbwml/default-settings package/new/default-settings -b
 git clone https://github.com/sbwml/wwan-packages package/new/wwan
 
 # luci-app-filemanager
+rm -rf feeds/luci/applications/luci-app-filemanager
 git clone https://$github/sbwml/luci-app-filemanager package/new/luci-app-filemanager
 
 # luci-app-webdav
