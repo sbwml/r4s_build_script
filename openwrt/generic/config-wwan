@@ -1,0 +1,9 @@
+
+# wwan
+luci-app-3ginfo-lite=m
+luci-app-modemband=m
+luci-app-sms-tool-js=m
+luci-proto-quectel=m
+CONFIG_PACKAGE_fibocom-dial=m
+CONFIG_PACKAGE_modemband=m
+CONFIG_PACKAGE_quectel-cm=m

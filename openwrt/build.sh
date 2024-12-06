@@ -346,6 +346,9 @@ echo -e "CONFIG_GCC_USE_VERSION_${gcc_version}=y\n" >> .config
 # not all kmod
 [ "$NO_KMOD" = "y" ] && sed -i '/CONFIG_ALL_KMODS=y/d; /CONFIG_ALL_NONSHARED=y/d' .config
 
+# build wwan pkgs for openwrt_core
+[ "$OPENWRT_CORE" = "y" ] && curl -s $mirror/openwrt/generic/config-wwan >> .config
+
 # ccache
 if [ "$USE_GCC15" = "y" ] && [ "$ENABLE_CCACHE" = "y" ]; then
     echo "CONFIG_CCACHE=y" >> .config
@@ -421,6 +424,13 @@ if [ "$platform" = "x86_64" ]; then
         rm -f $kmodpkg_name/Packages*
         cp -a bin/packages/x86_64/base/rtl88*a-firmware*.ipk $kmodpkg_name/
         cp -a bin/packages/x86_64/base/natflow*.ipk $kmodpkg_name/
+        [ "$OPENWRT_CORE" = "y" ] && {
+            cp -a bin/packages/x86_64/base/*3ginfo*.ipk $kmodpkg_name/
+            cp -a bin/packages/x86_64/base/*modemband*.ipk $kmodpkg_name/
+            cp -a bin/packages/x86_64/base/*sms-tool*.ipk $kmodpkg_name/
+            cp -a bin/packages/x86_64/base/*quectel*.ipk $kmodpkg_name/
+            cp -a bin/packages/x86_64/base/*fibocom*.ipk $kmodpkg_name/
+        }
         [ "$ENABLE_DPDK" = "y" ] && {
             cp -a bin/packages/x86_64/base/*dpdk*.ipk $kmodpkg_name/ || true
             cp -a bin/packages/x86_64/base/*numa*.ipk $kmodpkg_name/ || true
@@ -463,6 +473,13 @@ elif [ "$platform" = "armv8" ]; then
         rm -f $kmodpkg_name/Packages*
         cp -a bin/packages/aarch64_generic/base/rtl88*a-firmware*.ipk $kmodpkg_name/
         cp -a bin/packages/aarch64_generic/base/natflow*.ipk $kmodpkg_name/
+        [ "$OPENWRT_CORE" = "y" ] && {
+            cp -a bin/packages/aarch64_generic/base/*3ginfo*.ipk $kmodpkg_name/
+            cp -a bin/packages/aarch64_generic/base/*modemband*.ipk $kmodpkg_name/
+            cp -a bin/packages/aarch64_generic/base/*sms-tool*.ipk $kmodpkg_name/
+            cp -a bin/packages/aarch64_generic/base/*quectel*.ipk $kmodpkg_name/
+            cp -a bin/packages/aarch64_generic/base/*fibocom*.ipk $kmodpkg_name/
+        }
         [ "$ENABLE_DPDK" = "y" ] && {
             cp -a bin/packages/aarch64_generic/base/*dpdk*.ipk $kmodpkg_name/ || true
             cp -a bin/packages/aarch64_generic/base/*numa*.ipk $kmodpkg_name/ || true
@@ -495,6 +512,13 @@ elif [ "$platform" = "bcm53xx" ]; then
         rm -f $kmodpkg_name/Packages*
         cp -a bin/packages/arm_cortex-a9/base/rtl88*a-firmware*.ipk $kmodpkg_name/
         cp -a bin/packages/arm_cortex-a9/base/natflow*.ipk $kmodpkg_name/
+        [ "$OPENWRT_CORE" = "y" ] && {
+            cp -a bin/packages/arm_cortex-a9/base/*3ginfo*.ipk $kmodpkg_name/
+            cp -a bin/packages/arm_cortex-a9/base/*modemband*.ipk $kmodpkg_name/
+            cp -a bin/packages/arm_cortex-a9/base/*sms-tool*.ipk $kmodpkg_name/
+            cp -a bin/packages/arm_cortex-a9/base/*quectel*.ipk $kmodpkg_name/
+            cp -a bin/packages/arm_cortex-a9/base/*fibocom*.ipk $kmodpkg_name/
+        }
         bash kmod-sign $kmodpkg_name
         tar zcf bcm53xx-$kmodpkg_name.tar.gz $kmodpkg_name
         rm -rf $kmodpkg_name
@@ -528,6 +552,13 @@ else
         rm -f $kmodpkg_name/Packages*
         cp -a bin/packages/aarch64_generic/base/rtl88*a-firmware*.ipk $kmodpkg_name/
         cp -a bin/packages/aarch64_generic/base/natflow*.ipk $kmodpkg_name/
+        [ "$OPENWRT_CORE" = "y" ] && {
+            cp -a bin/packages/aarch64_generic/base/*3ginfo*.ipk $kmodpkg_name/
+            cp -a bin/packages/aarch64_generic/base/*modemband*.ipk $kmodpkg_name/
+            cp -a bin/packages/aarch64_generic/base/*sms-tool*.ipk $kmodpkg_name/
+            cp -a bin/packages/aarch64_generic/base/*quectel*.ipk $kmodpkg_name/
+            cp -a bin/packages/aarch64_generic/base/*fibocom*.ipk $kmodpkg_name/
+        }
         [ "$ENABLE_DPDK" = "y" ] && {
             cp -a bin/packages/aarch64_generic/base/*dpdk*.ipk $kmodpkg_name/ || true
             cp -a bin/packages/aarch64_generic/base/*numa*.ipk $kmodpkg_name/ || true
