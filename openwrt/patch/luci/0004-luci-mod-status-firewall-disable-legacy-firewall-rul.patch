@@ -11,10 +11,10 @@ Signed-off-by: sbwml <admin@cooluc.com>
  2 files changed, 16 insertions(+), 17 deletions(-)
 
 diff --git a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
-index be62d91..1718494 100644
+index 406f134..9c083e7 100644
 --- a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
 +++ b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
-@@ -672,26 +672,12 @@ return view.extend({
+@@ -675,26 +675,12 @@ return view.extend({
  		return node;
  	},
  
@@ -42,7 +42,7 @@ index be62d91..1718494 100644
  			return E('em', _('No nftables ruleset loaded.'));
  
 diff --git a/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json b/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json
-index 190eef0..e9cf485 100644
+index 79101e9..eceb5e1 100644
 --- a/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json
 +++ b/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json
 @@ -39,20 +39,33 @@
@@ -83,5 +83,5 @@ index 190eef0..e9cf485 100644
  			"type": "view",
  			"path": "status/iptables"
 -- 
-2.42.0
+2.43.5
 

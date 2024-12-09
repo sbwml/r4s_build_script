@@ -1,4 +1,4 @@
-From 8576944e698d42b96205e85fff003bd162c0f9c3 Mon Sep 17 00:00:00 2001
+From 53ff6a6a2bdeb5173d5ea0b3795b36737af8abb3 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Sat, 12 Oct 2024 08:36:46 +0800
 Subject: [PATCH 10/10] kernel: add PREEMPT_RT support for aarch64/x86_64
@@ -9,7 +9,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  1 file changed, 13 insertions(+)
 
 diff --git a/config/Config-kernel.in b/config/Config-kernel.in
-index a438621..47b7c4c 100644
+index eb0f000..76092d4 100644
 --- a/config/Config-kernel.in
 +++ b/config/Config-kernel.in
 @@ -20,6 +20,19 @@ config KERNEL_BUILD_DOMAIN

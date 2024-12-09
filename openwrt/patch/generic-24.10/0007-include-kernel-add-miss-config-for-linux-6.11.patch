@@ -1,4 +1,4 @@
-From 20ef2e23f6a2a4f4c7f6242486eca8c2b42d49c4 Mon Sep 17 00:00:00 2001
+From 6243d903b853abbc81a3258356155f207e2c0853 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 4 Oct 2024 10:58:29 +0800
 Subject: [PATCH 07/10] include: kernel: add miss config for linux-6.11
@@ -9,7 +9,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/include/kernel-defaults.mk b/include/kernel-defaults.mk
-index 8e9ed74..d703d5d 100644
+index 6ec2e75..ea97998 100644
 --- a/include/kernel-defaults.mk
 +++ b/include/kernel-defaults.mk
 @@ -108,6 +108,7 @@ define Kernel/SetNoInitramfs

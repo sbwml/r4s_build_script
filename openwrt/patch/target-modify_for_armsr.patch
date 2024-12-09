@@ -1,8 +1,8 @@
 diff --git a/include/target.mk b/include/target.mk
-index d13902a..72b8059 100644
+index 0108bce..4ceb81e 100644
 --- a/include/target.mk
 +++ b/include/target.mk
-@@ -294,6 +294,10 @@ ifeq ($(DUMP),1)
+@@ -318,6 +318,10 @@ ifeq ($(DUMP),1)
      CPU_CFLAGS := -O2 -pipe
      CPU_CFLAGS_generic:=-march=loongarch64
    endif

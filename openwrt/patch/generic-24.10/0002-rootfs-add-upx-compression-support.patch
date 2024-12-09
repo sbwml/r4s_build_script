@@ -1,4 +1,4 @@
-From 7cd01d84de61e8642db1c4f8599630290e3997d0 Mon Sep 17 00:00:00 2001
+From a85660738779248ea2c2cd44a11b7f4602875671 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 4 Oct 2024 10:46:49 +0800
 Subject: [PATCH 02/10] rootfs: add upx compression support

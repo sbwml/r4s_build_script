@@ -1,4 +1,4 @@
-From abe248ebdb46aa4635487ddf7819772cf22ca03b Mon Sep 17 00:00:00 2001
+From b557005f9d3164de1f23a0239647f25d07b0b389 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 4 Oct 2024 10:47:41 +0800
 Subject: [PATCH 03/10] rootfs: add r/w permissions for UCI configuration files

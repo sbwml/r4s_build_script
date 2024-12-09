@@ -1,7 +1,7 @@
-From 1ed5c775935304f67aff4aa83c85d17c4f31afc4 Mon Sep 17 00:00:00 2001
+From b6419cff44d0e951d3805dcd70f3d462f40baa8f Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Thu, 7 Nov 2024 01:13:32 +0800
-Subject: [PATCH] gcc: add support for GCC 15
+Subject: [PATCH] toolchain: gcc: add support for GCC 15
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
