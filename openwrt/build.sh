@@ -45,7 +45,7 @@ export gitea=git.cooluc.com
 
 # github mirror
 if [ "$isCN" = "CN" ]; then
-    export github="ghp.ci/github.com"
+    export github="ghgo.xyz/github.com"
 else
     export github="github.com"
 fi
