@@ -1,6 +1,6 @@
 --- a/modules/luci-mod-network/htdocs/luci-static/resources/view/network/interfaces.js
 +++ b/modules/luci-mod-network/htdocs/luci-static/resources/view/network/interfaces.js
-@@ -847,6 +847,20 @@ return view.extend({
+@@ -854,6 +854,20 @@ return view.extend({
  					so.depends('ra', 'server');
  					so.depends({ ra: 'hybrid', master: '0' });
  
