@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# fix luci-base - rc4
-sed -i 's|\[sid\].hasOwnProperty|\[sid\]?.hasOwnProperty|g' feeds/luci/modules/luci-base/htdocs/luci-static/resources/uci.js
-
 # apk-tools
 curl -s $mirror/openwrt/patch/apk-tools/9999-hack-for-linux-pre-releases.patch > package/system/apk/patches/9999-hack-for-linux-pre-releases.patch
 
