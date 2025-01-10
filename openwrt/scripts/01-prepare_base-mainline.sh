@@ -57,11 +57,6 @@ else
 fi
 cp -a target/linux/generic-6.12/* target/linux/generic
 
-# additional patches
-curl -s $mirror/tags/patches/patch.list | while read -r patch_file; do
-    curl -s $mirror/tags/patches/$patch_file > target/linux/generic/hack-6.12/$patch_file
-done
-
 # bcm53xx - fix build kernel with clang
 [ "$platform" = "bcm53xx" ] && [ "$KERNEL_CLANG_LTO" = "y" ] && rm -f target/linux/generic/hack-6.6/220-arm-gc_sections.patch target/linux/generic/hack-6.12/220-arm-gc_sections.patch
 
