@@ -101,12 +101,6 @@ git clone https://$github/sbwml/package_utils_util-linux -b openwrt-24.10 packag
 # Shortcut Forwarding Engine
 git clone https://$gitea/sbwml/shortcut-fe package/new/shortcut-fe
 
-# dnsmasq
-if [ "$version" = "dev" ]; then
-    curl -s $mirror/openwrt/patch/dnsmasq/0001-dnsmasq-drop-extraconftext-parameter.patch | patch -p1
-    [ "$?" -ne 0 ] && curl -s $mirror/openwrt/patch/dnsmasq/dnsmasq.init > package/network/services/dnsmasq/files/dnsmasq.init
-fi
-
 # Patch FireWall 4
 if [ "$version" = "dev" ] || [ "$version" = "rc2" ]; then
     # firewall4
