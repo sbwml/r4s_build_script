@@ -55,7 +55,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
   * between different flows.
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -1601,7 +1601,7 @@ int tcp_fragment(struct sock *sk, enum t
+@@ -1603,7 +1603,7 @@ int tcp_fragment(struct sock *sk, enum t
  {
  	struct tcp_sock *tp = tcp_sk(sk);
  	struct sk_buff *buff;
@@ -64,7 +64,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	long limit;
  	int nlen;
  	u8 flags;
-@@ -1676,6 +1676,30 @@ int tcp_fragment(struct sock *sk, enum t
+@@ -1678,6 +1678,30 @@ int tcp_fragment(struct sock *sk, enum t
  
  		if (diff)
  			tcp_adjust_pcount(sk, skb, diff);

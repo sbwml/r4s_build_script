@@ -97,7 +97,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  };
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -2057,13 +2057,12 @@ static u32 tcp_tso_autosize(const struct
+@@ -2059,13 +2059,12 @@ static u32 tcp_tso_autosize(const struct
  static u32 tcp_tso_segs(struct sock *sk, unsigned int mss_now)
  {
  	const struct tcp_congestion_ops *ca_ops = inet_csk(sk)->icsk_ca_ops;

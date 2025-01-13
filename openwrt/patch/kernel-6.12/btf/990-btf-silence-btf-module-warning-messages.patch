@@ -10,7 +10,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
 
 --- a/kernel/bpf/btf.c
 +++ b/kernel/bpf/btf.c
-@@ -7884,8 +7884,6 @@ static int btf_module_notify(struct noti
+@@ -8028,8 +8028,6 @@ static int btf_module_notify(struct noti
  				pr_warn("failed to validate module [%s] BTF: %ld\n",
  					mod->name, PTR_ERR(btf));
  				err = PTR_ERR(btf);

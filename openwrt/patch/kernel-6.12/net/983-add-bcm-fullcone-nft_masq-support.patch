@@ -30,7 +30,7 @@
  #define NFTA_MASQ_MAX		(__NFTA_MASQ_MAX - 1)
 --- a/net/netfilter/nf_tables_api.c
 +++ b/net/netfilter/nf_tables_api.c
-@@ -11083,6 +11083,24 @@ static int nft_validate_register_load(en
+@@ -11101,6 +11101,24 @@ static int nft_validate_register_load(en
  	return 0;
  }
  

@@ -45,7 +45,8 @@ export gitea=git.cooluc.com
 
 # github mirror
 if [ "$isCN" = "CN" ]; then
-    export github="ghgo.xyz/github.com"
+    # There is currently no stable gh proxy
+    export github="github.com"
 else
     export github="github.com"
 fi

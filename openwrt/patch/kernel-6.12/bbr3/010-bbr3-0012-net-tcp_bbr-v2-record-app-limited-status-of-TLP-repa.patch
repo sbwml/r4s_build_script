@@ -35,7 +35,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  		fastopen_no_cookie:1, /* Allow send/recv SYN+data without a cookie */
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -3003,6 +3003,7 @@ void tcp_send_loss_probe(struct sock *sk
+@@ -3005,6 +3005,7 @@ void tcp_send_loss_probe(struct sock *sk
  	if (WARN_ON(!skb || !tcp_skb_pcount(skb)))
  		goto rearm_timer;
  
