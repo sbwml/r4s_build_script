@@ -339,6 +339,7 @@ curl -so files/root/.bashrc $mirror/openwrt/files/root/.bashrc
 
 # rootfs files
 mkdir -p files/etc/sysctl.d
+curl -so files/etc/sysctl.d/10-default.conf $mirror/openwrt/files/etc/sysctl.d/10-default.conf
 curl -so files/etc/sysctl.d/15-vm-swappiness.conf $mirror/openwrt/files/etc/sysctl.d/15-vm-swappiness.conf
 curl -so files/etc/sysctl.d/16-udp-buffer-size.conf $mirror/openwrt/files/etc/sysctl.d/16-udp-buffer-size.conf
 if [ "$platform" = "bcm53xx" ]; then

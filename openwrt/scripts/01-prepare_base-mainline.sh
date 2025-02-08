@@ -7,7 +7,11 @@ git clone https://$github/sbwml/autocore-arm -b openwrt-24.10 package/system/aut
 
 # rockchip - target - r4s/r5s only
 rm -rf target/linux/rockchip
-git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_rockchip-6.x target/linux/rockchip -b openwrt-24.10
+if [ "$(whoami)" = "sbwml" ]; then
+    git clone https://$gitea/sbwml/target_linux_rockchip-6.x target/linux/rockchip -b openwrt-24.10
+else
+    git clone https://"$git_name":"$git_password"@$gitea/sbwml/target_linux_rockchip-6.x target/linux/rockchip -b openwrt-24.10
+fi
 
 # bpf-headers - 6.12
 sed -ri "s/(PKG_PATCHVER:=)[^\"]*/\16.12/" package/kernel/bpf-headers/Makefile
@@ -26,9 +30,15 @@ curl -s $mirror/openwrt/patch/openwrt-6.x/x86/base-files/etc/board.d/02_network 
 
 # bcm53xx - target
 rm -rf target/linux/bcm53xx
-git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_bcm53xx target/linux/bcm53xx
-git clone https://nanopi:nanopi@$gitea/sbwml/brcmfmac-firmware-4366c-pcie package/firmware/brcmfmac-firmware-4366c-pcie
-git clone https://nanopi:nanopi@$gitea/sbwml/brcmfmac-firmware-4366b-pcie package/firmware/brcmfmac-firmware-4366b-pcie
+if [ "$(whoami)" = "sbwml" ]; then
+    git clone https://$gitea/sbwml/target_linux_bcm53xx target/linux/bcm53xx
+    git clone https://$gitea/sbwml/brcmfmac-firmware-4366c-pcie package/firmware/brcmfmac-firmware-4366c-pcie
+    git clone https://$gitea/sbwml/brcmfmac-firmware-4366b-pcie package/firmware/brcmfmac-firmware-4366b-pcie
+else
+    git clone https://"$git_name":"$git_password"@$gitea/sbwml/target_linux_bcm53xx target/linux/bcm53xx
+    git clone https://"$git_name":"$git_password"@$gitea/sbwml/brcmfmac-firmware-4366c-pcie package/firmware/brcmfmac-firmware-4366c-pcie
+    git clone https://"$git_name":"$git_password"@$gitea/sbwml/brcmfmac-firmware-4366b-pcie package/firmware/brcmfmac-firmware-4366b-pcie
+fi
 
 # armsr/armv8
 rm -rf target/linux/armsr
@@ -48,11 +58,10 @@ release_kernel_version=$(curl -sL https://raw.githubusercontent.com/sbwml/r4s_bu
 if [ "$local_kernel_version" = "$release_kernel_version" ] && [ -z "$git_password" ] && [ "$(whoami)" != "sbwml" ]; then
     git clone https://$github/sbwml/target_linux_generic -b openwrt-24.10 target/linux/generic-6.12 --depth=1
 else
-    if [ "$(whoami)" = "runner" ]; then
-        git_name=private
-        git clone https://"$git_name":"$git_password"@$gitea/sbwml/target_linux_generic -b openwrt-24.10 target/linux/generic-6.12 --depth=1
-    elif [ "$(whoami)" = "sbwml" ]; then
+    if [ "$(whoami)" = "sbwml" ]; then
         git clone https://$gitea/sbwml/target_linux_generic -b openwrt-24.10 target/linux/generic-6.12 --depth=1
+    else
+        git clone https://"$git_name":"$git_password"@$gitea/sbwml/target_linux_generic -b openwrt-24.10 target/linux/generic-6.12 --depth=1
     fi
 fi
 cp -a target/linux/generic-6.12/* target/linux/generic
@@ -169,6 +178,7 @@ git clone https://$github/sbwml/package_firmware_linux-firmware package/firmware
 
 # mt76
 mkdir -p package/kernel/mt76/patches
+curl -s $mirror/openwrt/patch/mt76/Makefile > package/kernel/mt76/Makefile
 curl -s $mirror/openwrt/patch/mt76/patches/100-fix-build-with-mac80211-6.11-backport.patch > package/kernel/mt76/patches/100-fix-build-with-mac80211-6.11-backport.patch
 curl -s $mirror/openwrt/patch/mt76/patches/101-fix-build-with-linux-6.12rc2.patch > package/kernel/mt76/patches/101-fix-build-with-linux-6.12rc2.patch
 
