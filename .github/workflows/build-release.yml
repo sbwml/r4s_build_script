@@ -120,6 +120,9 @@ jobs:
       working-directory: /builder
       id: compile
       continue-on-error: true
+      env:
+        git_name: ${{ secrets.username }}
+        git_password: ${{ secrets.password }}
       run: |
         export ${{ github.event.inputs.build_options }} LAN=${{ github.event.inputs.lan_addr }} USE_GCC15=y
         [ ${{ github.event.inputs.ccache }} = 'true' ] && export ENABLE_CCACHE=y
