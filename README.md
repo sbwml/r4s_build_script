@@ -26,6 +26,16 @@ sudo apt-get install -y build-essential flex bison g++ gawk gcc-multilib g++-mul
 
 ---------------
 
+## 授权构建
+#### 由于本源码具备后门被证实 [#92](https://github.com/sbwml/r4s_build_script/issues/92)，良心发现后，防止毒害社会不再允许任何人~~与狗~~直接构建😏
+#### 如果你得到授权，请在构建前执行以下命令
+
+```
+export git_name=账户名 git_password=密码
+```
+
+---------------
+
 ### 启用 [Clang/LLVM](https://docs.kernel.org/kbuild/llvm.html) 构建内核
 ##### 脚本支持使用 Clang/LLVM 构建内核，NanoPi & X86_64 设备将同时启用 LLVM LTO 链接时优化，这会增加编译的时间，但会获得更优的性能
 ##### 只需在构建固件前执行以下命令即可启用 Clang/LLVM 构建内核与内核模块
