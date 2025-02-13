@@ -76,7 +76,7 @@ index 49bb368..be06df2 100644
  	default "11.3.0"	if GCC_VERSION_11
  	default "12.3.0"	if GCC_VERSION_12
  	default "14.2.0"	if GCC_VERSION_14
-+	default "15.0.0"	if GCC_VERSION_15
++	default "15.0.1"	if GCC_VERSION_15
  	default "13.3.0"
  
  config GCC_USE_DEFAULT_VERSION
@@ -89,8 +89,8 @@ index 0ccf55b..50e924f 100644
  GCC_DIR:=$(PKG_NAME)-$(PKG_VERSION)
  
 -PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
-+ifeq ($(PKG_VERSION),15.0.0)
-+  PKG_SOURCE_URL:=https://us.cooluc.com/gcc/20241103
++ifeq ($(PKG_VERSION),15.0.1)
++  PKG_SOURCE_URL:=https://us.cooluc.com/gcc/20250209
 +else
 +  PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
 +endif
@@ -101,8 +101,8 @@ index 0ccf55b..50e924f 100644
    PKG_HASH:=a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9
  endif
  
-+ifeq ($(PKG_VERSION),15.0.0)
-+  PKG_HASH:=da4db21566241844d14b5b2caad4e2cfccbcbe656f10c0b929eea68dfe807ca3
++ifeq ($(PKG_VERSION),15.0.1)
++  PKG_HASH:=fe13d340157821fb8d04193664d420a4f15de0f6f562415c0869fc371421d933
 +endif
 +
  PATCH_DIR=../patches-$(GCC_MAJOR_VERSION).x
