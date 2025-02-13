@@ -438,7 +438,6 @@ if [ "$platform" = "x86_64" ]; then
             cp -a bin/packages/x86_64/base/*modemband*.ipk $kmodpkg_name/
             cp -a bin/packages/x86_64/base/*sms-tool*.ipk $kmodpkg_name/
             cp -a bin/packages/x86_64/base/*quectel*.ipk $kmodpkg_name/
-            cp -a bin/packages/x86_64/base/*fibocom*.ipk $kmodpkg_name/
         }
         [ "$ENABLE_DPDK" = "y" ] && {
             cp -a bin/packages/x86_64/base/*dpdk*.ipk $kmodpkg_name/ || true
@@ -487,7 +486,6 @@ elif [ "$platform" = "armv8" ]; then
             cp -a bin/packages/aarch64_generic/base/*modemband*.ipk $kmodpkg_name/
             cp -a bin/packages/aarch64_generic/base/*sms-tool*.ipk $kmodpkg_name/
             cp -a bin/packages/aarch64_generic/base/*quectel*.ipk $kmodpkg_name/
-            cp -a bin/packages/aarch64_generic/base/*fibocom*.ipk $kmodpkg_name/
         }
         [ "$ENABLE_DPDK" = "y" ] && {
             cp -a bin/packages/aarch64_generic/base/*dpdk*.ipk $kmodpkg_name/ || true
@@ -526,7 +524,6 @@ elif [ "$platform" = "bcm53xx" ]; then
             cp -a bin/packages/arm_cortex-a9/base/*modemband*.ipk $kmodpkg_name/
             cp -a bin/packages/arm_cortex-a9/base/*sms-tool*.ipk $kmodpkg_name/
             cp -a bin/packages/arm_cortex-a9/base/*quectel*.ipk $kmodpkg_name/
-            cp -a bin/packages/arm_cortex-a9/base/*fibocom*.ipk $kmodpkg_name/
         }
         bash kmod-sign $kmodpkg_name
         tar zcf bcm53xx-$kmodpkg_name.tar.gz $kmodpkg_name
@@ -566,7 +563,6 @@ else
             cp -a bin/packages/aarch64_generic/base/*modemband*.ipk $kmodpkg_name/
             cp -a bin/packages/aarch64_generic/base/*sms-tool*.ipk $kmodpkg_name/
             cp -a bin/packages/aarch64_generic/base/*quectel*.ipk $kmodpkg_name/
-            cp -a bin/packages/aarch64_generic/base/*fibocom*.ipk $kmodpkg_name/
         }
         [ "$ENABLE_DPDK" = "y" ] && {
             cp -a bin/packages/aarch64_generic/base/*dpdk*.ipk $kmodpkg_name/ || true

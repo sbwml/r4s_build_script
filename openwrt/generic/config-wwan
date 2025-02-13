@@ -4,6 +4,6 @@ CONFIG_PACKAGE_luci-app-3ginfo-lite=m
 CONFIG_PACKAGE_luci-app-modemband=m
 CONFIG_PACKAGE_luci-app-sms-tool-js=m
 CONFIG_PACKAGE_luci-proto-quectel=m
-CONFIG_PACKAGE_fibocom-dial=m
+# CONFIG_PACKAGE_fibocom-dial is not set
 CONFIG_PACKAGE_modemband=m
 CONFIG_PACKAGE_quectel-cm=m
