@@ -66,6 +66,9 @@ else
     curl -s $mirror/openwrt/patch/target-modify_for_rockchip.patch | patch -p1
 fi
 
+# libubox
+sed -i '/TARGET_CFLAGS/ s/$/ -Os/' package/libs/libubox/Makefile
+
 # DPDK & NUMACTL
 mkdir -p package/new/{dpdk/patches,numactl}
 curl -s $mirror/openwrt/patch/dpdk/dpdk/Makefile > package/new/dpdk/Makefile
