@@ -122,6 +122,8 @@ if [ "$USE_GCC15" = y ]; then
     sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/net/rsync/Makefile
     # shine
     sed -i '/Build\/InstallDev/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/sound/shine/Makefile
+    # jq
+    sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/utils/jq/Makefile
 fi
 
 # ksmbd luci
