@@ -85,4 +85,7 @@ if [ "$KERNEL_CLANG_LTO" = "y" ]; then
     # coova-chilli module
     rm -rf feeds/packages/net/coova-chilli
     git clone https://$github/sbwml/kmod_packages_net_coova-chilli feeds/packages/net/coova-chilli
+else
+    # coova-chilli - fix gcc 15 c23
+    [ "$USE_GCC15" = y ] && sed -i '/TARGET_CFLAGS/s/$/ -std=gnu17/' feeds/packages/net/coova-chilli/Makefile
 fi
