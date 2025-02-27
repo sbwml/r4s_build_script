@@ -120,7 +120,7 @@ elif [ "$USE_GCC14" = y ]; then
 elif [ "$USE_GCC15" = y ]; then
     export USE_GCC15=y gcc_version=15
 else
-    export USE_GCC13=y gcc_version=13
+    export USE_GCC14=y gcc_version=14
 fi
 [ "$ENABLE_MOLD" = y ] && export ENABLE_MOLD=y
 
