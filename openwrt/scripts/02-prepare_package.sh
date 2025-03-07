@@ -167,3 +167,7 @@ git clone https://$github/sbwml/package_kernel_tcp-brutal package/kernel/tcp-bru
 
 # watchcat - clean config
 true > feeds/packages/utils/watchcat/files/watchcat.config
+
+# libpcap
+rm -rf package/libs/libpcap
+git clone https://$github/sbwml/package_libs_libpcap package/libs/libpcap
