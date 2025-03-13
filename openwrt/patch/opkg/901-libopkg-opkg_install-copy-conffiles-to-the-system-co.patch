@@ -1,0 +1,57 @@
+From 74dbda351198a9028a69a912be85cefd72c0cec9 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Thu, 13 Mar 2025 22:07:10 +0800
+Subject: [PATCH] libopkg: opkg_install: copy conffiles to the system
+ configuration preserved list
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ libopkg/opkg_install.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/libopkg/opkg_install.c b/libopkg/opkg_install.c
+index 68fb9ea..b4d18a2 100644
+--- a/libopkg/opkg_install.c
++++ b/libopkg/opkg_install.c
+@@ -1394,6 +1394,38 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
+ 		}
+ 	}
+ 
++	/* Handle conffiles for sysupgrade */
++	{
++		const char *tmp_dir = pkg_get_string(pkg, PKG_TMP_UNPACK_DIR);
++		if (tmp_dir) {
++			char *conffiles_path;
++			asprintf(&conffiles_path, "%s/conffiles", tmp_dir);
++			if (file_exists(conffiles_path)) {
++				char *keep_dir = "/lib/upgrade/keep.d";
++				char *keep_file;
++				asprintf(&keep_file, "%s/%s", keep_dir, pkg->name);
++
++				if (file_mkdir_hier(keep_dir, 0755) != 0) {
++					opkg_msg(ERROR, "Failed to create directory %s: %s\n",
++						 keep_dir, strerror(errno));
++					goto cleanup_conffiles;
++				}
++
++				if (file_copy(conffiles_path, keep_file) != 0) {
++					opkg_msg(ERROR, "Failed to copy %s to %s\n",
++						 conffiles_path, keep_file);
++					goto cleanup_conffiles;
++				}
++				opkg_msg(DEBUG, "Copied conffiles to %s for sysupgrade\n",
++					 keep_file);
++
++			cleanup_conffiles:
++				free(keep_file);
++			}
++			free(conffiles_path);
++		}
++	}
++
+ 	err = update_file_ownership(pkg, old_pkg);
+ 	if (err)
+ 		return -1;
+-- 
+2.43.5
+
