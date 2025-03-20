@@ -71,7 +71,7 @@ Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
  		goto out;
 --- a/drivers/gpu/drm/i915/display/intel_cursor.c
 +++ b/drivers/gpu/drm/i915/display/intel_cursor.c
-@@ -895,13 +895,15 @@ intel_legacy_cursor_update(struct drm_pl
+@@ -902,13 +902,15 @@ intel_legacy_cursor_update(struct drm_pl
  		 */
  		intel_psr_wait_for_idle_locked(crtc_state);
  
@@ -89,8 +89,8 @@ Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
  	}
  
  	if (new_plane_state->uapi.visible) {
-@@ -911,7 +913,8 @@ intel_legacy_cursor_update(struct drm_pl
- 		intel_plane_disable_arm(plane, crtc_state);
+@@ -918,7 +920,8 @@ intel_legacy_cursor_update(struct drm_pl
+ 		intel_plane_disable_arm(NULL, plane, crtc_state);
  	}
  
 -	local_irq_enable();

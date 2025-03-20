@@ -33,7 +33,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  		fastopen_no_cookie:1, /* Allow send/recv SYN+data without a cookie */
 --- a/net/ipv4/tcp.c
 +++ b/net/ipv4/tcp.c
-@@ -3384,6 +3384,7 @@ int tcp_disconnect(struct sock *sk, int
+@@ -3397,6 +3397,7 @@ int tcp_disconnect(struct sock *sk, int
  	tp->rx_opt.dsack = 0;
  	tp->rx_opt.num_sacks = 0;
  	tp->rcv_ooopack = 0;
@@ -53,7 +53,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	if (tcp_ca_needs_ecn(sk))
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
-@@ -5770,13 +5770,14 @@ static void __tcp_ack_snd_check(struct s
+@@ -5776,13 +5776,14 @@ static void __tcp_ack_snd_check(struct s
  
  	    /* More than one full frame received... */
  	if (((tp->rcv_nxt - tp->rcv_wup) > inet_csk(sk)->icsk_ack.rcv_mss &&

@@ -25,7 +25,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -376,6 +376,7 @@ static inline void tcp_dec_quickack_mode
+@@ -377,6 +377,7 @@ static inline void tcp_dec_quickack_mode
  #define	TCP_ECN_DEMAND_CWR	4
  #define	TCP_ECN_SEEN		8
  #define	TCP_ECN_LOW		16
@@ -47,7 +47,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  /* BBR marks the current round trip as a loss round. */
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -390,7 +390,8 @@ static void tcp_ecn_send(struct sock *sk
+@@ -393,7 +393,8 @@ static void tcp_ecn_send(struct sock *sk
  				th->cwr = 1;
  				skb_shinfo(skb)->gso_type |= SKB_GSO_TCP_ECN;
  			}
