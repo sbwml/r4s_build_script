@@ -83,6 +83,10 @@ sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/smb.conf.te
 # rk3568 bind cpus
 [ "$platform" = "rk3568" ] && sed -i 's#/usr/sbin/smbd -F#/usr/bin/taskset -c 1,0 /usr/sbin/smbd -F#' feeds/packages/net/samba4/files/samba.init
 
+# zerotier
+rm -rf feeds/packages/net/zerotier
+git clone https://$github/sbwml/feeds_packages_net_zerotier feeds/packages/net/zerotier
+
 # aria2 & ariaNG
 rm -rf feeds/packages/net/ariang
 rm -rf feeds/luci/applications/luci-app-aria2
