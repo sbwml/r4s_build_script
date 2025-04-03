@@ -181,17 +181,18 @@ mkdir -p package/kernel/mt76/patches
 curl -s $mirror/openwrt/patch/mt76/Makefile > package/kernel/mt76/Makefile
 curl -s $mirror/openwrt/patch/mt76/patches/100-fix-build-with-mac80211-6.11-backport.patch > package/kernel/mt76/patches/100-fix-build-with-mac80211-6.11-backport.patch
 curl -s $mirror/openwrt/patch/mt76/patches/101-fix-build-with-linux-6.12rc2.patch > package/kernel/mt76/patches/101-fix-build-with-linux-6.12rc2.patch
+curl -s $mirror/openwrt/patch/mt76/patches/102-fix-build-with-mac80211-6.14-backport.patch > package/kernel/mt76/patches/102-fix-build-with-mac80211-6.14-backport.patch
 
 # wireless-regdb
 curl -s $mirror/openwrt/patch/openwrt-6.x/500-world-regd-5GHz.patch > package/firmware/wireless-regdb/patches/500-world-regd-5GHz.patch
 
-# mac80211 - 6.12
+# mac80211 - 6.14
 rm -rf package/kernel/mac80211
 git clone https://$github/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b openwrt-24.10
 
 # ath10k-ct
 rm -rf package/kernel/ath10k-ct
-git clone https://$github/sbwml/package_kernel_ath10k-ct package/kernel/ath10k-ct -b v6.11
+git clone https://$github/sbwml/package_kernel_ath10k-ct package/kernel/ath10k-ct -b v6.14
 
 # kernel patch
 # btf: silence btf module warning messages
