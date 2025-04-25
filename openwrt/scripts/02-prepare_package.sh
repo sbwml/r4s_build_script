@@ -101,6 +101,9 @@ git clone https://$github/sbwml/luci-app-airconnect package/new/airconnect
 # netkit-ftp
 git clone https://$github/sbwml/package_new_ftp package/new/ftp
 
+# nethogs
+git clone https://github.com/sbwml/package_new_nethogs package/new/nethogs
+
 # SSRP & Passwall
 rm -rf feeds/packages/net/{xray-core,v2ray-core,v2ray-geodata,sing-box}
 git clone https://$github/sbwml/openwrt_helloworld package/new/helloworld -b v5
