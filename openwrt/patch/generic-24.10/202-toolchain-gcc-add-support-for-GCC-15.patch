@@ -7,7 +7,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
 ---
  toolchain/gcc/Config.in                       |   3 +
  toolchain/gcc/Config.version                  |   5 +
- toolchain/gcc/common.mk                       |  10 +-
+ toolchain/gcc/common.mk                       |   4 +
  .../patches-15.x/002-case_insensitive.patch   |  24 +++
  ...t-choke-when-building-32bit-on-64bit.patch |  13 ++
  .../gcc/patches-15.x/010-documentation.patch  |  35 +++++
@@ -25,7 +25,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  .../920-specs_nonfatal_getenv.patch           |  22 +++
  ...mpilation-when-making-cross-compiler.patch |  67 ++++++++
  .../970-macos_arm64-building-fix.patch        |  45 ++++++
- 20 files changed, 615 insertions(+), 1 deletion(-)
+ 20 files changed, 610 insertions(+)
  create mode 100644 toolchain/gcc/patches-15.x/002-case_insensitive.patch
  create mode 100644 toolchain/gcc/patches-15.x/003-dont-choke-when-building-32bit-on-64bit.patch
  create mode 100644 toolchain/gcc/patches-15.x/010-documentation.patch
@@ -59,7 +59,7 @@ index b306040..3ab16a8 100644
  
  config GCC_USE_GRAPHITE
 diff --git a/toolchain/gcc/Config.version b/toolchain/gcc/Config.version
-index 49bb368..be06df2 100644
+index 49bb368..9ecca5d 100644
 --- a/toolchain/gcc/Config.version
 +++ b/toolchain/gcc/Config.version
 @@ -10,12 +10,17 @@ config GCC_VERSION_14
@@ -76,33 +76,20 @@ index 49bb368..be06df2 100644
  	default "11.3.0"	if GCC_VERSION_11
  	default "12.3.0"	if GCC_VERSION_12
  	default "14.2.0"	if GCC_VERSION_14
-+	default "15.0.1"	if GCC_VERSION_15
++	default "15.1.0"	if GCC_VERSION_15
  	default "13.3.0"
  
  config GCC_USE_DEFAULT_VERSION
 diff --git a/toolchain/gcc/common.mk b/toolchain/gcc/common.mk
-index 0ccf55b..50e924f 100644
+index 0ccf55b..1dd644f 100644
 --- a/toolchain/gcc/common.mk
 +++ b/toolchain/gcc/common.mk
-@@ -26,7 +26,11 @@ PKG_VERSION:=$(firstword $(subst +, ,$(GCC_VERSION)))
- GCC_MAJOR_VERSION:=$(word 1,$(subst ., ,$(PKG_VERSION)))
- GCC_DIR:=$(PKG_NAME)-$(PKG_VERSION)
- 
--PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
-+ifeq ($(PKG_VERSION),15.0.1)
-+  PKG_SOURCE_URL:=https://us.cooluc.com/gcc/20250209
-+else
-+  PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
-+endif
- PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
- PKG_CPE_ID:=cpe:/a:gnu:gcc
- 
-@@ -46,6 +50,10 @@ ifeq ($(PKG_VERSION),14.2.0)
+@@ -46,6 +46,10 @@ ifeq ($(PKG_VERSION),14.2.0)
    PKG_HASH:=a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9
  endif
  
-+ifeq ($(PKG_VERSION),15.0.1)
-+  PKG_HASH:=fe13d340157821fb8d04193664d420a4f15de0f6f562415c0869fc371421d933
++ifeq ($(PKG_VERSION),15.1.0)
++  PKG_HASH:=e2b09ec21660f01fecffb715e0120265216943f038d0e48a9868713e54f06cea
 +endif
 +
  PATCH_DIR=../patches-$(GCC_MAJOR_VERSION).x
@@ -159,7 +146,7 @@ index 0000000..c41f35e
 +    are necessary to overlay a REAL_VALUE_TYPE on them.  This could be
 diff --git a/toolchain/gcc/patches-15.x/010-documentation.patch b/toolchain/gcc/patches-15.x/010-documentation.patch
 new file mode 100644
-index 0000000..42b816d
+index 0000000..b3f0e12
 --- /dev/null
 +++ b/toolchain/gcc/patches-15.x/010-documentation.patch
 @@ -0,0 +1,35 @@
@@ -177,7 +164,7 @@ index 0000000..42b816d
 +
 +--- a/gcc/Makefile.in
 ++++ b/gcc/Makefile.in
-+@@ -3566,18 +3566,10 @@ doc/gcc.info: $(TEXI_GCC_FILES)
++@@ -3747,18 +3747,10 @@ doc/gcc.info: $(TEXI_GCC_FILES)
 + doc/gccint.info: $(TEXI_GCCINT_FILES)
 + doc/cppinternals.info: $(TEXI_CPPINT_FILES)
 + 
@@ -200,13 +187,13 @@ index 0000000..42b816d
 + doc/gcc.dvi: $(TEXI_GCC_FILES)
 diff --git a/toolchain/gcc/patches-15.x/230-musl_libssp.patch b/toolchain/gcc/patches-15.x/230-musl_libssp.patch
 new file mode 100644
-index 0000000..f8dc944
+index 0000000..34eaac4
 --- /dev/null
 +++ b/toolchain/gcc/patches-15.x/230-musl_libssp.patch
 @@ -0,0 +1,13 @@
 +--- a/gcc/gcc.cc
 ++++ b/gcc/gcc.cc
-+@@ -989,7 +989,9 @@ proper position among the other output f
++@@ -992,7 +992,9 @@ proper position among the other output f
 + #endif
 + 
 + #ifndef LINK_SSP_SPEC
@@ -219,7 +206,7 @@ index 0000000..f8dc944
 + #else
 diff --git a/toolchain/gcc/patches-15.x/300-mips_Os_cpu_rtx_cost_model.patch b/toolchain/gcc/patches-15.x/300-mips_Os_cpu_rtx_cost_model.patch
 new file mode 100644
-index 0000000..4e32b75
+index 0000000..27b9657
 --- /dev/null
 +++ b/toolchain/gcc/patches-15.x/300-mips_Os_cpu_rtx_cost_model.patch
 @@ -0,0 +1,21 @@
@@ -235,7 +222,7 @@ index 0000000..4e32b75
 +
 +--- a/gcc/config/mips/mips.cc
 ++++ b/gcc/config/mips/mips.cc
-+@@ -20576,7 +20576,7 @@ mips_option_override (void)
++@@ -20599,7 +20599,7 @@ mips_option_override (void)
 +     flag_pcc_struct_return = 0;
 + 
 +   /* Decide which rtx_costs structure to use.  */
@@ -285,7 +272,7 @@ index 0000000..5c9d86a
 + #define LINUX_TARGET_LINK_SPEC  "%{h*} \
 diff --git a/toolchain/gcc/patches-15.x/820-libgcc_pic.patch b/toolchain/gcc/patches-15.x/820-libgcc_pic.patch
 new file mode 100644
-index 0000000..33ae0a9
+index 0000000..f9691e5
 --- /dev/null
 +++ b/toolchain/gcc/patches-15.x/820-libgcc_pic.patch
 @@ -0,0 +1,44 @@
@@ -322,7 +309,7 @@ index 0000000..33ae0a9
 + ifneq ($(LIBUNWIND),)
 + all: libunwind$(SHLIB_EXT)
 + libgcc_s$(SHLIB_EXT): libunwind$(SHLIB_EXT)
-+@@ -1178,6 +1179,10 @@ install-shared:
++@@ -1181,6 +1182,10 @@ install-shared:
 + 	chmod 644 $(DESTDIR)$(inst_libdir)/libgcc_eh.a
 + 	$(RANLIB) $(DESTDIR)$(inst_libdir)/libgcc_eh.a
 + 
@@ -506,7 +493,7 @@ index 0000000..b355545
 ++CRTSTUFF_T_CFLAGS_S += -mno-mips16
 diff --git a/toolchain/gcc/patches-15.x/910-mbsd_multi.patch b/toolchain/gcc/patches-15.x/910-mbsd_multi.patch
 new file mode 100644
-index 0000000..07afb52
+index 0000000..c5462e1
 --- /dev/null
 +++ b/toolchain/gcc/patches-15.x/910-mbsd_multi.patch
 @@ -0,0 +1,146 @@
@@ -529,7 +516,7 @@ index 0000000..07afb52
 +
 +--- a/gcc/c-family/c-opts.cc
 ++++ b/gcc/c-family/c-opts.cc
-+@@ -110,6 +110,9 @@ static size_t include_cursor;
++@@ -109,6 +109,9 @@ static size_t include_cursor;
 + /* Whether any standard preincluded header has been preincluded.  */
 + static bool done_preinclude;
 + 
@@ -552,7 +539,7 @@ index 0000000..07afb52
 +     case OPT_fconstant_string_class_:
 +       constant_string_class_name = arg;
 +       break;
-+@@ -1332,6 +1341,47 @@ c_common_init (void)
++@@ -1359,6 +1368,47 @@ c_common_init (void)
 +       return false;
 +     }
 + 
@@ -602,7 +589,7 @@ index 0000000..07afb52
 + 
 +--- a/gcc/c-family/c.opt
 ++++ b/gcc/c-family/c.opt
-+@@ -1987,6 +1987,9 @@ C++ ObjC++ Optimization Alias(fexception
++@@ -2008,6 +2008,9 @@ C++ ObjC++ Optimization Alias(fexception
 + fhonor-std
 + C++ ObjC++ WarnRemoved
 + 
@@ -614,7 +601,7 @@ index 0000000..07afb52
 + Assume normal C execution environment.
 +--- a/gcc/common.opt
 ++++ b/gcc/common.opt
-+@@ -1908,6 +1908,9 @@ Enum(hardcfr_check_noreturn_calls) Strin
++@@ -1938,6 +1938,9 @@ Enum(hardcfr_check_noreturn_calls) Strin
 + EnumValue
 + Enum(hardcfr_check_noreturn_calls) String(always) Value(HCFRNR_ALWAYS)
 + 
@@ -626,7 +613,7 @@ index 0000000..07afb52
 + ; On SVR4 targets, it also controls whether or not to emit a
 +--- a/gcc/doc/invoke.texi
 ++++ b/gcc/doc/invoke.texi
-+@@ -10690,6 +10690,17 @@ This option is only supported for C and
++@@ -10897,6 +10897,17 @@ This option is only supported for C and
 + 
 + This warning is upgraded to an error by @option{-pedantic-errors}.
 + 
@@ -646,7 +633,7 @@ index 0000000..07afb52
 + @item -Wstack-protector
 +--- a/gcc/opts.cc
 ++++ b/gcc/opts.cc
-+@@ -2848,6 +2848,9 @@ common_handle_option (struct gcc_options
++@@ -2867,6 +2867,9 @@ common_handle_option (struct gcc_options
 +       add_comma_separated_to_vector (&opts->x_flag_ignored_attributes, arg);
 +       break;
 + 
@@ -658,7 +645,7 @@ index 0000000..07afb52
 +       break;
 diff --git a/toolchain/gcc/patches-15.x/920-specs_nonfatal_getenv.patch b/toolchain/gcc/patches-15.x/920-specs_nonfatal_getenv.patch
 new file mode 100644
-index 0000000..5c9849f
+index 0000000..01591d2
 --- /dev/null
 +++ b/toolchain/gcc/patches-15.x/920-specs_nonfatal_getenv.patch
 @@ -0,0 +1,22 @@
@@ -671,7 +658,7 @@ index 0000000..5c9849f
 +
 +--- a/gcc/gcc.cc
 ++++ b/gcc/gcc.cc
-+@@ -10339,8 +10339,10 @@ getenv_spec_function (int argc, const ch
++@@ -10357,8 +10357,10 @@ getenv_spec_function (int argc, const ch
 +     }
 + 
 +   if (!value)
@@ -759,7 +746,7 @@ index 0000000..b1d7576
 + cmdsrcdir = $(libgosrcdir)/cmd
 diff --git a/toolchain/gcc/patches-15.x/970-macos_arm64-building-fix.patch b/toolchain/gcc/patches-15.x/970-macos_arm64-building-fix.patch
 new file mode 100644
-index 0000000..a4060d9
+index 0000000..cf0fd74
 --- /dev/null
 +++ b/toolchain/gcc/patches-15.x/970-macos_arm64-building-fix.patch
 @@ -0,0 +1,45 @@
@@ -782,7 +769,7 @@ index 0000000..a4060d9
 +
 +--- a/gcc/config/aarch64/aarch64.h
 ++++ b/gcc/config/aarch64/aarch64.h
-+@@ -1412,7 +1412,7 @@ extern enum aarch64_code_model aarch64_c
++@@ -1469,7 +1469,7 @@ extern enum aarch64_code_model aarch64_c
 + 
 + /* Extra specs when building a native AArch64-hosted compiler.
 +    Option rewriting rules based on host system.  */
