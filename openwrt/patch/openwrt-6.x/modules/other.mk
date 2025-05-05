@@ -802,13 +802,18 @@ $(eval $(call KernelPackage,ikconfig))
 define KernelPackage/zram
   SUBMENU:=$(OTHER_MENU)
   TITLE:=ZRAM
-  DEPENDS:=+LINUX_6_12:kmod-lib-lzo
+  DEPENDS:=+LINUX_6_12:kmod-lib-lzo +LINUX_6_12:kmod-lib-lz4 \
+           +LINUX_6_12:kmod-lib-lz4hc +LINUX_6_12:kmod-lib-zstd
   KCONFIG:= \
 	CONFIG_ZSMALLOC \
 	CONFIG_ZRAM \
 	CONFIG_ZRAM_DEBUG=n \
 	CONFIG_ZRAM_WRITEBACK=n \
-	CONFIG_ZSMALLOC_STAT=n
+	CONFIG_ZSMALLOC_STAT=n \
+	CONFIG_ZRAM_BACKEND_LZ4=y \
+	CONFIG_ZRAM_BACKEND_LZ4HC=y \
+	CONFIG_ZRAM_BACKEND_LZO=y \
+	CONFIG_ZRAM_BACKEND_ZSTD=y
   FILES:= \
 	$(LINUX_DIR)/mm/zsmalloc.ko \
 	$(LINUX_DIR)/drivers/block/zram/zram.ko
