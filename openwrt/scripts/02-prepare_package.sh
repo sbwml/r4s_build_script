@@ -159,9 +159,9 @@ sed -i 's,发送,Transmission,g' feeds/luci/applications/luci-app-transmission/p
 sed -i 's,frp 服务器,FRP 服务器,g' feeds/luci/applications/luci-app-frps/po/zh_Hans/frps.po
 sed -i 's,frp 客户端,FRP 客户端,g' feeds/luci/applications/luci-app-frpc/po/zh_Hans/frpc.po
 
-# SQM Translation
-mkdir -p feeds/packages/net/sqm-scripts/patches
-curl -s $mirror/openwrt/patch/sqm/001-help-translation.patch > feeds/packages/net/sqm-scripts/patches/001-help-translation.patch
+# luci-app-sqm
+rm -rf feeds/luci/applications/luci-app-sqm
+git clone https://$gitea/sbwml/luci-app-sqm feeds/luci/applications/luci-app-sqm
 
 # unzip
 rm -rf feeds/packages/utils/unzip
