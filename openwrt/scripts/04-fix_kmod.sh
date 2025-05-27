@@ -43,11 +43,11 @@ curl -s $mirror/openwrt/patch/packages-patches/rtpengine/900-fix-linux-6.12-11.5
 mkdir -p package/kernel/ubootenv-nvram/patches
 curl -s $mirror/openwrt/patch/packages-patches/ubootenv-nvram/010-make-ubootenv_remove-return-void-for-linux-6.12.patch > package/kernel/ubootenv-nvram/patches/010-make-ubootenv_remove-return-void-for-linux-6.12.patch
 
-# packages
-pushd feeds/packages
-  # xr_usb_serial_common linux-6.12
-  curl -s $mirror/openwrt/patch/packages-patches/xr_usb_serial_common/0002-fix-kernel-6.12-builds.patch > libs/xr_usb_serial_common/patches/0002-fix-kernel-6.12-builds.patch
-popd
+# usb-serial-xr_usb_serial_common: remove package
+# Now that we have packaged the upstream driver[1] and only board[2] that
+# includes it by default has been switched to it, remove this out-of-tree
+# driver that is broken on 6.12 anyway.
+rm -rf feeds/packages/libs/xr_usb_serial_common
 
 # xtables-addons
 curl -s $mirror/openwrt/patch/packages-patches/xtables-addons/301-fix-build-with-linux-6.12.patch > feeds/packages/net/xtables-addons/patches/301-fix-build-with-linux-6.12.patch

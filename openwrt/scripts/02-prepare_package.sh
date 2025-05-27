@@ -65,9 +65,6 @@ popd
 # samba4 - bump version
 rm -rf feeds/packages/net/samba4
 git clone https://$github/sbwml/feeds_packages_net_samba4 feeds/packages/net/samba4
-# liburing - 2.7 (samba-4.21.0)
-rm -rf feeds/packages/libs/liburing
-git clone https://$github/sbwml/feeds_packages_libs_liburing feeds/packages/libs/liburing
 # enable multi-channel
 sed -i '/workgroup/a \\n\t## enable multi-channel' feeds/packages/net/samba4/files/smb.conf.template
 sed -i '/enable multi-channel/a \\tserver multi channel support = yes' feeds/packages/net/samba4/files/smb.conf.template
@@ -139,7 +136,7 @@ sed -i 's/services/network/g' feeds/luci/applications/luci-app-nlbwmon/root/usr/
 sed -i 's/services/network/g' feeds/luci/applications/luci-app-nlbwmon/htdocs/luci-static/resources/view/nlbw/config.js
 
 # mentohust
-git clone https://github.com/sbwml/luci-app-mentohust package/new/mentohust
+git clone https://$github/sbwml/luci-app-mentohust package/new/mentohust
 
 # custom packages
 rm -rf feeds/packages/utils/coremark
