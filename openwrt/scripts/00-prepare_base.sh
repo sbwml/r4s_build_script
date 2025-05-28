@@ -201,6 +201,12 @@ pushd package/libs/openssl/patches
     curl -sO $mirror/openwrt/patch/openssl/quic/0044-QUIC-Update-metadata-version.patch
 popd
 
+# openssl benchmarks
+pushd package/libs/openssl/patches
+    curl -sO $mirror/openwrt/patch/openssl/901-Revert-speed-Pass-IV-to-EVP_CipherInit_ex-for-evp-ru.patch
+    curl -sO $mirror/openwrt/patch/openssl/902-Revert-apps-speed.c-Fix-the-benchmarking-for-AEAD-ci.patch
+popd
+
 # openssl urandom
 sed -i "/-openwrt/iOPENSSL_OPTIONS += enable-ktls '-DDEVRANDOM=\"\\\\\"/dev/urandom\\\\\"\"\'\n" package/libs/openssl/Makefile
 
