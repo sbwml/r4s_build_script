@@ -9,7 +9,7 @@ Subject: [PATCH] dockerd: fix bridge network
  2 files changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/utils/dockerd/files/dockerd.init b/utils/dockerd/files/dockerd.init
-index 111e2cd8db1b..0ae6fd9af403 100755
+index 8835a6d..ec83ec5 100755
 --- a/utils/dockerd/files/dockerd.init
 +++ b/utils/dockerd/files/dockerd.init
 @@ -91,6 +91,9 @@ uciadd() {
@@ -23,10 +23,10 @@ index 111e2cd8db1b..0ae6fd9af403 100755
  	fi
  
 diff --git a/utils/dockerd/files/etc/config/dockerd b/utils/dockerd/files/etc/config/dockerd
-index dd7523543c22..414fa6e5c26e 100644
+index 0fa4a56..03fdcf8 100644
 --- a/utils/dockerd/files/etc/config/dockerd
 +++ b/utils/dockerd/files/etc/config/dockerd
-@@ -34,5 +34,5 @@ config globals 'globals'
+@@ -41,5 +41,5 @@ config proxies 'proxies'
  # then docker restarted to load in new changes.
  config firewall 'firewall'
  	option device 'docker0'
