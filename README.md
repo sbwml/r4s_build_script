@@ -139,6 +139,13 @@ export MINIMAL_BUILD=y
 export LAN=10.0.0.1
 ```
 
+### 更改默认 ROOT 密码
+##### 只需在构建固件前执行以下命令即可设置默认 ROOT 密码（默认：无密码）
+
+```
+export ROOT_PASSWORD=12345678
+```
+
 ### 使用 uhttpd 轻量 web 引擎
 ##### 固件默认使用 Nginx（quic） 作为页面引擎，只需在构建固件前执行以下命令即可使用 uhttpd 取代 nginx
 ##### Nginx 在具备公网的环境下可以提供更丰富的功能支持
