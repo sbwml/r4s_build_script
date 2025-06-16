@@ -105,6 +105,9 @@ git clone https://github.com/sbwml/package_new_nethogs package/new/nethogs
 rm -rf feeds/packages/net/{xray-core,v2ray-core,v2ray-geodata,sing-box}
 git clone https://$github/sbwml/openwrt_helloworld package/new/helloworld -b v5
 
+# openlist
+git clone https://$github/sbwml/luci-app-openlist package/new/openlist
+
 # netdata
 sed -i 's/syslog/none/g' feeds/packages/admin/netdata/files/netdata.conf
 
