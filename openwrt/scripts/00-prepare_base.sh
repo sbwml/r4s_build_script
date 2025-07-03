@@ -246,13 +246,7 @@ if [ "$version" = "dev" ] || [ "$version" = "rc2" ]; then
     git clone https://$github/sbwml/packages_utils_dockerd feeds/packages/utils/dockerd
     git clone https://$github/sbwml/packages_utils_containerd feeds/packages/utils/containerd
     git clone https://$github/sbwml/packages_utils_runc feeds/packages/utils/runc
-    sed -i '/cgroupfs-mount/d' feeds/packages/utils/dockerd/Config.in
 fi
-sed -i '/sysctl.d/d' feeds/packages/utils/dockerd/Makefile
-pushd feeds/packages
-    curl -s $mirror/openwrt/patch/docker/0001-dockerd-fix-bridge-network.patch | patch -p1
-    curl -s $mirror/openwrt/patch/docker/0002-docker-add-buildkit-experimental-support.patch | patch -p1
-popd
 
 # cgroupfs-mount
 # fix unmount hierarchical mount
