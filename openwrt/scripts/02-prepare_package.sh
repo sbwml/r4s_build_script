@@ -18,6 +18,9 @@ git clone https://$github/sbwml/wwan-packages package/new/wwan --depth=1
 rm -rf feeds/luci/applications/luci-app-filemanager
 git clone https://$github/sbwml/luci-app-filemanager package/new/luci-app-filemanager
 
+# luci-app-quickfile
+git clone https://$github/sbwml/luci-app-quickfile package/new/quickfile
+
 # luci-app-airplay2
 git clone https://$github/sbwml/luci-app-airplay2 package/new/airplay2
 
