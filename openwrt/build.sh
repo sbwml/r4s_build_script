@@ -48,14 +48,16 @@ if [ "$(whoami)" = "runner" ] && [ "$git_name" != "private" ]; then
 fi
 
 # private gitea
-export gitea=git.cooluc.com
+export gitea="git.cooluc.com"
 
 # github mirror
 if [ "$isCN" = "CN" ]; then
     # There is currently no stable gh proxy
     export github="github.com"
+    code_mirror="git.cooluc.com"
 else
     export github="github.com"
+    code_mirror="github.com"
 fi
 
 # Check root
@@ -177,7 +179,7 @@ rm -rf openwrt master
 
 # openwrt - releases
 [ "$(whoami)" = "runner" ] && group "source code"
-git clone --depth=1 https://$github/openwrt/openwrt -b $branch
+git clone --depth=1 https://$code_mirror/openwrt/openwrt -b $branch
 
 # immortalwrt master
 git clone https://$github/immortalwrt/packages master/immortalwrt_packages --depth=1
@@ -211,10 +213,10 @@ else
     telephony=";$branch"
 fi
 cat > feeds.conf <<EOF
-src-git packages https://$github/openwrt/packages.git$packages
-src-git luci https://$github/openwrt/luci.git$luci
-src-git routing https://$github/openwrt/routing.git$routing
-src-git telephony https://$github/openwrt/telephony.git$telephony
+src-git packages https://$code_mirror/openwrt/packages.git$packages
+src-git luci https://$code_mirror/openwrt/luci.git$luci
+src-git routing https://$code_mirror/openwrt/routing.git$routing
+src-git telephony https://$code_mirror/openwrt/telephony.git$telephony
 EOF
 
 # Init feeds
