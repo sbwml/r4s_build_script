@@ -31,7 +31,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  };
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
-@@ -3853,7 +3853,8 @@ static void tcp_replace_ts_recent(struct
+@@ -3862,7 +3862,8 @@ static void tcp_replace_ts_recent(struct
  /* This routine deals with acks during a TLP episode and ends an episode by
   * resetting tlp_high_seq. Ref: TLP algorithm in draft-ietf-tcpm-rack
   */
@@ -41,7 +41,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  {
  	struct tcp_sock *tp = tcp_sk(sk);
  
-@@ -3881,6 +3882,11 @@ static void tcp_process_tlp_ack(struct s
+@@ -3890,6 +3891,11 @@ static void tcp_process_tlp_ack(struct s
  			     FLAG_NOT_DUP | FLAG_DATA_SACKED))) {
  		/* Pure dupack: original and TLP probe arrived; no loss */
  		tp->tlp_high_seq = 0;
@@ -53,7 +53,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	}
  }
  
-@@ -4066,7 +4072,7 @@ static int tcp_ack(struct sock *sk, cons
+@@ -4075,7 +4081,7 @@ static int tcp_ack(struct sock *sk, cons
  	tcp_in_ack_event(sk, flag);
  
  	if (tp->tlp_high_seq)
@@ -62,7 +62,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  
  	if (tcp_ack_is_dubious(sk, flag)) {
  		if (!(flag & (FLAG_SND_UNA_ADVANCED |
-@@ -4111,7 +4117,7 @@ no_queue:
+@@ -4120,7 +4126,7 @@ no_queue:
  	tcp_ack_probe(sk);
  
  	if (tp->tlp_high_seq)
