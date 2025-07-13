@@ -6,12 +6,12 @@ Subject: [PATCH 4/5] luci-mod-status: firewall: disable legacy firewall rule
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
- .../resources/view/status/nftables.js         | 14 --------------
- .../share/luci/menu.d/luci-mod-status.json    | 19 ++++++++++++++++---
- 2 files changed, 16 insertions(+), 17 deletions(-)
+ .../resources/view/status/nftables.js         | 14 ------------
+ .../share/luci/menu.d/luci-mod-status.json    | 22 ++++++++++++++++---
+ 2 files changed, 19 insertions(+), 17 deletions(-)
 
 diff --git a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
-index 406f134..9c083e7 100644
+index 0013a3a..bc630b0 100644
 --- a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
 +++ b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
 @@ -675,26 +675,12 @@ return view.extend({
@@ -42,10 +42,10 @@ index 406f134..9c083e7 100644
  			return E('em', _('No nftables ruleset loaded.'));
  
 diff --git a/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json b/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json
-index 79101e9..eceb5e1 100644
+index 79101e9..0b7272d 100644
 --- a/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json
 +++ b/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json
-@@ -39,20 +39,33 @@
+@@ -39,23 +39,39 @@
  		}
  	},
  
@@ -82,6 +82,12 @@ index 79101e9..eceb5e1 100644
  		"action": {
  			"type": "view",
  			"path": "status/iptables"
++		},
++		"depends": {
++			"fs": { "/usr/sbin/iptables": "executable" }
+ 		}
+ 	},
+ 
 -- 
 2.43.5
 
