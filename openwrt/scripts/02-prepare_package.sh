@@ -109,8 +109,7 @@ rm -rf feeds/packages/net/{xray-core,v2ray-core,v2ray-geodata,sing-box}
 git clone https://$github/sbwml/openwrt_helloworld package/new/helloworld -b v5
 
 # openlist
-rm -rf feeds/packages/net/openlist feeds/luci/applications/luci-app-openlist
-git clone https://$github/sbwml/luci-app-openlist package/new/openlist --depth=1
+git clone https://$github/sbwml/luci-app-openlist2 package/new/openlist --depth=1
 
 # netdata
 sed -i 's/syslog/none/g' feeds/packages/admin/netdata/files/netdata.conf
@@ -123,7 +122,7 @@ git clone https://$github/UnblockNeteaseMusic/luci-app-unblockneteasemusic packa
 sed -i 's/解除网易云音乐播放限制/网易云音乐解锁/g' package/new/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
 
 # Theme
-git clone --depth 1 https://$github/sbwml/luci-theme-argon package/new/luci-theme-argon --depth=1
+git clone https://$github/sbwml/luci-theme-argon package/new/luci-theme-argon --depth=1
 
 # Mosdns
 git clone https://$github/sbwml/luci-app-mosdns -b v5 package/new/mosdns --depth=1
