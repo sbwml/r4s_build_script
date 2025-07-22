@@ -216,7 +216,7 @@ if [ "$platform" = "rk3399" ] || [ "$platform" = "rk3568" ]; then
 fi
 
 # emmc-install
-if [ "$platform" = "rk3568" ]; then
+if [ "$platform" = "rk3568" ] || [ "$platform" = "rk3576" ]; then
     mkdir -p files/sbin
     curl -so files/sbin/emmc-install $mirror/openwrt/files/sbin/emmc-install
     chmod 755 files/sbin/emmc-install
