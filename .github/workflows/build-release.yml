@@ -12,6 +12,7 @@ on:
           - 'armv8'
           - 'nanopi-r4s'
           - 'nanopi-r5s'
+          - 'nanopi-r76s'
           - 'netgear_r8500'
           - 'x86_64'
       version:
