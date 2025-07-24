@@ -62,8 +62,7 @@ fi
 
 # Check root
 if [ "$(id -u)" = "0" ]; then
-    echo -e "${RED_COLOR}Building with root user is not supported.${RES}"
-    exit 1
+    export FORCE_UNSAFE_CONFIGURE=1 FORCE=1
 fi
 
 # Start time

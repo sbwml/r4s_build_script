@@ -61,9 +61,10 @@ if [ "$USE_GCC15" = y ]; then
     # gmp
     mkdir -p package/libs/gmp/patches
     curl -s $mirror/openwrt/patch/openwrt-6.x/gcc-15-c23/gmp/001-fix-build-with-gcc-15.patch > package/libs/gmp/patches/001-fix-build-with-gcc-15.patch
-    # htop
-    mkdir -p feeds/packages/admin/htop/patches
-    curl -s $mirror/openwrt/patch/openwrt-6.x/gcc-15-c23/htop/001-Avoid-compilation-issues-with-ncurses-on-GCC-15.patch > feeds/packages/admin/htop/patches/001-Avoid-compilation-issues-with-ncurses-on-GCC-15.patch
+    # htop - 24.10-NEXT
+    HTOP_VERSION=3.4.1
+    HTOP_HASH=af9ec878f831b7c27d33e775c668ec79d569aa781861c995a0fbadc1bdb666cf
+    sed -ri "s/(PKG_VERSION:=)[^\"]*/\1$HTOP_VERSION/;s/(PKG_HASH:=)[^\"]*/\1$HTOP_HASH/" feeds/packages/admin/htop/Makefile
     # libtirpc
     sed -i '/TARGET_CFLAGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/libs/libtirpc/Makefile
     # libsepol
