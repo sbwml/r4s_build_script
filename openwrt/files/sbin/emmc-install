@@ -24,8 +24,8 @@ echo "Starting eMMC Flashing ..."
 # eMMC device
 echo " "
 echo "eMMC info"
-emmc_device=$(parted -l 2>/dev/null | grep -A 1 -E 'Model: MMC .*sd/mmc' | tail -n1 | awk '{print $2}' | sed 's/://g')
-emmc_size=$(parted -l 2>/dev/null | grep -A 1 -E 'Model: MMC .*sd/mmc' | tail -n1 | awk '{print $3}')
+emmc_device=$(parted -s -l 2>/dev/null | grep -A 1 -E 'Model: MMC .*sd/mmc' | tail -n1 | awk '{print $2}' | sed 's/://g')
+emmc_size=$(parted -s -l 2>/dev/null | grep -A 1 -E 'Model: MMC .*sd/mmc' | tail -n1 | awk '{print $3}')
 emmc_device_name=$(echo $emmc_device | awk -F/ '{print $3}')
 emmc_partition=$(fdisk -l 2>/dev/null | grep "$emmc_device_name"p | wc -l)
 if [ "$emmc_partition" -eq 3 ]; then
