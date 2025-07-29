@@ -610,7 +610,7 @@ else
     if [ "$NO_KMOD" != "y" ] && [ "$platform" != "rk3399" ]; then
         cp -a bin/targets/rockchip/armv8*/packages $kmodpkg_name
         rm -f $kmodpkg_name/Packages*
-        cp -a bin/packages/aarch64_generic/base/rtl88*a-firmware*.ipk $kmodpkg_name/
+        cp -a bin/packages/aarch64_generic/base/rtl88*-firmware*.ipk $kmodpkg_name/
         cp -a bin/packages/aarch64_generic/base/natflow*.ipk $kmodpkg_name/
         [ "$OPENWRT_CORE" = "y" ] && {
             cp -a bin/packages/aarch64_generic/base/*3ginfo*.ipk $kmodpkg_name/

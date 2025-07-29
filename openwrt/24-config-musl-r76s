@@ -24,7 +24,7 @@ CONFIG_COREMARK_NUMBER_OF_THREADS=8
 # CONFIG_KERNEL_KALLSYMS is not set
 
 # SDIO WIFI
-CONFIG_PACKAGE_kmod-rtw88-8822cs=y
+CONFIG_PACKAGE_kmod-rtl8822cs=y
 
 ### Video Support
 CONFIG_PACKAGE_kmod-drm-rockchip=y
