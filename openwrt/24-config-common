@@ -229,9 +229,6 @@ CONFIG_PACKAGE_kmod-usb-net-rtl8152-vendor=y
 
 ### Kernel Modules - USB WiFi Adapter
 CONFIG_PACKAGE_kmod-mt7921u=y
-CONFIG_PACKAGE_kmod-rtw88-8812au=y
-CONFIG_PACKAGE_kmod-rtw88-8821au=y
-CONFIG_PACKAGE_kmod-rtw88-8822bu=y
 # CONFIG_PACKAGE_kmod-rtl8812au-ct is not set
 
 ### Utilities
@@ -250,7 +247,6 @@ CONFIG_PACKAGE_gdisk=y
 CONFIG_PACKAGE_htop=y
 CONFIG_PACKAGE_iperf3=y
 CONFIG_PACKAGE_iputils-ping=y
-CONFIG_PACKAGE_less=y
 CONFIG_PACKAGE_lrzsz=y
 CONFIG_PACKAGE_lsblk=y
 CONFIG_PACKAGE_lscpu=y
@@ -282,22 +278,6 @@ CONFIG_PACKAGE_xz-utils=y
 CONFIG_PACKAGE_xz=y
 CONFIG_PACKAGE_zip=y
 CONFIG_PACKAGE_zoneinfo-asia=y
-
-### Shadow Utilities
-CONFIG_PACKAGE_shadow-gpasswd=y
-CONFIG_PACKAGE_shadow-groupadd=y
-CONFIG_PACKAGE_shadow-groupdel=y
-CONFIG_PACKAGE_shadow-groupmod=y
-CONFIG_PACKAGE_shadow-groups=y
-CONFIG_PACKAGE_shadow-login=y
-CONFIG_PACKAGE_shadow-nologin=y
-CONFIG_PACKAGE_shadow-passwd=y
-CONFIG_PACKAGE_shadow-su=y
-CONFIG_PACKAGE_shadow-useradd=y
-CONFIG_PACKAGE_shadow-userdel=y
-CONFIG_PACKAGE_shadow-usermod=y
-CONFIG_PACKAGE_shadow-utils=y
-# CONFIG_shadow-all is not set
 
 ### GNU Core Utilities
 CONFIG_PACKAGE_coreutils=y
