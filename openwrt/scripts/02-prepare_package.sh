@@ -128,7 +128,7 @@ git clone https://$github/sbwml/luci-theme-argon package/new/luci-theme-argon --
 git clone https://$github/sbwml/luci-app-mosdns -b v5 package/new/mosdns --depth=1
 
 # OpenAppFilter
-git clone https://$github/sbwml/OpenAppFilter --depth=1 package/new/OpenAppFilter
+git clone https://$github/sbwml/OpenAppFilter --depth=1 package/new/OpenAppFilter -b v6
 
 # iperf3
 sed -i "s/D_GNU_SOURCE/D_GNU_SOURCE -funroll-loops/g" feeds/packages/net/iperf3/Makefile
