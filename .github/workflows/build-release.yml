@@ -194,12 +194,7 @@ jobs:
       working-directory: /builder
       run: |
         mkdir -p rom info
-        if [ "${{ github.event.inputs.device }}" = "nanopi-r4s" ]; then
-          cp -a openwrt/bin/targets/rockchip/*/*.img.gz rom/
-          cp -a openwrt/bin/targets/rockchip/*/*-r4s.manifest info/manifest.txt
-          cp -a openwrt/bin/targets/rockchip/*/config.buildinfo info/config.buildinfo
-          cd rom && sha256sum *gz > ../info/sha256sums.txt
-        elif [ "${{ github.event.inputs.device }}" = "nanopi-r5s" ]; then
+        if [[ "${{ github.event.inputs.device }}" == "nanopi-*" ]]; then
           cp -a openwrt/bin/targets/rockchip/*/*.img.gz rom/
           cp -a openwrt/bin/targets/rockchip/*/*.manifest info/manifest.txt
           cp -a openwrt/bin/targets/rockchip/*/config.buildinfo info/config.buildinfo
