@@ -420,6 +420,9 @@ if [ "$USE_GCC15" = "y" ] && [ "$ENABLE_CCACHE" = "y" ]; then
     tools_suffix="_ccache"
 fi
 
+# nanopi-r76s
+[ "$platform" = "rk3576" ] && sed -i '/samba4/d' .config
+
 # Toolchain Cache
 if [ "$BUILD_FAST" = "y" ]; then
     [ "$ENABLE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
