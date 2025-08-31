@@ -194,7 +194,7 @@ jobs:
       working-directory: /builder
       run: |
         mkdir -p rom info
-        if [[ "${{ github.event.inputs.device }}" == "nanopi-*" ]]; then
+        if [[ "${{ github.event.inputs.device }}" == nanopi-* ]]; then
           cp -a openwrt/bin/targets/rockchip/*/*.img.gz rom/
           cp -a openwrt/bin/targets/rockchip/*/*.manifest info/manifest.txt
           cp -a openwrt/bin/targets/rockchip/*/config.buildinfo info/config.buildinfo
