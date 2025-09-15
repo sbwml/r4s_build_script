@@ -28,18 +28,6 @@ sed -i '/KERNEL_PATCHVER/a\KERNEL_TESTING_PATCHVER:=6.6' target/linux/x86/Makefi
 curl -s $mirror/openwrt/patch/openwrt-6.x/x86/base-files/etc/board.d/01_leds > target/linux/x86/base-files/etc/board.d/01_leds
 curl -s $mirror/openwrt/patch/openwrt-6.x/x86/base-files/etc/board.d/02_network > target/linux/x86/base-files/etc/board.d/02_network
 
-# bcm53xx - target
-rm -rf target/linux/bcm53xx
-if [ "$(whoami)" = "sbwml" ]; then
-    git clone https://$gitea/sbwml/target_linux_bcm53xx target/linux/bcm53xx
-    git clone https://$gitea/sbwml/brcmfmac-firmware-4366c-pcie package/firmware/brcmfmac-firmware-4366c-pcie
-    git clone https://$gitea/sbwml/brcmfmac-firmware-4366b-pcie package/firmware/brcmfmac-firmware-4366b-pcie
-else
-    git clone https://"$git_name":"$git_password"@$gitea/sbwml/target_linux_bcm53xx target/linux/bcm53xx
-    git clone https://"$git_name":"$git_password"@$gitea/sbwml/brcmfmac-firmware-4366c-pcie package/firmware/brcmfmac-firmware-4366c-pcie
-    git clone https://"$git_name":"$git_password"@$gitea/sbwml/brcmfmac-firmware-4366b-pcie package/firmware/brcmfmac-firmware-4366b-pcie
-fi
-
 # armsr/armv8
 rm -rf target/linux/armsr
 git clone https://nanopi:nanopi@$gitea/sbwml/target_linux_armsr target/linux/armsr -b main

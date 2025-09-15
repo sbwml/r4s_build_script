@@ -13,7 +13,6 @@ on:
           - 'nanopi-r4s'
           - 'nanopi-r5s'
           - 'nanopi-r76s'
-          - 'netgear_r8500'
           - 'x86_64'
       version:
         description: 'Select the build version'
@@ -206,11 +205,6 @@ jobs:
           cp -a openwrt/bin/targets/x86/*/*-x86-64-generic.manifest info/manifest.txt
           cp -a openwrt/bin/targets/x86/*/config.buildinfo info/config.buildinfo
           cd rom && sha256sum *gz > ../info/sha256sums.txt
-        elif [ "${{ github.event.inputs.device }}" = "netgear_r8500" ]; then
-          cp -a openwrt/bin/targets/bcm53xx/generic/*-bcm53xx-generic-netgear_r8500-squashfs.chk rom/
-          cp -a openwrt/bin/targets/bcm53xx/generic/*.manifest info/manifest.txt
-          cp -a openwrt/bin/targets/bcm53xx/generic/config.buildinfo info/config.buildinfo
-          cd rom && sha256sum * > ../info/sha256sums.txt
         elif [ "${{ github.event.inputs.device }}" = "armv8" ]; then
           tar zcf rom/u-boot-qemu_armv8.tar.gz -C openwrt/bin/targets/armsr/armv8*/ ./u-boot-qemu_armv8
           cp -a openwrt/bin/targets/armsr/armv8*/*-generic-initramfs-kernel.bin rom/

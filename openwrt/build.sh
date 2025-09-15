@@ -77,7 +77,7 @@ if curl --help | grep progress-bar >/dev/null 2>&1; then
     CURL_BAR="--progress-bar";
 fi
 
-SUPPORTED_BOARDS="nanopi-r4s nanopi-r5s nanopi-r76s x86_64 netgear_r8500 armv8"
+SUPPORTED_BOARDS="nanopi-r4s nanopi-r5s nanopi-r76s x86_64 armv8"
 if [ -z "$1" ] || ! echo "$SUPPORTED_BOARDS" | grep -qw "$2"; then
     echo -e "\n${RED_COLOR}Building type not specified or unsupported board: '$2'.${RES}\n"
     echo -e "Usage:\n"
@@ -121,10 +121,6 @@ case "$2" in
         platform="rk3576"
         toolchain_arch="aarch64_generic"
         ;;
-    netgear_r8500)
-        platform="bcm53xx"
-        toolchain_arch="arm_cortex-a9"
-        ;;
     x86_64)
         platform="x86_64"
         toolchain_arch="x86_64"
@@ -162,10 +158,6 @@ case "$platform" in
     armv8)
         echo -e "${GREEN_COLOR}Model: armsr/armv8${RES}"
         [ "$1" = "rc2" ] && model="armv8"
-        ;;
-    bcm53xx)
-        echo -e "${GREEN_COLOR}Model: netgear_r8500${RES}"
-        [ "$LAN" = "10.0.0.1" ] && export LAN="192.168.1.1"
         ;;
     rk3568)
         echo -e "${GREEN_COLOR}Model: nanopi-r5s/r5c${RES}"
@@ -315,13 +307,6 @@ rm -rf ../master
 # Load devices Config
 if [ "$platform" = "x86_64" ]; then
     curl -s $mirror/openwrt/24-config-musl-x86 > .config
-elif [ "$platform" = "bcm53xx" ]; then
-    if [ "$MINIMAL_BUILD" = "y" ]; then
-        curl -s $mirror/openwrt/24-config-musl-r8500-minimal > .config
-    else
-        curl -s $mirror/openwrt/24-config-musl-r8500 > .config
-    fi
-    sed -i '1i\# CONFIG_PACKAGE_kselftests-bpf is not set\n# CONFIG_PACKAGE_perf is not set\n' .config
 elif [ "$platform" = "rk3568" ]; then
     curl -s $mirror/openwrt/24-config-musl-r5s > .config
 elif [ "$platform" = "rk3576" ]; then
@@ -334,10 +319,10 @@ fi
 
 # config-common
 if [ "$MINIMAL_BUILD" = "y" ]; then
-    [ "$platform" != "bcm53xx" ] && curl -s $mirror/openwrt/24-config-minimal-common >> .config
+    curl -s $mirror/openwrt/24-config-minimal-common >> .config
     echo 'VERSION_TYPE="minimal"' >> package/base-files/files/usr/lib/os-release
 else
-    [ "$platform" != "bcm53xx" ] && curl -s $mirror/openwrt/24-config-common >> .config
+    curl -s $mirror/openwrt/24-config-common >> .config
     [ "$platform" = "armv8" ] && sed -i '/DOCKER/Id' .config
 fi
 
@@ -564,45 +549,6 @@ elif [ "$platform" = "armv8" ]; then
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
       "url": "https://github.com/sbwml/builder/releases/download/v$VERSION/openwrt-$VERSION-armsr-armv8-generic-squashfs-combined-efi.img.gz"
-    }
-  ]
-}
-EOF
-    fi
-    exit 0
-elif [ "$platform" = "bcm53xx" ]; then
-    if [ "$NO_KMOD" != "y" ]; then
-        cp -a bin/targets/bcm53xx/generic/packages $kmodpkg_name
-        rm -f $kmodpkg_name/Packages*
-        cp -a bin/packages/arm_cortex-a9/base/rtl88*a-firmware*.ipk $kmodpkg_name/
-        cp -a bin/packages/arm_cortex-a9/base/natflow*.ipk $kmodpkg_name/
-        [ "$OPENWRT_CORE" = "y" ] && {
-            cp -a bin/packages/arm_cortex-a9/base/*3ginfo*.ipk $kmodpkg_name/
-            cp -a bin/packages/arm_cortex-a9/base/*modemband*.ipk $kmodpkg_name/
-            cp -a bin/packages/arm_cortex-a9/base/*sms-tool*.ipk $kmodpkg_name/
-            cp -a bin/packages/arm_cortex-a9/base/*quectel*.ipk $kmodpkg_name/
-        }
-        bash kmod-sign $kmodpkg_name
-        tar zcf bcm53xx-$kmodpkg_name.tar.gz $kmodpkg_name
-        rm -rf $kmodpkg_name
-    fi
-    # OTA json
-    if [ "$1" = "rc2" ]; then
-        mkdir -p ota
-        if [ "$MINIMAL_BUILD" = "y" ]; then
-            OTA_URL="https://r8500.cooluc.com/d/minimal/openwrt-24.10"
-        else
-            OTA_URL="https://github.com/sbwml/builder/releases/download"
-        fi
-        VERSION=$(sed 's/v//g' version.txt)
-        SHA256=$(sha256sum bin/targets/bcm53xx/generic/*-bcm53xx-generic-netgear_r8500-squashfs.chk | awk '{print $1}')
-        cat > ota/fw.json <<EOF
-{
-  "netgear,r8500": [
-    {
-      "build_date": "$CURRENT_DATE",
-      "sha256sum": "$SHA256",
-      "url": "$OTA_URL/v$VERSION/openwrt-$VERSION-bcm53xx-generic-netgear_r8500-squashfs.chk"
     }
   ]
 }

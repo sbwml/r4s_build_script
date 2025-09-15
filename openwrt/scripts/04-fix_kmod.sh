@@ -66,12 +66,6 @@ popd
 # routing - batman-adv fix build with linux-6.12
 curl -s $mirror/openwrt/patch/packages-patches/batman-adv/901-fix-linux-6.12rc2-builds.patch > feeds/routing/batman-adv/patches/901-fix-linux-6.12rc2-builds.patch
 
-# bcm53xx
-if [ "$platform" = "bcm53xx" ]; then
-    # libpfring
-    sed -i '/CONFIGURE_VARS +=/iEXTRA_CFLAGS += -Wno-int-conversion\n' feeds/packages/libs/libpfring/Makefile
-fi
-
 # clang
 if [ "$KERNEL_CLANG_LTO" = "y" ]; then
     # xtables-addons module
