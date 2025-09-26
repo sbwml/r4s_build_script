@@ -208,6 +208,7 @@ print_status "ENABLE_LOCAL_KMOD" "$ENABLE_LOCAL_KMOD"
 print_status "BUILD_FAST"        "$BUILD_FAST"
 print_status "ENABLE_CCACHE"     "$ENABLE_CCACHE"
 print_status "MINIMAL_BUILD"     "$MINIMAL_BUILD"
+print_status "STD_BUILD"         "$STD_BUILD"
 print_status "KERNEL_CLANG_LTO"  "$KERNEL_CLANG_LTO" "$GREEN_COLOR" "$YELLOW_COLOR" "\n"
 
 # clean old files
@@ -321,6 +322,8 @@ fi
 if [ "$MINIMAL_BUILD" = "y" ]; then
     curl -s $mirror/openwrt/24-config-minimal-common >> .config
     echo 'VERSION_TYPE="minimal"' >> package/base-files/files/usr/lib/os-release
+elif [ "$STD_BUILD" = "y" ]; then
+    curl -s $mirror/openwrt/24-config-std-common >> .config
 else
     curl -s $mirror/openwrt/24-config-common >> .config
     [ "$platform" = "armv8" ] && sed -i '/DOCKER/Id' .config
