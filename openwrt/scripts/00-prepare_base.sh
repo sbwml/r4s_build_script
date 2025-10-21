@@ -332,13 +332,6 @@ sed -i "s/openwrt.org/www.qq.com/g" feeds/luci/modules/luci-mod-network/htdocs/l
 # luci-compat - remove extra line breaks from description
 sed -i '/<br \/>/d' feeds/luci/modules/luci-compat/luasrc/view/cbi/full_valuefooter.htm
 
-# odhcpd RFC-9096
-mkdir -p package/network/services/odhcpd/patches
-curl -s $mirror/openwrt/patch/odhcpd/001-odhcpd-RFC-9096-compliance-openwrt-24.10.patch > package/network/services/odhcpd/patches/001-odhcpd-RFC-9096-compliance.patch
-pushd feeds/luci
-    curl -s $mirror/openwrt/patch/odhcpd/luci-mod-network-add-option-for-ipv6-max-plt-vlt.patch | patch -p1
-popd
-
 # urngd - 2020-01-21
 rm -rf package/system/urngd
 git clone https://$github/sbwml/package_system_urngd package/system/urngd
