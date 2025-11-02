@@ -91,7 +91,6 @@ define KernelPackage/fs-smbfs-common
   KCONFIG:=\
 	CONFIG_SMBFS
   FILES:= \
-	$(LINUX_DIR)/fs/smb/common/cifs_arc4.ko \
 	$(LINUX_DIR)/fs/smb/common/cifs_md4.ko
 endef
 

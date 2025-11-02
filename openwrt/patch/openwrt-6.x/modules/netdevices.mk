@@ -223,6 +223,18 @@ endef
 
 $(eval $(call KernelPackage,et131x))
 
+
+define KernelPackage/phy-package
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  TITLE:=PHY Device support and infrastructure
+  KCONFIG:=CONFIG_PHY_PACKAGE
+  FILES:=$(LINUX_DIR)/drivers/net/phy/phy_package.ko
+  AUTOLOAD:=$(call AutoProbe,phy_package)
+endef
+
+$(eval $(call KernelPackage,phy-package))
+
+
 define KernelPackage/phy-microchip
    SUBMENU:=$(NETWORK_DEVICES_MENU)
    TITLE:=Microchip Ethernet PHY driver
@@ -432,7 +444,7 @@ define KernelPackage/phy-micrel
    SUBMENU:=$(NETWORK_DEVICES_MENU)
    TITLE:=Micrel PHYs
    KCONFIG:=CONFIG_MICREL_PHY
-   DEPENDS:=+kmod-libphy +kmod-ptp
+   DEPENDS:=+kmod-libphy +kmod-ptp +kmod-phy-package
    FILES:=$(LINUX_DIR)/drivers/net/phy/micrel.ko
    AUTOLOAD:=$(call AutoLoad,18,micrel,1)
 endef
@@ -513,7 +525,7 @@ $(eval $(call KernelPackage,phy-airoha-en8811h))
 define KernelPackage/phy-aquantia
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Aquantia Ethernet PHYs
-  DEPENDS:=+kmod-libphy +kmod-hwmon-core +kmod-lib-crc-ccitt +LINUX_6_12:kmod-lib-crc-itu-t
+  DEPENDS:=+kmod-libphy +kmod-hwmon-core +kmod-lib-crc-ccitt +kmod-lib-crc-itu-t
   KCONFIG:=CONFIG_AQUANTIA_PHY
   FILES:=$(LINUX_DIR)/drivers/net/phy/aquantia/aquantia.ko
   AUTOLOAD:=$(call AutoLoad,18,aquantia,1)
@@ -1079,7 +1091,7 @@ $(eval $(call KernelPackage,igbvf))
 define KernelPackage/ixgbe
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Intel(R) 82598/82599 PCI-Express 10 Gigabit Ethernet support
-  DEPENDS:=@PCI_SUPPORT +kmod-mdio +kmod-ptp +kmod-hwmon-core +kmod-libphy +kmod-mdio-devres
+  DEPENDS:=@PCI_SUPPORT +kmod-mdio +kmod-ptp +kmod-hwmon-core +kmod-libphy +kmod-mdio-devres +kmod-libie-fwlog +kmod-libie-adminq
   KCONFIG:=CONFIG_IXGBE \
     CONFIG_IXGBE_VXLAN=n \
     CONFIG_IXGBE_HWMON=y \
@@ -1117,7 +1129,7 @@ $(eval $(call KernelPackage,ixgbevf))
 define KernelPackage/i40e
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Intel(R) Ethernet Controller XL710 Family support
-  DEPENDS:=@PCI_SUPPORT +kmod-mdio +kmod-ptp +kmod-hwmon-core +kmod-libphy +LINUX_6_12:kmod-libie
+  DEPENDS:=@PCI_SUPPORT +kmod-mdio +kmod-ptp +kmod-hwmon-core +kmod-libphy +kmod-libie +kmod-libie-adminq
   KCONFIG:=CONFIG_I40E \
     CONFIG_I40E_VXLAN=n \
     CONFIG_I40E_HWMON=y \
@@ -1136,7 +1148,7 @@ $(eval $(call KernelPackage,i40e))
 define KernelPackage/iavf
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Intel(R) Ethernet Adaptive Virtual Function support
-  DEPENDS:=@PCI_SUPPORT +LINUX_6_12:kmod-libie +LINUX_6_12:kmod-libeth
+  DEPENDS:=@PCI_SUPPORT +kmod-libie +kmod-libeth +kmod-libie-adminq +kmod-ptp
   KCONFIG:= \
        CONFIG_I40EVF \
        CONFIG_IAVF
@@ -1984,6 +1996,7 @@ $(eval $(call KernelPackage,lan743x))
 define KernelPackage/amazon-ena
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Elastic Network Adapter (for Amazon AWS)
+  DEPENDS:=+kmod-ptp
   KCONFIG:=CONFIG_ENA_ETHERNET
   FILES:=$(LINUX_DIR)/drivers/net/ethernet/amazon/ena/ena.ko
   AUTOLOAD:=$(call AutoLoad,12,ena)

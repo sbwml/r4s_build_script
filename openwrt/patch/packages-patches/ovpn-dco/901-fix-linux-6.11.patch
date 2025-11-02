@@ -1,9 +1,0 @@
---- a/drivers/net/ovpn-dco/main.c
-+++ b/drivers/net/ovpn-dco/main.c
-@@ -268,4 +268,6 @@ MODULE_AUTHOR(DRV_COPYRIGHT);
- MODULE_LICENSE("GPL");
- MODULE_VERSION(DRV_VERSION);
- MODULE_ALIAS_RTNL_LINK(DRV_NAME);
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 11, 0)
- MODULE_ALIAS_GENL_FAMILY(OVPN_NL_NAME);
-+#endif

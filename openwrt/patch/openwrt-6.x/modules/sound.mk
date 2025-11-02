@@ -370,9 +370,9 @@ define KernelPackage/sound-hda-core
 	CONFIG_SND_HDA_PATCH_LOADER=n \
 	CONFIG_SND_HDA_GENERIC
   FILES:= \
-	$(LINUX_DIR)/sound/hda/snd-hda-core.ko \
-	$(LINUX_DIR)/sound/pci/hda/snd-hda-codec.ko \
-	$(LINUX_DIR)/sound/pci/hda/snd-hda-codec-generic.ko
+	$(LINUX_DIR)/sound/hda/core/snd-hda-core.ko \
+	$(LINUX_DIR)/sound/hda/common/snd-hda-codec.ko \
+	$(LINUX_DIR)/sound/hda/codecs/snd-hda-codec-generic.ko
   AUTOLOAD:=$(call AutoProbe,snd-hda-core snd-hda-codec snd-hda-codec-generic)
   $(call AddDepends/sound,+kmod-regmap-core)
 endef
@@ -387,10 +387,31 @@ define KernelPackage/sound-hda-codec-realtek
   SUBMENU:=$(SOUND_MENU)
   TITLE:= HD Audio Realtek Codec
   KCONFIG:= \
-	CONFIG_SND_HDA_CODEC_REALTEK
+	CONFIG_SND_HDA_CODEC_REALTEK \
+	CONFIG_SND_HDA_CODEC_REALTEK_LIB \
+	CONFIG_SND_HDA_CODEC_ALC260 \
+	CONFIG_SND_HDA_CODEC_ALC262 \
+	CONFIG_SND_HDA_CODEC_ALC268 \
+	CONFIG_SND_HDA_CODEC_ALC269 \
+	CONFIG_SND_HDA_CODEC_ALC662 \
+	CONFIG_SND_HDA_CODEC_ALC680 \
+	CONFIG_SND_HDA_CODEC_ALC861 \
+	CONFIG_SND_HDA_CODEC_ALC861VD \
+	CONFIG_SND_HDA_CODEC_ALC880 \
+	CONFIG_SND_HDA_CODEC_ALC882
   FILES:= \
-	$(LINUX_DIR)/sound/pci/hda/snd-hda-codec-realtek.ko \
-	$(LINUX_DIR)/sound/pci/hda/snd-hda-scodec-component.ko@ge6.12
+	$(LINUX_DIR)/sound/hda/codecs/realtek/snd-hda-codec-realtek-lib.ko \
+	$(LINUX_DIR)/sound/hda/codecs/realtek/snd-hda-codec-alc260.ko \
+	$(LINUX_DIR)/sound/hda/codecs/realtek/snd-hda-codec-alc262.ko \
+	$(LINUX_DIR)/sound/hda/codecs/realtek/snd-hda-codec-alc268.ko \
+	$(LINUX_DIR)/sound/hda/codecs/realtek/snd-hda-codec-alc269.ko \
+	$(LINUX_DIR)/sound/hda/codecs/realtek/snd-hda-codec-alc662.ko \
+	$(LINUX_DIR)/sound/hda/codecs/realtek/snd-hda-codec-alc680.ko \
+	$(LINUX_DIR)/sound/hda/codecs/realtek/snd-hda-codec-alc861.ko \
+	$(LINUX_DIR)/sound/hda/codecs/realtek/snd-hda-codec-alc861vd.ko \
+	$(LINUX_DIR)/sound/hda/codecs/realtek/snd-hda-codec-alc880.ko \
+	$(LINUX_DIR)/sound/hda/codecs/realtek/snd-hda-codec-alc882.ko \
+	$(LINUX_DIR)/sound/hda/codecs/side-codecs/snd-hda-scodec-component.ko
   AUTOLOAD:=$(call AutoProbe,snd-hda-codec-realtek)
   $(call AddDepends/sound,kmod-sound-hda-core)
 endef
@@ -407,7 +428,7 @@ define KernelPackage/sound-hda-codec-cmedia
   KCONFIG:= \
 	CONFIG_SND_HDA_CODEC_CMEDIA
   FILES:= \
-	$(LINUX_DIR)/sound/pci/hda/snd-hda-codec-cmedia.ko
+	$(LINUX_DIR)/sound/hda/codecs/snd-hda-codec-cmedia.ko
   AUTOLOAD:=$(call AutoProbe,snd-hda-codec-cmedia)
   $(call AddDepends/sound,kmod-sound-hda-core)
 endef
@@ -424,7 +445,7 @@ define KernelPackage/sound-hda-codec-analog
   KCONFIG:= \
 	CONFIG_SND_HDA_CODEC_ANALOG
   FILES:= \
-	$(LINUX_DIR)/sound/pci/hda/snd-hda-codec-analog.ko
+	$(LINUX_DIR)/sound/hda/codecs/snd-hda-codec-analog.ko
   AUTOLOAD:=$(call AutoProbe,snd-hda-codec-analog)
   $(call AddDepends/sound,kmod-sound-hda-core)
 endef
@@ -441,7 +462,7 @@ define KernelPackage/sound-hda-codec-idt
   KCONFIG:= \
 	CONFIG_SND_HDA_CODEC_SIGMATEL
   FILES:= \
-	$(LINUX_DIR)/sound/pci/hda/snd-hda-codec-idt.ko
+	$(LINUX_DIR)/sound/hda/codecs/snd-hda-codec-idt.ko
   AUTOLOAD:=$(call AutoProbe,snd-hda-codec-idt)
   $(call AddDepends/sound,kmod-sound-hda-core)
 endef
@@ -458,7 +479,7 @@ define KernelPackage/sound-hda-codec-si3054
   KCONFIG:= \
 	CONFIG_SND_HDA_CODEC_SI3054
   FILES:= \
-	$(LINUX_DIR)/sound/pci/hda/snd-hda-codec-si3054.ko
+	$(LINUX_DIR)/sound/hda/codecs/snd-hda-codec-si3054.ko
   AUTOLOAD:=$(call AutoProbe,snd-hda-codec-si3054)
   $(call AddDepends/sound,kmod-sound-hda-core)
 endef
@@ -473,9 +494,14 @@ define KernelPackage/sound-hda-codec-cirrus
   SUBMENU:=$(SOUND_MENU)
   TITLE:=HD Audio Cirrus Logic Codec
   KCONFIG:= \
-	CONFIG_SND_HDA_CODEC_CIRRUS
+	CONFIG_SND_HDA_CODEC_CIRRUS \
+	CONFIG_SND_HDA_CODEC_CS420X \
+	CONFIG_SND_HDA_CODEC_CS421X \
+	CONFIG_SND_HDA_CODEC_CS8409
   FILES:= \
-	$(LINUX_DIR)/sound/pci/hda/snd-hda-codec-cirrus.ko
+	$(LINUX_DIR)/sound/hda/codecs/cirrus/snd-hda-codec-cs420x.ko \
+	$(LINUX_DIR)/sound/hda/codecs/cirrus/snd-hda-codec-cs421x.ko \
+	$(LINUX_DIR)/sound/hda/codecs/cirrus/snd-hda-codec-cs8409.ko
   AUTOLOAD:=$(call AutoProbe,snd-hda-codec-cirrus)
   $(call AddDepends/sound,kmod-sound-hda-core)
 endef
@@ -492,7 +518,7 @@ define KernelPackage/sound-hda-codec-ca0110
   KCONFIG:= \
 	CONFIG_SND_HDA_CODEC_CA0110
   FILES:= \
-	$(LINUX_DIR)/sound/pci/hda/snd-hda-codec-ca0110.ko
+	$(LINUX_DIR)/sound/hda/codecs/snd-hda-codec-ca0110.ko
   AUTOLOAD:=$(call AutoProbe,snd-hda-codec-ca0110)
   $(call AddDepends/sound,kmod-sound-hda-core)
 endef
@@ -510,7 +536,7 @@ define KernelPackage/sound-hda-codec-ca0132
 	CONFIG_SND_HDA_CODEC_CA0132 \
 	CONFIG_SND_HDA_CODEC_CA0132_DSP=n
   FILES:= \
-	$(LINUX_DIR)/sound/pci/hda/snd-hda-codec-ca0132.ko
+	$(LINUX_DIR)/sound/hda/codecs/snd-hda-codec-ca0132.ko
   AUTOLOAD:=$(call AutoProbe,snd-hda-codec-ca0132)
   $(call AddDepends/sound,kmod-sound-hda-core)
 endef
@@ -527,7 +553,7 @@ define KernelPackage/sound-hda-codec-conexant
   KCONFIG:= \
 	CONFIG_SND_HDA_CODEC_CONEXANT
   FILES:= \
-	$(LINUX_DIR)/sound/pci/hda/snd-hda-codec-conexant.ko
+	$(LINUX_DIR)/sound/hda/codecs/snd-hda-codec-conexant.ko
   AUTOLOAD:=$(call AutoProbe,snd-hda-codec-conexant)
   $(call AddDepends/sound,kmod-sound-hda-core)
 endef
@@ -544,7 +570,7 @@ define KernelPackage/sound-hda-codec-via
   KCONFIG:= \
 	CONFIG_SND_HDA_CODEC_VIA
   FILES:= \
-	$(LINUX_DIR)/sound/pci/hda/snd-hda-codec-via.ko
+	$(LINUX_DIR)/sound/hda/codecs/snd-hda-codec-via.ko
   AUTOLOAD:=$(call AutoProbe,snd-hda-codec-via)
   $(call AddDepends/sound,kmod-sound-hda-core)
 endef
@@ -561,7 +587,7 @@ define KernelPackage/sound-hda-codec-hdmi
   KCONFIG:= \
 	CONFIG_SND_HDA_CODEC_HDMI
   FILES:= \
-	$(LINUX_DIR)/sound/pci/hda/snd-hda-codec-hdmi.ko
+	$(LINUX_DIR)/sound/hda/codecs/hdmi/snd-hda-codec-hdmi.ko
   AUTOLOAD:=$(call AutoProbe,snd-hda-codec-hdmi)
   $(call AddDepends/sound,kmod-sound-hda-core)
 endef
@@ -580,8 +606,8 @@ define KernelPackage/sound-hda-intel
 	CONFIG_SOUND_PCI \
 	CONFIG_SND_HDA_INTEL
   FILES:= \
-	$(LINUX_DIR)/sound/pci/hda/snd-hda-intel.ko \
-	$(LINUX_DIR)/sound/hda/snd-intel-dspcfg.ko
+	$(LINUX_DIR)/sound/hda/controllers/snd-hda-intel.ko \
+	$(LINUX_DIR)/sound/hda/core/snd-intel-dspcfg.ko
   AUTOLOAD:=$(call AutoProbe,snd-hda-intel)
   $(call AddDepends/sound,kmod-sound-hda-core)
 endef

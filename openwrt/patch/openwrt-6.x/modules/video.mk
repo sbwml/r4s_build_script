@@ -289,6 +289,17 @@ endef
 $(eval $(call KernelPackage,multimedia-input))
 
 
+define KernelPackage/cec-core
+  SUBMENU:=$(VIDEO_MENU)
+  TITLE:=CEC support
+  KCONFIG:=CONFIG_CEC_CORE
+  FILES:=$(LINUX_DIR)/drivers/media/cec/core/cec.ko
+  AUTOLOAD:=$(call AutoProbe,cec)
+endef
+
+$(eval $(call KernelPackage,cec-core))
+
+
 define KernelPackage/drm
   SUBMENU:=$(VIDEO_MENU)
   TITLE:=Direct Rendering Manager (DRM) support
@@ -308,6 +319,17 @@ endef
 
 $(eval $(call KernelPackage,drm))
 
+define KernelPackage/drm-client-lib
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  TITLE:=Direct Rendering Manager
+  DEPENDS:=+kmod-drm +kmod-drm-kms-helper
+  KCONFIG:=CONFIG_DRM_CLIENT_LIB
+  FILES:=$(LINUX_DIR)/drivers/gpu/drm/clients/drm_client_lib.ko
+  AUTOLOAD:=$(call AutoProbe,drm_client_lib)
+endef
+
+$(eval $(call KernelPackage,drm-client-lib))
+
 define KernelPackage/drm-buddy
   SUBMENU:=$(VIDEO_MENU)
   TITLE:=A page based buddy allocator
@@ -326,7 +348,7 @@ $(eval $(call KernelPackage,drm-buddy))
 define KernelPackage/drm-display-helper
   SUBMENU:=$(VIDEO_MENU)
   TITLE:=DRM helpers for display adapters drivers
-  DEPENDS:=@DISPLAY_SUPPORT +kmod-drm-kms-helper
+  DEPENDS:=@DISPLAY_SUPPORT +kmod-drm-kms-helper +kmod-cec-core
   KCONFIG:=CONFIG_DRM_DISPLAY_HELPER
   FILES:=$(LINUX_DIR)/drivers/gpu/drm/display/drm_display_helper.ko
   AUTOLOAD:=$(call AutoProbe,drm_display_helper)
@@ -475,7 +497,8 @@ define KernelPackage/drm-amdgpu
 	CONFIG_DEBUG_KERNEL_DC=n
   FILES:=$(LINUX_DIR)/drivers/gpu/drm/amd/amdgpu/amdgpu.ko \
 	$(LINUX_DIR)/drivers/gpu/drm/scheduler/gpu-sched.ko \
-	$(LINUX_DIR)/drivers/gpu/drm/amd/amdxcp/amdxcp.ko
+	$(LINUX_DIR)/drivers/gpu/drm/amd/amdxcp/amdxcp.ko \
+	$(LINUX_DIR)/drivers/gpu/drm/drm_panel_backlight_quirks.ko
   AUTOLOAD:=$(call AutoProbe,amdgpu)
 endef
 
@@ -616,7 +639,7 @@ $(eval $(call KernelPackage,drm-imx-ldb))
 define KernelPackage/drm-panel-mipi-dbi
   SUBMENU:=$(VIDEO_MENU)
   TITLE:=Generic MIPI DBI LCD panel
-  DEPENDS:=+kmod-drm-mipi-dbi +kmod-drm-dma-helper
+  DEPENDS:=+kmod-drm-mipi-dbi +kmod-drm-dma-helper +kmod-drm-client-lib
   KCONFIG:=CONFIG_DRM_PANEL_MIPI_DBI \
 	CONFIG_DRM_FBDEV_EMULATION=y \
 	CONFIG_DRM_FBDEV_OVERALLOC=100
@@ -695,7 +718,7 @@ define KernelPackage/drm-radeon
   TITLE:=Radeon DRM support
   DEPENDS:=@TARGET_x86 @DISPLAY_SUPPORT +kmod-backlight +kmod-drm-kms-helper \
 	+kmod-drm-ttm +kmod-drm-ttm-helper +kmod-i2c-algo-bit +radeon-firmware \
-	+kmod-drm-display-helper +kmod-acpi-video +kmod-drm-suballoc-helper
+	+kmod-drm-display-helper +kmod-acpi-video +kmod-drm-suballoc-helper +kmod-drm-exec
   KCONFIG:=CONFIG_DRM_RADEON
   FILES:=$(LINUX_DIR)/drivers/gpu/drm/radeon/radeon.ko
   AUTOLOAD:=$(call AutoProbe,radeon)

@@ -1,0 +1,22 @@
+--- a/nat46/modules/nat46-module.c
++++ b/nat46/modules/nat46-module.c
+@@ -48,7 +48,7 @@
+ #define NAT46_CONTROL_PROC_NAME "control"
+ 
+ #ifndef NAT46_VERSION
+-#define NAT46_VERSION __DATE__ " " __TIME__
++#define NAT46_VERSION "Unknown Version"
+ #endif
+ 
+ MODULE_LICENSE("GPL");
+--- a/nat46/modules/nat46-netdev.c
++++ b/nat46/modules/nat46-netdev.c
+@@ -113,7 +113,7 @@ static void nat46_netdev_setup(struct ne
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(6, 12, 0)
+ 	dev->features = NETIF_F_NETNS_LOCAL;
+ #else
+-	dev->features = dev->netns_local;
++	dev->features = dev->netns_immutable;
+ #endif
+ 	dev->flags = IFF_NOARP | IFF_POINTOPOINT;
+ }

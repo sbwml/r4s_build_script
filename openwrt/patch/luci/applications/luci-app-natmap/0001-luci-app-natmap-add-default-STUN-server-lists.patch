@@ -9,11 +9,11 @@ Signed-off-by: sbwml <admin@cooluc.com>
  1 file changed, 14 insertions(+)
 
 diff --git a/applications/luci-app-natmap/htdocs/luci-static/resources/view/natmap.js b/applications/luci-app-natmap/htdocs/luci-static/resources/view/natmap.js
-index e837fbf..14451bf 100644
+index 6c01d88..f64e4ed 100644
 --- a/applications/luci-app-natmap/htdocs/luci-static/resources/view/natmap.js
 +++ b/applications/luci-app-natmap/htdocs/luci-static/resources/view/natmap.js
-@@ -80,12 +80,26 @@ return view.extend({
- 		o.modalonly = true;
+@@ -85,12 +85,26 @@ return view.extend({
+ 		o.depends('udp_mode', '1');
  
  		o = s.option(form.Value, 'stun_server', _('STUN server'));
 +		o.value('stun.voipia.net');
@@ -23,7 +23,7 @@ index e837fbf..14451bf 100644
 +		o.value('stun.fitauto.ru');
 +		o.value('stun.cooluc.com');
 +		o.default = 'stun.voipia.net';
- 		o.datatype = 'host';
+ 		o.datatype = 'string';
  		o.modalonly = true;
  		o.optional = false;
  		o.rmempty = false;
@@ -36,9 +36,6 @@ index e837fbf..14451bf 100644
 +		o.value('stun.fitauto.ru');
 +		o.value('stun.cooluc.com');
 +		o.default = 'stun.voipia.net';
- 		o.datatype = 'host';
+ 		o.datatype = 'string';
  		o.modalonly = true;
  		o.rmempty = false;
--- 
-2.42.0
-

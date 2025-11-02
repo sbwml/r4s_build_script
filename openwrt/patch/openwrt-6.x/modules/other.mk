@@ -280,9 +280,9 @@ define KernelPackage/mlxreg
 	CONFIG_SENSORS_MLXREG_FAN \
 	CONFIG_LEDS_MLXREG
   FILES:= \
-	$(LINUX_DIR)/drivers/platform/x86/mlx-platform.ko \
 	$(LINUX_DIR)/drivers/platform/mellanox/mlxreg-hotplug.ko \
 	$(LINUX_DIR)/drivers/platform/mellanox/mlxreg-io.ko \
+	$(LINUX_DIR)/drivers/platform/mellanox/mlx-platform.ko \
 	$(LINUX_DIR)/drivers/hwmon/mlxreg-fan.ko \
 	$(LINUX_DIR)/drivers/leds/leds-mlxreg.ko
   AUTOLOAD:=$(call AutoProbe,mlx-platform mlxreg-hotplug mlxreg-io mlxreg-fan leds-mlxreg)
@@ -709,7 +709,7 @@ define KernelPackage/serial-8250-exar
   KCONFIG:= CONFIG_SERIAL_8250_EXAR
   FILES:=$(LINUX_DIR)/drivers/tty/serial/8250/8250_exar.ko
   AUTOLOAD:=$(call AutoProbe,8250 8250_base 8250_exar)
-  DEPENDS:=@PCI_SUPPORT +kmod-serial-8250
+  DEPENDS:=@PCI_SUPPORT +kmod-serial-8250 +kmod-eeprom-93cx6
 endef
 
 define KernelPackage/serial-8250-exar/description
@@ -804,8 +804,8 @@ $(eval $(call KernelPackage,ikconfig))
 define KernelPackage/zram
   SUBMENU:=$(OTHER_MENU)
   TITLE:=ZRAM
-  DEPENDS:=+LINUX_6_12:kmod-lib-lzo +LINUX_6_12:kmod-lib-lz4 \
-           +LINUX_6_12:kmod-lib-lz4hc +LINUX_6_12:kmod-lib-zstd
+  DEPENDS:=+kmod-lib-lzo +kmod-lib-lz4 \
+           +kmod-lib-lz4hc +kmod-lib-zstd
   KCONFIG:= \
 	CONFIG_ZSMALLOC \
 	CONFIG_ZRAM \

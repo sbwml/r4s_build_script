@@ -208,7 +208,7 @@ $(eval $(call KernelPackage,iio-dht11))
 
 define KernelPackage/iio-bme680
   TITLE:=BME680 gas/humidity/pressure/temperature sensor
-  DEPENDS:=+kmod-regmap-core
+  DEPENDS:=+kmod-regmap-core +kmod-industrialio-triggered-buffer
   KCONFIG:=CONFIG_BME680
   FILES:=$(LINUX_DIR)/drivers/iio/chemical/bme680_core.ko
   $(call AddDepends/iio)
@@ -252,7 +252,7 @@ $(eval $(call KernelPackage,iio-bme680-spi))
 
 define KernelPackage/iio-bmp280
   TITLE:=BMP180/BMP280/BME280 pressure/temperatur sensor
-  DEPENDS:=+kmod-regmap-core +LINUX_6_12:kmod-industrialio-triggered-buffer
+  DEPENDS:=+kmod-regmap-core +kmod-industrialio-triggered-buffer
   KCONFIG:=CONFIG_BMP280
   FILES:=$(LINUX_DIR)/drivers/iio/pressure/bmp280.ko
   $(call AddDepends/iio)
@@ -433,7 +433,7 @@ $(eval $(call KernelPackage,iio-lsm6dsx))
 define KernelPackage/iio-lsm6dsx-i2c
   DEPENDS:=+kmod-iio-lsm6dsx +kmod-i2c-core +kmod-regmap-i2c
   TITLE:=ST LSM6DSx driver for IMU MEMS sensors (I2C)
-  KCONFIG:=CONFIG_IIO_ST_LSM6DSX
+  KCONFIG:=CONFIG_IIO_ST_LSM6DSX_I2C
   FILES:=$(LINUX_DIR)/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i2c.ko
   AUTOLOAD:=$(call AutoProbe,st_lsm6dsx-i2c)
   $(call AddDepends/iio)
@@ -449,7 +449,7 @@ $(eval $(call KernelPackage,iio-lsm6dsx-i2c))
 define KernelPackage/iio-lsm6dsx-spi
   DEPENDS:=+kmod-iio-lsm6dsx +kmod-regmap-spi
   TITLE:=ST LSM6DSx driver for IMU MEMS sensors (SPI)
-  KCONFIG:=CONFIG_IIO_ST_LSM6DSX
+  KCONFIG:=CONFIG_IIO_ST_LSM6DSX_SPI
   FILES:=$(LINUX_DIR)/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_spi.ko
   AUTOLOAD:=$(call AutoProbe,st_lsm6dsx-spi)
   $(call AddDepends/iio)

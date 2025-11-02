@@ -8,7 +8,7 @@
  
  #define NAME "ubootenv"
  
-@@ -132,18 +133,30 @@ static int ubootenv_probe(struct platfor
+@@ -132,13 +133,21 @@ static int ubootenv_probe(struct platfor
  	return misc_register(&data->misc);
  }
  
@@ -31,12 +31,3 @@
  }
  
  static struct platform_driver ubootenv_driver = {
- 	.probe = ubootenv_probe,
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 11, 0)
- 	.remove = ubootenv_remove,
-+#else
-+	.remove_new = ubootenv_remove,
-+#endif
- 	.driver = {
- 		.name           = NAME,
- 		.owner          = THIS_MODULE,

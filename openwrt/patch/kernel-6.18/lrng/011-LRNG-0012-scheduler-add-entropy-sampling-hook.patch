@@ -1,0 +1,35 @@
+From fd922b0c5d2007b72cc80917a7b3a920e6011886 Mon Sep 17 00:00:00 2001
+From: Stephan Mueller <smueller@chronox.de>
+Date: Sat, 28 Sep 2024 21:24:59 +0200
+Subject: [PATCH 12/25] scheduler - add entropy sampling hook
+
+The scheduler can be used as a source of entropy. This requires the
+presence of a hook that invokes the entropy source implementation.
+
+When the scheduler-based entropy source is not compiled, the hook is
+folded into a noop which does not affect the scheduler in any way.
+
+Signed-off-by: Stephan Mueller <smueller@chronox.de>
+---
+ kernel/sched/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -8,6 +8,7 @@
+  *  Copyright (C) 1998-2024  Ingo Molnar, Red Hat
+  */
+ #define INSTANTIATE_EXPORTED_MIGRATE_DISABLE
++#include <linux/lrng.h>
+ #include <linux/sched.h>
+ #include <linux/highmem.h>
+ #include <linux/hrtimer_api.h>
+@@ -3641,6 +3642,8 @@ ttwu_stat(struct task_struct *p, int cpu
+ {
+ 	struct rq *rq;
+ 
++	add_sched_randomness(p, cpu);
++
+ 	if (!schedstat_enabled())
+ 		return;
+ 

@@ -1,0 +1,22 @@
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -49,9 +49,6 @@
+ #include <linux/tracepoint-defs.h>
+ #include <linux/unwind_deferred_types.h>
+ #include <asm/kmap_size.h>
+-#ifndef COMPILE_OFFSETS
+-#include <generated/rq-offsets.h>
+-#endif
+ 
+ /* task_struct member predeclarations (sorted alphabetically): */
+ struct audit_context;
+@@ -2334,6 +2331,9 @@ DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
+  *
+  * So use arch_raw_cpu_ptr()/PERCPU_PTR() directly here.
+  */
++#ifndef RQ_nr_pinned
++#define RQ_nr_pinned 0
++#endif
+ #ifdef CONFIG_SMP
+ #define this_rq_raw() arch_raw_cpu_ptr(&runqueues)
+ #else

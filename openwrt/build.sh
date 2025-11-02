@@ -37,9 +37,9 @@ ip_info=`curl -sk https://ip.cooluc.com`;
 
 # script url
 if [ "$isCN" = "CN" ]; then
-    export mirror=https://init.cooluc.com
+    export mirror=https://init3.cooluc.com
 else
-    export mirror=https://init2.cooluc.com
+    export mirror=https://init3.cooluc.com
 fi
 
 # github actions - caddy server
@@ -174,7 +174,7 @@ case "$platform" in
 esac
 
 # print build opt
-get_kernel_version=$(curl -s $mirror/tags/kernel-6.12)
+get_kernel_version=$(curl -s $mirror/tags/kernel-6.18)
 kmod_hash=$(echo -e "$get_kernel_version" | awk -F'HASH-' '{print $2}' | awk '{print $1}' | tail -1 | md5sum | awk '{print $1}')
 kmodpkg_name=$(echo $(echo -e "$get_kernel_version" | awk -F'HASH-' '{print $2}' | awk '{print $1}')~$(echo $kmod_hash)-r1)
 echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
@@ -328,6 +328,9 @@ else
     curl -s $mirror/openwrt/24-config-common >> .config
     [ "$platform" = "armv8" ] && sed -i '/DOCKER/Id' .config
 fi
+
+# waiting fix
+curl -s $mirror/openwrt/6.18-disable-config >> .config
 
 # ota
 [ "$ENABLE_OTA" = "y" ] && [ "$version" = "rc2" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config

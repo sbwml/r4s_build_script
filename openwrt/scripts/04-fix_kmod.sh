@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-# Fix build for 6.12
+# Fix build for 6.18
 
 ### BROKEN
 sed -i 's/^\([[:space:]]*DEPENDS:=.*\)$/\1 @BROKEN/' package/kernel/rtl8812au-ct/Makefile
@@ -9,17 +9,24 @@ sed -i 's/^\([[:space:]]*DEPENDS:=.*\)$/\1 @BROKEN/' package/kernel/rtl8812au-ct
 mkdir -p package/kernel/cryptodev-linux/patches
 curl -s $mirror/openwrt/patch/packages-patches/cryptodev-linux/6.12/0005-Fix-cryptodev_verbosity-sysctl-for-Linux-6.11-rc1.patch > package/kernel/cryptodev-linux/patches/0005-Fix-cryptodev_verbosity-sysctl-for-Linux-6.11-rc1.patch
 curl -s $mirror/openwrt/patch/packages-patches/cryptodev-linux/6.12/0006-Exclude-unused-struct-since-Linux-6.5.patch > package/kernel/cryptodev-linux/patches/0006-Exclude-unused-struct-since-Linux-6.5.patch
+curl -s $mirror/openwrt/patch/packages-patches/cryptodev-linux/6.18/900-fix-linux-6.18.patch > package/kernel/cryptodev-linux/patches/900-fix-linux-6.18.patch
 
 # gpio-button-hotplug
 curl -s $mirror/openwrt/patch/packages-patches/gpio-button-hotplug/fix-linux-6.12.patch | patch -p1
 
+# gpio-nct5104d
+curl -s $mirror/openwrt/patch/packages-patches/gpio-nct5104d/fix-linux-6.18.patch | patch -p1
+
 # jool
+rm -rf feeds/packages/net/jool
+mkdir -p feeds/packages/net/jool/patches
 curl -s $mirror/openwrt/patch/packages-patches/jool/Makefile > feeds/packages/net/jool/Makefile
+curl -s $mirror/openwrt/patch/packages-patches/jool/patches/100-fix-compilation-warning-simple-fix.patch > feeds/packages/net/jool/patches/100-fix-compilation-warning-simple-fix.patch
+curl -s $mirror/openwrt/patch/packages-patches/jool/patches/900-fix-build-with-linux-6.18.patch > feeds/packages/net/jool/patches/900-fix-build-with-linux-6.18.patch
 
 # ovpn-dco
-mkdir -p feeds/packages/kernel/ovpn-dco/patches
-curl -s $mirror/openwrt/patch/packages-patches/ovpn-dco/901-fix-linux-6.11.patch > feeds/packages/kernel/ovpn-dco/patches/901-fix-linux-6.11.patch
-curl -s $mirror/openwrt/patch/packages-patches/ovpn-dco/902-fix-linux-6.12.patch > feeds/packages/kernel/ovpn-dco/patches/902-fix-linux-6.12.patch
+rm -rf feeds/packages/kernel/ovpn-dco/patches
+curl -s $mirror/openwrt/patch/packages-patches/ovpn-dco/Makefile > feeds/packages/kernel/ovpn-dco/Makefile
 
 # libpfring
 rm -rf feeds/packages/libs/libpfring
@@ -29,18 +36,21 @@ pushd feeds/packages/libs/libpfring/patches
   curl -Os $mirror/openwrt/patch/packages-patches/libpfring/patches/0001-fix-cross-compiling.patch
   curl -Os $mirror/openwrt/patch/packages-patches/libpfring/patches/100-fix-compilation-warning.patch
   curl -Os $mirror/openwrt/patch/packages-patches/libpfring/patches/900-fix-linux-6.6.patch
+  curl -Os $mirror/openwrt/patch/packages-patches/libpfring/patches/901-fix-build-for-linux-6.17.patch
 popd
 
 # nat46
 mkdir -p package/kernel/nat46/patches
 curl -s $mirror/openwrt/patch/packages-patches/nat46/100-fix-build-with-kernel-6.9.patch > package/kernel/nat46/patches/100-fix-build-with-kernel-6.9.patch
 curl -s $mirror/openwrt/patch/packages-patches/nat46/101-fix-build-with-kernel-6.12.patch > package/kernel/nat46/patches/101-fix-build-with-kernel-6.12.patch
+curl -s $mirror/openwrt/patch/packages-patches/nat46/102-fix-build-with-kernel-6.18.patch > package/kernel/nat46/patches/102-fix-build-with-kernel-6.18.patch
 
 # openvswitch
 sed -i '/ovs_kmod_openvswitch_depends/a\\t\ \ +kmod-sched-act-sample \\' feeds/packages/net/openvswitch/Makefile
 
 # rtpengine
 curl -s $mirror/openwrt/patch/packages-patches/rtpengine/900-fix-linux-6.12-11.5.1.18.patch > feeds/telephony/net/rtpengine/patches/900-fix-linux-6.12-11.5.1.18.patch
+curl -s $mirror/openwrt/patch/packages-patches/rtpengine/901-fix-build-for-linux-6.18.patch > feeds/telephony/net/rtpengine/patches/901-fix-build-for-linux-6.18.patch
 
 # ubootenv-nvram - 6.12
 mkdir -p package/kernel/ubootenv-nvram/patches
@@ -70,7 +80,7 @@ curl -s $mirror/openwrt/patch/packages-patches/batman-adv/901-fix-linux-6.12rc2-
 if [ "$KERNEL_CLANG_LTO" = "y" ]; then
     # xtables-addons module
     rm -rf feeds/packages/net/xtables-addons
-    git clone https://$github/sbwml/kmod_packages_net_xtables-addons feeds/packages/net/xtables-addons
+    git clone https://$github/sbwml/kmod_packages_net_xtables-addons feeds/packages/net/xtables-addons -b v6.18
     # netatop
     sed -i 's/$(MAKE)/$(KERNEL_MAKE)/g' feeds/packages/admin/netatop/Makefile
     curl -s $mirror/openwrt/patch/packages-patches/clang/netatop/900-fix-build-with-clang.patch > feeds/packages/admin/netatop/patches/900-fix-build-with-clang.patch

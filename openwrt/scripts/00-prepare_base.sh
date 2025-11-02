@@ -23,6 +23,8 @@ curl -s $mirror/openwrt/patch/generic-24.10/0009-kernel-add-legacy-cgroup-v1-mem
 curl -s $mirror/openwrt/patch/generic-24.10/0010-kernel-add-PREEMPT_RT-support-for-aarch64-x86_64.patch | patch -p1
 #curl -s $mirror/openwrt/patch/generic-24.10/0011-tools-squashfs4-enable-zstd-compression-support.patch | patch -p1
 #curl -s $mirror/openwrt/patch/generic-24.10/0012-config-include-image-add-support-for-squashfs-zstd-c.patch | patch -p1
+curl -s $mirror/openwrt/patch/generic-24.10/0013-include-kernel-Always-collect-module-symvers.patch | patch -p1
+curl -s $mirror/openwrt/patch/generic-24.10/0014-include-netfilter-update-kernel-config-options-for-l.patch | patch -p1
 
 # attr no-mold
 [ "$ENABLE_MOLD" = "y" ] && sed -i '/PKG_BUILD_PARALLEL/aPKG_BUILD_FLAGS:=no-mold' feeds/packages/utils/attr/Makefile
