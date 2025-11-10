@@ -1,4 +1,4 @@
-From 7388298a7c008c1b999ae3f819ad6308738ea733 Mon Sep 17 00:00:00 2001
+From 0ce3488d0852c204c5b96f46cd551c6205b3d993 Mon Sep 17 00:00:00 2001
 From: Leonard de Vries <leonard@envitron.com>
 Date: Thu, 21 Sep 2023 09:40:12 +0200
 Subject: [PATCH] vim: fix renamed defaults config file
@@ -17,10 +17,10 @@ Signed-off-by: Leonard de Vries <leonard@envitron.com>
  rename utils/vim/files/{vimrc.full => defaults.vim.full} (100%)
 
 diff --git a/utils/vim/Makefile b/utils/vim/Makefile
-index 125acbf99..59ae674fa 100644
+index 7726765..a6d6dd2 100644
 --- a/utils/vim/Makefile
 +++ b/utils/vim/Makefile
-@@ -73,12 +73,12 @@ define Package/xxd
+@@ -74,12 +74,12 @@ define Package/xxd
  endef
  
  define Package/vim-full/conffiles
@@ -35,7 +35,7 @@ index 125acbf99..59ae674fa 100644
  /root/.vimrc
  endef
  
-@@ -208,7 +208,7 @@ define Package/vim/install
+@@ -209,7 +209,7 @@ define Package/vim/install
  	$(INSTALL_DIR) $(1)/usr/bin
  	$(INSTALL_BIN) $(PKG_BUILD_DIR)/vim_tiny $(1)/usr/bin/vim
  	$(INSTALL_DIR) $(1)/usr/share/vim
@@ -44,7 +44,7 @@ index 125acbf99..59ae674fa 100644
  endef
  
  define Package/vim-full/install
-@@ -216,7 +216,7 @@ define Package/vim-full/install
+@@ -217,7 +217,7 @@ define Package/vim-full/install
  	$(INSTALL_BIN) $(PKG_BUILD_DIR)/vim_normal $(1)/usr/bin/vim
  	$(INSTALL_DIR) $(1)/usr/share/vim
  	$(LN) vim $(1)/usr/bin/vimdiff
@@ -53,7 +53,7 @@ index 125acbf99..59ae674fa 100644
  endef
  
  
-@@ -226,7 +226,7 @@ define Package/vim-fuller/install
+@@ -227,7 +227,7 @@ define Package/vim-fuller/install
  	$(INSTALL_DIR) $(1)/usr/share/vim
  	$(LN) vim $(1)/usr/bin/vimdiff
  	$(CP) $(PKG_INSTALL_DIR)/usr/share/vim/vim$(VIMVER) $(1)/usr/share/vim

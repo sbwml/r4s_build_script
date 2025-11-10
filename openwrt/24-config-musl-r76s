@@ -8,7 +8,7 @@ CONFIG_ALL_KMODS=y
 CONFIG_ALL_NONSHARED=y
 CONFIG_KERNEL_BUILD_DOMAIN="cooluc.com"
 CONFIG_KERNEL_BUILD_USER="admin"
-CONFIG_KERNEL_CFLAGS="-march=armv8-a+crypto+crc -mcpu=cortex-a73+crypto+crc -mtune=cortex-a73"
+CONFIG_KERNEL_CFLAGS="-march=armv8-a+crypto+crc -mcpu=cortex-a72.cortex-a53+crypto+crc -mtune=cortex-a72.cortex-a53"
 CONFIG_KERNEL_MEMCG_V1=y
 CONFIG_KERNEL_MPTCP=y
 CONFIG_KERNEL_MPTCP_IPV6=y
