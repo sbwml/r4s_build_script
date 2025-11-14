@@ -68,13 +68,7 @@ git clone https://$github/sbwml/package_kernel_r8126 package/kernel/r8126
 git clone https://$github/sbwml/package_kernel_r8127 package/kernel/r8127
 
 # GCC Optimization level -O3
-if [ "$platform" = "x86_64" ]; then
-    curl -s $mirror/openwrt/patch/target-modify_for_x86_64.patch | patch -p1
-elif [ "$platform" = "armv8" ]; then
-    curl -s $mirror/openwrt/patch/target-modify_for_armsr.patch | patch -p1
-else
-    curl -s $mirror/openwrt/patch/target-modify_for_rockchip.patch | patch -p1
-fi
+curl -s $mirror/openwrt/patch/target-modify_for_aarch64_x86_64.patch | patch -p1
 
 # libubox
 sed -i '/TARGET_CFLAGS/ s/$/ -Os/' package/libs/libubox/Makefile
@@ -244,13 +238,13 @@ git clone https://$github/sbwml/feeds_packages_net_curl feeds/packages/net/curl
 
 # Docker
 rm -rf feeds/luci/applications/luci-app-dockerman
-git clone https://$gitea/sbwml/luci-app-dockerman -b openwrt-24.10 feeds/luci/applications/luci-app-dockerman
+git clone https://$gitea/sbwml/luci-app-dockerman -b nft feeds/luci/applications/luci-app-dockerman
 if [ "$version" = "dev" ] || [ "$version" = "rc2" ]; then
     rm -rf feeds/packages/utils/{docker,dockerd,containerd,runc}
-    git clone https://$github/sbwml/packages_utils_docker feeds/packages/utils/docker
-    git clone https://$github/sbwml/packages_utils_dockerd feeds/packages/utils/dockerd
-    git clone https://$github/sbwml/packages_utils_containerd feeds/packages/utils/containerd
-    git clone https://$github/sbwml/packages_utils_runc feeds/packages/utils/runc
+    git clone https://$gitea/sbwml/packages_utils_docker feeds/packages/utils/docker
+    git clone https://$gitea/sbwml/packages_utils_dockerd feeds/packages/utils/dockerd
+    git clone https://$gitea/sbwml/packages_utils_containerd feeds/packages/utils/containerd
+    git clone https://$gitea/sbwml/packages_utils_runc feeds/packages/utils/runc
 fi
 
 # cgroupfs-mount
