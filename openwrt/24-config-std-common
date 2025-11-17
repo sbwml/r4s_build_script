@@ -12,15 +12,6 @@ CONFIG_LIBCURL_OPENSSL=y
 
 ### Firewall
 CONFIG_PACKAGE_nat6=y
-CONFIG_PACKAGE_ip6tables-nft=y
-CONFIG_PACKAGE_iptables-mod-conntrack-extra=y
-CONFIG_PACKAGE_iptables-mod-iprange=y
-CONFIG_PACKAGE_iptables-mod-nat-extra=y
-CONFIG_PACKAGE_iptables-mod-socket=y
-CONFIG_PACKAGE_iptables-mod-tproxy=y
-CONFIG_PACKAGE_iptables-nft=y
-CONFIG_PACKAGE_xtables-nft=y
-# CONFIG_PACKAGE_iptables-legacy is not set
 
 # Natflow
 CONFIG_PACKAGE_natflow=m
@@ -40,7 +31,6 @@ CONFIG_BUSYBOX_CONFIG_FEATURE_SYSLOG_INFO=y
 
 ### Dnsmasq
 CONFIG_PACKAGE_dnsmasq-full=y
-CONFIG_PACKAGE_dnsmasq_full_ipset=y
 # CONFIG_PACKAGE_dnsmasq_full_broken_rtc is not set
 # CONFIG_PACKAGE_dnsmasq is not set
 
@@ -153,8 +143,6 @@ CONFIG_PACKAGE_kmod-ikconfig=y
 CONFIG_PACKAGE_kmod-inet-diag=y
 CONFIG_PACKAGE_kmod-ipsec4=y
 CONFIG_PACKAGE_kmod-ipsec6=y
-CONFIG_PACKAGE_kmod-ipt-nat6=y
-CONFIG_PACKAGE_kmod-ipt-tproxy=y
 CONFIG_PACKAGE_kmod-iptunnel6=y
 CONFIG_PACKAGE_kmod-mac80211=y
 CONFIG_PACKAGE_kmod-nf-socket=y
@@ -222,7 +210,6 @@ CONFIG_PACKAGE_telnet-bsd=y
 CONFIG_PACKAGE_tree=y
 CONFIG_PACKAGE_unzip=y
 CONFIG_PACKAGE_usbutils=y
-CONFIG_PACKAGE_vim=y
 CONFIG_PACKAGE_wget-ssl=y
 CONFIG_PACKAGE_wpad-openssl=y
 CONFIG_PACKAGE_xfs-admin=y
