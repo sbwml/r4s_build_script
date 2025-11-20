@@ -26,6 +26,9 @@ curl -s $mirror/openwrt/patch/generic-24.10/0010-kernel-add-PREEMPT_RT-support-f
 curl -s $mirror/openwrt/patch/generic-24.10/0013-include-kernel-Always-collect-module-symvers.patch | patch -p1
 curl -s $mirror/openwrt/patch/generic-24.10/0014-include-netfilter-update-kernel-config-options-for-l.patch | patch -p1
 
+# add source mirror
+sed -i '/"@OPENWRT": \[/a\\t\t"https://source.cooluc.com",' scripts/projectsmirrors.json
+
 # attr no-mold
 [ "$ENABLE_MOLD" = "y" ] && sed -i '/PKG_BUILD_PARALLEL/aPKG_BUILD_FLAGS:=no-mold' feeds/packages/utils/attr/Makefile
 
