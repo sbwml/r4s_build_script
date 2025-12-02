@@ -291,6 +291,9 @@ sed -i '/ubus_parallel_req/a\        ubus_script_timeout 300;' feeds/packages/ne
 curl -s $mirror/openwrt/nginx/luci.locations > feeds/packages/net/nginx/files-luci-support/luci.locations
 curl -s $mirror/openwrt/nginx/uci.conf.template > feeds/packages/net/nginx-util/files/uci.conf.template
 
+# netifd
+curl -s $mirror/openwrt/patch/netifd/001-hack-packet_steering-for-nanopi-r76s.patch | patch -p1
+
 # opkg
 mkdir -p package/system/opkg/patches
 curl -s $mirror/openwrt/patch/opkg/900-opkg-download-disable-hsts.patch > package/system/opkg/patches/900-opkg-download-disable-hsts.patch
