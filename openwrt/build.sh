@@ -37,9 +37,9 @@ ip_info=`curl -sk https://ip.cooluc.com`;
 
 # script url
 if [ "$isCN" = "CN" ]; then
-    export mirror=https://init3.cooluc.com
+    export mirror=https://init.cooluc.com
 else
-    export mirror=https://init3.cooluc.com
+    export mirror=https://init2.cooluc.com
 fi
 
 # github actions - caddy server
@@ -502,9 +502,9 @@ if [ "$platform" = "x86_64" ]; then
     if [ "$1" = "rc2" ]; then
         mkdir -p ota
         if [ "$MINIMAL_BUILD" = "y" ]; then
-            OTA_URL="https://x86.cooluc.com/d/minimal/openwrt-24.10"
+            OTA_URL="https://dev.cooluc.com/minimal/x86_64"
         else
-            OTA_URL="https://github.com/sbwml/builder/releases/download"
+            OTA_URL="https://dev.cooluc.com/release/x86_64"
         fi
         VERSION=$(sed 's/v//g' version.txt)
         SHA256=$(sha256sum bin/targets/x86/64*/*-generic-squashfs-combined-efi.img.gz | awk '{print $1}')
@@ -514,7 +514,7 @@ if [ "$platform" = "x86_64" ]; then
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
-      "url": "$OTA_URL/v$VERSION/openwrt-$VERSION-x86-64-generic-squashfs-combined-efi.img.gz"
+      "url": "$OTA_URL/openwrt-$VERSION-x86-64-generic-squashfs-combined-efi.img.gz"
     }
   ]
 }
@@ -549,6 +549,11 @@ elif [ "$platform" = "armv8" ]; then
     # OTA json
     if [ "$1" = "rc2" ]; then
         mkdir -p ota
+        if [ "$MINIMAL_BUILD" = "y" ]; then
+            OTA_URL="https://dev.cooluc.com/minimal/armv8"
+        else
+            OTA_URL="https://dev.cooluc.com/release/armv8"
+        fi
         VERSION=$(sed 's/v//g' version.txt)
         SHA256=$(sha256sum bin/targets/armsr/armv8*/*-generic-squashfs-combined-efi.img.gz | awk '{print $1}')
         cat > ota/fw.json <<EOF
@@ -557,7 +562,7 @@ elif [ "$platform" = "armv8" ]; then
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
-      "url": "https://github.com/sbwml/builder/releases/download/v$VERSION/openwrt-$VERSION-armsr-armv8-generic-squashfs-combined-efi.img.gz"
+      "url": "$OTA_URL/openwrt-$VERSION-armsr-armv8-generic-squashfs-combined-efi.img.gz"
     }
   ]
 }
@@ -587,10 +592,13 @@ else
     # OTA json
     if [ "$1" = "rc2" ]; then
         mkdir -p ota
-        OTA_URL="https://github.com/sbwml/builder/releases/download"
+        if [ "$MINIMAL_BUILD" = "y" ]; then
+            OTA_URL="https://dev.cooluc.com/minimal/$model"
+        else
+            OTA_URL="https://dev.cooluc.com/release/$model"
+        fi
         VERSION=$(sed 's/v//g' version.txt)
         if [ "$model" = "nanopi-r4s" ]; then
-            [ "$MINIMAL_BUILD" = "y" ] && OTA_URL="https://r4s.cooluc.com/d/minimal/openwrt-24.10"
             SHA256=$(sha256sum bin/targets/rockchip/armv8*/*-squashfs-sysupgrade.img.gz | awk '{print $1}')
             cat > ota/fw.json <<EOF
 {
@@ -598,13 +606,12 @@ else
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
-      "url": "$OTA_URL/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz"
+      "url": "$OTA_URL/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz"
     }
   ]
 }
 EOF
         elif [ "$model" = "nanopi-r5s" ]; then
-            [ "$MINIMAL_BUILD" = "y" ] && OTA_URL="https://r5s.cooluc.com/d/minimal/openwrt-24.10"
             SHA256_R5C=$(sha256sum bin/targets/rockchip/armv8*/*-r5c-squashfs-sysupgrade.img.gz | awk '{print $1}')
             SHA256_R5S=$(sha256sum bin/targets/rockchip/armv8*/*-r5s-squashfs-sysupgrade.img.gz | awk '{print $1}')
             cat > ota/fw.json <<EOF
@@ -613,20 +620,19 @@ EOF
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256_R5C",
-      "url": "$OTA_URL/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5c-squashfs-sysupgrade.img.gz"
+      "url": "$OTA_URL/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5c-squashfs-sysupgrade.img.gz"
     }
   ],
   "friendlyarm,nanopi-r5s": [
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256_R5S",
-      "url": "$OTA_URL/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5s-squashfs-sysupgrade.img.gz"
+      "url": "$OTA_URL/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5s-squashfs-sysupgrade.img.gz"
     }
   ]
 }
 EOF
         elif [ "$model" = "nanopi-r76s" ]; then
-            [ "$MINIMAL_BUILD" = "y" ] && OTA_URL="https://r76s.cooluc.com/d/minimal/openwrt-24.10"
             SHA256_R76S=$(sha256sum bin/targets/rockchip/armv8*/*-r76s-squashfs-sysupgrade.img.gz | awk '{print $1}')
             cat > ota/fw.json <<EOF
 {
@@ -634,7 +640,7 @@ EOF
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256_R76S",
-      "url": "$OTA_URL/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r76s-squashfs-sysupgrade.img.gz"
+      "url": "$OTA_URL/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r76s-squashfs-sysupgrade.img.gz"
     }
   ]
 }
