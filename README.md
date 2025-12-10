@@ -4,7 +4,7 @@
 
 ---------------
 
-## 基于 Linux 6.12 LTS 固件下载:
+## 基于 Linux 6.18 LTS 固件下载:
 
 #### NanoPi R4S: https://r4s.cooluc.com
 
@@ -176,19 +176,19 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 nanopi-r4s
 
 ### nanopi-r5s/r5c
 ```shell
-# linux-6.12
+# linux-6.18
 bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 nanopi-r5s
 ```
 
 ### nanopi-r76s
 ```shell
-# linux-6.12
+# linux-6.18
 bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 nanopi-r76s
 ```
 
 ### x86_64
 ```shell
-# linux-6.12
+# linux-6.18
 bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 x86_64
 ```
 
@@ -196,25 +196,25 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 x86_64
 
 ### nanopi-r4s
 ```shell
-# linux-6.12
+# linux-6.18
 bash <(curl -sS https://init2.cooluc.com/build.sh) dev nanopi-r4s
 ```
 
 ### nanopi-r5s/r5c
 ```shell
-# linux-6.12
+# linux-6.18
 bash <(curl -sS https://init2.cooluc.com/build.sh) dev nanopi-r5s
 ```
 
 ### nanopi-r76s
 ```shell
-# linux-6.12
+# linux-6.18
 bash <(curl -sS https://init2.cooluc.com/build.sh) dev nanopi-r76s
 ```
 
 ### x86_64
 ```shell
-# linux-6.12
+# linux-6.18
 bash <(curl -sS https://init2.cooluc.com/build.sh) dev x86_64
 ```
 
@@ -245,19 +245,19 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) dev x86_64
 
 #### nanopi-r4s openwrt-24.10
 ```shell
-# linux-6.12
+# linux-6.18
 bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/refs/heads/master/openwrt/build.sh) rc2 nanopi-r4s
 ```
 
 #### nanopi-r5s/r5c openwrt-24.10
 ```shell
-# linux-6.12
+# linux-6.18
 bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/refs/heads/master/openwrt/build.sh) rc2 nanopi-r5s
 ```
 
 #### x86_64 openwrt-24.10
 ```shell
-# linux-6.12
+# linux-6.18
 bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/refs/heads/master/openwrt/build.sh) rc2 x86_64
 ```
 
