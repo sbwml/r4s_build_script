@@ -62,6 +62,11 @@ curl -s $mirror/openwrt/patch/packages-patches/ubootenv-nvram/010-make-ubootenv_
 # driver that is broken on 6.12 anyway.
 rm -rf feeds/packages/libs/xr_usb_serial_common
 
+# v4l2loopback
+rm -rf feeds/packages/kernel/v4l2loopback
+mkdir -p feeds/packages/kernel/v4l2loopback
+curl -s $mirror/openwrt/patch/packages-patches/v4l2loopback/Makefile > feeds/packages/kernel/v4l2loopback/Makefile
+
 # xtables-addons
 curl -s $mirror/openwrt/patch/packages-patches/xtables-addons/301-fix-build-with-linux-6.12.patch > feeds/packages/net/xtables-addons/patches/301-fix-build-with-linux-6.12.patch
 curl -s $mirror/openwrt/patch/packages-patches/xtables-addons/302-fix-build-for-linux-6.12rc2.patch > feeds/packages/net/xtables-addons/patches/302-fix-build-for-linux-6.12rc2.patch

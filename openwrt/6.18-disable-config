@@ -1,7 +1,4 @@
 
-# package/feeds/packages/v4l2loopback
-# CONFIG_PACKAGE_kmod-v4l2loopback is not set
-
 # package/new/shortcut-fe/shortcut-fe
 # CONFIG_PACKAGE_kmod-shortcut-fe is not set
 # CONFIG_PACKAGE_kmod-shortcut-fe-cm is not set

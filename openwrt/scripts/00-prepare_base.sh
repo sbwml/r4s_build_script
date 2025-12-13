@@ -27,6 +27,7 @@ curl -s $mirror/openwrt/patch/generic-24.10/0013-include-kernel-Always-collect-m
 curl -s $mirror/openwrt/patch/generic-24.10/0014-include-netfilter-update-kernel-config-options-for-l.patch | patch -p1
 
 # add source mirror
+#sed -i '/"@OPENWRT": \[/a\\t\t"https://sources-cdn-openwrt.cooluc.com",' scripts/projectsmirrors.json
 sed -i '/"@OPENWRT": \[/a\\t\t"https://source.cooluc.com",' scripts/projectsmirrors.json
 
 # attr no-mold
