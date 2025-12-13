@@ -5,8 +5,8 @@ set -e
 ROOT="./"
 
 # LTS
-KERNEL_VERSION=`curl -s https://raw.githubusercontent.com/andreoss/kernel-overlay/refs/heads/master/sources.json | jq -r '.[] | select(.package.name == "mainline") | .version'`
-KERNEL_HASH=`curl -s https://raw.githubusercontent.com/andreoss/kernel-overlay/refs/heads/master/sources.json | jq -r '.[] | select(.package.name == "mainline") | .checksum'`
+KERNEL_VERSION=`curl -s https://raw.githubusercontent.com/andreoss/kernel-overlay/refs/heads/master/sources.json | jq -r '.[] | select(.package.name == "stable") | .version' | tail -n1`
+KERNEL_HASH=`curl -s https://raw.githubusercontent.com/andreoss/kernel-overlay/refs/heads/master/sources.json | jq -r '.[] | select(.package.name == "stable") | .checksum' | tail -n1`
 TAG=`echo $KERNEL_VERSION | awk -F"." '{print $3}'`
 
 [ -z $TAG ] && TAG="" || TAG=.$TAG

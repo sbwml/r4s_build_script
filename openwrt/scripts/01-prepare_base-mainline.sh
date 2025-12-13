@@ -15,7 +15,6 @@ fi
 
 # bpf-headers - 6.18
 sed -ri "s/(PKG_PATCHVER:=)[^\"]*/\16.18/" package/kernel/bpf-headers/Makefile
-sed -ri "s/tar.xz/tar.gz/" package/kernel/bpf-headers/Makefile
 curl -s $mirror/openwrt/patch/packages-patches/bpf-headers/900-fix-build.patch > package/kernel/bpf-headers/patches/900-fix-build.patch
 
 ## x86_64 - target 6.18
@@ -175,7 +174,7 @@ curl -s $mirror/openwrt/patch/openwrt-6.x/500-world-regd-5GHz.patch > package/fi
 
 # mac80211 - 6.18
 rm -rf package/kernel/mac80211
-git clone https://$gitea/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b v6.18
+git clone https://$github/sbwml/package_kernel_mac80211 package/kernel/mac80211 -b v6.18
 
 # ath10k-ct
 rm -rf package/kernel/ath10k-ct
