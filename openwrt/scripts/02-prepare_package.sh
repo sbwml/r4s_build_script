@@ -42,12 +42,6 @@ curl -s $mirror/openwrt/patch/pcre/Config.in > package/libs/pcre/Config.in
 rm -rf feeds/packages/utils/lrzsz
 git clone https://$github/sbwml/packages_utils_lrzsz package/new/lrzsz
 
-# irqbalance: disable build with numa
-if [ "$version" = "rc2" ]; then
-    curl -s $mirror/openwrt/patch/irqbalance/011-meson-numa.patch > feeds/packages/utils/irqbalance/patches/011-meson-numa.patch
-    sed -i '/-Dcapng=disabled/i\\t-Dnuma=disabled \\' feeds/packages/utils/irqbalance/Makefile
-fi
-
 # frpc
 sed -i 's/procd_set_param stdout $stdout/procd_set_param stdout 0/g' feeds/packages/net/frp/files/frpc.init
 sed -i 's/procd_set_param stderr $stderr/procd_set_param stderr 0/g' feeds/packages/net/frp/files/frpc.init

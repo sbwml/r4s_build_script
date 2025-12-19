@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# 24.10 xcrypt
+if [ "$version" = "dev" ] || [ "$version" = "rc2" ]; then
+    git clone https://github.com/openwrt/openwrt -b openwrt-25.12 --depth=1 openwrt-25.12
+    mv openwrt-25.12/package/libs/xcrypt package/libs
+    rm -rf openwrt-25.12
+fi
+
 # apk-tools
 curl -s $mirror/openwrt/patch/apk-tools/9999-hack-for-linux-pre-releases.patch > package/system/apk/patches/9999-hack-for-linux-pre-releases.patch
 
