@@ -1,0 +1,38 @@
+--- a/meson.build
++++ b/meson.build
+@@ -9,12 +9,13 @@ glib_dep = dependency('glib-2.0', static
+ m_dep = cc.find_library('m', required: false)
+ capng_dep = dependency('libcap-ng', required: get_option('capng'))
+ ncurses_dep = dependency('curses', required: get_option('ui'))
++numa_dep = cc.find_library('numa', required: get_option('numa'))
+ systemd_dep = dependency('libsystemd', required: get_option('systemd'))
+ 
+ cdata = configuration_data()
+ cdata.set('HAVE_GETOPT_LONG', cc.has_function('getopt_long'))
+ cdata.set('HAVE_IRQBALANCEUI', ncurses_dep.found())
+-cdata.set('HAVE_NUMA_H', cc.has_header('numa.h'))
++cdata.set('HAVE_NUMA_H', cc.has_header('numa.h') and numa_dep.found())
+ cdata.set('HAVE_LIBCAP_NG', capng_dep.found())
+ cdata.set('HAVE_LIBSYSTEMD', systemd_dep.found())
+ cdata.set_quoted('VERSION', meson.project_version())
+@@ -38,6 +39,6 @@ executable('irqbalance',
+   'numa.c',
+   'placement.c',
+   'procinterrupts.c',
+-  dependencies: [ glib_dep, m_dep, capng_dep, ncurses_dep, systemd_dep ],
++  dependencies: [ glib_dep, m_dep, capng_dep, ncurses_dep, numa_dep, systemd_dep ],
+   install : true
+ )
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -2,6 +2,10 @@ option('capng', type : 'feature',
+   description : 'Build with libcap-ng support',
+ )
+ 
++option('numa', type : 'feature', value: 'disabled',
++  description : 'Build with numa support',
++)
++
+ option('systemd', type : 'feature',
+   description : 'Build with systemd support',
+ )

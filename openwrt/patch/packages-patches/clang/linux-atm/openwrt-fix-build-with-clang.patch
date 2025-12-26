@@ -1,0 +1,20 @@
+diff --git a/package/network/utils/linux-atm/Makefile b/package/network/utils/linux-atm/Makefile
+index c48309d..bec084d 100644
+--- a/package/network/utils/linux-atm/Makefile
++++ b/package/network/utils/linux-atm/Makefile
+@@ -6,7 +6,6 @@
+ #
+ 
+ include $(TOPDIR)/rules.mk
+-include $(INCLUDE_DIR)/kernel.mk
+ 
+ PKG_NAME:=linux-atm
+ PKG_VERSION:=2.5.2
+@@ -24,6 +23,7 @@ PKG_FIXUP:=autoreconf
+ PKG_FLAGS:=nonshared
+ 
+ include $(INCLUDE_DIR)/package.mk
++include $(INCLUDE_DIR)/kernel.mk
+ 
+ ATM_DEBUG_BINS:=aread awrite atmdiag atmdump atmswitch saaldump \
+ 		sonetdiag svc_recv svc_send ttcp_atm

@@ -25,22 +25,22 @@ IPv6 traffic do NOT need this FullCone NAT functionality.
  	option forward		REJECT
  # Uncomment this line to disable ipv6 rules
  #	option disable_ipv6	1
-+	option fullcone '1'
++	option fullcone		1
  
  config zone
  	option name		lan
-@@ -20,6 +21,8 @@ config zone
- 	option input		REJECT
- 	option output		ACCEPT
- 	option forward		REJECT
-+	option fullcone4 '1'
-+	option fullcone6 '1'
+@@ -22,6 +23,8 @@ config zone
+ 	option forward		DROP
  	option masq		1
  	option mtu_fix		1
++	option fullcone4	1
++	option fullcone6	1
  
+ config forwarding
+ 	option src		lan
 --- a/root/usr/share/firewall4/templates/ruleset.uc
 +++ b/root/usr/share/firewall4/templates/ruleset.uc
-@@ -327,6 +327,12 @@ table inet fw4 {
+@@ -323,6 +323,12 @@ table inet fw4 {
  {%   for (let redirect in fw4.redirects(`dstnat_${zone.name}`)): %}
  		{%+ include("redirect.uc", { fw4, zone, redirect }) %}
  {%   endfor %}
@@ -53,7 +53,7 @@ IPv6 traffic do NOT need this FullCone NAT functionality.
  {%   fw4.includes('chain-append', `dstnat_${zone.name}`) %}
  	}
  
-@@ -337,20 +343,26 @@ table inet fw4 {
+@@ -333,20 +339,26 @@ table inet fw4 {
  {%   for (let redirect in fw4.redirects(`srcnat_${zone.name}`)): %}
  		{%+ include("redirect.uc", { fw4, zone, redirect }) %}
  {%   endfor %}
@@ -123,7 +123,7 @@ IPv6 traffic do NOT need this FullCone NAT functionality.
  
  return {
  	read_kernel_version: function() {
-@@ -832,6 +853,18 @@ return {
+@@ -855,6 +876,18 @@ return {
  			warn(`[!] ${msg}\n`);
  	},
  
@@ -142,7 +142,7 @@ IPv6 traffic do NOT need this FullCone NAT functionality.
  	get: function(sid, opt) {
  		return this.cursor.get("firewall", sid, opt);
  	},
-@@ -1013,6 +1046,21 @@ return {
+@@ -1036,6 +1069,21 @@ return {
  		}
  	},
  
@@ -164,7 +164,7 @@ IPv6 traffic do NOT need this FullCone NAT functionality.
  	parse_policy: function(val) {
  		return this.parse_enum(val, [
  			"accept",
-@@ -1452,6 +1500,7 @@ return {
+@@ -1475,6 +1523,7 @@ return {
  			"dnat",
  			"snat",
  			"masquerade",
@@ -172,7 +172,7 @@ IPv6 traffic do NOT need this FullCone NAT functionality.
  			"accept",
  			"reject",
  			"drop"
-@@ -1923,6 +1972,7 @@ return {
+@@ -1946,6 +1995,7 @@ return {
  		}
  
  		let defs = this.parse_options(data, {
@@ -180,7 +180,7 @@ IPv6 traffic do NOT need this FullCone NAT functionality.
  			input: [ "policy", "drop" ],
  			output: [ "policy", "drop" ],
  			forward: [ "policy", "drop" ],
-@@ -1957,6 +2007,11 @@ return {
+@@ -1980,6 +2030,11 @@ return {
  
  		delete defs.syn_flood;
  
@@ -192,7 +192,7 @@ IPv6 traffic do NOT need this FullCone NAT functionality.
  		this.state.defaults = defs;
  	},
  
-@@ -1981,6 +2036,8 @@ return {
+@@ -2004,6 +2059,8 @@ return {
  			masq_dest: [ "network", null, PARSE_LIST ],
  
  			masq6: [ "bool" ],
@@ -201,7 +201,7 @@ IPv6 traffic do NOT need this FullCone NAT functionality.
  
  			extra: [ "string", null, UNSUPPORTED ],
  			extra_src: [ "string", null, UNSUPPORTED ],
-@@ -2013,6 +2070,18 @@ return {
+@@ -2036,6 +2093,18 @@ return {
  			}
  		}
  
@@ -220,7 +220,7 @@ IPv6 traffic do NOT need this FullCone NAT functionality.
  		if (zone.mtu_fix && this.kernel < 0x040a0000) {
  			this.warn_section(data, "option 'mtu_fix' requires kernel 4.10 or later");
  			return;
-@@ -2182,10 +2251,15 @@ return {
+@@ -2205,10 +2274,15 @@ return {
  		zone.related_subnets = related_subnets;
  		zone.related_physdevs = related_physdevs;
  

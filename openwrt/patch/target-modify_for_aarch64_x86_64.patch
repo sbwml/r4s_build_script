@@ -1,8 +1,6 @@
-diff --git a/include/target.mk b/include/target.mk
-index 02ea68b..28b3f56 100644
 --- a/include/target.mk
 +++ b/include/target.mk
-@@ -221,7 +221,7 @@ LINUX_RECONF_DIFF = $(SCRIPT_DIR)/kconfig.pl - '>' $(call __linux_confcmd,$(filt
+@@ -215,7 +215,7 @@ LINUX_RECONF_DIFF = $(SCRIPT_DIR)/kconfig.pl - '>' $(call __linux_confcmd,$(filt
  ifeq ($(DUMP),1)
    BuildTarget=$(BuildTargets/DumpCurrent)
  
@@ -11,7 +9,7 @@ index 02ea68b..28b3f56 100644
    ifneq ($(findstring mips,$(ARCH)),)
      ifneq ($(findstring mips64,$(ARCH)),)
        CPU_TYPE ?= mips64
-@@ -282,6 +282,14 @@ ifeq ($(DUMP),1)
+@@ -276,6 +276,14 @@ ifeq ($(DUMP),1)
      CPU_CFLAGS := -O2 -pipe
      CPU_CFLAGS_generic:=-march=loongarch64
    endif

@@ -12,7 +12,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
 
 --- a/include/libnftnl/expr.h
 +++ b/include/libnftnl/expr.h
-@@ -268,6 +268,8 @@ enum {
+@@ -269,6 +269,8 @@ enum {
  	NFTNL_EXPR_MASQ_FLAGS		= NFTNL_EXPR_BASE,
  	NFTNL_EXPR_MASQ_REG_PROTO_MIN,
  	NFTNL_EXPR_MASQ_REG_PROTO_MAX,
@@ -23,7 +23,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  
 --- a/include/linux/netfilter/nf_tables.h
 +++ b/include/linux/netfilter/nf_tables.h
-@@ -1453,12 +1453,16 @@ enum nft_tproxy_attributes {
+@@ -1499,12 +1499,16 @@ enum nft_tproxy_attributes {
   * @NFTA_MASQ_FLAGS: NAT flags (see NF_NAT_RANGE_* in linux/netfilter/nf_nat.h) (NLA_U32)
   * @NFTA_MASQ_REG_PROTO_MIN: source register of proto range start (NLA_U32: nft_registers)
   * @NFTA_MASQ_REG_PROTO_MAX: source register of proto range end (NLA_U32: nft_registers)
@@ -42,7 +42,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  #define NFTA_MASQ_MAX		(__NFTA_MASQ_MAX - 1)
 --- a/src/expr/masq.c
 +++ b/src/expr/masq.c
-@@ -24,6 +24,8 @@ struct nftnl_expr_masq {
+@@ -20,6 +20,8 @@ struct nftnl_expr_masq {
  	uint32_t		flags;
  	enum nft_registers	sreg_proto_min;
  	enum nft_registers	sreg_proto_max;
@@ -51,7 +51,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  };
  
  static int
-@@ -42,6 +44,12 @@ nftnl_expr_masq_set(struct nftnl_expr *e
+@@ -38,6 +40,12 @@ nftnl_expr_masq_set(struct nftnl_expr *e
  	case NFTNL_EXPR_MASQ_REG_PROTO_MAX:
  		memcpy(&masq->sreg_proto_max, data, data_len);
  		break;
@@ -64,7 +64,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  	}
  	return 0;
  }
-@@ -62,6 +70,12 @@ nftnl_expr_masq_get(const struct nftnl_e
+@@ -58,6 +66,12 @@ nftnl_expr_masq_get(const struct nftnl_e
  	case NFTNL_EXPR_MASQ_REG_PROTO_MAX:
  		*data_len = sizeof(masq->sreg_proto_max);
  		return &masq->sreg_proto_max;
@@ -77,7 +77,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  	}
  	return NULL;
  }
-@@ -78,6 +92,8 @@ static int nftnl_expr_masq_cb(const stru
+@@ -74,6 +88,8 @@ static int nftnl_expr_masq_cb(const stru
  	case NFTA_MASQ_REG_PROTO_MIN:
  	case NFTA_MASQ_REG_PROTO_MAX:
  	case NFTA_MASQ_FLAGS:
@@ -86,7 +86,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  		if (mnl_attr_validate(attr, MNL_TYPE_U32) < 0)
  			abi_breakage();
  		break;
-@@ -100,6 +116,12 @@ nftnl_expr_masq_build(struct nlmsghdr *n
+@@ -96,6 +112,12 @@ nftnl_expr_masq_build(struct nlmsghdr *n
  	if (e->flags & (1 << NFTNL_EXPR_MASQ_REG_PROTO_MAX))
  		mnl_attr_put_u32(nlh, NFTA_MASQ_REG_PROTO_MAX,
  				 htobe32(masq->sreg_proto_max));
@@ -99,7 +99,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  }
  
  static int
-@@ -125,6 +147,16 @@ nftnl_expr_masq_parse(struct nftnl_expr
+@@ -121,6 +143,16 @@ nftnl_expr_masq_parse(struct nftnl_expr
  			be32toh(mnl_attr_get_u32(tb[NFTA_MASQ_REG_PROTO_MAX]));
  		e->flags |= (1 << NFTNL_EXPR_MASQ_REG_PROTO_MAX);
  	}
@@ -116,7 +116,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  
  	return 0;
  }
-@@ -149,6 +181,16 @@ static int nftnl_expr_masq_snprintf(char
+@@ -145,6 +177,16 @@ static int nftnl_expr_masq_snprintf(char
  		ret = snprintf(buf + offset, remain, "flags 0x%x ", masq->flags);
  		SNPRINTF_BUFFER_SIZE(ret, remain, offset);
  	}

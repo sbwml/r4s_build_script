@@ -3,10 +3,10 @@
 @@ -6,6 +6,9 @@ config defaults
  # Uncomment this line to disable ipv6 rules
  #	option disable_ipv6	1
- 	option fullcone '1'
+ 	option fullcone		1
 +# 0 - use nft_fullcone originated from Chion82
 +# 1 - use bcm fullconenat from broadcom ASUS Merlin
-+	option brcmfullcone '0'
++	option brcmfullcone 	0
  
  config zone
  	option name		lan
@@ -81,7 +81,7 @@
  
  return {
  	read_kernel_version: function() {
-@@ -1972,6 +1986,7 @@ return {
+@@ -1995,6 +2009,7 @@ return {
  		}
  
  		let defs = this.parse_options(data, {
@@ -89,7 +89,7 @@
  			fullcone: [ "bool", "0" ],
  			input: [ "policy", "drop" ],
  			output: [ "policy", "drop" ],
-@@ -2007,9 +2022,20 @@ return {
+@@ -2030,9 +2045,20 @@ return {
  
  		delete defs.syn_flood;
  
@@ -113,7 +113,7 @@
  		}
  
  		this.state.defaults = defs;
-@@ -2075,6 +2101,10 @@ return {
+@@ -2098,6 +2124,10 @@ return {
  			zone.fullcone4 = false;
  			zone.fullcone6 = false;
  		}
@@ -124,7 +124,7 @@
  		if (zone.fullcone4) {
  			this.myinfo_section(data, "IPv4 fullcone enabled for zone '" + zone.name + "'");
  		}
-@@ -2259,6 +2289,9 @@ return {
+@@ -2282,6 +2312,9 @@ return {
  		if (zone.masq || zone.masq6)
  			zone.dflags.snat = true;
  

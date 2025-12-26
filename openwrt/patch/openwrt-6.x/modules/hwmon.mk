@@ -9,8 +9,8 @@ HWMON_MENU:=Hardware Monitoring Support
 
 define KernelPackage/hwmon-core
   SUBMENU:=$(HWMON_MENU)
-  TITLE:=Hardware monitoring support
   DEPENDS:=+kmod-i2c-core
+  TITLE:=Hardware monitoring support
   KCONFIG:= \
 	CONFIG_HWMON \
 	CONFIG_HWMON_DEBUG_CHIP=n
@@ -402,21 +402,6 @@ endef
 $(eval $(call KernelPackage,hwmon-ltc4151))
 
 
-define KernelPackage/hwmon-max6642
-  TITLE:=MAX6642 monitoring support
-  KCONFIG:=CONFIG_SENSORS_MAX6642
-  FILES:=$(LINUX_DIR)/drivers/hwmon/max6642.ko
-  AUTOLOAD:=$(call AutoLoad,60,max6642 max6642)
-  $(call AddDepends/hwmon,+kmod-i2c-core)
-endef
-
-define KernelPackage/hwmon-max6642/description
- Kernel module for Maxim MAX6642 temperature monitor
-endef
-
-$(eval $(call KernelPackage,hwmon-max6642))
-
-
 define KernelPackage/hwmon-max6697
   TITLE:=MAX6697 monitoring support
   KCONFIG:=CONFIG_SENSORS_MAX6697
@@ -746,3 +731,12 @@ endef
 $(eval $(call KernelPackage,hwmon-adcxx))
 
 
+define KernelPackage/polynomial
+  TITLE:=polynomial support
+  KCONFIG:=CONFIG_POLYNOMIAL
+  HIDDEN:=1
+  FILES:=$(LINUX_DIR)/lib/polynomial.ko
+  AUTOLOAD:=$(call AutoProbe, polynomial)
+endef
+
+$(eval $(call KernelPackage,polynomial))

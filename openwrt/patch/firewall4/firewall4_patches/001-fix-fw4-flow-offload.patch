@@ -1,6 +1,6 @@
 --- a/root/usr/share/ucode/fw4.uc
 +++ b/root/usr/share/ucode/fw4.uc
-@@ -2045,8 +2045,8 @@ return {
+@@ -2068,8 +2068,8 @@ return {
  					});
  				}
  

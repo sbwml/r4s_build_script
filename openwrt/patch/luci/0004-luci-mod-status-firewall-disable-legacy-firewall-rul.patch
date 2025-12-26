@@ -1,7 +1,7 @@
-From 44cb42a004b8334d784814c5f616c8d8ceda6b22 Mon Sep 17 00:00:00 2001
+From b8114ae5032c4f73994074326c0db004795bb0aa Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 13 Sep 2024 19:44:52 +0800
-Subject: [PATCH 4/5] luci-mod-status: firewall: disable legacy firewall rule
+Subject: [PATCH 4/7] luci-mod-status: firewall: disable legacy firewall rule
  warning
 
 Signed-off-by: sbwml <admin@cooluc.com>
@@ -11,10 +11,10 @@ Signed-off-by: sbwml <admin@cooluc.com>
  2 files changed, 19 insertions(+), 17 deletions(-)
 
 diff --git a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
-index 0013a3a..bc630b0 100644
+index 40f7f71..38a0d24 100644
 --- a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
 +++ b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
-@@ -675,26 +675,12 @@ return view.extend({
+@@ -773,26 +773,12 @@ return view.extend({
  		return node;
  	},
  
@@ -42,10 +42,10 @@ index 0013a3a..bc630b0 100644
  			return E('em', _('No nftables ruleset loaded.'));
  
 diff --git a/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json b/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json
-index 79101e9..0b7272d 100644
+index 23e8bdb..5ba794e 100644
 --- a/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json
 +++ b/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json
-@@ -39,23 +39,39 @@
+@@ -60,23 +60,39 @@
  		}
  	},
  

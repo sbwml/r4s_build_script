@@ -1,0 +1,29 @@
+From 2959e6624a39b223527d654828022fe1d79ea6fc Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Sun, 21 Dec 2025 15:14:08 +0800
+Subject: [PATCH 09/13] tools: squashfs4: enable lz4 & zstd compression support
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ tools/squashfs4/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/squashfs4/Makefile b/tools/squashfs4/Makefile
+index 6b88735..31c884a 100644
+--- a/tools/squashfs4/Makefile
++++ b/tools/squashfs4/Makefile
+@@ -24,9 +24,9 @@ include $(INCLUDE_DIR)/host-build.mk
+ define Host/Compile
+ 	+$(HOST_MAKE_VARS) \
+ 	$(MAKE) $(HOST_JOBS) -C $(HOST_BUILD_DIR)/squashfs-tools \
+-		LZ4_SUPPORT=0 \
++		LZ4_SUPPORT=1 \
+ 		LZO_SUPPORT=0 \
+-		ZSTD_SUPPORT=0 \
++		ZSTD_SUPPORT=1 \
+ 		GZIP_SUPPORT=1 \
+ 		XZ_SUPPORT=1 \
+ 		LZMA_XZ_SUPPORT=1 \
+-- 
+2.43.5
+

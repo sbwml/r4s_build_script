@@ -14,7 +14,7 @@
 
 #### X86_64: https://x86.cooluc.com
 
-#### Snapshot 24.10: https://snapshot.cooluc.com
+#### Snapshot 25.12: https://snapshot.cooluc.com
 
 #### 构建来源: https://github.com/sbwml/builder
 
@@ -92,9 +92,9 @@ export ENABLE_BPF=y
 export ENABLE_LRNG=y
 ```
 
-### 启用 [Glibc](https://www.gnu.org/software/libc/) 库构建 （实验性）
-##### 启用 glibc 库进行构建时，构建的固件将会同时兼容 musl/glibc 的预构建二进制程序，但缺失 `opkg install` 安装源支持
-##### 只需在构建固件前执行以下命令即可启用 glibc 构建
+### ~~启用 [Glibc](https://www.gnu.org/software/libc/) 库构建 （实验性）~~
+##### ~~启用 glibc 库进行构建时，构建的固件将会同时兼容 musl/glibc 的预构建二进制程序，但缺失 `apk install` 安装源支持~~
+##### ~~只需在构建固件前执行以下命令即可启用 glibc 构建~~
 
 ```
 export ENABLE_GLIBC=y
@@ -166,7 +166,7 @@ export NO_KMOD=y
 
 ---------------
 
-## 构建 OpenWrt 24.10 最新 Releases
+## 构建 OpenWrt 25.12 最新 Releases
 
 ### nanopi-r4s
 ```shell
@@ -192,7 +192,7 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 nanopi-r76s
 bash <(curl -sS https://init2.cooluc.com/build.sh) rc2 x86_64
 ```
 
-## 构建 OpenWrt 24.10 开发版（24.10-SNAPSHOT）
+## 构建 OpenWrt 25.12 开发版（25.12-SNAPSHOT）
 
 ### nanopi-r4s
 ```shell
@@ -243,19 +243,19 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) dev x86_64
 
 ### 三、在本地 Linux 执行基于你自己仓库的构建脚本，即可编译所需固件
 
-#### nanopi-r4s openwrt-24.10
+#### nanopi-r4s openwrt-25.12
 ```shell
 # linux-6.18
 bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/refs/heads/master/openwrt/build.sh) rc2 nanopi-r4s
 ```
 
-#### nanopi-r5s/r5c openwrt-24.10
+#### nanopi-r5s/r5c openwrt-25.12
 ```shell
 # linux-6.18
 bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/refs/heads/master/openwrt/build.sh) rc2 nanopi-r5s
 ```
 
-#### x86_64 openwrt-24.10
+#### x86_64 openwrt-25.12
 ```shell
 # linux-6.18
 bash <(curl -sS https://raw.githubusercontent.com/你的用户名/r4s_build_script/refs/heads/master/openwrt/build.sh) rc2 x86_64

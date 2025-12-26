@@ -1,7 +1,7 @@
-From 433eec85db3ec6ca6185eb077ff694ba9b9db2d8 Mon Sep 17 00:00:00 2001
+From fe0acd787f369d075816ceafb5d95d1cfa40fd25 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Mon, 5 May 2025 22:24:52 +0800
-Subject: [PATCH] luci-mod-system: add ucitrack luci-mod-system-zram.json
+Subject: [PATCH 7/7] luci-mod-system: add ucitrack luci-mod-system-zram.json
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
@@ -20,5 +20,5 @@ index 0000000..56da09e
 +	"init": "zram"
 +}
 -- 
-2.36.0
+2.43.5
 

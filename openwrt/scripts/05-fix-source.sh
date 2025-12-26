@@ -1,14 +1,20 @@
 #!/bin/bash
 
-# 24.10 xcrypt
-if [ "$version" = "dev" ] || [ "$version" = "rc2" ]; then
-    git clone https://github.com/openwrt/openwrt -b openwrt-25.12 --depth=1 openwrt-25.12
-    mv openwrt-25.12/package/libs/xcrypt package/libs
-    rm -rf openwrt-25.12
+if [ "$KERNEL_CLANG_LTO" = "y" ]; then 
+    # linux-atm
+    curl -s $mirror/openwrt/patch/packages-patches/clang/linux-atm/openwrt-fix-build-with-clang.patch | patch -p1
+fi
+
+if [ "$ENABLE_MOLD" = "y" ]; then
+    # attr
+    sed -i '/PKG_BUILD_PARALLEL/aPKG_BUILD_FLAGS:=no-mold' feeds/packages/utils/attr/Makefile
 fi
 
 # apk-tools
-curl -s $mirror/openwrt/patch/apk-tools/9999-hack-for-linux-pre-releases.patch > package/system/apk/patches/9999-hack-for-linux-pre-releases.patch
+curl -s $mirror/openwrt/patch/apk-tools/999-hack-for-linux-pre-releases.patch > package/system/apk/patches/999-hack-for-linux-pre-releases.patch
+
+# irqbalance
+curl -s $mirror/openwrt/patch/packages-patches/irqbalance/900-meson-add-numa-option.patch > feeds/packages/utils/irqbalance/patches/900-meson-add-numa-option.patch
 
 # libsodium - fix build with lto (GNU BUG - 89147)
 sed -i "/CONFIGURE_ARGS/i\TARGET_CFLAGS += -ffat-lto-objects\n" feeds/packages/libs/libsodium/Makefile
@@ -20,54 +26,24 @@ sed -i '/USE_QUIC_OPENSSL_COMPAT/d' feeds/packages/net/haproxy/Makefile
 rm -rf package/network/utils/xdp-tools
 git clone https://$github/sbwml/package_network_utils_xdp-tools package/network/utils/xdp-tools
 
-# fix gcc14
-if [ "$USE_GCC14" = y ] || [ "$USE_GCC15" = y ]; then
-    # linux-atm
-    rm -rf package/network/utils/linux-atm
-    git clone https://$github/sbwml/package_network_utils_linux-atm package/network/utils/linux-atm
-    # glibc
-    # Added the compiler flag -Wno-implicit-function-declaration to suppress
-    # warnings about implicit function declarations during the build process.
-    # This change addresses build issues in environments where some functions
-    # are used without prior declaration.
-    if [ "$ENABLE_GLIBC" = "y" ]; then
-        # perl
-        sed -i "/Target perl/i\TARGET_CFLAGS_PERL += -Wno-implicit-function-declaration -Wno-int-conversion\n" feeds/packages/lang/perl/Makefile
-        sed -i '/HOST_BUILD_PARALLEL/aPKG_BUILD_FLAGS:=no-mold' feeds/packages/lang/perl/Makefile
-        # lucihttp
-        sed -i "/TARGET_CFLAGS/i\TARGET_CFLAGS += -Wno-implicit-function-declaration" feeds/luci/contrib/package/lucihttp/Makefile
-        # rpcd
-        sed -i "/TARGET_LDFLAGS/i\TARGET_CFLAGS += -Wno-implicit-function-declaration" package/system/rpcd/Makefile
-        # ucode-mod-lua
-        sed -i "/Build\/Configure/i\TARGET_CFLAGS += -Wno-implicit-function-declaration" feeds/luci/contrib/package/ucode-mod-lua/Makefile
-        # luci-base
-        sed -i "s/-DNDEBUG/-DNDEBUG -Wno-implicit-function-declaration/g" feeds/luci/modules/luci-base/src/Makefile
-        # uhttpd
-        sed -i "/Package\/uhttpd\/install/i\TARGET_CFLAGS += -Wno-implicit-function-declaration\n" package/network/services/uhttpd/Makefile
-        # shadow
-        sed -i '/TARGET_LDFLAGS/d' feeds/packages/utils/shadow/Makefile
-        sed -i 's/libxcrypt/openssl/g' feeds/packages/utils/shadow/Makefile
-    fi
-fi
+# ksmbd luci
+sed -i 's/0666/0644/g;s/0777/0755/g' feeds/luci/applications/luci-app-ksmbd/htdocs/luci-static/resources/view/ksmbd.js
 
-# fix gcc-15
-if [ "$USE_GCC15" = y ]; then
-    sed -i '/TARGET_CFLAGS/ s/$/ -Wno-error=unterminated-string-initialization/' package/libs/mbedtls/Makefile
-    # elfutils
-    curl -s $mirror/openwrt/patch/openwrt-6.x/gcc-15/elfutils/901-backends-fix-string-initialization-error-on-gcc15.patch > package/libs/elfutils/patches/901-backends-fix-string-initialization-error-on-gcc15.patch
-    # libwebsockets
-    mkdir -p feeds/packages/libs/libwebsockets/patches
-    curl -s $mirror/openwrt/patch/openwrt-6.x/gcc-15/libwebsockets/901-fix-string-initialization-error-on-gcc15.patch > feeds/packages/libs/libwebsockets/patches/901-fix-string-initialization-error-on-gcc15.patch
-    # libxcrypt
-    mkdir -p feeds/packages/libs/libxcrypt/patches
-    curl -s $mirror/openwrt/patch/openwrt-6.x/gcc-15/libxcrypt/901-fix-string-initialization-error-on-gcc15.patch > feeds/packages/libs/libxcrypt/patches/901-fix-string-initialization-error-on-gcc15.patch
-fi
+# ksmbd tools
+sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/ksmbd-tools/files/ksmbd.config.example
+sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages/net/ksmbd-tools/files/ksmbd.conf.template
 
-# fix gcc-15.0.1 C23
+# perf
+curl -s $mirror/openwrt/patch/openwrt-6.x/musl/990-add-typedefs-for-Elf64_Relr-and-Elf32_Relr.patch > toolchain/musl/patches/990-add-typedefs-for-Elf64_Relr-and-Elf32_Relr.patch
+curl -s $mirror/openwrt/patch/openwrt-6.x/perf/Makefile > package/devel/perf/Makefile
+
+# kselftests-bpf
+curl -s $mirror/openwrt/patch/packages-patches/kselftests-bpf/Makefile > package/devel/kselftests-bpf/Makefile
+
+#######################################
+
+# fix gcc-15.0.1 gnu17
 if [ "$USE_GCC15" = y ]; then
-    # gmp
-    mkdir -p package/libs/gmp/patches
-    curl -s $mirror/openwrt/patch/openwrt-6.x/gcc-15-c23/gmp/001-fix-build-with-gcc-15.patch > package/libs/gmp/patches/001-fix-build-with-gcc-15.patch
     # libtirpc
     sed -i '/TARGET_CFLAGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/libs/libtirpc/Makefile
     # libsepol
@@ -94,12 +70,8 @@ if [ "$USE_GCC15" = y ]; then
     sed -i '/MAKE_FLAGS/i TARGET_CFLAGS += -std=gnu17\n' package/libs/libselinux/Makefile
     # avahi
     sed -i '/TARGET_CFLAGS +=/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/libs/avahi/Makefile
-    # bash
-    sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/utils/bash/Makefile
     # xl2tpd
     sed -i '/ifneq (0,0)/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/net/xl2tpd/Makefile
-    # dnsmasq
-    sed -i '/MAKE_FLAGS/i TARGET_CFLAGS += -std=gnu17\n' package/network/services/dnsmasq/Makefile
     # bluez
     sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/utils/bluez/Makefile
     # e2fsprogs
@@ -127,26 +99,3 @@ if [ "$USE_GCC15" = y ]; then
     # jq
     sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/utils/jq/Makefile
 fi
-
-# ksmbd luci
-sed -i 's/0666/0644/g;s/0777/0755/g' feeds/luci/applications/luci-app-ksmbd/htdocs/luci-static/resources/view/ksmbd.js
-
-# ksmbd tools
-sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/ksmbd-tools/files/ksmbd.config.example
-sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages/net/ksmbd-tools/files/ksmbd.conf.template
-
-# vim - fix E1187: Failed to source defaults.vim
-pushd feeds/packages
-    curl -s $mirror/openwrt/patch/vim/0001-vim-fix-renamed-defaults-config-file.patch | patch -p1
-popd
-
-# perf
-curl -s $mirror/openwrt/patch/openwrt-6.x/musl/990-add-typedefs-for-Elf64_Relr-and-Elf32_Relr.patch > toolchain/musl/patches/990-add-typedefs-for-Elf64_Relr-and-Elf32_Relr.patch
-curl -s $mirror/openwrt/patch/openwrt-6.x/perf/Makefile > package/devel/perf/Makefile
-
-# kselftests-bpf
-curl -s $mirror/openwrt/patch/packages-patches/kselftests-bpf/Makefile > package/devel/kselftests-bpf/Makefile
-
-# sms-tools
-mkdir -p feeds/packages/utils/sms-tool/patches
-curl -s $mirror/openwrt/patch/packages-patches/sms-tools/900-fix-incompatible-pointer-type-error-for-signal-function.patch > feeds/packages/utils/sms-tool/patches/900-fix-incompatible-pointer-type-error-for-signal-function.patch

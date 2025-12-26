@@ -1,7 +1,7 @@
-From fb9d1a301136922a624e1eb2927ad60260ee11f8 Mon Sep 17 00:00:00 2001
+From 673317998a908c133f7f677fa985b854d182e96a Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 13 Sep 2024 19:43:19 +0800
-Subject: [PATCH 2/5] luci-mod-status: displays actual process memory usage
+Subject: [PATCH 2/7] luci-mod-status: displays actual process memory usage
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
@@ -9,7 +9,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/20_memory.js b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/20_memory.js
-index 0a885c0..d3302ff 100644
+index 0a885c0..56ac7c4 100644
 --- a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/20_memory.js
 +++ b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/20_memory.js
 @@ -32,8 +32,8 @@ return baseclass.extend({
@@ -24,5 +24,5 @@ index 0a885c0..d3302ff 100644
  
  		if (mem.buffered)
 -- 
-2.42.0
+2.43.5
 

@@ -1,7 +1,7 @@
-From b5423aca7403dc8b5662bc3e13bf22115fb6b2eb Mon Sep 17 00:00:00 2001
+From 32885208f76463b46706ef88d080cce81529b903 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Sat, 2 Nov 2024 19:13:53 +0800
-Subject: [PATCH] luci-mod-system: mounts: add docker directory mount point
+Subject: [PATCH 6/7] luci-mod-system: mounts: add docker directory mount point
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---

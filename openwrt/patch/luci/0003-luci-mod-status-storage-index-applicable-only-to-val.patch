@@ -1,7 +1,7 @@
-From 2543713322fa4f7b404a673429ce36f4319c4749 Mon Sep 17 00:00:00 2001
+From a2ce3356bd451a51e241361e56f0b9ff7349273a Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Sun, 24 Mar 2024 00:12:45 +0800
-Subject: [PATCH 3/5] luci-mod-status: storage index applicable only to valid
+Subject: [PATCH 3/7] luci-mod-status: storage index applicable only to valid
  devices
 
 Signed-off-by: sbwml <admin@cooluc.com>
@@ -39,5 +39,5 @@ index 60661f6..aac6711 100644
  
  			var name = entry.device + ' (' + entry.mount +')',
 -- 
-2.42.0
+2.43.5
 

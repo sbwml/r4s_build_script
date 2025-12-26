@@ -6,13 +6,10 @@
 sed -i 's/^\([[:space:]]*DEPENDS:=.*\)$/\1 @BROKEN/' package/kernel/rtl8812au-ct/Makefile
 
 # cryptodev-linux
-mkdir -p package/kernel/cryptodev-linux/patches
-curl -s $mirror/openwrt/patch/packages-patches/cryptodev-linux/6.12/0005-Fix-cryptodev_verbosity-sysctl-for-Linux-6.11-rc1.patch > package/kernel/cryptodev-linux/patches/0005-Fix-cryptodev_verbosity-sysctl-for-Linux-6.11-rc1.patch
-curl -s $mirror/openwrt/patch/packages-patches/cryptodev-linux/6.12/0006-Exclude-unused-struct-since-Linux-6.5.patch > package/kernel/cryptodev-linux/patches/0006-Exclude-unused-struct-since-Linux-6.5.patch
 curl -s $mirror/openwrt/patch/packages-patches/cryptodev-linux/6.18/900-fix-linux-6.18.patch > package/kernel/cryptodev-linux/patches/900-fix-linux-6.18.patch
 
 # gpio-button-hotplug
-curl -s $mirror/openwrt/patch/packages-patches/gpio-button-hotplug/fix-linux-6.12.patch | patch -p1
+curl -s $mirror/openwrt/patch/packages-patches/gpio-button-hotplug/fix-linux-6.18.patch | patch -p1
 
 # gpio-nct5104d
 curl -s $mirror/openwrt/patch/packages-patches/gpio-nct5104d/fix-linux-6.18.patch | patch -p1
@@ -41,20 +38,16 @@ popd
 
 # nat46
 mkdir -p package/kernel/nat46/patches
-curl -s $mirror/openwrt/patch/packages-patches/nat46/100-fix-build-with-kernel-6.9.patch > package/kernel/nat46/patches/100-fix-build-with-kernel-6.9.patch
-curl -s $mirror/openwrt/patch/packages-patches/nat46/101-fix-build-with-kernel-6.12.patch > package/kernel/nat46/patches/101-fix-build-with-kernel-6.12.patch
 curl -s $mirror/openwrt/patch/packages-patches/nat46/102-fix-build-with-kernel-6.18.patch > package/kernel/nat46/patches/102-fix-build-with-kernel-6.18.patch
 
 # openvswitch
 sed -i '/ovs_kmod_openvswitch_depends/a\\t\ \ +kmod-sched-act-sample \\' feeds/packages/net/openvswitch/Makefile
 
 # rtpengine
-curl -s $mirror/openwrt/patch/packages-patches/rtpengine/900-fix-linux-6.12-11.5.1.18.patch > feeds/telephony/net/rtpengine/patches/900-fix-linux-6.12-11.5.1.18.patch
 curl -s $mirror/openwrt/patch/packages-patches/rtpengine/901-fix-build-for-linux-6.18.patch > feeds/telephony/net/rtpengine/patches/901-fix-build-for-linux-6.18.patch
 
-# ubootenv-nvram - 6.12
-mkdir -p package/kernel/ubootenv-nvram/patches
-curl -s $mirror/openwrt/patch/packages-patches/ubootenv-nvram/010-make-ubootenv_remove-return-void-for-linux-6.12.patch > package/kernel/ubootenv-nvram/patches/010-make-ubootenv_remove-return-void-for-linux-6.12.patch
+# ubootenv-nvram - 6.18
+curl -s $mirror/openwrt/patch/packages-patches/ubootenv-nvram/010-fix-build-for-linux-6.18.patch | patch -p1
 
 # usb-serial-xr_usb_serial_common: remove package
 # Now that we have packaged the upstream driver[1] and only board[2] that
@@ -67,10 +60,6 @@ rm -rf feeds/packages/kernel/v4l2loopback
 mkdir -p feeds/packages/kernel/v4l2loopback
 curl -s $mirror/openwrt/patch/packages-patches/v4l2loopback/Makefile > feeds/packages/kernel/v4l2loopback/Makefile
 
-# xtables-addons
-curl -s $mirror/openwrt/patch/packages-patches/xtables-addons/301-fix-build-with-linux-6.12.patch > feeds/packages/net/xtables-addons/patches/301-fix-build-with-linux-6.12.patch
-curl -s $mirror/openwrt/patch/packages-patches/xtables-addons/302-fix-build-for-linux-6.12rc2.patch > feeds/packages/net/xtables-addons/patches/302-fix-build-for-linux-6.12rc2.patch
-
 # telephony
 pushd feeds/telephony
   # dahdi-linux
@@ -78,14 +67,11 @@ pushd feeds/telephony
   git clone https://$github/sbwml/feeds_telephony_libs_dahdi-linux libs/dahdi-linux -b v6.18
 popd
 
-# routing - batman-adv fix build with linux-6.12
-curl -s $mirror/openwrt/patch/packages-patches/batman-adv/901-fix-linux-6.12rc2-builds.patch > feeds/routing/batman-adv/patches/901-fix-linux-6.12rc2-builds.patch
-
 # clang
 if [ "$KERNEL_CLANG_LTO" = "y" ]; then
     # xtables-addons module
     rm -rf feeds/packages/net/xtables-addons
-    git clone https://$github/sbwml/kmod_packages_net_xtables-addons feeds/packages/net/xtables-addons -b v6.18
+    git clone https://$github/sbwml/kmod_packages_net_xtables-addons feeds/packages/net/xtables-addons -b openwrt-25.12
     # netatop
     sed -i 's/$(MAKE)/$(KERNEL_MAKE)/g' feeds/packages/admin/netatop/Makefile
     curl -s $mirror/openwrt/patch/packages-patches/clang/netatop/900-fix-build-with-clang.patch > feeds/packages/admin/netatop/patches/900-fix-build-with-clang.patch
