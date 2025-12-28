@@ -205,6 +205,7 @@ print_status "BUILD_FAST"        "$BUILD_FAST"
 print_status "ENABLE_CCACHE"     "$ENABLE_CCACHE"
 print_status "MINIMAL_BUILD"     "$MINIMAL_BUILD"
 print_status "STD_BUILD"         "$STD_BUILD"
+print_status "ENABLE_ISTORE"     "$ENABLE_ISTORE"
 print_status "KERNEL_CLANG_LTO"  "$KERNEL_CLANG_LTO" "$GREEN_COLOR" "$YELLOW_COLOR" "\n"
 
 # clean old files
@@ -348,6 +349,12 @@ export ENABLE_LTO=$ENABLE_LTO
 [ "$ENABLE_DPDK" = "y" ] && {
     echo 'CONFIG_PACKAGE_dpdk-tools=y' >> .config
     echo 'CONFIG_PACKAGE_numactl=y' >> .config
+}
+
+# istore
+[ "$ENABLE_ISTORE" = "y" ] && {
+    echo 'CONFIG_PACKAGE_luci-app-store=y' >> .config
+    echo 'CONFIG_PACKAGE_luci-app-quickstart=y' >> .config
 }
 
 # mold

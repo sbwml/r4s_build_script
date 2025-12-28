@@ -14,6 +14,9 @@ git clone https://$github/sbwml/default-settings package/new/default-settings -b
 # wwan
 git clone https://$github/sbwml/wwan-packages package/new/wwan --depth=1
 
+# istore
+git clone https://github.com/sbwml/package_new_istore package/new/istore --depth=1
+
 # luci-app-filemanager
 rm -rf feeds/luci/applications/luci-app-filemanager
 git clone https://$github/sbwml/luci-app-filemanager package/new/luci-app-filemanager
@@ -118,7 +121,7 @@ git clone https://$github/UnblockNeteaseMusic/luci-app-unblockneteasemusic packa
 sed -i 's/解除网易云音乐播放限制/网易云音乐解锁/g' package/new/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
 
 # Theme
-git clone https://$github/sbwml/luci-theme-argon package/new/luci-theme-argon --depth=1
+git clone https://$github/sbwml/luci-theme-argon -b openwrt-25.12 package/new/luci-theme-argon --depth=1
 
 # Mosdns
 git clone https://$github/sbwml/luci-app-mosdns -b v5 package/new/mosdns --depth=1

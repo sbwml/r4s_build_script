@@ -133,6 +133,14 @@ export BUILD_FAST=y
 export MINIMAL_BUILD=y
 ```
 
+### 构建 iStoreOS 样式
+##### 包含 iStoreOS 的商店、状态页
+##### 只需在构建固件前执行以下命令即可构建 iStoreOS 样式
+
+```
+export ENABLE_ISTORE=y
+```
+
 ### 更改 LAN IP 地址
 ##### 自定义默认 LAN IP 地址
 ##### 只需在构建固件前执行以下命令即可覆盖默认 LAN 地址（默认：10.0.0.1）
@@ -232,13 +240,8 @@ bash <(curl -sS https://init2.cooluc.com/build.sh) dev x86_64
 
 ```diff
  # script url
- if [ "$isCN" = "CN" ]; then
--    export mirror=https://init.cooluc.com
-+    export mirror=https://raw.githubusercontent.com/你的用户名/r4s_build_script/refs/heads/master
- else
--    export mirror=https://init2.cooluc.com
-+    export mirror=https://raw.githubusercontent.com/你的用户名/r4s_build_script/refs/heads/master
- fi
+-export mirror=https://init.cooluc.com
++export mirror=https://raw.githubusercontent.com/你的用户名/r4s_build_script/refs/heads/master
 ```
 
 ### 三、在本地 Linux 执行基于你自己仓库的构建脚本，即可编译所需固件
