@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
-# golang 1.25
+# golang 1.26
 rm -rf feeds/packages/lang/golang
-git clone https://$github/sbwml/packages_lang_golang -b 25.x feeds/packages/lang/golang
+git clone https://$github/sbwml/packages_lang_golang -b 26.x feeds/packages/lang/golang
 
 # node - prebuilt
 rm -rf feeds/packages/lang/node
