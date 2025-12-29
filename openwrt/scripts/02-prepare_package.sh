@@ -14,8 +14,12 @@ git clone https://$github/sbwml/default-settings package/new/default-settings -b
 # wwan
 git clone https://$github/sbwml/wwan-packages package/new/wwan --depth=1
 
+# bandix
+git clone https://$github/timsaya/openwrt-bandix package/new/bandix --depth=1
+git clone https://$github/timsaya/luci-app-bandix package/new/luci-app-bandix --depth=1
+
 # istore
-git clone https://github.com/sbwml/package_new_istore package/new/istore --depth=1
+git clone https://$github/sbwml/package_new_istore package/new/istore --depth=1
 
 # luci-app-filemanager
 rm -rf feeds/luci/applications/luci-app-filemanager
