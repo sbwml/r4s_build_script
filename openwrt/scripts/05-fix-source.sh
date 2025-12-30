@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# odhcp6c - fix for openwrt-25.12.0-rc1
+if [ "$branch" = "25.12.0-rc1" ]; then
+    curl -s $mirror/openwrt/patch/odhcp6c/0001-odhcp6c-update-to-25.12-Git-HEAD-2025-12-29.patch | patch -p1
+fi
+
 if [ "$KERNEL_CLANG_LTO" = "y" ]; then 
     # linux-atm
     curl -s $mirror/openwrt/patch/packages-patches/clang/linux-atm/openwrt-fix-build-with-clang.patch | patch -p1

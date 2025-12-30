@@ -1,0 +1,68 @@
+From 948b1b564dcf0afa84882cb79691951d41ff51a5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
+Date: Mon, 29 Dec 2025 18:25:47 +0100
+Subject: [PATCH] odhcp6c: update to 25.12 Git HEAD (2025-12-29)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+699cc61568b6 dhcpv6: omit IA_NA on Request
+8774d3c0ec9c dhcpv6: dhcpv6_send: convert whitespaces to tabs
+11abe3790431 ra: convert if block to switch
+c05b803d38e9 odhcp6c: do cleanup at exit
+6aa4e491a869 config: fix potential memory leaks in error paths
+235cdc97d73b all: add log helpers
+6e3272d609d3 dhcpv6: clarifying comments
+04aea4e3f870 dhcpv6: offload FQDN construction to init_dhcpv6
+449ce8374275 dhcpv6: migrate dhcpv6_response_is_valid to switch case
+
+https://github.com/openwrt/odhcp6c/compare/5ab3203875ad...699cc61568b6
+
+Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
+---
+ package/network/ipv6/odhcp6c/Makefile        | 6 +++---
+ package/network/ipv6/odhcp6c/files/dhcpv6.sh | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/package/network/ipv6/odhcp6c/Makefile b/package/network/ipv6/odhcp6c/Makefile
+index 952831e47a..9741046cfe 100644
+--- a/package/network/ipv6/odhcp6c/Makefile
++++ b/package/network/ipv6/odhcp6c/Makefile
+@@ -12,9 +12,9 @@ PKG_RELEASE:=1
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL=$(PROJECT_GIT)/project/odhcp6c.git
+-PKG_SOURCE_DATE:=2025-12-18
+-PKG_SOURCE_VERSION:=5ab3203875ad938ea85f6d0ceebdff113c355656
+-PKG_MIRROR_HASH:=4de69fe364be2d302329cdc86d4d93820e73c82f00d788a536cf947076a4ded3
++PKG_SOURCE_DATE:=2025-12-29
++PKG_SOURCE_VERSION:=699cc61568b6816783d17d57dda4ef7851198528
++PKG_MIRROR_HASH:=e8a42c429ed83660ccc04d69e3bcbf0056d8e96e08caff0f14518150b89ec352
+ 
+ PKG_MAINTAINER:=Álvaro Fernández Rojas <noltari@gmail.com>
+ PKG_LICENSE:=GPL-2.0
+diff --git a/package/network/ipv6/odhcp6c/files/dhcpv6.sh b/package/network/ipv6/odhcp6c/files/dhcpv6.sh
+index 59a6021c5c..d59e988991 100755
+--- a/package/network/ipv6/odhcp6c/files/dhcpv6.sh
++++ b/package/network/ipv6/odhcp6c/files/dhcpv6.sh
+@@ -42,7 +42,7 @@ proto_dhcpv6_init_config() {
+ 	proto_config_add_boolean sourcefilter
+ 	proto_config_add_boolean keep_ra_dnslifetime
+ 	proto_config_add_int "ra_holdoff"
+-	proto_config_add_boolean verbose
++	proto_config_add_int 'verbose:range(0, 7)'
+ 	proto_config_add_boolean dynamic
+ }
+ 
+@@ -116,7 +116,7 @@ proto_dhcpv6_setup() {
+ 
+ 	[ -n "$ra_holdoff" ] && append opts "-m$ra_holdoff"
+ 
+-	[ "$verbose" = "1" ] && append opts "-v"
++	[ -n "$verbose" ] && append opts "-l$verbose"
+ 
+ 	json_for_each_item proto_dhcpv6_add_sendopts sendopts opts
+ 
+-- 
+2.43.5
+
