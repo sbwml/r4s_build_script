@@ -321,6 +321,7 @@ if [ "$MINIMAL_BUILD" = "y" ]; then
     echo 'VERSION_TYPE="minimal"' >> package/base-files/files/usr/lib/os-release
 elif [ "$STD_BUILD" = "y" ]; then
     curl -s $mirror/openwrt/25-config-std-common >> .config
+    echo 'VERSION_TYPE="standard"' >> package/base-files/files/usr/lib/os-release
 else
     curl -s $mirror/openwrt/25-config-common >> .config
     [ "$platform" = "armv8" ] && sed -i '/DOCKER/Id' .config
@@ -501,6 +502,8 @@ if [ "$platform" = "x86_64" ]; then
         mkdir -p ota
         if [ "$MINIMAL_BUILD" = "y" ]; then
             OTA_URL="https://dev.cooluc.com/minimal/x86_64"
+        elif [ "$STD_BUILD" = "y" ]; then
+            OTA_URL="https://dev.cooluc.com/standard/x86_64"
         else
             OTA_URL="https://dev.cooluc.com/release/x86_64"
         fi
@@ -549,6 +552,8 @@ elif [ "$platform" = "armv8" ]; then
         mkdir -p ota
         if [ "$MINIMAL_BUILD" = "y" ]; then
             OTA_URL="https://dev.cooluc.com/minimal/armv8"
+        elif [ "$STD_BUILD" = "y" ]; then
+            OTA_URL="https://dev.cooluc.com/standard/armv8"
         else
             OTA_URL="https://dev.cooluc.com/release/armv8"
         fi
@@ -592,6 +597,8 @@ else
         mkdir -p ota
         if [ "$MINIMAL_BUILD" = "y" ]; then
             OTA_URL="https://dev.cooluc.com/minimal/$model"
+        elif [ "$STD_BUILD" = "y" ]; then
+            OTA_URL="https://dev.cooluc.com/standard/$model"
         else
             OTA_URL="https://dev.cooluc.com/release/$model"
         fi
