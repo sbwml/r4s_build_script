@@ -35,7 +35,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	u8	accecn_minlen:2,/* Minimum length of AccECN option sent */
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -3162,6 +3162,7 @@ void tcp_send_loss_probe(struct sock *sk
+@@ -3173,6 +3173,7 @@ void tcp_send_loss_probe(struct sock *sk
  	if (WARN_ON(!skb || !tcp_skb_pcount(skb)))
  		goto rearm_timer;
  

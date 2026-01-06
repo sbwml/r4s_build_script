@@ -42,7 +42,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	 */
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
-@@ -1282,7 +1282,12 @@ static void tcp_verify_retransmit_hint(s
+@@ -1289,7 +1289,12 @@ static void tcp_verify_retransmit_hint(s
   */
  static void tcp_notify_skb_loss_event(struct tcp_sock *tp, const struct sk_buff *skb)
  {

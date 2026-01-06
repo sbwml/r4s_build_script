@@ -1,9 +1,11 @@
 #!/bin/bash
 
-# odhcp6c - fix for openwrt-v25.12.0-rc1
-if [ "$branch" = "v25.12.0-rc1" ]; then
-    curl -s $mirror/openwrt/patch/odhcp6c/0001-odhcp6c-update-to-25.12-Git-HEAD-2025-12-29.patch | patch -p1
-fi
+# odhcp6c-2025-10
+rm -rf package/network/ipv6/odhcp6c
+git clone https://$gitea/sbwml/package_network_ipv6_odhcp6c package/network/ipv6/odhcp6c
+#if [ "$branch" = "v25.12.0-rc1" ]; then
+#    curl -s $mirror/openwrt/patch/odhcp6c/0001-odhcp6c-update-to-25.12-Git-HEAD-2025-12-29.patch | patch -p1
+#fi
 
 if [ "$KERNEL_CLANG_LTO" = "y" ]; then 
     # linux-atm
@@ -14,9 +16,6 @@ if [ "$ENABLE_MOLD" = "y" ]; then
     # attr
     sed -i '/PKG_BUILD_PARALLEL/aPKG_BUILD_FLAGS:=no-mold' feeds/packages/utils/attr/Makefile
 fi
-
-# apk-tools
-curl -s $mirror/openwrt/patch/apk-tools/999-hack-for-linux-pre-releases.patch > package/system/apk/patches/999-hack-for-linux-pre-releases.patch
 
 # irqbalance
 curl -s $mirror/openwrt/patch/packages-patches/irqbalance/900-meson-add-numa-option.patch > feeds/packages/utils/irqbalance/patches/900-meson-add-numa-option.patch

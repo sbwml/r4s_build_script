@@ -28,7 +28,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  struct tcp_congestion_ops {
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
-@@ -4133,6 +4133,7 @@ static int tcp_ack(struct sock *sk, cons
+@@ -4140,6 +4140,7 @@ static int tcp_ack(struct sock *sk, cons
  
  	lost = tp->lost - lost;			/* freshly marked lost */
  	rs.is_ack_delayed = !!(flag & FLAG_ACK_MAYBE_DELAYED);
