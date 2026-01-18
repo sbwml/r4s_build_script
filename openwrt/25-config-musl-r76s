@@ -33,7 +33,7 @@ CONFIG_PACKAGE_kmod-drm-rockchip=y
 CONFIG_PACKAGE_kmod-drm-panfrost=y
 
 ### Video Decoder
-CONFIG_PACKAGE_kmod-rkvdec
+CONFIG_PACKAGE_kmod-rkvdec=y
 
 ### Rocket NPU
 CONFIG_PACKAGE_kmod-rocket-rockchip=y
