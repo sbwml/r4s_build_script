@@ -23,14 +23,17 @@ CONFIG_TARGET_ROOTFS_PARTSIZE=944
 CONFIG_COREMARK_NUMBER_OF_THREADS=8
 # CONFIG_KERNEL_KALLSYMS is not set
 
-# SDIO Wireless / Bluetooth
+### SDIO Wireless / Bluetooth
 CONFIG_PACKAGE_kmod-bluetooth=y
 CONFIG_PACKAGE_kmod-rtw88-8822cs=y
 CONFIG_PACKAGE_rtl8822cs-firmware=y
 
-### Video Support
+### HDMI
 CONFIG_PACKAGE_kmod-drm-rockchip=y
 CONFIG_PACKAGE_kmod-drm-panfrost=y
+
+### Video Decoder
+CONFIG_PACKAGE_kmod-rkvdec
 
 ### Rocket NPU
 CONFIG_PACKAGE_kmod-rocket-rockchip=y
