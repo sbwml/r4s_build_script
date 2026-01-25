@@ -1,0 +1,54 @@
+From 8a57210e3b7c6aae95788b3b4a8cbabad0dd7912 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Sun, 25 Jan 2026 21:06:05 +0800
+Subject: [PATCH] luci-app-package-manager: support installing uploaded APK
+ without signature
+
+Add a new "install-upload" action that runs apk with
+--allow-untrusted for locally uploaded packages.
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ .../htdocs/luci-static/resources/view/package-manager.js     | 2 +-
+ .../root/usr/libexec/package-manager-call                    | 5 ++++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js b/applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js
+index 8a70b4bd29..ced8785dcc 100644
+--- a/applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js
++++ b/applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js
+@@ -1084,7 +1084,7 @@ function handleUpload(ev)
+ 				}, _('Cancel')), ' ',
+ 				E('div', {
+ 					'class': 'btn cbi-button-action',
+-					'data-command': 'install',
++					'data-command': 'install-upload',
+ 					'data-package': path,
+ 					'click': function(ev) {
+ 						handlePkg(ev).finally(function() {
+diff --git a/applications/luci-app-package-manager/root/usr/libexec/package-manager-call b/applications/luci-app-package-manager/root/usr/libexec/package-manager-call
+index 3a4175783a..7fa58f9060 100755
+--- a/applications/luci-app-package-manager/root/usr/libexec/package-manager-call
++++ b/applications/luci-app-package-manager/root/usr/libexec/package-manager-call
+@@ -27,7 +27,7 @@ case "$action" in
+ 			find "${lists_dir:-/usr/lib/opkg/lists}" -type f '!' -name '*.sig' | xargs -r gzip -cd
+ 		fi
+ 	;;
+-	install|update|upgrade|remove)
++	install|install-upload|update|upgrade|remove)
+ 		(
+ 			cmd="$ipkg_bin"
+ 
+@@ -37,6 +37,9 @@ case "$action" in
+ 					install)
+ 						action="add"
+ 					;;
++					install-upload)
++						action="add --allow-untrusted"
++					;;
+ 					update)
+ 						action="update"
+ 					;;
+-- 
+2.43.5
+

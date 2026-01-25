@@ -265,6 +265,11 @@ sed -i "s/openwrt.org/www.qq.com/g" feeds/luci/modules/luci-mod-network/htdocs/l
 # luci-compat - remove extra line breaks from description
 sed -i '/<br \/>/d' feeds/luci/modules/luci-compat/luasrc/view/cbi/full_valuefooter.htm
 
+# luci-app-package-manager
+pushd feeds/luci
+    curl -s $mirror/openwrt/patch/luci/applications/luci-app-package-manager/0001-luci-app-package-manager-support-installing-uploaded.patch | patch -p1
+popd
+
 # urngd - 2020-01-21
 rm -rf package/system/urngd
 git clone https://$github/sbwml/package_system_urngd package/system/urngd
