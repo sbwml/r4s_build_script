@@ -1,0 +1,11 @@
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -2,7 +2,7 @@ option('capng', type : 'feature',
+   description : 'Build with libcap-ng support',
+ )
+ 
+-option('numa', type : 'feature', value: 'enabled',
++option('numa', type : 'feature', value: 'disabled',
+   description : 'Build with numa support',
+ )
+ 

@@ -18,7 +18,11 @@ if [ "$ENABLE_MOLD" = "y" ]; then
 fi
 
 # irqbalance
-curl -s $mirror/openwrt/patch/packages-patches/irqbalance/900-meson-add-numa-option.patch > feeds/packages/utils/irqbalance/patches/900-meson-add-numa-option.patch
+if [ "$version" = "rc2" ]; then
+    curl -s $mirror/openwrt/patch/packages-patches/irqbalance/900-meson-add-numa-option.patch > feeds/packages/utils/irqbalance/patches/900-meson-add-numa-option.patch
+else
+    curl -s $mirror/openwrt/patch/packages-patches/irqbalance/901-meson-disable-numa-option-by-default.patch > feeds/packages/utils/irqbalance/patches/901-meson-disable-numa-option-by-default.patch
+fi
 
 # libsodium - fix build with lto (GNU BUG - 89147)
 sed -i "/CONFIGURE_ARGS/i\TARGET_CFLAGS += -ffat-lto-objects\n" feeds/packages/libs/libsodium/Makefile
