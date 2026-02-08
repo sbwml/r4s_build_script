@@ -186,14 +186,12 @@ git clone https://$github/sbwml/feeds_packages_net_curl feeds/packages/net/curl
 
 # Docker
 rm -rf feeds/luci/applications/luci-app-dockerman
-git clone https://$gitea/sbwml/luci-app-dockerman -b nft feeds/luci/applications/luci-app-dockerman
-if [ "$version" = "dev" ] || [ "$version" = "rc2" ]; then
-    rm -rf feeds/packages/utils/{docker,dockerd,containerd,runc}
-    git clone https://$gitea/sbwml/packages_utils_docker feeds/packages/utils/docker
-    git clone https://$gitea/sbwml/packages_utils_dockerd feeds/packages/utils/dockerd
-    git clone https://$gitea/sbwml/packages_utils_containerd feeds/packages/utils/containerd
-    git clone https://$gitea/sbwml/packages_utils_runc feeds/packages/utils/runc
-fi
+git clone https://$github/sbwml/luci-app-dockerman feeds/luci/applications/luci-app-dockerman
+rm -rf feeds/packages/utils/{docker,dockerd,containerd,runc}
+git clone https://$github/sbwml/packages_utils_docker feeds/packages/utils/docker
+git clone https://$github/sbwml/packages_utils_dockerd feeds/packages/utils/dockerd
+git clone https://$github/sbwml/packages_utils_containerd feeds/packages/utils/containerd
+git clone https://$github/sbwml/packages_utils_runc feeds/packages/utils/runc
 
 # procps-ng - top
 sed -i 's/enable-skill/enable-skill --disable-modern-top/g' feeds/packages/utils/procps-ng/Makefile

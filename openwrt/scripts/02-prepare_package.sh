@@ -69,8 +69,8 @@ pushd feeds/luci
 popd
 
 # samba4 - bump version
-rm -rf feeds/packages/net/samba4
-git clone https://$github/sbwml/feeds_packages_net_samba4 feeds/packages/net/samba4
+#rm -rf feeds/packages/net/samba4
+#git clone https://$github/sbwml/feeds_packages_net_samba4 feeds/packages/net/samba4
 # enable multi-channel
 sed -i '/workgroup/a \\n\t## enable multi-channel' feeds/packages/net/samba4/files/smb.conf.template
 sed -i '/enable multi-channel/a \\tserver multi channel support = yes' feeds/packages/net/samba4/files/smb.conf.template
