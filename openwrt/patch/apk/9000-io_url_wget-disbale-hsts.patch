@@ -1,0 +1,25 @@
+From f53b64feb573f286cdd6bc8cd2a5601caf82cdef Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Sun, 15 Feb 2026 21:48:33 +0800
+Subject: [PATCH] io_url_wget: disbale hsts
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ src/io_url_wget.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/io_url_wget.c b/src/io_url_wget.c
+index 2d5cd4a..28a0851 100644
+--- a/src/io_url_wget.c
++++ b/src/io_url_wget.c
+@@ -21,6 +21,7 @@ struct apk_istream *apk_io_url_istream(const char *url, time_t since)
+ 
+ 	argv[i++] = "wget";
+ 	argv[i++] = "-q";
++	argv[i++] = "--no-hsts";
+ 	argv[i++] = "-T";
+ 	argv[i++] = wget_timeout;
+ 	if (wget_no_check_certificate) argv[i++] = "--no-check-certificate";
+-- 
+2.43.5
+

@@ -223,6 +223,10 @@ curl -s $mirror/openwrt/nginx/uci.conf.template > feeds/packages/net/nginx-util/
 # netifd
 curl -s $mirror/openwrt/patch/netifd/001-hack-packet_steering-for-nanopi-r76s.patch | patch -p1
 
+# apk
+mkdir -p package/system/apk/patches
+curl -s $mirror/openwrt/patch/apk/9000-io_url_wget-disbale-hsts.patch > package/system/opkg/patches/9000-io_url_wget-disbale-hsts.patch
+
 # opkg
 mkdir -p package/system/opkg/patches
 curl -s $mirror/openwrt/patch/opkg/900-opkg-download-disable-hsts.patch > package/system/opkg/patches/900-opkg-download-disable-hsts.patch
