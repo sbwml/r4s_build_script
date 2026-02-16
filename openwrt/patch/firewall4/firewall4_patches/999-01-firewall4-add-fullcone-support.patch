@@ -25,7 +25,7 @@ IPv6 traffic do NOT need this FullCone NAT functionality.
  	option forward		REJECT
  # Uncomment this line to disable ipv6 rules
  #	option disable_ipv6	1
-+	option fullcone		1
++	option fullcone		0
  
  config zone
  	option name		lan

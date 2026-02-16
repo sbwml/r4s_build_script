@@ -3,7 +3,7 @@
 @@ -6,6 +6,9 @@ config defaults
  # Uncomment this line to disable ipv6 rules
  #	option disable_ipv6	1
- 	option fullcone		1
+ 	option fullcone		0
 +# 0 - use nft_fullcone originated from Chion82
 +# 1 - use bcm fullconenat from broadcom ASUS Merlin
 +	option brcmfullcone 	0
