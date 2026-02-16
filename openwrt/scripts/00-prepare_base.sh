@@ -225,7 +225,7 @@ curl -s $mirror/openwrt/patch/netifd/001-hack-packet_steering-for-nanopi-r76s.pa
 
 # apk
 mkdir -p package/system/apk/patches
-curl -s $mirror/openwrt/patch/apk/9000-io_url_wget-disbale-hsts.patch > package/system/opkg/patches/9000-io_url_wget-disbale-hsts.patch
+curl -s $mirror/openwrt/patch/apk/9000-io_url_wget-disbale-hsts.patch > package/system/apk/patches/9000-io_url_wget-disbale-hsts.patch
 
 # opkg
 mkdir -p package/system/opkg/patches
