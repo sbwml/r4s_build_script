@@ -156,8 +156,8 @@ git clone https://$github/sbwml/package_firmware_linux-firmware package/firmware
 rm -rf package/kernel/mt76
 mkdir -p package/kernel/mt76/patches
 curl -s $mirror/openwrt/patch/mt76/Makefile > package/kernel/mt76/Makefile
+curl -s $mirror/openwrt/patch/mt76/patches/002-use-hrtimer_setup-in-mt76x02u-beacon-init.patch > package/kernel/mt76/patches/002-use-hrtimer_setup-in-mt76x02u-beacon-init.patch
 curl -s $mirror/openwrt/patch/mt76/patches/101-fix-build-with-linux-6.12rc2.patch > package/kernel/mt76/patches/101-fix-build-with-linux-6.12rc2.patch
-curl -s $mirror/openwrt/patch/mt76/patches/102-fix-build-with-linux-6.18.patch > package/kernel/mt76/patches/102-fix-build-with-linux-6.18.patch
 
 # wireless-regdb
 curl -s $mirror/openwrt/patch/openwrt-6.x/500-world-regd-5GHz.patch > package/firmware/wireless-regdb/patches/500-world-regd-5GHz.patch
