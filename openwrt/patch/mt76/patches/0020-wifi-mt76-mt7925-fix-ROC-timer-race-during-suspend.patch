@@ -1,0 +1,47 @@
+From 428960f8f65f3be6a11910eba3e1f1000a80c4f6 Mon Sep 17 00:00:00 2001
+From: Zac Bowling <zac@zacbowling.com>
+Date: Mon, 19 Jan 2026 12:28:11 -0800
+Subject: [PATCH 20/24] wifi: mt76: mt7925: fix ROC timer race during suspend
+
+Cancel ROC timer and work in mt7925_suspend() (mac80211 callback)
+before mac80211 finishes quiescing. Previously this was only done
+in mt7925_pci_suspend() which is called later.
+
+The race condition:
+1. mac80211 sets quiescing=true
+2. mac80211 calls mt7925_suspend() - ROC timer still active
+3. ROC timer fires, calls ieee80211_queue_work() -> warning
+4. Later, mt7925_pci_suspend() cancels ROC timer (too late)
+
+This can leave the driver in an inconsistent state causing freezes
+on resume. By canceling the ROC work early in the mac80211 suspend
+callback, we ensure no ROC operations are pending when quiescing
+begins.
+
+Fixes: c948b5da6bbe ("wifi: mt76: mt7925: add Mediatek Wi-Fi7 driver for mt7925 chips")
+Signed-off-by: Zac Bowling <zac@zacbowling.com>
+---
+ mt7925/main.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+--- a/mt7925/main.c
++++ b/mt7925/main.c
+@@ -1584,6 +1584,18 @@ static int mt7925_suspend(struct ieee802
+ 	cancel_delayed_work_sync(&dev->pm.ps_work);
+ 	mt76_connac_free_pending_tx_skbs(&dev->pm, NULL);
+ 
++	/* Cancel ROC timer and work before mac80211 finishes quiescing.
++	 * This must happen here, not in pci_suspend, because mac80211
++	 * sets quiescing=true before calling this callback. If the ROC
++	 * timer fires after quiescing starts, ieee80211_queue_work() will
++	 * fail and leave the driver in an inconsistent state.
++	 *
++	 * IMPORTANT: Must be called BEFORE mutex_acquire to avoid deadlock.
++	 * If roc_work is running and waiting for mutex, cancel_work_sync
++	 * would block forever if we already hold the mutex.
++	 */
++	mt7925_roc_abort_sync(dev);
++
+ 	mt792x_mutex_acquire(dev);
+ 
+ 	clear_bit(MT76_STATE_RUNNING, &phy->mt76->state);

@@ -1,0 +1,69 @@
+From c3304a1b31fe91c3b79e4e8263ced6ace1d21052 Mon Sep 17 00:00:00 2001
+From: Zac Bowling <zbowling@gmail.com>
+Date: Thu, 1 Jan 2026 12:36:10 -0800
+Subject: [PATCH 13/24] wifi: mt76: mt7925: fix kernel warning in MLO ROC setup
+ when channel not configured
+
+mt7925_mcu_set_mlo_roc() uses WARN_ON_ONCE() to check if link_conf or
+channel is NULL. However, during MLO AP setup, it's normal for the
+channel to not be configured yet when this function is called. The
+WARN_ON_ONCE triggers a kernel warning/oops that makes the system
+appear to have crashed, even though it's just a timing issue.
+
+Replace WARN_ON_ONCE with regular NULL checks and return -ENOLINK to
+indicate the link isn't fully configured yet. This allows the upper
+layers to retry when the link is ready, without spamming the kernel
+log with warnings.
+
+Also add a check for mconf in the first loop to match the pattern
+used in the second loop, preventing potential NULL dereference.
+
+This fixes kernel oops reported during MLO AP setup on OpenWrt with
+MT7925E hardware.
+
+Signed-off-by: Zac Bowling <zac@zacbowling.com>
+---
+ mt7925/mcu.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+--- a/mt7925/mcu.c
++++ b/mt7925/mcu.c
+@@ -1341,15 +1341,23 @@ int mt7925_mcu_set_mlo_roc(struct mt792x
+ 	for (i = 0; i < ARRAY_SIZE(links); i++) {
+ 		links[i].id = i ? __ffs(~BIT(mconf->link_id) & sel_links) :
+ 				 mconf->link_id;
++
+ 		link_conf = mt792x_vif_to_bss_conf(vif, links[i].id);
+-		if (WARN_ON_ONCE(!link_conf))
+-			return -EPERM;
++		if (!link_conf)
++			return -ENOLINK;
+ 
+ 		links[i].chan = link_conf->chanreq.oper.chan;
+-		if (WARN_ON_ONCE(!links[i].chan))
+-			return -EPERM;
++		if (!links[i].chan)
++			/* Channel not configured yet - this can happen during
++			 * MLO AP setup when links are being added sequentially.
++			 * Return -ENOLINK to indicate link not ready.
++			 */
++			return -ENOLINK;
+ 
+ 		links[i].mconf = mt792x_vif_to_link(mvif, links[i].id);
++		if (!links[i].mconf)
++			return -ENOLINK;
++
+ 		links[i].tag = links[i].id == mconf->link_id ?
+ 			       UNI_ROC_ACQUIRE : UNI_ROC_SUB_LINK;
+ 
+@@ -1364,8 +1372,8 @@ int mt7925_mcu_set_mlo_roc(struct mt792x
+ 		type = MT7925_ROC_REQ_JOIN;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(links) && i < hweight16(vif->active_links); i++) {
+-		if (WARN_ON_ONCE(!links[i].mconf || !links[i].chan))
+-			continue;
++		if (!links[i].mconf || !links[i].chan)
++			return -ENOLINK;
+ 
+ 		chan = links[i].chan;
+ 		center_ch = ieee80211_frequency_to_channel(chan->center_freq);

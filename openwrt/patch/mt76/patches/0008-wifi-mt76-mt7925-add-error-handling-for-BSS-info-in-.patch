@@ -1,0 +1,35 @@
+From 0ed559511504baf62cfe5d714d9d7e2ca219fd7a Mon Sep 17 00:00:00 2001
+From: Zac Bowling <zac@zacbowling.com>
+Date: Wed, 31 Dec 2025 17:21:51 -0800
+Subject: [PATCH 08/24] wifi: mt76: mt7925: add error handling for BSS info in
+ key setup
+
+Check return value of mt7925_mcu_add_bss_info() in mt7925_set_key_link()
+when setting up cipher for the first time and propagate errors.
+
+The BSS info update with cipher information must succeed before key
+programming can proceed. If this MCU command fails, continuing with
+key setup would program keys into the firmware for a BSS that doesn't
+have the correct cipher configuration.
+
+Reported-by: Zac Bowling <zac@zacbowling.com>
+Signed-off-by: Zac Bowling <zac@zacbowling.com>
+---
+ mt7925/main.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+--- a/mt7925/main.c
++++ b/mt7925/main.c
+@@ -645,8 +645,10 @@ static int mt7925_set_link_key(struct ie
+ 		struct mt792x_phy *phy = mt792x_hw_phy(hw);
+ 
+ 		mconf->mt76.cipher = mt7925_mcu_get_cipher(key->cipher);
+-		mt7925_mcu_add_bss_info(phy, mconf->mt76.ctx, link_conf,
+-					link_sta, true);
++		err = mt7925_mcu_add_bss_info(phy, mconf->mt76.ctx, link_conf,
++					      link_sta, true);
++		if (err)
++			goto out;
+ 	}
+ 
+ 	if (cmd == SET_KEY)

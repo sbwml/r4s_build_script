@@ -156,8 +156,34 @@ git clone https://$github/sbwml/package_firmware_linux-firmware package/firmware
 rm -rf package/kernel/mt76
 mkdir -p package/kernel/mt76/patches
 curl -s $mirror/openwrt/patch/mt76/Makefile > package/kernel/mt76/Makefile
-curl -s $mirror/openwrt/patch/mt76/patches/002-use-hrtimer_setup-in-mt76x02u-beacon-init.patch > package/kernel/mt76/patches/002-use-hrtimer_setup-in-mt76x02u-beacon-init.patch
-curl -s $mirror/openwrt/patch/mt76/patches/101-fix-build-with-linux-6.12rc2.patch > package/kernel/mt76/patches/101-fix-build-with-linux-6.12rc2.patch
+pushd package/kernel/mt76/patches
+    curl -Os $mirror/openwrt/patch/mt76/patches/100-fix-build-with-linux-6.12rc2.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/102-use-hrtimer_setup-in-mt76x02u-beacon-init.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0001-wifi-mt76-mt7925-fix-NULL-pointer-dereference-in-vif.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0002-wifi-mt76-mt7925-fix-missing-mutex-protection-in-res.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0003-wifi-mt76-mt7925-fix-missing-mutex-protection-in-run.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0004-wifi-mt76-mt7925-add-NULL-checks-in-MCU-STA-TLV-func.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0005-wifi-mt76-mt7925-add-NULL-checks-for-link_conf-and-m.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0006-wifi-mt76-mt7925-add-error-handling-for-AMPDU-MCU-co.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0007-wifi-mt76-mt7925-add-error-handling-for-BSS-info-MCU.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0008-wifi-mt76-mt7925-add-error-handling-for-BSS-info-in-.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0009-wifi-mt76-mt7925-add-NULL-checks-in-MLO-link-and-cha.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0010-wifi-mt76-mt792x-fix-NULL-pointer-dereference-in-TX-.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0011-wifi-mt76-mt7925-add-lockdep-assertions-for-mutex-ve.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0012-wifi-mt76-mt7925-fix-key-removal-failure-during-MLO-.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0013-wifi-mt76-mt7925-fix-kernel-warning-in-MLO-ROC-setup.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0014-wifi-mt76-mt7925-add-NULL-checks-for-MLO-link-pointe.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0015-wifi-mt76-mt792x-fix-firmware-reload-failure-after-p.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0016-wifi-mt76-mt7925-add-mutex-protection-in-resume-path.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0017-wifi-mt76-mt7925-add-NULL-checks-for-link-pointers-i.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0018-wifi-mt76-mt7925-fix-BA-session-teardown-during-beac.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0019-wifi-mt76-mt7925-fix-deadlock-in-sta-removal-ROC-abo.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0020-wifi-mt76-mt7925-fix-ROC-timer-race-during-suspend.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0021-wifi-mt76-mt7925-add-ROC-rate-limiting-to-mitigate-M.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0022-wifi-mt76-mt7925-improve-error-handling-and-code-cle.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0023-wifi-mt76-mt7925-fix-deadlock-and-WCID-leak-bugs.patch
+    curl -Os $mirror/openwrt/patch/mt76/patches/0024-wifi-mt76-mt7925-fix-race-condition-in-async-ROC-abo.patch
+popd
 
 # wireless-regdb
 curl -s $mirror/openwrt/patch/openwrt-6.x/500-world-regd-5GHz.patch > package/firmware/wireless-regdb/patches/500-world-regd-5GHz.patch

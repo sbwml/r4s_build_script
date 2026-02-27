@@ -1,0 +1,147 @@
+From a43924caa7a783b4371a03f8d663903015dfb2b1 Mon Sep 17 00:00:00 2001
+From: Zac <zac@zacbowling.com>
+Date: Mon, 19 Jan 2026 15:29:29 -0800
+Subject: [PATCH 24/24] wifi: mt76: mt7925: fix race condition in async ROC
+ abort
+
+Fix multiple issues in the async ROC abort mechanism:
+
+1. Schedule roc_work after setting abort flag and deleting timer.
+   If the timer hasn't fired yet, roc_work would never be scheduled
+   and MT76_STATE_ROC would remain set permanently, causing future
+   ROC attempts to fail with -EBUSY.
+
+2. Remove the clear_bit(MT76_STATE_ROC) call to fix a race where
+   mac80211 might not receive the ROC expiry notification.
+
+3. Add missing power_save_sched call in WCID error cleanup path
+   to balance the pm_wake call and prevent power state imbalance.
+
+Also clean up verbose intermediate comments throughout ROC code.
+
+Reported-by: Cursor Bot (code review)
+Reported-by: GitHub Copilot (code review)
+Signed-off-by: Zac Bowling <zac@zacbowling.com>
+---
+ mt7925/main.c | 55 ++++++++++-----------------------------------------
+ 1 file changed, 10 insertions(+), 45 deletions(-)
+
+--- a/mt7925/main.c
++++ b/mt7925/main.c
+@@ -465,19 +465,14 @@ static void mt7925_roc_abort_async(struc
+ {
+ 	struct mt792x_phy *phy = &dev->phy;
+ 
+-	/* Set abort flag first - roc_work checks this before acquiring mutex */
++	/* Set abort flag - roc_work checks this before acquiring mutex */
+ 	set_bit(MT76_STATE_ROC_ABORT, &phy->mt76->state);
+ 
+-	/* Clear ROC state */
+-	clear_bit(MT76_STATE_ROC, &phy->mt76->state);
+-
+-	/* Stop the timer - use non-sync version to avoid blocking */
+-	timer_delete(&phy->roc_timer);
+-
+-	/* Do NOT call cancel_work_sync here - that would deadlock if
+-	 * roc_work is waiting for mutex that we (caller) already hold.
+-	 * The work will see the abort flag and clean up gracefully.
++	/* Stop timer and schedule work to handle cleanup.
++	 * Must schedule work since timer may not have fired yet.
+ 	 */
++	timer_delete(&phy->roc_timer);
++	ieee80211_queue_work(phy->mt76->hw, &phy->roc_work);
+ }
+ 
+ void mt7925_roc_abort_sync(struct mt792x_dev *dev)
+@@ -626,14 +621,7 @@ static int mt7925_set_roc(struct mt792x_
+ 		}
+ 	}
+ 
+-	/* Clear any stale abort flag from previous ROC abort_async calls.
+-	 * If abort_async was called but roc_work never ran (timer was cancelled
+-	 * before firing), the abort flag would be stale and incorrectly abort
+-	 * this new ROC session.
+-	 *
+-	 * Note: cancel_work_sync must be called by our callers BEFORE they
+-	 * acquire the mutex, to prevent deadlock. See mt7925_remain_on_channel.
+-	 */
++	/* Clear stale abort flag from previous ROC */
+ 	clear_bit(MT76_STATE_ROC_ABORT, &phy->mt76->state);
+ 
+ 	if (test_and_set_bit(MT76_STATE_ROC, &phy->mt76->state))
+@@ -684,10 +672,7 @@ static int mt7925_set_mlo_roc(struct mt7
+ 		}
+ 	}
+ 
+-	/* Clear any stale abort flag from previous ROC abort_async calls.
+-	 * Note: cancel_work_sync must be called by our callers BEFORE they
+-	 * acquire the mutex, to prevent deadlock.
+-	 */
++	/* Clear stale abort flag from previous ROC */
+ 	clear_bit(MT76_STATE_ROC_ABORT, &phy->mt76->state);
+ 
+ 	if (WARN_ON_ONCE(test_and_set_bit(MT76_STATE_ROC, &phy->mt76->state)))
+@@ -724,11 +709,7 @@ static int mt7925_remain_on_channel(stru
+ 	struct mt792x_phy *phy = mt792x_hw_phy(hw);
+ 	int err;
+ 
+-	/* Cancel any pending ROC work BEFORE acquiring mutex to prevent
+-	 * deadlock. The work may be waiting for mutex we're about to take.
+-	 */
+ 	cancel_work_sync(&phy->roc_work);
+-
+ 	mt792x_mutex_acquire(phy->dev);
+ 	err = mt7925_set_roc(phy, &mvif->bss_conf,
+ 			     chan, duration, MT7925_ROC_REQ_ROC);
+@@ -1118,6 +1099,7 @@ static int mt7925_mac_link_sta_add(struc
+ err_wcid:
+ 	rcu_assign_pointer(dev->mt76.wcid[idx], NULL);
+ 	mt76_wcid_mask_clear(dev->mt76.wcid_mask, idx);
++	mt76_connac_power_save_sched(&dev->mphy, &dev->pm);
+ 	return ret;
+ }
+ 
+@@ -1310,10 +1292,7 @@ static void mt7925_mac_link_sta_remove(s
+ 	if (!mlink)
+ 		return;
+ 
+-	/* Use async abort to prevent deadlock - this function is called from
+-	 * mt76_sta_remove() which already holds dev->mt76.mutex. Using the
+-	 * sync version would deadlock if roc_work is waiting for the same mutex.
+-	 */
++	/* Async abort - caller already holds mutex */
+ 	mt7925_roc_abort_async(dev);
+ 
+ 	mt76_connac_free_pending_tx_skbs(&dev->pm, &mlink->wcid);
+@@ -1728,18 +1707,8 @@ static int mt7925_suspend(struct ieee802
+ 	cancel_delayed_work_sync(&dev->pm.ps_work);
+ 	mt76_connac_free_pending_tx_skbs(&dev->pm, NULL);
+ 
+-	/* Cancel ROC timer and work before mac80211 finishes quiescing.
+-	 * This must happen here, not in pci_suspend, because mac80211
+-	 * sets quiescing=true before calling this callback. If the ROC
+-	 * timer fires after quiescing starts, ieee80211_queue_work() will
+-	 * fail and leave the driver in an inconsistent state.
+-	 *
+-	 * IMPORTANT: Must be called BEFORE mutex_acquire to avoid deadlock.
+-	 * If roc_work is running and waiting for mutex, cancel_work_sync
+-	 * would block forever if we already hold the mutex.
+-	 */
++	/* Cancel ROC before quiescing starts */
+ 	mt7925_roc_abort_sync(dev);
+-
+ 	mt792x_mutex_acquire(dev);
+ 
+ 	clear_bit(MT76_STATE_RUNNING, &phy->mt76->state);
+@@ -2248,11 +2217,7 @@ mt7925_change_vif_links(struct ieee80211
+ 	if (old_links == new_links)
+ 		return 0;
+ 
+-	/* Cancel any pending ROC work before acquiring mutex to prevent
+-	 * deadlock if mt7925_set_mlo_roc is called below.
+-	 */
+ 	cancel_work_sync(&phy->roc_work);
+-
+ 	mt792x_mutex_acquire(dev);
+ 
+ 	for_each_set_bit(link_id, &rem, IEEE80211_MLD_MAX_NUM_LINKS) {

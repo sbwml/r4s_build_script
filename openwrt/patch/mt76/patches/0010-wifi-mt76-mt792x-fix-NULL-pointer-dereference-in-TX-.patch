@@ -1,0 +1,70 @@
+From 1521b28edece1801c7e2edc657b456721720022c Mon Sep 17 00:00:00 2001
+From: Zac Bowling <zac@zacbowling.com>
+Date: Wed, 31 Dec 2025 17:38:26 -0800
+Subject: [PATCH 10/24] wifi: mt76: mt792x: fix NULL pointer dereference in TX
+ path
+
+Add NULL pointer checks in mt792x_tx() to prevent kernel crashes when
+transmitting packets during MLO link removal.
+
+The function calls mt792x_sta_to_link() which can return NULL if the
+link is being removed, but the return value was dereferenced without
+checking. Similarly, the RCU-protected link_conf and link_sta pointers
+were used without NULL validation.
+
+This race can occur when:
+1. A packet is queued for transmission
+2. Concurrently, the link is being removed (mt7925_mac_link_sta_remove)
+3. mt792x_sta_to_link() returns NULL for the removed link
+4. Kernel crashes on wcid = &mlink->wcid dereference
+
+Fix by:
+- Check mlink return value before dereferencing wcid
+- Check RCU-dereferenced conf and link_sta before use
+- Free the SKB and return early if any pointer is NULL
+
+This affects both MT7921 and MT7925 drivers as mt792x_core.c is shared.
+
+Reported-by: Zac Bowling <zac@zacbowling.com>
+Signed-off-by: Zac Bowling <zac@zacbowling.com>
+---
+ mt792x_core.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+--- a/mt792x_core.c
++++ b/mt792x_core.c
+@@ -95,6 +95,8 @@ void mt792x_tx(struct ieee80211_hw *hw,
+ 				       IEEE80211_TX_CTRL_MLO_LINK);
+ 		sta = (struct mt792x_sta *)control->sta->drv_priv;
+ 		mlink = mt792x_sta_to_link(sta, link_id);
++		if (!mlink)
++			goto free_skb;
+ 		wcid = &mlink->wcid;
+ 	}
+ 
+@@ -113,9 +115,12 @@ void mt792x_tx(struct ieee80211_hw *hw,
+ 		link_id = wcid->link_id;
+ 		rcu_read_lock();
+ 		conf = rcu_dereference(vif->link_conf[link_id]);
+-		memcpy(hdr->addr2, conf->addr, ETH_ALEN);
+-
+ 		link_sta = rcu_dereference(control->sta->link[link_id]);
++		if (!conf || !link_sta) {
++			rcu_read_unlock();
++			goto free_skb;
++		}
++		memcpy(hdr->addr2, conf->addr, ETH_ALEN);
+ 		memcpy(hdr->addr1, link_sta->addr, ETH_ALEN);
+ 
+ 		if (vif->type == NL80211_IFTYPE_STATION)
+@@ -136,6 +141,10 @@ void mt792x_tx(struct ieee80211_hw *hw,
+ 	}
+ 
+ 	mt76_connac_pm_queue_skb(hw, &dev->pm, wcid, skb);
++	return;
++
++free_skb:
++	ieee80211_free_txskb(hw, skb);
+ }
+ EXPORT_SYMBOL_GPL(mt792x_tx);
+ 

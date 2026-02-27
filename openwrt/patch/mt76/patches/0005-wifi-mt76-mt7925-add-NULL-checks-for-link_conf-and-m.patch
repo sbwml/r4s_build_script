@@ -1,0 +1,122 @@
+From 36afd6a3968570e92101e3599fa5a28bc943f915 Mon Sep 17 00:00:00 2001
+From: Zac Bowling <zac@zacbowling.com>
+Date: Wed, 31 Dec 2025 17:10:57 -0800
+Subject: [PATCH 05/24] wifi: mt76: mt7925: add NULL checks for link_conf and
+ mlink in main.c
+
+Add NULL pointer checks throughout main.c for functions that call
+mt792x_vif_to_bss_conf(), mt792x_vif_to_link(), and mt792x_sta_to_link()
+without verifying the return value before dereferencing.
+
+Functions fixed:
+- mt7925_set_key(): Check link_conf, mconf, and mlink before use
+- mt7925_mac_link_sta_add(): Check link_conf before BSS info update
+- mt7925_mac_link_sta_assoc(): Check mlink and link_conf before use
+- mt7925_mac_link_sta_remove(): Check mlink and link_conf, add goto
+  label for proper cleanup path
+- mt7925_change_vif_links(): Check link_conf before adding BSS
+
+These functions can receive NULL when the link configuration in mac80211
+is not yet synchronized with the driver's link tracking during MLO
+operations or state transitions.
+
+Without these checks, the driver will crash with NULL pointer
+dereferences during station add/remove/association operations.
+
+Reported-by: Zac Bowling <zac@zacbowling.com>
+Signed-off-by: Zac Bowling <zac@zacbowling.com>
+---
+ mt7925/main.c | 27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
+
+--- a/mt7925/main.c
++++ b/mt7925/main.c
+@@ -612,6 +612,10 @@ static int mt7925_set_link_key(struct ie
+ 	link_sta = sta ? mt792x_sta_to_link_sta(vif, sta, link_id) : NULL;
+ 	mconf = mt792x_vif_to_link(mvif, link_id);
+ 	mlink = mt792x_sta_to_link(msta, link_id);
++
++	if (!link_conf || !mconf || !mlink)
++		return -EINVAL;
++
+ 	wcid = &mlink->wcid;
+ 	wcid_keyidx = &wcid->hw_key_idx;
+ 
+@@ -897,6 +901,8 @@ static int mt7925_mac_link_sta_add(struc
+ 			       MT_WTBL_UPDATE_ADM_COUNT_CLEAR);
+ 
+ 	link_conf = mt792x_vif_to_bss_conf(vif, link_id);
++	if (!link_conf)
++		return -EINVAL;
+ 
+ 	/* should update bss info before STA add */
+ 	if (vif->type == NL80211_IFTYPE_STATION && !link_sta->sta->tdls) {
+@@ -1042,6 +1048,8 @@ static void mt7925_mac_link_sta_assoc(st
+ 
+ 	msta = (struct mt792x_sta *)link_sta->sta->drv_priv;
+ 	mlink = mt792x_sta_to_link(msta, link_sta->link_id);
++	if (!mlink)
++		return;
+ 
+ 	mt792x_mutex_acquire(dev);
+ 
+@@ -1051,12 +1059,13 @@ static void mt7925_mac_link_sta_assoc(st
+ 		link_conf = mt792x_vif_to_bss_conf(vif, vif->bss_conf.link_id);
+ 	}
+ 
+-	if (vif->type == NL80211_IFTYPE_STATION && !link_sta->sta->tdls) {
++	if (link_conf && vif->type == NL80211_IFTYPE_STATION && !link_sta->sta->tdls) {
+ 		struct mt792x_bss_conf *mconf;
+ 
+ 		mconf = mt792x_link_conf_to_mconf(link_conf);
+-		mt7925_mcu_add_bss_info(&dev->phy, mconf->mt76.ctx,
+-					link_conf, link_sta, true);
++		if (mconf)
++			mt7925_mcu_add_bss_info(&dev->phy, mconf->mt76.ctx,
++						link_conf, link_sta, true);
+ 	}
+ 
+ 	ewma_avg_signal_init(&mlink->avg_ack_signal);
+@@ -1103,6 +1112,8 @@ static void mt7925_mac_link_sta_remove(s
+ 
+ 	msta = (struct mt792x_sta *)link_sta->sta->drv_priv;
+ 	mlink = mt792x_sta_to_link(msta, link_id);
++	if (!mlink)
++		return;
+ 
+ 	mt7925_roc_abort_sync(dev);
+ 
+@@ -1116,10 +1127,12 @@ static void mt7925_mac_link_sta_remove(s
+ 
+ 	link_conf = mt792x_vif_to_bss_conf(vif, link_id);
+ 
+-	if (vif->type == NL80211_IFTYPE_STATION && !link_sta->sta->tdls) {
++	if (link_conf && vif->type == NL80211_IFTYPE_STATION && !link_sta->sta->tdls) {
+ 		struct mt792x_bss_conf *mconf;
+ 
+ 		mconf = mt792x_link_conf_to_mconf(link_conf);
++		if (!mconf)
++			goto out;
+ 
+ 		if (ieee80211_vif_is_mld(vif))
+ 			mt792x_mac_link_bss_remove(dev, mconf, mlink);
+@@ -1127,6 +1140,7 @@ static void mt7925_mac_link_sta_remove(s
+ 			mt7925_mcu_add_bss_info(&dev->phy, mconf->mt76.ctx, link_conf,
+ 						link_sta, false);
+ 	}
++out:
+ 
+ 	spin_lock_bh(&mdev->sta_poll_lock);
+ 	if (!list_empty(&mlink->wcid.poll_list))
+@@ -2050,6 +2064,11 @@ mt7925_change_vif_links(struct ieee80211
+ 		mlink = mlinks[link_id];
+ 		link_conf = mt792x_vif_to_bss_conf(vif, link_id);
+ 
++		if (!link_conf) {
++			err = -EINVAL;
++			goto free;
++		}
++
+ 		rcu_assign_pointer(mvif->link_conf[link_id], mconf);
+ 		rcu_assign_pointer(mvif->sta.link[link_id], mlink);
+ 

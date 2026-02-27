@@ -1,0 +1,254 @@
+From 846ac23af31d165ce310257c91052518730d1604 Mon Sep 17 00:00:00 2001
+From: Zac Bowling <zac@zacbowling.com>
+Date: Mon, 19 Jan 2026 12:32:01 -0800
+Subject: [PATCH 21/24] wifi: mt76: mt7925: add ROC rate limiting to mitigate
+ MLO auth failures
+
+Add exponential backoff rate limiting for ROC (Remain On Channel)
+commands to prevent MCU overload during rapid reconnection cycles.
+
+Problem:
+When MLO (Multi-Link Operation) authentication fails due to an upper
+layer race condition, the driver enters a rapid reconnection loop that
+overwhelms the MCU with ROC commands, causing timeouts and firmware
+resets.
+
+Root Cause (upper layer bug, not fixed by this patch):
+The kernel's nl80211 layer at net/wireless/nl80211.c:4828 requires
+link_id for group key operations when MLO is active (wdev->valid_links
+is set). During Fast Transition (802.11r) roaming:
+
+1. Device is connected in MLO mode (wdev->valid_links = bitmask)
+2. FT roaming begins to new AP
+3. wpa_supplicant attempts to set group keys without link_id
+4. Disconnect hasn't completed yet - valid_links still set
+5. nl80211 validation fails: "link ID must for MLO group key"
+6. This triggers reconnection attempts with ROC commands
+7. MCU overwhelmed -> timeouts -> firmware reset -> cycle repeats
+
+The race is between disconnect (which clears valid_links in
+cfg80211's __cfg80211_disconnected at sme.c:1359) and key setup.
+
+This Mitigation:
+- Track consecutive ROC timeouts in mt792x_phy structure
+- Implement exponential backoff: 100ms, 200ms, 400ms, 800ms, 1600ms
+- Reset backoff after 10 seconds of no timeouts
+- Log warning after 5 consecutive timeouts to help identify the issue
+- Short backoffs (<200ms) wait inline; longer ones return -EBUSY
+
+This doesn't fix the root cause but prevents the system from becoming
+unresponsive during the failure cycle, giving users time to work around
+the issue (e.g., disable MLO or use single-link WiFi 7).
+
+Upstream Bug Reports Needed:
+- wpa_supplicant: MLO group key setup missing link_id during FT roaming
+- mac80211/cfg80211: Race between disconnect and key setup sequencing
+
+Signed-off-by: Zac Bowling <zac@zacbowling.com>
+---
+ mt7925/main.c | 133 ++++++++++++++++++++++++++++++++++++++++++++++++--
+ mt792x.h      |   7 +++
+ 2 files changed, 136 insertions(+), 4 deletions(-)
+
+--- a/mt7925/main.c
++++ b/mt7925/main.c
+@@ -542,14 +542,108 @@ static int mt7925_abort_roc(struct mt792
+ 	return err;
+ }
+ 
++/* ROC rate limiting constants - exponential backoff to prevent MCU overload
++ * when upper layers trigger rapid reconnection cycles (e.g., MLO auth failures).
++ * Max backoff ~1.6s, resets after 10s of no timeouts.
++ */
++#define MT7925_ROC_BACKOFF_BASE_MS	100
++#define MT7925_ROC_BACKOFF_MAX_MS	1600
++#define MT7925_ROC_TIMEOUT_RESET_MS	10000
++#define MT7925_ROC_TIMEOUT_WARN_THRESH	5
++
++/* Check if ROC should be throttled due to recent timeouts.
++ * Returns delay in jiffies if throttling, 0 if OK to proceed.
++ */
++static unsigned long mt7925_roc_throttle_check(struct mt792x_phy *phy)
++{
++	unsigned long now = jiffies;
++
++	/* Reset timeout counter if it's been a while since last timeout */
++	if (phy->roc_timeout_count &&
++	    time_after(now, phy->roc_last_timeout +
++		       msecs_to_jiffies(MT7925_ROC_TIMEOUT_RESET_MS))) {
++		phy->roc_timeout_count = 0;
++		phy->roc_backoff_until = 0;
++	}
++
++	/* Check if we're still in backoff period */
++	if (phy->roc_backoff_until && time_before(now, phy->roc_backoff_until))
++		return phy->roc_backoff_until - now;
++
++	return 0;
++}
++
++/* Record ROC timeout and calculate backoff period */
++static void mt7925_roc_record_timeout(struct mt792x_phy *phy)
++{
++	unsigned int backoff_ms;
++
++	phy->roc_last_timeout = jiffies;
++	phy->roc_timeout_count++;
++
++	/* Exponential backoff: 100ms, 200ms, 400ms, 800ms, 1600ms (capped) */
++	backoff_ms = MT7925_ROC_BACKOFF_BASE_MS <<
++		     min_t(u8, phy->roc_timeout_count - 1, 4);
++	if (backoff_ms > MT7925_ROC_BACKOFF_MAX_MS)
++		backoff_ms = MT7925_ROC_BACKOFF_MAX_MS;
++
++	phy->roc_backoff_until = jiffies + msecs_to_jiffies(backoff_ms);
++
++	/* Warn if we're seeing repeated timeouts - likely upper layer issue */
++	if (phy->roc_timeout_count == MT7925_ROC_TIMEOUT_WARN_THRESH)
++		dev_warn(phy->dev->mt76.dev,
++			 "mt7925: %u consecutive ROC timeouts, possible mac80211/wpa_supplicant issue (MLO key race?)\n",
++			 phy->roc_timeout_count);
++}
++
++/* Clear timeout tracking on successful ROC */
++static void mt7925_roc_clear_timeout(struct mt792x_phy *phy)
++{
++	phy->roc_timeout_count = 0;
++	phy->roc_backoff_until = 0;
++}
++
+ static int mt7925_set_roc(struct mt792x_phy *phy,
+ 			  struct mt792x_bss_conf *mconf,
+ 			  struct ieee80211_channel *chan,
+ 			  int duration,
+ 			  enum mt7925_roc_req type)
+ {
++	unsigned long throttle;
+ 	int err;
+ 
++	/* Check rate limiting - if in backoff period, wait or return busy */
++	throttle = mt7925_roc_throttle_check(phy);
++	if (throttle) {
++		/* For short backoffs, wait; for longer ones, return busy */
++		if (throttle < msecs_to_jiffies(200)) {
++			msleep(jiffies_to_msecs(throttle));
++		} else {
++			dev_dbg(phy->dev->mt76.dev,
++				"mt7925: ROC throttled, %lu ms remaining\n",
++				jiffies_to_msecs(throttle));
++			return -EBUSY;
++		}
++	}
++
++	/* Clear any stale abort flag from previous ROC abort_async calls.
++	 * If abort_async was called but roc_work never ran (timer was cancelled
++	 * before firing), the abort flag would be stale and incorrectly abort
++	 * this new ROC session.
++	 */
++	clear_bit(MT76_STATE_ROC_ABORT, &phy->mt76->state);
++
++	/* Cancel any pending roc_work from a previous async-aborted ROC.
++	 * This prevents a race where stale work could abort our new ROC:
++	 * 1. Previous ROC's roc_work clears ROC flag with test_and_clear
++	 * 2. Work blocks waiting for mutex
++	 * 3. abort_async called, sets abort flag
++	 * 4. New ROC starts here, clears abort flag, sets ROC flag
++	 * 5. Stale work gets mutex, calls mcu_abort_roc with NEW token
++	 * Safe to call here since we don't hold the mutex yet.
++	 */
++	cancel_work_sync(&phy->roc_work);
++
+ 	if (test_and_set_bit(MT76_STATE_ROC, &phy->mt76->state))
+ 		return -EBUSY;
+ 
+@@ -565,7 +659,11 @@ static int mt7925_set_roc(struct mt792x_
+ 	if (!wait_event_timeout(phy->roc_wait, phy->roc_grant, 4 * HZ)) {
+ 		mt7925_mcu_abort_roc(phy, mconf, phy->roc_token_id);
+ 		clear_bit(MT76_STATE_ROC, &phy->mt76->state);
++		mt7925_roc_record_timeout(phy);
+ 		err = -ETIMEDOUT;
++	} else {
++		/* Successful ROC - reset timeout tracking */
++		mt7925_roc_clear_timeout(phy);
+ 	}
+ 
+ out:
+@@ -576,8 +674,32 @@ static int mt7925_set_mlo_roc(struct mt7
+ 			      struct mt792x_bss_conf *mconf,
+ 			      u16 sel_links)
+ {
++	unsigned long throttle;
+ 	int err;
+ 
++	/* Check rate limiting - MLO ROC is especially prone to rapid-fire
++	 * during reconnection cycles after MLO authentication failures.
++	 */
++	throttle = mt7925_roc_throttle_check(phy);
++	if (throttle) {
++		if (throttle < msecs_to_jiffies(200)) {
++			msleep(jiffies_to_msecs(throttle));
++		} else {
++			dev_dbg(phy->dev->mt76.dev,
++				"mt7925: MLO ROC throttled, %lu ms remaining\n",
++				jiffies_to_msecs(throttle));
++			return -EBUSY;
++		}
++	}
++
++	/* Clear any stale abort flag from previous ROC abort_async calls */
++	clear_bit(MT76_STATE_ROC_ABORT, &phy->mt76->state);
++
++	/* Cancel any pending roc_work from a previous async-aborted ROC.
++	 * See comment in mt7925_set_roc for the race condition this prevents.
++	 */
++	cancel_work_sync(&phy->roc_work);
++
+ 	if (WARN_ON_ONCE(test_and_set_bit(MT76_STATE_ROC, &phy->mt76->state)))
+ 		return -EBUSY;
+ 
+@@ -592,7 +714,10 @@ static int mt7925_set_mlo_roc(struct mt7
+ 	if (!wait_event_timeout(phy->roc_wait, phy->roc_grant, 4 * HZ)) {
+ 		mt7925_mcu_abort_roc(phy, mconf, phy->roc_token_id);
+ 		clear_bit(MT76_STATE_ROC, &phy->mt76->state);
++		mt7925_roc_record_timeout(phy);
+ 		err = -ETIMEDOUT;
++	} else {
++		mt7925_roc_clear_timeout(phy);
+ 	}
+ 
+ out:
+@@ -916,14 +1041,14 @@ static int mt7925_mac_link_sta_add(struc
+ 	if (!mlink)
+ 		return -EINVAL;
+ 
+-	idx = mt76_wcid_alloc(dev->mt76.wcid_mask, MT792x_WTBL_STA - 1);
+-	if (idx < 0)
+-		return -ENOSPC;
+-
+ 	mconf = mt792x_vif_to_link(mvif, link_id);
+ 	if (!mconf)
+ 		return -EINVAL;
+ 
++	idx = mt76_wcid_alloc(dev->mt76.wcid_mask, MT792x_WTBL_STA - 1);
++	if (idx < 0)
++		return -ENOSPC;
++
+ 	mt76_wcid_init(&mlink->wcid, 0);
+ 	mlink->wcid.sta = 1;
+ 	mlink->wcid.idx = idx;
+--- a/mt792x.h
++++ b/mt792x.h
+@@ -186,6 +186,13 @@ struct mt792x_phy {
+ 	wait_queue_head_t roc_wait;
+ 	u8 roc_token_id;
+ 	bool roc_grant;
++
++	/* ROC rate limiting to prevent MCU overload during rapid reconnection
++	 * cycles (e.g., MLO authentication failures causing repeated ROC).
++	 */
++	u8 roc_timeout_count;		/* consecutive ROC timeouts */
++	unsigned long roc_last_timeout;	/* jiffies of last timeout */
++	unsigned long roc_backoff_until;/* don't issue ROC until this time */
+ };
+ 
+ struct mt792x_irq_map {

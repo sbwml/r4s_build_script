@@ -1,0 +1,53 @@
+From 59e0921dd7e913052f2b69b93ea544417595f118 Mon Sep 17 00:00:00 2001
+From: Zac Bowling <zbowling@gmail.com>
+Date: Thu, 1 Jan 2026 14:01:50 -0800
+Subject: [PATCH 15/24] wifi: mt76: mt792x: fix firmware reload failure after
+ previous load crash
+
+If the firmware loading process crashes or is interrupted after
+acquiring the patch semaphore but before releasing it, subsequent
+firmware load attempts will fail with 'Failed to get patch semaphore'
+because the semaphore is still held.
+
+This issue manifests as devices becoming unusable after suspend/resume
+failures or firmware crashes, requiring a full hardware reboot to
+recover. This has been widely reported on MT7921 and MT7925 devices.
+
+Apply the same fix that was applied to MT7915 in commit 79dd14f:
+1. Release the patch semaphore before starting firmware load (in case
+   it was held by a previous failed attempt)
+2. Restart MCU firmware to ensure clean state
+3. Wait briefly for MCU to be ready
+
+This fix applies to both MT7921 and MT7925 drivers which share the
+mt792x_load_firmware() function.
+
+Fixes: 'Failed to get patch semaphore' errors after firmware crash
+Signed-off-by: Zac Bowling <zac@zacbowling.com>
+---
+ mt792x_core.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+--- a/mt792x_core.c
++++ b/mt792x_core.c
+@@ -935,6 +935,20 @@ int mt792x_load_firmware(struct mt792x_d
+ {
+ 	int ret;
+ 
++	/* Release semaphore if taken by previous failed load attempt.
++	 * This prevents "Failed to get patch semaphore" errors when
++	 * recovering from firmware crashes or suspend/resume failures.
++	 */
++	ret = mt76_connac_mcu_patch_sem_ctrl(&dev->mt76, false);
++	if (ret < 0)
++		dev_dbg(dev->mt76.dev, "Semaphore release returned %d (may be expected)\n", ret);
++
++	/* Always restart MCU to ensure clean state before loading firmware */
++	mt76_connac_mcu_restart(&dev->mt76);
++
++	/* Wait for MCU to be ready after restart */
++	msleep(100);
++
+ 	ret = mt76_connac2_load_patch(&dev->mt76, mt792x_patch_name(dev));
+ 	if (ret)
+ 		return ret;

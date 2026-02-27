@@ -1,0 +1,45 @@
+From 593bb9c6da996644f40acf32abe5f1ae7fe406c3 Mon Sep 17 00:00:00 2001
+From: Zac Bowling <zac@zacbowling.com>
+Date: Thu, 15 Jan 2026 16:35:55 -0800
+Subject: [PATCH 18/24] wifi: mt76: mt7925: fix BA session teardown during
+ beacon loss
+
+The ieee80211_stop_tx_ba_cb_irqsafe() callback was conditionally called
+only when the MCU command succeeded. However, during beacon connection
+loss, the MCU command may fail because the AP is no longer reachable.
+
+If the callback is not called, mac80211's BA session state machine gets
+stuck in an intermediate state. When mac80211 later tries to tear down
+all BA sessions during disconnection, it hits a WARN in
+__ieee80211_stop_tx_ba_session() due to the inconsistent state.
+
+Fix by making the callback unconditional, matching the behavior of
+mt7921 and mt7996 drivers. The MCU command failure is acceptable during
+disconnection - what matters is that mac80211 is notified to complete
+the session teardown.
+
+Reported-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Zac Bowling <zbowling@gmail.com>
+---
+ mt7925/main.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+--- a/mt7925/main.c
++++ b/mt7925/main.c
+@@ -1331,9 +1331,13 @@ mt7925_ampdu_action(struct ieee80211_hw
+ 	case IEEE80211_AMPDU_TX_STOP_CONT:
+ 		mtxq->aggr = false;
+ 		clear_bit(tid, &msta->deflink.wcid.ampdu_state);
+-		ret = mt7925_mcu_uni_tx_ba(dev, params, false);
+-		if (!ret)
+-			ieee80211_stop_tx_ba_cb_irqsafe(vif, sta->addr, tid);
++		/* MCU command may fail during beacon loss, but callback must
++		 * always be called to complete the BA session teardown in
++		 * mac80211. Otherwise the state machine gets stuck and triggers
++		 * WARN in __ieee80211_stop_tx_ba_session().
++		 */
++		mt7925_mcu_uni_tx_ba(dev, params, false);
++		ieee80211_stop_tx_ba_cb_irqsafe(vif, sta->addr, tid);
+ 		break;
+ 	}
+ 	mt792x_mutex_release(dev);

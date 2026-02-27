@@ -1,0 +1,54 @@
+From 22e6df471b3f7f60cb947f9e71e0188ef07abea0 Mon Sep 17 00:00:00 2001
+From: Zac Bowling <zac@zacbowling.com>
+Date: Thu, 1 Jan 2026 12:09:42 -0800
+Subject: [PATCH 12/24] wifi: mt76: mt7925: fix key removal failure during MLO
+ roaming
+
+During MLO roaming, mac80211 may request key removal after the link state
+has already been torn down. The current code returns -EINVAL when
+link_conf, mconf, or mlink is NULL, causing 'failed to remove key from
+hardware (-22)' errors in the kernel log.
+
+This is a race condition where:
+1. MLO link teardown begins, cleaning up driver state
+2. mac80211 requests group key removal for the old link
+3. mt792x_vif_to_bss_conf() or related functions return NULL
+4. Driver returns -EINVAL, confusing upper layers
+
+The fix: When removing a key (cmd != SET_KEY), if the link state is
+already gone, return success (0) instead of error. The key is effectively
+removed when the link was torn down.
+
+This prevents the following errors during roaming:
+  wlp192s0: failed to remove key (1, ff:ff:ff:ff:ff:ff) from hardware (-22)
+  wlp192s0: failed to remove key (4, ff:ff:ff:ff:ff:ff) from hardware (-22)
+
+And the associated wpa_supplicant warnings:
+  nl80211: kernel reports: link ID must for MLO group key
+
+Reported-by: Zac Bowling <zac@zacbowling.com>
+Tested-by: Zac Bowling <zac@zacbowling.com>
+Signed-off-by: Zac Bowling <zac@zacbowling.com>
+---
+ mt7925/main.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+--- a/mt7925/main.c
++++ b/mt7925/main.c
+@@ -613,8 +613,15 @@ static int mt7925_set_link_key(struct ie
+ 	mconf = mt792x_vif_to_link(mvif, link_id);
+ 	mlink = mt792x_sta_to_link(msta, link_id);
+ 
+-	if (!link_conf || !mconf || !mlink)
++	if (!link_conf || !mconf || !mlink) {
++		/* During MLO roaming, link state may be torn down before
++		 * mac80211 requests key removal. If removing a key and
++		 * the link is already gone, consider it successfully removed.
++		 */
++		if (cmd != SET_KEY)
++			return 0;
+ 		return -EINVAL;
++	}
+ 
+ 	wcid = &mlink->wcid;
+ 	wcid_keyidx = &wcid->hw_key_idx;

@@ -1,0 +1,143 @@
+From 95dc76b6053151eeedaaa1477ffa26990fdb5fc8 Mon Sep 17 00:00:00 2001
+From: Zac Bowling <zac@zacbowling.com>
+Date: Fri, 16 Jan 2026 21:59:42 -0800
+Subject: [PATCH 19/24] wifi: mt76: mt7925: fix deadlock in sta removal ROC
+ abort path
+
+Fix a mutex deadlock that occurs during station removal when
+cancel_work_sync() is called while already holding the device mutex.
+
+The deadlock occurs in the following scenario:
+
+Thread A (mac80211 sta_state callback):
+  mt76_sta_state()
+    -> mt76_sta_remove()
+         -> mutex_lock(&dev->mutex)     // ACQUIRES MUTEX
+         -> __mt76_sta_remove()
+              -> mt7925_mac_sta_remove()
+                   -> mt7925_mac_sta_remove_links()
+                        -> mt7925_mac_link_sta_remove()
+                             -> mt7925_roc_abort_sync()
+                                  -> cancel_work_sync(&roc_work)
+                                       // WAITS for roc_work
+
+Thread B (workqueue):
+  mt7925_roc_work()
+    -> mt792x_mutex_acquire()           // BLOCKED waiting for mutex
+
+This results in a classic AB-BA deadlock where Thread A holds the mutex
+and waits for roc_work to complete, while roc_work (Thread B) is blocked
+waiting for the same mutex.
+
+From user reports (Framework Laptop 16 with MT7925, NixOS, kernel 6.18.5):
+
+  INFO: task kworker/u128:0:48737 blocked for more than 122 seconds.
+  Workqueue: mt76 mt7925_mac_reset_work [mt7925_common]
+  Call Trace:
+   <TASK>
+   __schedule+0x426/0x12c0
+   schedule+0x27/0xf0
+   schedule_preempt_disabled+0x15/0x30
+   __mutex_lock.constprop.0+0x3d0/0x6d0
+   mt7925_mac_reset_work+0x85/0x170 [mt7925_common]
+   ...
+
+  Showing all locks held in the system:
+  1 lock held by kworker/u128:5/48827:
+   #0: ffff9fff8179d930 (&dev->mutex){+.+.}-{4:4}, at: mt76_sta_remove
+
+The deadlock is triggered by roaming events (moving away from AP, BSSID
+changes) when ROC work is pending and station removal occurs.
+
+The fix introduces an asynchronous ROC abort mechanism:
+
+1. Add MT76_STATE_ROC_ABORT flag to signal abort request
+2. Create mt7925_roc_abort_async() that sets the flag without blocking
+3. Modify mt7925_roc_work() to check abort flag BEFORE acquiring mutex
+4. Use async abort in mt7925_mac_link_sta_remove() instead of sync
+
+The key insight is that if roc_work sees the abort flag before trying
+to acquire the mutex, it can clean up and exit without blocking. This
+breaks the deadlock chain while still ensuring proper ROC cleanup.
+
+Fixes: c948b5da6bbe ("wifi: mt76: mt7925: add Mediatek Wi-Fi7 driver for mt7925 chips")
+Reported-by: Aritz Beobide-Cardinal <aritz@aritzcracker.ca>
+Signed-off-by: Zac Bowling <zac@zacbowling.com>
+---
+ mt76.h        |  1 +
+ mt7925/main.c | 40 +++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 40 insertions(+), 1 deletion(-)
+
+--- a/mt76.h
++++ b/mt76.h
+@@ -525,6 +525,7 @@ enum {
+ 	MT76_STATE_POWER_OFF,
+ 	MT76_STATE_SUSPEND,
+ 	MT76_STATE_ROC,
++	MT76_STATE_ROC_ABORT,
+ 	MT76_STATE_PM,
+ 	MT76_STATE_WED_RESET,
+ };
+--- a/mt7925/main.c
++++ b/mt7925/main.c
+@@ -457,6 +457,29 @@ static void mt7925_roc_iter(void *priv,
+ 	mt7925_mcu_abort_roc(phy, &mvif->bss_conf, phy->roc_token_id);
+ }
+ 
++/* Async ROC abort - safe to call while holding mutex.
++ * Sets abort flag and lets roc_work handle cleanup without blocking.
++ * This prevents deadlock when called from sta_remove path which holds mutex.
++ */
++static void mt7925_roc_abort_async(struct mt792x_dev *dev)
++{
++	struct mt792x_phy *phy = &dev->phy;
++
++	/* Set abort flag first - roc_work checks this before acquiring mutex */
++	set_bit(MT76_STATE_ROC_ABORT, &phy->mt76->state);
++
++	/* Clear ROC state */
++	clear_bit(MT76_STATE_ROC, &phy->mt76->state);
++
++	/* Stop the timer - use non-sync version to avoid blocking */
++	timer_delete(&phy->roc_timer);
++
++	/* Do NOT call cancel_work_sync here - that would deadlock if
++	 * roc_work is waiting for mutex that we (caller) already hold.
++	 * The work will see the abort flag and clean up gracefully.
++	 */
++}
++
+ void mt7925_roc_abort_sync(struct mt792x_dev *dev)
+ {
+ 	struct mt792x_phy *phy = &dev->phy;
+@@ -481,6 +504,17 @@ void mt7925_roc_work(struct work_struct
+ 	phy = (struct mt792x_phy *)container_of(work, struct mt792x_phy,
+ 						roc_work);
+ 
++	/* Check abort flag BEFORE acquiring mutex to prevent deadlock.
++	 * If abort is requested while we're in the sta_remove path (which
++	 * holds the mutex), we must not try to acquire it or we'll deadlock.
++	 * Just clear the flags and notify mac80211 that ROC expired.
++	 */
++	if (test_and_clear_bit(MT76_STATE_ROC_ABORT, &phy->mt76->state)) {
++		clear_bit(MT76_STATE_ROC, &phy->mt76->state);
++		ieee80211_remain_on_channel_expired(phy->mt76->hw);
++		return;
++	}
++
+ 	if (!test_and_clear_bit(MT76_STATE_ROC, &phy->mt76->state))
+ 		return;
+ 
+@@ -1143,7 +1177,11 @@ static void mt7925_mac_link_sta_remove(s
+ 	if (!mlink)
+ 		return;
+ 
+-	mt7925_roc_abort_sync(dev);
++	/* Use async abort to prevent deadlock - this function is called from
++	 * mt76_sta_remove() which already holds dev->mt76.mutex. Using the
++	 * sync version would deadlock if roc_work is waiting for the same mutex.
++	 */
++	mt7925_roc_abort_async(dev);
+ 
+ 	mt76_connac_free_pending_tx_skbs(&dev->pm, &mlink->wcid);
+ 	mt76_connac_pm_wake(&dev->mphy, &dev->pm);

@@ -1,0 +1,57 @@
+From b597a5c4c11574a15db2a0a8f8fc07eaa869ccda Mon Sep 17 00:00:00 2001
+From: Zac Bowling <zbowling@gmail.com>
+Date: Wed, 31 Dec 2025 16:51:29 -0800
+Subject: [PATCH 02/24] wifi: mt76: mt7925: fix missing mutex protection in
+ reset and ROC abort
+
+During firmware recovery and ROC (Remain On Channel) abort operations,
+the driver iterates over active interfaces and calls MCU functions that
+require the device mutex to be held, but the mutex was not acquired.
+
+This causes system-wide hangs where network commands hang indefinitely,
+processes get stuck in uninterruptible sleep (D state), and the system
+becomes completely unresponsive requiring force reboot.
+
+Add mutex protection around interface iteration in:
+- mt7925_mac_reset_work(): Called during firmware recovery after MCU
+  timeouts to reconnect all interfaces
+- PCI suspend path: Wrap mt7925_roc_abort_sync() call with mutex
+
+Note: The mutex is added at the call site in pci.c rather than inside
+mt7925_roc_abort_sync() because this function is also called from the
+station remove path which already holds the mutex.
+
+Reported-by: Zac Bowling <zac@zacbowling.com>
+Tested-by: Zac Bowling <zac@zacbowling.com>
+Signed-off-by: Zac Bowling <zac@zacbowling.com>
+---
+ mt7925/mac.c | 2 ++
+ mt7925/pci.c | 2 ++
+ 2 files changed, 4 insertions(+)
+
+--- a/mt7925/mac.c
++++ b/mt7925/mac.c
+@@ -1336,9 +1336,11 @@ void mt7925_mac_reset_work(struct work_s
+ 	dev->hw_full_reset = false;
+ 	pm->suspended = false;
+ 	ieee80211_wake_queues(hw);
++	mt792x_mutex_acquire(dev);
+ 	ieee80211_iterate_active_interfaces(hw,
+ 					    IEEE80211_IFACE_ITER_RESUME_ALL,
+ 					    mt7925_vif_connect_iter, NULL);
++	mt792x_mutex_release(dev);
+ 	mt76_connac_power_save_sched(&dev->mt76.phy, pm);
+ 
+ 	mt7925_regd_change(&dev->phy, "00");
+--- a/mt7925/pci.c
++++ b/mt7925/pci.c
+@@ -455,7 +455,9 @@ static int mt7925_pci_suspend(struct dev
+ 	cancel_delayed_work_sync(&pm->ps_work);
+ 	cancel_work_sync(&pm->wake_work);
+ 
++	mt792x_mutex_acquire(dev);
+ 	mt7925_roc_abort_sync(dev);
++	mt792x_mutex_release(dev);
+ 
+ 	err = mt792x_mcu_drv_pmctrl(dev);
+ 	if (err < 0)

@@ -1,0 +1,71 @@
+From d50a5ea85f9f33b7127a26b12327ae622c1b45fd Mon Sep 17 00:00:00 2001
+From: Zac Bowling <zbowling@gmail.com>
+Date: Wed, 31 Dec 2025 16:51:37 -0800
+Subject: [PATCH 03/24] wifi: mt76: mt7925: fix missing mutex protection in
+ runtime PM and MLO PM
+
+Two additional code paths iterate over active interfaces and call MCU
+functions without proper mutex protection:
+
+1. mt7925_set_runtime_pm(): Called when runtime PM settings change.
+   The ieee80211_iterate_active_interfaces() call invokes
+   mt7925_pm_interface_iter() which calls mt7925_mcu_set_beacon_filter().
+
+2. mt7925_mlo_pm_work(): Workqueue function for MLO power management.
+   The iterator callback mt7925_mlo_pm_iter() calls mt7925_mcu_uni_bss_ps().
+
+Add mutex protection around the iterate calls in both functions. For
+mt7925_mlo_pm_iter(), move the mutex from inside the callback to the
+caller (mt7925_mlo_pm_work) for consistency with other patterns.
+
+This matches the pattern used in the older mt7615 driver and other
+wireless drivers like iwlwifi.
+
+Reported-by: Zac Bowling <zac@zacbowling.com>
+Tested-by: Zac Bowling <zac@zacbowling.com>
+Signed-off-by: Zac Bowling <zac@zacbowling.com>
+---
+ mt7925/main.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+--- a/mt7925/main.c
++++ b/mt7925/main.c
+@@ -759,9 +759,11 @@ void mt7925_set_runtime_pm(struct mt792x
+ 	bool monitor = !!(hw->conf.flags & IEEE80211_CONF_MONITOR);
+ 
+ 	pm->enable = pm->enable_user && !monitor;
++	mt792x_mutex_acquire(dev);
+ 	ieee80211_iterate_active_interfaces(hw,
+ 					    IEEE80211_IFACE_ITER_RESUME_ALL,
+ 					    mt7925_pm_interface_iter, dev);
++	mt792x_mutex_release(dev);
+ 	pm->ds_enable = pm->ds_enable_user && !monitor;
+ 	mt7925_mcu_set_deep_sleep(dev, pm->ds_enable);
+ }
+@@ -1309,14 +1311,12 @@ mt7925_mlo_pm_iter(void *priv, u8 *mac,
+ 	if (mvif->mlo_pm_state != MT792x_MLO_CHANGED_PS)
+ 		return;
+ 
+-	mt792x_mutex_acquire(dev);
+ 	for_each_set_bit(i, &valid, IEEE80211_MLD_MAX_NUM_LINKS) {
+ 		bss_conf = mt792x_vif_to_bss_conf(vif, i);
+ 		if (!bss_conf)
+ 			continue;
+ 		mt7925_mcu_uni_bss_ps(dev, bss_conf);
+ 	}
+-	mt792x_mutex_release(dev);
+ }
+ 
+ void mt7925_mlo_pm_work(struct work_struct *work)
+@@ -1325,9 +1325,11 @@ void mt7925_mlo_pm_work(struct work_stru
+ 					      mlo_pm_work.work);
+ 	struct ieee80211_hw *hw = mt76_hw(dev);
+ 
++	mt792x_mutex_acquire(dev);
+ 	ieee80211_iterate_active_interfaces(hw,
+ 					    IEEE80211_IFACE_ITER_RESUME_ALL,
+ 					    mt7925_mlo_pm_iter, dev);
++	mt792x_mutex_release(dev);
+ }
+ 
+ void mt7925_scan_work(struct work_struct *work)

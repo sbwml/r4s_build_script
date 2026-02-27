@@ -1,0 +1,40 @@
+From 4173078c845d19e66fc025abd26154ee22718a3f Mon Sep 17 00:00:00 2001
+From: Zac Bowling <zac@zacbowling.com>
+Date: Wed, 31 Dec 2025 17:21:34 -0800
+Subject: [PATCH 07/24] wifi: mt76: mt7925: add error handling for BSS info MCU
+ command in sta_add
+
+Check return value of mt7925_mcu_add_bss_info() in mt7925_mac_link_sta_add()
+and propagate errors to the caller.
+
+BSS info must be set up before adding a station record. If this MCU
+command fails, continuing with station add would leave the firmware in
+an inconsistent state with a station but no BSS configuration.
+
+Reported-by: Zac Bowling <zac@zacbowling.com>
+Signed-off-by: Zac Bowling <zac@zacbowling.com>
+---
+ mt7925/main.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+--- a/mt7925/main.c
++++ b/mt7925/main.c
+@@ -907,11 +907,14 @@ static int mt7925_mac_link_sta_add(struc
+ 	/* should update bss info before STA add */
+ 	if (vif->type == NL80211_IFTYPE_STATION && !link_sta->sta->tdls) {
+ 		if (ieee80211_vif_is_mld(vif))
+-			mt7925_mcu_add_bss_info(&dev->phy, mconf->mt76.ctx,
+-						link_conf, link_sta, link_sta != mlink->pri_link);
++			ret = mt7925_mcu_add_bss_info(&dev->phy, mconf->mt76.ctx,
++						      link_conf, link_sta,
++						      link_sta != mlink->pri_link);
+ 		else
+-			mt7925_mcu_add_bss_info(&dev->phy, mconf->mt76.ctx,
+-						link_conf, link_sta, false);
++			ret = mt7925_mcu_add_bss_info(&dev->phy, mconf->mt76.ctx,
++						      link_conf, link_sta, false);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	if (ieee80211_vif_is_mld(vif) &&

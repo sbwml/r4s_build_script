@@ -1,0 +1,52 @@
+From e92c47a90205ce125af3d0b6f21d008f8e816aa8 Mon Sep 17 00:00:00 2001
+From: Zac Bowling <zac@zacbowling.com>
+Date: Wed, 31 Dec 2025 21:31:51 -0800
+Subject: [PATCH 11/24] wifi: mt76: mt7925: add lockdep assertions for mutex
+ verification
+
+Add lockdep_assert_held() calls to critical MCU functions to help catch
+mutex violations during development and debugging. This follows the
+pattern used in other mt76 drivers (mt7996, mt7915, mt7615).
+
+Functions with new assertions:
+- mt7925_mcu_add_bss_info(): Core BSS configuration MCU command
+- mt7925_mcu_sta_update(): Station record update MCU command
+- mt7925_mcu_uni_bss_ps(): Power save state MCU command
+
+These functions modify firmware state and must be called with the
+device mutex held to prevent race conditions.
+
+Signed-off-by: Zac Bowling <zac@zacbowling.com>
+---
+ mt7925/mcu.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+--- a/mt7925/mcu.c
++++ b/mt7925/mcu.c
+@@ -1532,6 +1532,8 @@ int mt7925_mcu_uni_bss_ps(struct mt792x_
+ 		},
+ 	};
+ 
++	lockdep_assert_held(&dev->mt76.mutex);
++
+ 	if (link_conf->vif->type != NL80211_IFTYPE_STATION)
+ 		return -EOPNOTSUPP;
+ 
+@@ -2042,6 +2044,8 @@ int mt7925_mcu_sta_update(struct mt792x_
+ 	struct mt792x_sta *msta;
+ 	struct mt792x_link_sta *mlink;
+ 
++	lockdep_assert_held(&dev->mt76.mutex);
++
+ 	if (link_sta) {
+ 		msta = (struct mt792x_sta *)link_sta->sta->drv_priv;
+ 		mlink = mt792x_sta_to_link(msta, link_sta->link_id);
+@@ -2848,6 +2852,8 @@ int mt7925_mcu_add_bss_info(struct mt792
+ 	struct mt792x_link_sta *mlink_bc;
+ 	struct sk_buff *skb;
+ 
++	lockdep_assert_held(&dev->mt76.mutex);
++
+ 	skb = __mt7925_mcu_alloc_bss_req(&dev->mt76, &mconf->mt76,
+ 					 MT7925_BSS_UPDATE_MAX_SIZE);
+ 	if (IS_ERR(skb))

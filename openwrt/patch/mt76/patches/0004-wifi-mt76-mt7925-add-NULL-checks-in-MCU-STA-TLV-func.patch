@@ -1,0 +1,48 @@
+From f6d73e60d473f84899ec8973d5b4c59520a1041b Mon Sep 17 00:00:00 2001
+From: Zac Bowling <zac@zacbowling.com>
+Date: Wed, 31 Dec 2025 17:09:05 -0800
+Subject: [PATCH 04/24] wifi: mt76: mt7925: add NULL checks in MCU STA TLV
+ functions
+
+Add NULL pointer checks for link_conf and mconf in:
+- mt7925_mcu_sta_phy_tlv(): builds PHY capability TLV for station record
+- mt7925_mcu_sta_rate_ctrl_tlv(): builds rate control TLV for station record
+
+Both functions call mt792x_vif_to_bss_conf() and mt792x_vif_to_link()
+which can return NULL during MLO link state transitions when the link
+configuration in mac80211 is not yet synchronized with the driver's
+link tracking.
+
+Without these checks, the driver will crash with a NULL pointer
+dereference when accessing link_conf->chanreq.oper or link_conf->basic_rates.
+
+Reported-by: Zac Bowling <zac@zacbowling.com>
+Signed-off-by: Zac Bowling <zac@zacbowling.com>
+---
+ mt7925/mcu.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+--- a/mt7925/mcu.c
++++ b/mt7925/mcu.c
+@@ -1778,6 +1778,10 @@ mt7925_mcu_sta_phy_tlv(struct sk_buff *s
+ 
+ 	link_conf = mt792x_vif_to_bss_conf(vif, link_sta->link_id);
+ 	mconf = mt792x_vif_to_link(mvif, link_sta->link_id);
++
++	if (!link_conf || !mconf)
++		return;
++
+ 	chandef = mconf->mt76.ctx ? &mconf->mt76.ctx->def :
+ 				    &link_conf->chanreq.oper;
+ 
+@@ -1856,6 +1860,10 @@ mt7925_mcu_sta_rate_ctrl_tlv(struct sk_b
+ 
+ 	link_conf = mt792x_vif_to_bss_conf(vif, link_sta->link_id);
+ 	mconf = mt792x_vif_to_link(mvif, link_sta->link_id);
++
++	if (!link_conf || !mconf)
++		return;
++
+ 	chandef = mconf->mt76.ctx ? &mconf->mt76.ctx->def :
+ 				    &link_conf->chanreq.oper;
+ 	band = chandef->chan->band;
