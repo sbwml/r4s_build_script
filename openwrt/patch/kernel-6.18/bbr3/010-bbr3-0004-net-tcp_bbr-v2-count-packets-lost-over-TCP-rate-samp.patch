@@ -27,7 +27,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  		} tx;   /* only used for outgoing skbs */
  		union {
  			struct inet_skb_parm	h4;
-@@ -1219,11 +1220,13 @@ struct ack_sample {
+@@ -1227,11 +1228,13 @@ struct ack_sample {
   */
  struct rate_sample {
  	u64  prior_mstamp; /* starting timestamp for interval */

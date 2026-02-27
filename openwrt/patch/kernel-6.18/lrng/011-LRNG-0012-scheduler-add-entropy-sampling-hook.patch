@@ -24,7 +24,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
  #include <linux/sched.h>
  #include <linux/highmem.h>
  #include <linux/hrtimer_api.h>
-@@ -3641,6 +3642,8 @@ ttwu_stat(struct task_struct *p, int cpu
+@@ -3646,6 +3647,8 @@ ttwu_stat(struct task_struct *p, int cpu
  {
  	struct rq *rq;
  

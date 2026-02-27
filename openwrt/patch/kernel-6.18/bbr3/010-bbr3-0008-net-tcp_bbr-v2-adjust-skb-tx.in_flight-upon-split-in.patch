@@ -31,7 +31,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -1364,6 +1364,21 @@ static inline bool tcp_skb_sent_after(u6
+@@ -1393,6 +1393,21 @@ static inline bool tcp_skb_sent_after(u6
  	return t1 > t2 || (t1 == t2 && after(seq1, seq2));
  }
  

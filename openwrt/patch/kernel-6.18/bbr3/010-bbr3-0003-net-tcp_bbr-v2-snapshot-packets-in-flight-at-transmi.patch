@@ -38,7 +38,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  		} tx;   /* only used for outgoing skbs */
  		union {
  			struct inet_skb_parm	h4;
-@@ -1217,6 +1221,7 @@ struct rate_sample {
+@@ -1225,6 +1229,7 @@ struct rate_sample {
  	u64  prior_mstamp; /* starting timestamp for interval */
  	u32  prior_delivered;	/* tp->delivered at "prior_mstamp" */
  	u32  prior_delivered_ce;/* tp->delivered_ce at "prior_mstamp" */
@@ -46,7 +46,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	s32  delivered;		/* number of packets delivered over interval */
  	s32  delivered_ce;	/* number of packets delivered w/ CE marks*/
  	long interval_us;	/* time for tp->delivered to incr "delivered" */
-@@ -1339,6 +1344,7 @@ static inline void tcp_ca_event(struct s
+@@ -1368,6 +1373,7 @@ static inline void tcp_ca_event(struct s
  void tcp_set_ca_state(struct sock *sk, const u8 ca_state);
  
  /* From tcp_rate.c */

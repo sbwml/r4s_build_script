@@ -6,7 +6,7 @@ ROOT="./"
 
 # 获取所有 stable 版本中最新的 6.18.x
 KERNEL_VERSION=$(curl -s https://www.kernel.org/releases.json \
-  | jq -r '.releases[] | select(.moniker=="stable") | .version' \
+  | jq -r '.releases[] | select(.moniker=="longterm") | .version' \
   | grep '^6\.18\.' \
   | sort -V \
   | tail -n1)

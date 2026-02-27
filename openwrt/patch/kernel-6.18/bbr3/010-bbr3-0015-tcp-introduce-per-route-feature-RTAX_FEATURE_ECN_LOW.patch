@@ -77,7 +77,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	__u8	proto;
 --- a/net/ipv4/tcp_minisocks.c
 +++ b/net/ipv4/tcp_minisocks.c
-@@ -500,6 +500,8 @@ void tcp_ca_openreq_child(struct sock *s
+@@ -501,6 +501,8 @@ void tcp_ca_openreq_child(struct sock *s
  	u32 ca_key = dst_metric(dst, RTAX_CC_ALGO);
  	bool ca_got_dst = false;
  
@@ -88,7 +88,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  
 --- a/include/net/tcp_ecn.h
 +++ b/include/net/tcp_ecn.h
-@@ -583,10 +583,9 @@ static inline void tcp_ecn_send_syn(stru
+@@ -613,10 +613,9 @@ static inline void tcp_ecn_send_syn(stru
  	use_ecn = tcp_ecn == TCP_ECN_IN_ECN_OUT_ECN ||
  		  tcp_ecn == TCP_ECN_IN_ACCECN_OUT_ECN ||
  		  tcp_ca_needs_ecn(sk) || bpf_needs_ecn || use_accecn;
@@ -100,7 +100,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  		if (dst && dst_feature(dst, RTAX_FEATURE_ECN))
  			use_ecn = true;
  	}
-@@ -604,6 +603,9 @@ static inline void tcp_ecn_send_syn(stru
+@@ -634,6 +633,9 @@ static inline void tcp_ecn_send_syn(stru
  			tp->syn_ect_snt = inet_sk(sk)->tos & INET_ECN_MASK;
  		} else {
  			tcp_ecn_mode_set(tp, TCP_ECN_MODE_RFC3168);

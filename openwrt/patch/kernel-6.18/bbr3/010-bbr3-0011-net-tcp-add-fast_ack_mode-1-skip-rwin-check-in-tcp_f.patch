@@ -33,7 +33,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	/* RX read-mostly hotpath cache lines */
 --- a/net/ipv4/tcp.c
 +++ b/net/ipv4/tcp.c
-@@ -3469,6 +3469,7 @@ int tcp_disconnect(struct sock *sk, int
+@@ -3470,6 +3470,7 @@ int tcp_disconnect(struct sock *sk, int
  	tp->rx_opt.dsack = 0;
  	tp->rx_opt.num_sacks = 0;
  	tp->rcv_ooopack = 0;
@@ -43,7 +43,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	/* Clean up fastopen related fields */
 --- a/net/ipv4/tcp_cong.c
 +++ b/net/ipv4/tcp_cong.c
-@@ -237,6 +237,7 @@ void tcp_init_congestion_control(struct
+@@ -238,6 +238,7 @@ void tcp_init_congestion_control(struct
  	struct inet_connection_sock *icsk = inet_csk(sk);
  
  	tcp_sk(sk)->prior_ssthresh = 0;
