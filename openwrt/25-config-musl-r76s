@@ -25,7 +25,7 @@ CONFIG_COREMARK_NUMBER_OF_THREADS=8
 
 ### SDIO Wireless / Bluetooth
 CONFIG_PACKAGE_kmod-bluetooth=y
-CONFIG_PACKAGE_kmod-rtw88-8822cs=y
+CONFIG_PACKAGE_kmod-rtl8822cs=y
 CONFIG_PACKAGE_rtl8822cs-firmware=y
 
 ### HDMI
