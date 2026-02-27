@@ -69,7 +69,7 @@ sed -i '/luci-app-attendedsysupgrade/d' \
     feeds/luci/collections/luci-ssl/Makefile \
     feeds/luci/collections/luci/Makefile
 
-# Realtek driver - R8168 & R8125 & R8126 & R8152 & R8101 & r8127
+# Realtek Ethernet driver - R8168 & R8125 & R8126 & R8152 & R8101 & r8127
 rm -rf package/kernel/{r8168,r8101,r8125,r8126,r8127}
 git clone https://$github/sbwml/package_kernel_r8168 package/kernel/r8168
 git clone https://$github/sbwml/package_kernel_r8152 package/kernel/r8152
@@ -77,6 +77,9 @@ git clone https://$github/sbwml/package_kernel_r8101 package/kernel/r8101
 git clone https://$github/sbwml/package_kernel_r8125 package/kernel/r8125
 git clone https://$github/sbwml/package_kernel_r8126 package/kernel/r8126
 git clone https://$github/sbwml/package_kernel_r8127 package/kernel/r8127
+# Realtek Wireless driver - RTL8822CS & RTL8852AU
+git clone https://$github/sbwml/package_kernel_rtl8822cs package/kernel/rtl8822cs
+git clone https://$github/sbwml/package_kernel_rtl8852au package/kernel/rtl8852au
 
 # GCC Optimization level -O3
 curl -s $mirror/openwrt/patch/target-modify_for_aarch64_x86_64.patch | patch -p1
