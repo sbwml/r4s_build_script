@@ -1,8 +1,8 @@
-From 6d3223164d85f83b7568e0859e4cdcbbb7136f6c Mon Sep 17 00:00:00 2001
+From ff0f5e454d80e392f2985071ad9c0a3fd2fa01c6 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Wed, 18 Dec 2024 23:38:26 +0800
-Subject: [PATCH] luci-app-firewall: add fullcone6 option for nftables based
- fullcone
+Subject: [PATCH 7/7] luci-app-firewall: add fullcone6 option for nftables
+ based fullcone
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
@@ -10,10 +10,10 @@ Signed-off-by: sbwml <admin@cooluc.com>
  1 file changed, 19 insertions(+)
 
 diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-index 3fe1065..37dfaf2 100644
+index df2f6d69a8..0a1646594d 100644
 --- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 +++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-@@ -77,6 +77,25 @@ return view.extend({
+@@ -75,6 +75,25 @@ return view.extend({
  				uci.set('firewall', section_id, 'fullcone', value === '0' ? null : '1');
  				uci.set('firewall', section_id, 'brcmfullcone', value === '2' ? '1' : null);
  			};

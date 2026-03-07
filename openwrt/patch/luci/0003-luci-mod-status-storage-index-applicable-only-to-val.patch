@@ -1,4 +1,4 @@
-From a2ce3356bd451a51e241361e56f0b9ff7349273a Mon Sep 17 00:00:00 2001
+From 6c7f86e77b7f0659d19bea26bede8a05f1575197 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Sun, 24 Mar 2024 00:12:45 +0800
 Subject: [PATCH 3/7] luci-mod-status: storage index applicable only to valid
@@ -10,7 +10,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/25_storage.js b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/25_storage.js
-index 60661f6..aac6711 100644
+index 60661f63e5..aac6711ed3 100644
 --- a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/25_storage.js
 +++ b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/25_storage.js
 @@ -13,12 +13,14 @@ var callMountPoints = rpc.declare({

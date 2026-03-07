@@ -1,7 +1,7 @@
-From 880db92c404fb4842fa31439c174224da4fd245d Mon Sep 17 00:00:00 2001
+From e19842ac20e07e2031558daa8c6d3c1811441b57 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 25 Oct 2024 17:58:57 +0800
-Subject: [PATCH 5/6] luci-app-firewall: add natflow offload support
+Subject: [PATCH 5/7] luci-app-firewall: add natflow offload support
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
@@ -9,10 +9,10 @@ Signed-off-by: sbwml <admin@cooluc.com>
  1 file changed, 22 insertions(+), 1 deletion(-)
 
 diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-index a1fb06d..447c42b 100644
+index 8417eb2bdc..5ad81a4530 100644
 --- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 +++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-@@ -113,25 +113,38 @@ return view.extend({
+@@ -111,25 +111,38 @@ return view.extend({
  			if (L.hasSystemFeature('shortcutfe')) {
  				o.value('3', _("Shortcut-FE flow offloading"), _('Shortcut-FE based offloading for routing/NAT'));
  			}
@@ -21,10 +21,10 @@ index a1fb06d..447c42b 100644
 +			}
  			o.optional = false;
  			o.load = function (section_id) {
- 				var flow_offloading = uci.get('firewall', section_id, 'flow_offloading');
- 				var flow_offloading_hw = uci.get('firewall', section_id, 'flow_offloading_hw');
- 				var shortcut_fe = uci.get('firewall', section_id, 'shortcut_fe');
-+				var natflow = uci.get('firewall', section_id, 'natflow');
+ 				const flow_offloading = uci.get('firewall', section_id, 'flow_offloading');
+ 				const flow_offloading_hw = uci.get('firewall', section_id, 'flow_offloading_hw');
+ 				const shortcut_fe = uci.get('firewall', section_id, 'shortcut_fe');
++				const natflow = uci.get('firewall', section_id, 'natflow');
  				if (flow_offloading === '1') {
  					return flow_offloading_hw === '1' ? '2' : '1';
 -				} else {
@@ -52,7 +52,7 @@ index a1fb06d..447c42b 100644
  				}
  			};
  
-@@ -143,6 +156,14 @@ return view.extend({
+@@ -141,6 +154,14 @@ return view.extend({
  			o.value('fast-classifier', _('fast-classifier'));
  			o.default = 'shortcut-fe-cm';
  			o.depends('offloading_type', '3');
@@ -68,5 +68,5 @@ index a1fb06d..447c42b 100644
  
  
 -- 
-2.42.0
+2.43.5
 

@@ -1,7 +1,7 @@
-From 314fbe82b79b19499507ec5e8043a4b32c9885a8 Mon Sep 17 00:00:00 2001
+From 0cfeaf969c9b000f6de383d111b8b923d6d05fed Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Sat, 26 Oct 2024 03:35:05 +0800
-Subject: [PATCH 1/6] luci-app-firewall: add nft-fullcone and bcm-fullcone
+Subject: [PATCH 1/7] luci-app-firewall: add nft-fullcone and bcm-fullcone
  option
 
 Signed-off-by: sbwml <admin@cooluc.com>
@@ -10,10 +10,10 @@ Signed-off-by: sbwml <admin@cooluc.com>
  1 file changed, 21 insertions(+)
 
 diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-index 41b9834..b41ebae 100644
+index 129d290e5c..4675a44efd 100644
 --- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 +++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-@@ -58,6 +58,27 @@ return view.extend({
+@@ -56,6 +56,27 @@ return view.extend({
  
  		o = s.option(form.Flag, 'drop_invalid', _('Drop invalid packets'));
  
@@ -38,9 +38,9 @@ index 41b9834..b41ebae 100644
 +			};
 +		}
 +
- 		var p = [
+ 		let p = [
  			s.option(form.ListValue, 'input', _('Input')),
  			s.option(form.ListValue, 'output', _('Output')),
 -- 
-2.42.0
+2.43.5
 

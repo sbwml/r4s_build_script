@@ -1,4 +1,4 @@
-From 6430d15ff19b9885b3aedb5b228b0c3a5652ef29 Mon Sep 17 00:00:00 2001
+From 17678ba3c7b04b39a9aef9751ad645f3671b4ecd Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Wed, 11 Feb 2026 01:11:00 +0800
 Subject: [PATCH] luci-app-package-manager: support installing uploaded APK
@@ -12,10 +12,10 @@ Signed-off-by: sbwml <admin@cooluc.com>
  3 files changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js b/applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js
-index 8a70b4b..ced8785 100644
+index 48476dbe16..6afa5895cc 100644
 --- a/applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js
 +++ b/applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js
-@@ -1084,7 +1084,7 @@ function handleUpload(ev)
+@@ -1086,7 +1086,7 @@ function handleUpload(ev)
  				}, _('Cancel')), ' ',
  				E('div', {
  					'class': 'btn cbi-button-action',
@@ -25,7 +25,7 @@ index 8a70b4b..ced8785 100644
  					'click': function(ev) {
  						handlePkg(ev).finally(function() {
 diff --git a/applications/luci-app-package-manager/root/usr/libexec/package-manager-call b/applications/luci-app-package-manager/root/usr/libexec/package-manager-call
-index 3a41757..7fa58f9 100755
+index 3a4175783a..7fa58f9060 100755
 --- a/applications/luci-app-package-manager/root/usr/libexec/package-manager-call
 +++ b/applications/luci-app-package-manager/root/usr/libexec/package-manager-call
 @@ -27,7 +27,7 @@ case "$action" in
@@ -48,7 +48,7 @@ index 3a41757..7fa58f9 100755
  						action="update"
  					;;
 diff --git a/applications/luci-app-package-manager/root/usr/share/rpcd/acl.d/luci-app-package-manager.json b/applications/luci-app-package-manager/root/usr/share/rpcd/acl.d/luci-app-package-manager.json
-index 8d55186..31eb0b6 100644
+index 8d551860e8..31eb0b6a84 100644
 --- a/applications/luci-app-package-manager/root/usr/share/rpcd/acl.d/luci-app-package-manager.json
 +++ b/applications/luci-app-package-manager/root/usr/share/rpcd/acl.d/luci-app-package-manager.json
 @@ -20,6 +20,7 @@

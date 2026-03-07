@@ -1,7 +1,7 @@
-From fdf42e33bb356f2cf86edc42926f508a1c74624d Mon Sep 17 00:00:00 2001
+From 4e4415c040b8405121be9cc7d25e6e252dbb6316 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Sat, 26 Oct 2024 03:37:02 +0800
-Subject: [PATCH 3/6] luci-app-firewall: add ipv6 nat option
+Subject: [PATCH 3/7] luci-app-firewall: add ipv6 nat option
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
@@ -9,10 +9,10 @@ Signed-off-by: sbwml <admin@cooluc.com>
  1 file changed, 6 insertions(+)
 
 diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-index 12626c5..a1fb06d 100644
+index 98334c9165..8417eb2bdc 100644
 --- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 +++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-@@ -79,6 +79,12 @@ return view.extend({
+@@ -77,6 +77,12 @@ return view.extend({
  			};
  		}
  
@@ -22,9 +22,9 @@ index 12626c5..a1fb06d 100644
 +			_('Applicable to internet environments where the router is not assigned an IPv6 prefix, such as when using an upstream optical modem for dial-up.'));
 +		};
 +
- 		var p = [
+ 		let p = [
  			s.option(form.ListValue, 'input', _('Input')),
  			s.option(form.ListValue, 'output', _('Output')),
 -- 
-2.42.0
+2.43.5
 

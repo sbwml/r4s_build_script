@@ -1,4 +1,4 @@
-From b8114ae5032c4f73994074326c0db004795bb0aa Mon Sep 17 00:00:00 2001
+From b0b925497f0e583e765992d18992b7dae3826b30 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 13 Sep 2024 19:44:52 +0800
 Subject: [PATCH 4/7] luci-mod-status: firewall: disable legacy firewall rule
@@ -11,14 +11,14 @@ Signed-off-by: sbwml <admin@cooluc.com>
  2 files changed, 19 insertions(+), 17 deletions(-)
 
 diff --git a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
-index 40f7f71..38a0d24 100644
+index 682c29f872..1ebc17bfbd 100644
 --- a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
 +++ b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
-@@ -773,26 +773,12 @@ return view.extend({
+@@ -773,23 +773,9 @@ return view.extend({
  		return node;
  	},
  
--	checkLegacyRules: function(ipt4save, ipt6save) {
+-	checkLegacyRules(ipt4save, ipt6save) {
 -		if (ipt4save.match(/\n-A /) || ipt6save.match(/\n-A /)) {
 -			ui.addNotification(_('Legacy rules detected'), [
 -				E('p', _('There are legacy iptables rules present on the system. Mixing iptables and nftables rules is discouraged and may lead to incomplete traffic filtering.')),
@@ -30,11 +30,8 @@ index 40f7f71..38a0d24 100644
 -		}
 -	},
 -
- 	render: function(data) {
- 		var view = E('div'),
- 		    nft = data[0],
- 		    ipt = data[1],
- 		    ipt6 = data[2];
+ 	render([nft, ipt, ipt6]) {
+ 		const view = E('div');
  
 -		this.checkLegacyRules(ipt, ipt6);
 -
@@ -42,7 +39,7 @@ index 40f7f71..38a0d24 100644
  			return E('em', _('No nftables ruleset loaded.'));
  
 diff --git a/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json b/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json
-index 23e8bdb..5ba794e 100644
+index 23e8bdb61d..5ba794e8fd 100644
 --- a/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json
 +++ b/modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json
 @@ -60,23 +60,39 @@

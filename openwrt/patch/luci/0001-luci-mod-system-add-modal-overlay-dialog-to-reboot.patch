@@ -1,4 +1,4 @@
-From d6e535bd88ef6c10500e60acb83f74b37a42a9f5 Mon Sep 17 00:00:00 2001
+From b5ae515838777322a9b6c76d1397b71403802514 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 13 Sep 2024 19:36:44 +0800
 Subject: [PATCH 1/7] luci-mod-system: add modal overlay dialog to reboot
@@ -9,7 +9,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  1 file changed, 20 insertions(+), 1 deletion(-)
 
 diff --git a/modules/luci-mod-system/htdocs/luci-static/resources/view/system/reboot.js b/modules/luci-mod-system/htdocs/luci-static/resources/view/system/reboot.js
-index 92e1dd4..c106f78 100644
+index 92e1dd4920..c106f781aa 100644
 --- a/modules/luci-mod-system/htdocs/luci-static/resources/view/system/reboot.js
 +++ b/modules/luci-mod-system/htdocs/luci-static/resources/view/system/reboot.js
 @@ -30,7 +30,26 @@ return view.extend({

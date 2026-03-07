@@ -155,12 +155,11 @@ define KernelPackage/libphy
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=PHY library
   KCONFIG:=CONFIG_PHYLIB \
-	   CONFIG_MDIO_BUS \
-	   CONFIG_PHYLIB_LEDS=y
-  FILES:= \
-	$(LINUX_DIR)/drivers/net/phy/libphy.ko \
-	$(LINUX_DIR)/drivers/net/phy/mdio-bus.ko
-  AUTOLOAD:=$(call AutoLoad,15,libphy,1)
+	   CONFIG_PHYLIB_LEDS=y \
+	   CONFIG_MDIO_BUS
+  FILES:=$(LINUX_DIR)/drivers/net/phy/libphy.ko \
+    $(LINUX_DIR)/drivers/net/phy/mdio-bus.ko@ge6.18
+  AUTOLOAD:=$(call AutoLoad,15,libphy mdio-bus,1)
 endef
 
 define KernelPackage/libphy/description
