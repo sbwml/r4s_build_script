@@ -1,12 +1,5 @@
 #!/bin/bash
 
-# odhcp6c-2025-10
-rm -rf package/network/ipv6/odhcp6c
-git clone https://$gitea/sbwml/package_network_ipv6_odhcp6c package/network/ipv6/odhcp6c
-#if [ "$branch" = "v25.12.0-rc1" ]; then
-#    curl -s $mirror/openwrt/patch/odhcp6c/0001-odhcp6c-update-to-25.12-Git-HEAD-2025-12-29.patch | patch -p1
-#fi
-
 if [ "$KERNEL_CLANG_LTO" = "y" ]; then 
     # linux-atm
     curl -s $mirror/openwrt/patch/packages-patches/clang/linux-atm/openwrt-fix-build-with-clang.patch | patch -p1
