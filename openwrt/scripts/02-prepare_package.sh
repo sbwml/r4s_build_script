@@ -91,13 +91,6 @@ sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/smb.conf.te
 rm -rf feeds/packages/net/zerotier
 git clone https://$github/sbwml/feeds_packages_net_zerotier feeds/packages/net/zerotier
 
-# aria2 & ariaNG
-rm -rf feeds/packages/net/ariang
-rm -rf feeds/luci/applications/luci-app-aria2
-git clone https://$github/sbwml/ariang-nginx package/new/ariang-nginx
-rm -rf feeds/packages/net/aria2
-git clone https://$github/sbwml/feeds_packages_net_aria2 -b 22.03 feeds/packages/net/aria2
-
 # airconnect
 git clone https://$github/sbwml/luci-app-airconnect package/new/airconnect --depth=1
 
@@ -155,7 +148,6 @@ sed -i 's/<%:Up%>/<%:Move up%>/g' feeds/luci/modules/luci-compat/luasrc/view/cbi
 sed -i 's/<%:Down%>/<%:Move down%>/g' feeds/luci/modules/luci-compat/luasrc/view/cbi/tblsection.htm
 
 # frpc translation
-sed -i 's,发送,Transmission,g' feeds/luci/applications/luci-app-transmission/po/zh_Hans/transmission.po
 sed -i 's,frp 服务器,Frp 服务器,g' feeds/luci/applications/luci-app-frps/po/zh_Hans/frps.po
 sed -i 's,frp 客户端,Frp 客户端,g' feeds/luci/applications/luci-app-frpc/po/zh_Hans/frpc.po
 
