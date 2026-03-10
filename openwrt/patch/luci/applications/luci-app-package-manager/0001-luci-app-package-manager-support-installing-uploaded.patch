@@ -12,7 +12,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  3 files changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js b/applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js
-index 48476dbe16..6afa5895cc 100644
+index 48476db..6afa589 100644
 --- a/applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js
 +++ b/applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js
 @@ -1086,7 +1086,7 @@ function handleUpload(ev)
@@ -25,7 +25,7 @@ index 48476dbe16..6afa5895cc 100644
  					'click': function(ev) {
  						handlePkg(ev).finally(function() {
 diff --git a/applications/luci-app-package-manager/root/usr/libexec/package-manager-call b/applications/luci-app-package-manager/root/usr/libexec/package-manager-call
-index 3a4175783a..7fa58f9060 100755
+index 3a41757..7fa58f9 100755
 --- a/applications/luci-app-package-manager/root/usr/libexec/package-manager-call
 +++ b/applications/luci-app-package-manager/root/usr/libexec/package-manager-call
 @@ -27,7 +27,7 @@ case "$action" in
@@ -48,14 +48,15 @@ index 3a4175783a..7fa58f9060 100755
  						action="update"
  					;;
 diff --git a/applications/luci-app-package-manager/root/usr/share/rpcd/acl.d/luci-app-package-manager.json b/applications/luci-app-package-manager/root/usr/share/rpcd/acl.d/luci-app-package-manager.json
-index 8d551860e8..31eb0b6a84 100644
+index 8d55186..6ec7947 100644
 --- a/applications/luci-app-package-manager/root/usr/share/rpcd/acl.d/luci-app-package-manager.json
 +++ b/applications/luci-app-package-manager/root/usr/share/rpcd/acl.d/luci-app-package-manager.json
-@@ -20,6 +20,7 @@
+@@ -20,6 +20,8 @@
  			"file": {
  				"/usr/libexec/package-manager-call install": [ "exec" ],
  				"/usr/libexec/package-manager-call install *": [ "exec" ],
 +				"/usr/libexec/package-manager-call install-upload": [ "exec" ],
++				"/usr/libexec/package-manager-call install-upload *": [ "exec" ],
  				"/usr/libexec/package-manager-call remove *": [ "exec" ],
  				"/usr/libexec/package-manager-call update": [ "exec" ],
  				"/usr/libexec/package-manager-call upgrade": [ "exec" ],
