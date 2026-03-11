@@ -23,9 +23,11 @@ CONFIG_TARGET_ROOTFS_PARTSIZE=944
 CONFIG_COREMARK_NUMBER_OF_THREADS=8
 # CONFIG_KERNEL_KALLSYMS is not set
 
-### SDIO Wireless / Bluetooth
-CONFIG_PACKAGE_kmod-bluetooth=y
+### SDIO Wireles
 CONFIG_PACKAGE_kmod-rtl8822cs=y
+
+### UART Bluetooth
+CONFIG_PACKAGE_kmod-hci-uart=y
 CONFIG_PACKAGE_rtl8822cs-firmware=y
 
 ### HDMI
