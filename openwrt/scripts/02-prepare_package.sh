@@ -14,6 +14,10 @@ git clone https://$github/sbwml/default-settings package/new/default-settings -b
 # wwan
 git clone https://$github/sbwml/wwan-packages package/new/wwan --depth=1
 
+# bluetooth
+git clone https://$github/sbwml/luci-app-bluetooth package/new/luci-app-bluetooth
+git clone https://$github/sbwml/package_new_bluez-alsa package/new/bluez-alsa
+
 # bandix
 git clone https://$github/timsaya/openwrt-bandix package/new/bandix --depth=1
 git clone https://$github/timsaya/luci-app-bandix package/new/luci-app-bandix --depth=1
