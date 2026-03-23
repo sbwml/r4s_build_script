@@ -125,6 +125,8 @@ sed -i 's/解除网易云音乐播放限制/网易云音乐解锁/g' package/new
 git clone https://$github/sbwml/luci-theme-argon -b openwrt-25.12 package/new/luci-theme-argon --depth=1
 git clone https://$github/eamonxg/luci-theme-aurora package/new/luci-theme-aurora --depth=1
 git clone https://$github/eamonxg/luci-app-aurora-config package/new/luci-app-aurora-config --depth=1
+rm -rf package/new/luci-theme-aurora/root/etc/uci-defaults
+sed -i 's/100/91/g' package/new/luci-app-aurora-config/root/usr/share/luci/menu.d/luci-app-aurora.json
 
 # Mosdns
 git clone https://$github/sbwml/luci-app-mosdns -b v5 package/new/mosdns --depth=1
