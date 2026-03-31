@@ -126,7 +126,7 @@ git clone https://$github/sbwml/luci-theme-argon -b openwrt-25.12 package/new/lu
 git clone https://$github/eamonxg/luci-theme-aurora package/new/luci-theme-aurora --depth=1
 git clone https://$github/eamonxg/luci-app-aurora-config package/new/luci-app-aurora-config --depth=1
 rm -rf package/new/luci-theme-aurora/root/etc/uci-defaults
-sed -i 's/100/91/g' package/new/luci-app-aurora-config/root/usr/share/luci/menu.d/luci-app-aurora.json
+sed -i 's/100/85/g' package/new/luci-app-aurora-config/root/usr/share/luci/menu.d/luci-app-aurora.json
 
 # Mosdns
 git clone https://$github/sbwml/luci-app-mosdns -b v5 package/new/mosdns --depth=1
