@@ -289,6 +289,9 @@ mkdir -p files/root
 curl -so files/root/.bash_profile $mirror/openwrt/files/root/.bash_profile
 curl -so files/root/.bashrc $mirror/openwrt/files/root/.bashrc
 
+# busybox
+sed -i '/profile\.d/d' package/utils/busybox/Makefile
+
 # rootfs files
 mkdir -p files/etc/sysctl.d
 curl -so files/etc/sysctl.d/10-default.conf $mirror/openwrt/files/etc/sysctl.d/10-default.conf
