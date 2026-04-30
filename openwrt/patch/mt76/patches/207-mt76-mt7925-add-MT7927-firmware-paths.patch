@@ -1,0 +1,77 @@
+From 4dde052ea50e332d7db57efb959a89899fc9bb9a Mon Sep 17 00:00:00 2001
+From: Javier Tia <floss@jetm.me>
+Date: Thu, 26 Mar 2026 15:12:31 -0600
+Subject: [PATCH 7/9] mt76: mt7925: add MT7927 firmware paths
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add firmware path definitions for MT7927 WiFi firmware (WIFI_RAM_CODE
+and PATCH_MCU) and the corresponding MODULE_FIRMWARE declarations. Add
+MT7927 cases to mt792x_ram_name() and mt792x_patch_name() so the driver
+loads the correct firmware for the 0x7927 chip ID.
+
+PCI device table entries are deferred to a later patch to allow
+infrastructure setup before device enablement.
+
+Tested-by: Marcin FM <marcin@lgic.pl>
+Tested-by: Cristian-Florin Radoi <radoi.chris@gmail.com>
+Tested-by: George Salukvadze <giosal90@gmail.com>
+Tested-by: Evgeny Kapusta <3193631@gmail.com>
+Tested-by: Samu Toljamo <samu.toljamo@gmail.com>
+Tested-by: Ariel Rosenfeld <ariel.rosenfeld.750@gmail.com>
+Tested-by: Chapuis Dario <chapuisdario4@gmail.com>
+Tested-by: Thibaut François <tibo@humeurlibre.fr>
+Tested-by: 张旭涵 <Loong.0x00@gmail.com>
+Signed-off-by: Javier Tia <floss@jetm.me>
+---
+ mt7925/pci.c | 2 ++
+ mt792x.h     | 6 ++++++
+ 2 files changed, 8 insertions(+)
+
+--- a/mt7925/pci.c
++++ b/mt7925/pci.c
+@@ -633,6 +633,8 @@ module_pci_driver(mt7925_pci_driver);
+ MODULE_DEVICE_TABLE(pci, mt7925_pci_device_table);
+ MODULE_FIRMWARE(MT7925_FIRMWARE_WM);
+ MODULE_FIRMWARE(MT7925_ROM_PATCH);
++MODULE_FIRMWARE(MT7927_FIRMWARE_WM);
++MODULE_FIRMWARE(MT7927_ROM_PATCH);
+ MODULE_AUTHOR("Deren Wu <deren.wu@mediatek.com>");
+ MODULE_AUTHOR("Lorenzo Bianconi <lorenzo@kernel.org>");
+ MODULE_DESCRIPTION("MediaTek MT7925E (PCIe) wireless driver");
+--- a/mt792x.h
++++ b/mt792x.h
+@@ -46,12 +46,14 @@
+ #define MT7921_FIRMWARE_WM	"mediatek/WIFI_RAM_CODE_MT7961_1.bin"
+ #define MT7922_FIRMWARE_WM	"mediatek/WIFI_RAM_CODE_MT7922_1.bin"
+ #define MT7925_FIRMWARE_WM	"mediatek/mt7925/WIFI_RAM_CODE_MT7925_1_1.bin"
++#define MT7927_FIRMWARE_WM	"mediatek/mt7927/WIFI_RAM_CODE_MT6639_2_1.bin"
+ 
+ #define MT7902_ROM_PATCH	"mediatek/WIFI_MT7902_patch_mcu_1_1_hdr.bin"
+ #define MT7920_ROM_PATCH	"mediatek/WIFI_MT7961_patch_mcu_1a_2_hdr.bin"
+ #define MT7921_ROM_PATCH	"mediatek/WIFI_MT7961_patch_mcu_1_2_hdr.bin"
+ #define MT7922_ROM_PATCH	"mediatek/WIFI_MT7922_patch_mcu_1_1_hdr.bin"
+ #define MT7925_ROM_PATCH	"mediatek/mt7925/WIFI_MT7925_PATCH_MCU_1_1_hdr.bin"
++#define MT7927_ROM_PATCH	"mediatek/mt7927/WIFI_MT6639_PATCH_MCU_2_1_hdr.bin"
+ 
+ #define MT792x_SDIO_HDR_TX_BYTES	GENMASK(15, 0)
+ #define MT792x_SDIO_HDR_PKT_TYPE	GENMASK(17, 16)
+@@ -459,6 +461,8 @@ static inline char *mt792x_ram_name(stru
+ 		return MT7922_FIRMWARE_WM;
+ 	case 0x7925:
+ 		return MT7925_FIRMWARE_WM;
++	case 0x7927:
++		return MT7927_FIRMWARE_WM;
+ 	default:
+ 		return MT7921_FIRMWARE_WM;
+ 	}
+@@ -475,6 +479,8 @@ static inline char *mt792x_patch_name(st
+ 		return MT7922_ROM_PATCH;
+ 	case 0x7925:
+ 		return MT7925_ROM_PATCH;
++	case 0x7927:
++		return MT7927_ROM_PATCH;
+ 	default:
+ 		return MT7921_ROM_PATCH;
+ 	}

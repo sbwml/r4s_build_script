@@ -1,0 +1,55 @@
+From 56209dc45e762dafef428908877d634eeb0c4bcd Mon Sep 17 00:00:00 2001
+From: Javier Tia <floss@jetm.me>
+Date: Thu, 26 Mar 2026 15:12:30 -0600
+Subject: [PATCH 6/9] mt76: mt7925: add MT7927 chip ID helpers
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The MediaTek MT7927 (Filogic 380) combo chip uses MT7927 WiFi silicon
+that is architecturally compatible with MT7925. Extend is_mt7925() to
+match chip ID 0x7927, and add is_mt7927() for code paths that need
+MT7927-specific handling.
+
+Also add 0x7927 to is_mt76_fw_txp() to match MT7925's TXP format.
+
+Tested-by: Marcin FM <marcin@lgic.pl>
+Tested-by: Cristian-Florin Radoi <radoi.chris@gmail.com>
+Tested-by: George Salukvadze <giosal90@gmail.com>
+Tested-by: Evgeny Kapusta <3193631@gmail.com>
+Tested-by: Samu Toljamo <samu.toljamo@gmail.com>
+Tested-by: Ariel Rosenfeld <ariel.rosenfeld.750@gmail.com>
+Tested-by: Chapuis Dario <chapuisdario4@gmail.com>
+Tested-by: Thibaut François <tibo@humeurlibre.fr>
+Tested-by: 张旭涵 <Loong.0x00@gmail.com>
+Signed-off-by: Javier Tia <floss@jetm.me>
+---
+ mt76_connac.h | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+--- a/mt76_connac.h
++++ b/mt76_connac.h
+@@ -174,9 +174,14 @@ extern const struct wiphy_wowlan_support
+ 
+ static inline bool is_mt7925(struct mt76_dev *dev)
+ {
+-	return mt76_chip(dev) == 0x7925;
++	return mt76_chip(dev) == 0x7925 || mt76_chip(dev) == 0x7927;
+ }
+ 
++static inline bool is_mt7927(struct mt76_dev *dev)
++{
++	return mt76_chip(dev) == 0x7927;
++ }
++
+ static inline bool is_320mhz_supported(struct mt76_dev *dev)
+ {
+ 	return mt76_chip(dev) == 0x7927;
+@@ -284,6 +289,7 @@ static inline bool is_mt76_fw_txp(struct
+ 	case 0x7922:
+ 	case 0x7902:
+ 	case 0x7925:
++	case 0x7927:
+ 	case 0x7663:
+ 	case 0x7622:
+ 		return false;

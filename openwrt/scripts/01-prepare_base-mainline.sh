@@ -154,11 +154,15 @@ git clone https://$github/sbwml/package_firmware_linux-firmware package/firmware
 
 # mt76
 rm -rf package/kernel/mt76
-mkdir -p package/kernel/mt76/patches
+mkdir -p package/kernel/mt76/patches package/kernel/mt76/src/firmware/mt7927
 curl -s $mirror/openwrt/patch/mt76/Makefile > package/kernel/mt76/Makefile
 pushd package/kernel/mt76/patches
     curl -Os $mirror/openwrt/patch/mt76/patches/100-fix-build-with-linux-6.12rc2.patch
     curl -Os $mirror/openwrt/patch/mt76/patches/102-use-hrtimer_setup-in-mt76x02u-beacon-init.patch
+popd
+pushd package/kernel/mt76/src/firmware/mt7927
+    curl -Os $mirror/openwrt/patch/mt76/src/firmware/mt7927/WIFI_MT6639_PATCH_MCU_2_1_hdr.bin
+    curl -Os $mirror/openwrt/patch/mt76/src/firmware/mt7927/WIFI_RAM_CODE_MT6639_2_1.bin
 popd
 
 # wireless-regdb

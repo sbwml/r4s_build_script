@@ -1,0 +1,56 @@
+From fba3bc87e92a96faab126a0840bde11eab384f54 Mon Sep 17 00:00:00 2001
+From: Javier Tia <floss@jetm.me>
+Date: Thu, 26 Mar 2026 15:12:27 -0600
+Subject: [PATCH 3/9] mt76: mt7925: handle 320MHz bandwidth in RXV and TXS
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The RX vector (RXV) and TX status (TXS) parsing in mac.c lack handling
+for 320MHz channel width. When the hardware reports 320MHz in the
+bandwidth field, mt7925_mac_fill_rx_rate() returns -EINVAL and
+mt7925_mac_add_txs_skb() records no bandwidth stats.
+
+Add IEEE80211_STA_RX_BW_320 cases to both functions. The RXV parser
+also handles BW_320+1 since the hardware can report 320MHz in two
+adjacent encoding positions.
+
+Tested-by: Marcin FM <marcin@lgic.pl>
+Tested-by: Cristian-Florin Radoi <radoi.chris@gmail.com>
+Tested-by: George Salukvadze <giosal90@gmail.com>
+Tested-by: Evgeny Kapusta <3193631@gmail.com>
+Tested-by: Samu Toljamo <samu.toljamo@gmail.com>
+Tested-by: Ariel Rosenfeld <ariel.rosenfeld.750@gmail.com>
+Tested-by: Chapuis Dario <chapuisdario4@gmail.com>
+Tested-by: Thibaut François <tibo@humeurlibre.fr>
+Tested-by: 张旭涵 <Loong.0x00@gmail.com>
+Signed-off-by: Javier Tia <floss@jetm.me>
+---
+ mt7925/mac.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+--- a/mt7925/mac.c
++++ b/mt7925/mac.c
+@@ -339,6 +339,11 @@ mt7925_mac_fill_rx_rate(struct mt792x_de
+ 	case IEEE80211_STA_RX_BW_160:
+ 		status->bw = RATE_INFO_BW_160;
+ 		break;
++	/* RXV can report 320 in two positions */
++	case IEEE80211_STA_RX_BW_320:
++	case IEEE80211_STA_RX_BW_320 + 1:
++		status->bw = RATE_INFO_BW_320;
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -997,6 +1002,10 @@ mt7925_mac_add_txs_skb(struct mt792x_dev
+ 	stats->tx_mode[mode]++;
+ 
+ 	switch (FIELD_GET(MT_TXS0_BW, txs)) {
++	case IEEE80211_STA_RX_BW_320:
++		rate.bw = RATE_INFO_BW_320;
++		stats->tx_bw[4]++;
++		break;
+ 	case IEEE80211_STA_RX_BW_160:
+ 		rate.bw = RATE_INFO_BW_160;
+ 		stats->tx_bw[3]++;

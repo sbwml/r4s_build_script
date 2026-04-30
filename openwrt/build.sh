@@ -402,6 +402,9 @@ echo -e "CONFIG_GCC_USE_VERSION_${gcc_version}=y\n" >> .config
 # build wwan pkgs for openwrt_core
 [ "$OPENWRT_CORE" = "y" ] && curl -s $mirror/openwrt/generic/config-wwan >> .config
 
+# build mt7927-firmware pkgs for openwrt_core
+[ "$OPENWRT_CORE" = "y" ] && echo 'CONFIG_PACKAGE_kmod-mt7927-firmware=m' >> 
+
 # ccache
 if [ "$USE_GCC15" = "y" ] && [ "$ENABLE_CCACHE" = "y" ]; then
     echo "CONFIG_CCACHE=y" >> .config

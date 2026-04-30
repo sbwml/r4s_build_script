@@ -1,0 +1,56 @@
+From c2e9c5bde7646f97bb8a2298872bf8a34b693d6b Mon Sep 17 00:00:00 2001
+From: Javier Tia <floss@jetm.me>
+Date: Thu, 26 Mar 2026 15:12:33 -0600
+Subject: [PATCH 9/9] mt76: mt7925: disable ASPM and runtime PM for MT7927
+
+Disable PCIe ASPM unconditionally for MT7927. The CONNINFRA power
+domain and WFDMA register access are unreliable with PCIe L1 active,
+causing throughput to drop from 1+ Gbps to ~200 Mbps.
+
+Disable runtime PM and deep sleep for MT7927. The combo chip shares
+a CONNINFRA power domain between WiFi (PCIe) and BT (USB).
+SET_OWN/CLR_OWN transitions on the LPCTL register crash the BT
+firmware, requiring a full power cycle to recover. PM enablement will
+be addressed in a follow-up once safe power state transitions are
+determined.
+
+Signed-off-by: Javier Tia <floss@jetm.me>
+---
+ mt7925/init.c | 3 ++-
+ mt7925/pci.c  | 6 ++++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+--- a/mt7925/init.c
++++ b/mt7925/init.c
+@@ -232,7 +232,8 @@ int mt7925_register_device(struct mt792x
+ 	dev->pm.idle_timeout = MT792x_PM_TIMEOUT;
+ 	dev->pm.stats.last_wake_event = jiffies;
+ 	dev->pm.stats.last_doze_event = jiffies;
+-	if (!mt76_is_usb(&dev->mt76)) {
++	/* MT7927: runtime PM crashes BT firmware on the shared CONNINFRA domain */
++	if (!mt76_is_usb(&dev->mt76) && !is_mt7927(&dev->mt76)) {
+ 		dev->pm.enable_user = true;
+ 		dev->pm.enable = true;
+ 		dev->pm.ds_enable_user = true;
+--- a/mt7925/pci.c
++++ b/mt7925/pci.c
+@@ -350,7 +350,10 @@ static int mt7925_pci_probe(struct pci_d
+ 	if (ret)
+ 		goto err_free_pci_vec;
+ 
+-	if (mt7925_disable_aspm)
++	is_mt7927_hw = (pdev->device == 0x6639 || pdev->device == 0x7927);
++
++	/* MT7927: ASPM L1 causes unreliable WFDMA register access */
++	if (mt7925_disable_aspm || is_mt7927_hw)
+ 		mt76_pci_disable_aspm(pdev);
+ 
+ 	ops = mt792x_get_mac80211_ops(&pdev->dev, &mt7925_ops,
+@@ -371,7 +374,6 @@ static int mt7925_pci_probe(struct pci_d
+ 	dev = container_of(mdev, struct mt792x_dev, mt76);
+ 	dev->fw_features = features;
+ 	dev->hif_ops = &mt7925_pcie_ops;
+-	is_mt7927_hw = (pdev->device == 0x6639 || pdev->device == 0x7927);
+ 	dev->irq_map = is_mt7927_hw ? &mt7927_irq_map : &irq_map;
+ 	mt76_mmio_init(&dev->mt76, pcim_iomap_table(pdev)[0]);
+ 	tasklet_init(&mdev->irq_tasklet, mt792x_irq_tasklet, (unsigned long)dev);
