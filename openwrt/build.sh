@@ -327,9 +327,6 @@ else
     [ "$platform" = "armv8" ] && sed -i '/DOCKER/Id' .config
 fi
 
-# waiting fix
-curl -s $mirror/openwrt/6.18-disable-config >> .config
-
 # ota
 [ "$ENABLE_OTA" = "y" ] && [ "$version" = "rc2" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
 

@@ -67,6 +67,13 @@ pushd feeds/telephony
   git clone https://$github/sbwml/feeds_telephony_libs_dahdi-linux libs/dahdi-linux -b v6.18
 popd
 
+# routing
+pushd feeds/routing
+  # batman-adv
+  rm -rf batman-adv
+  git clone https://$github/sbwml/feeds_routing_batman-adv batman-adv
+popd
+
 # clang
 if [ "$KERNEL_CLANG_LTO" = "y" ]; then
     # xtables-addons module
