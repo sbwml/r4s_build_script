@@ -1,10 +1,3 @@
 
-# package/new/shortcut-fe/shortcut-fe
-# CONFIG_PACKAGE_kmod-shortcut-fe is not set
-# CONFIG_PACKAGE_kmod-shortcut-fe-cm is not set
-
-# package/new/shortcut-fe/fast-classifier
-# CONFIG_PACKAGE_kmod-fast-classifier is not set
-
 # package/feeds/routing/batman-adv
 # CONFIG_PACKAGE_kmod-batman-adv is not set
