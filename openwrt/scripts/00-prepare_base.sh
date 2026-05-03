@@ -125,7 +125,6 @@ git clone https://$gitea/sbwml/shortcut-fe package/new/shortcut-fe
 # Patch FireWall 4
 if [ "$version" = "dev" ] || [ "$version" = "rc2" ]; then
     # firewall4
-    sed -i 's|$(PROJECT_GIT)/project|https://github.com/openwrt|g' package/network/config/firewall4/Makefile
     mkdir -p package/network/config/firewall4/patches
     # fullcone
     curl -s $mirror/openwrt/patch/firewall4/firewall4_patches/999-01-firewall4-add-fullcone-support.patch > package/network/config/firewall4/patches/999-01-firewall4-add-fullcone-support.patch
@@ -135,6 +134,8 @@ if [ "$version" = "dev" ] || [ "$version" = "rc2" ]; then
     curl -s $mirror/openwrt/patch/firewall4/firewall4_patches/001-fix-fw4-flow-offload.patch > package/network/config/firewall4/patches/001-fix-fw4-flow-offload.patch
     # add custom nft command support
     curl -s $mirror/openwrt/patch/firewall4/100-openwrt-firewall4-add-custom-nft-command-support.patch | patch -p1
+    # fw4 - github mirror
+    sed -i 's|$(PROJECT_GIT)/project|https://github.com/openwrt|g' package/network/config/firewall4/Makefile
     # libnftnl
     mkdir -p package/libs/libnftnl/patches
     curl -s $mirror/openwrt/patch/firewall4/libnftnl/0001-libnftnl-add-fullcone-expression-support.patch > package/libs/libnftnl/patches/0001-libnftnl-add-fullcone-expression-support.patch

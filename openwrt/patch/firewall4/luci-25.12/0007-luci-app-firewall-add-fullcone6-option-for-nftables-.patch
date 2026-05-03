@@ -1,4 +1,4 @@
-From ff0f5e454d80e392f2985071ad9c0a3fd2fa01c6 Mon Sep 17 00:00:00 2001
+From 4cd5c39d1dfef115e81e148ceb5f821cf8a30aa7 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Wed, 18 Dec 2024 23:38:26 +0800
 Subject: [PATCH 7/7] luci-app-firewall: add fullcone6 option for nftables
@@ -6,17 +6,22 @@ Subject: [PATCH 7/7] luci-app-firewall: add fullcone6 option for nftables
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
- .../resources/view/firewall/zones.js          | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ .../resources/view/firewall/zones.js           | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
 diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-index df2f6d69a8..0a1646594d 100644
+index df2f6d6..45351b3 100644
 --- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 +++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-@@ -75,6 +75,25 @@ return view.extend({
+@@ -74,6 +74,24 @@ return view.extend({
+ 			o.write = function(section_id, value) {
  				uci.set('firewall', section_id, 'fullcone', value === '0' ? null : '1');
  				uci.set('firewall', section_id, 'brcmfullcone', value === '2' ? '1' : null);
- 			};
++
++				if (value === '0') {
++					uci.set('firewall', '@zone[1]', 'fullcone6', '0');
++				}
++			};
 +
 +			/* nft-fullcone 6 */
 +			o = s.option(form.RichListValue, "fullcone6", _("Full Cone NAT6"));
@@ -25,20 +30,14 @@ index df2f6d69a8..0a1646594d 100644
 +			o.optional = false;
 +			o.depends('fullcone_type', '1');
 +			o.load = function (section_id) {
-+				var fullcone6 = uci.get('firewall', section_id, 'fullcone6');
-+				if (fullcone6 === '1') {
-+					return '1';
-+				} else {
-+					return '0';
-+				}
++				var fullcone6 = uci.get('firewall', '@zone[1]', 'fullcone6');
++				return (fullcone6 === '1') ? '1' : '0';
 +			};
 +			o.write = function(section_id, value) {
-+				uci.set('firewall', section_id, 'fullcone6', value === '1' ? '1' : '0');
 +				uci.set('firewall', '@zone[1]', 'fullcone6', value === '1' ? '1' : '0');
-+			};
+ 			};
  		}
  
- 		if (L.hasSystemFeature('ipv6')) {
 -- 
 2.43.5
 

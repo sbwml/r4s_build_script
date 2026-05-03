@@ -1,4 +1,4 @@
-From 18fa3af2cf740557475bfcbdfd6a5aa909724b8a Mon Sep 17 00:00:00 2001
+From 1c7faac708c5c28bf3764d07502e3d9e8b555801 Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 25 Oct 2024 21:04:10 +0800
 Subject: [PATCH 6/7] luci-app-firewall: enable hardware offload only on
@@ -10,7 +10,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-index 5ad81a4530..df2f6d69a8 100644
+index 5ad81a4..df2f6d6 100644
 --- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 +++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 @@ -107,7 +107,9 @@ return view.extend({

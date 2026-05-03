@@ -12,7 +12,7 @@
  	option name		lan
 --- a/root/usr/share/firewall4/templates/ruleset.uc
 +++ b/root/usr/share/firewall4/templates/ruleset.uc
-@@ -323,11 +323,13 @@ table inet fw4 {
+@@ -327,11 +327,13 @@ table inet fw4 {
  {%   for (let redirect in fw4.redirects(`dstnat_${zone.name}`)): %}
  		{%+ include("redirect.uc", { fw4, zone, redirect }) %}
  {%   endfor %}
@@ -29,7 +29,7 @@
  {%   endif %}
  {%   fw4.includes('chain-append', `dstnat_${zone.name}`) %}
  	}
-@@ -353,11 +355,18 @@ table inet fw4 {
+@@ -357,11 +359,18 @@ table inet fw4 {
  {%     endfor %}
  {%    endfor %}
  {%   endif %}

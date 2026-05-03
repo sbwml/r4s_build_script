@@ -1,4 +1,4 @@
-From 76323fe8dfaf8b241a36b22056781fcdf6f449cc Mon Sep 17 00:00:00 2001
+From b048a9d3fdaa1a51481ef1b4fa2025359785351b Mon Sep 17 00:00:00 2001
 From: sbwml <admin@cooluc.com>
 Date: Fri, 25 Oct 2024 17:40:35 +0800
 Subject: [PATCH 2/7] luci-app-firewall: add shortcut-fe option
@@ -9,7 +9,7 @@ Signed-off-by: sbwml <admin@cooluc.com>
  1 file changed, 24 insertions(+), 3 deletions(-)
 
 diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-index 4675a44efd..98334c9165 100644
+index 4675a44..98334c9 100644
 --- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 +++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 @@ -102,18 +102,39 @@ return view.extend({
