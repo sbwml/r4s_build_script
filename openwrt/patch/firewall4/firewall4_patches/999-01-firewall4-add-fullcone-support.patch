@@ -34,7 +34,7 @@ IPv6 traffic do NOT need this FullCone NAT functionality.
  	option masq		1
  	option mtu_fix		1
 +	option fullcone4	1
-+	option fullcone6	1
++	option fullcone6	0
  
  config forwarding
  	option src		lan
