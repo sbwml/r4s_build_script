@@ -33,7 +33,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	/* RX read-mostly hotpath cache lines */
 --- a/net/ipv4/tcp.c
 +++ b/net/ipv4/tcp.c
-@@ -3470,6 +3470,7 @@ int tcp_disconnect(struct sock *sk, int
+@@ -3471,6 +3471,7 @@ int tcp_disconnect(struct sock *sk, int
  	tp->rx_opt.dsack = 0;
  	tp->rx_opt.num_sacks = 0;
  	tp->rcv_ooopack = 0;
@@ -53,7 +53,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  	if (tcp_ca_needs_ecn(sk))
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
-@@ -5909,13 +5909,14 @@ static void __tcp_ack_snd_check(struct s
+@@ -5906,13 +5906,14 @@ static void __tcp_ack_snd_check(struct s
  
  	    /* More than one full frame received... */
  	if (((tp->rcv_nxt - tp->rcv_wup) > inet_csk(sk)->icsk_ack.rcv_mss &&

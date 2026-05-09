@@ -23,7 +23,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -1206,9 +1206,11 @@ enum tcp_ca_ack_event_flags {
+@@ -1209,9 +1209,11 @@ enum tcp_ca_ack_event_flags {
  #define TCP_CONG_ECT_1_NEGOTIATION	BIT(3)
  /* Cannot fallback to RFC3168 during AccECN negotiation */
  #define TCP_CONG_NO_FALLBACK_RFC3168	BIT(4)
@@ -36,7 +36,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  
  union tcp_cc_info;
  
-@@ -1340,6 +1342,14 @@ static inline char *tcp_ca_get_name_by_k
+@@ -1343,6 +1345,14 @@ static inline char *tcp_ca_get_name_by_k
  }
  #endif
  

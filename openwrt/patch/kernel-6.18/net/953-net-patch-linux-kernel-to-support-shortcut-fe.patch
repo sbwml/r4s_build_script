@@ -93,7 +93,7 @@ Signed-off-by: Xiaoping Fan <xfan@codeaurora.org>
  	struct net_bridge_port *p;
 --- a/net/core/dev.c
 +++ b/net/core/dev.c
-@@ -3850,8 +3850,17 @@ static int xmit_one(struct sk_buff *skb,
+@@ -3867,8 +3867,17 @@ static int xmit_one(struct sk_buff *skb,
  	unsigned int len;
  	int rc;
  
@@ -111,7 +111,7 @@ Signed-off-by: Xiaoping Fan <xfan@codeaurora.org>
  
  #ifdef CONFIG_ETHERNET_PACKET_MANGLE
  	if (dev->eth_mangle_tx && !(skb = dev->eth_mangle_tx(dev, skb)))
-@@ -5827,6 +5836,11 @@ void netdev_rx_handler_unregister(struct
+@@ -5852,6 +5861,11 @@ void netdev_rx_handler_unregister(struct
  }
  EXPORT_SYMBOL_GPL(netdev_rx_handler_unregister);
  
@@ -123,7 +123,7 @@ Signed-off-by: Xiaoping Fan <xfan@codeaurora.org>
  /*
   * Limit the use of PFMEMALLOC reserves to those protocols that implement
   * the special handling of PFMEMALLOC skbs.
-@@ -5876,6 +5890,10 @@ static int __netif_receive_skb_core(stru
+@@ -5901,6 +5915,10 @@ static int __netif_receive_skb_core(stru
  	int ret = NET_RX_DROP;
  	__be16 type;
  
@@ -134,7 +134,7 @@ Signed-off-by: Xiaoping Fan <xfan@codeaurora.org>
  	net_timestamp_check(!READ_ONCE(net_hotdata.tstamp_prequeue), skb);
  
  	trace_netif_receive_skb(skb);
-@@ -5920,6 +5938,16 @@ another_round:
+@@ -5945,6 +5963,16 @@ another_round:
  			goto out;
  	}
  
@@ -179,7 +179,7 @@ Signed-off-by: Xiaoping Fan <xfan@codeaurora.org>
  	rcu_read_unlock();
  
  	if (likely(ret >= 0 && missed == 0))
-@@ -349,6 +361,11 @@ int nf_conntrack_register_notifier(struc
+@@ -351,6 +363,11 @@ int nf_conntrack_register_notifier(struc
  {
  	return atomic_notifier_chain_register(&net->ct.nf_conntrack_chain, nb);
  }
@@ -191,7 +191,7 @@ Signed-off-by: Xiaoping Fan <xfan@codeaurora.org>
  #else
  int nf_conntrack_register_notifier(struct net *net,
  				    const struct nf_ct_event_notifier *new)
-@@ -379,6 +396,11 @@ int nf_conntrack_unregister_notifier(str
+@@ -381,6 +398,11 @@ int nf_conntrack_unregister_notifier(str
  {
  	return atomic_notifier_chain_unregister(&net->ct.nf_conntrack_chain, nb);
  }

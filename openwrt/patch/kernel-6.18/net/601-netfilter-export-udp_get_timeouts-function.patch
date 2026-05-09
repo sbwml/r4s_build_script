@@ -14,7 +14,7 @@ Change-Id: Ibca4f402735764e7e6fb3ce2678e670753c6ef9c
 
 --- a/include/net/netfilter/nf_conntrack_timeout.h
 +++ b/include/net/netfilter/nf_conntrack_timeout.h
-@@ -107,5 +107,6 @@ struct nf_ct_timeout_hooks {
+@@ -108,5 +108,6 @@ struct nf_ct_timeout_hooks {
  
  extern const struct nf_ct_timeout_hooks __rcu *nf_ct_timeout_hook;
  #endif

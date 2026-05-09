@@ -25,7 +25,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -404,6 +404,7 @@ static inline void tcp_dec_quickack_mode
+@@ -405,6 +405,7 @@ static inline void tcp_dec_quickack_mode
  #define	TCP_ECN_SEEN		BIT(3)
  #define	TCP_ECN_MODE_ACCECN	BIT(4)
  #define	TCP_ECN_LOW		BIT(5)

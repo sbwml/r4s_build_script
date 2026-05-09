@@ -19,7 +19,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
 
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -1065,6 +1065,7 @@ struct tcp_skb_cb {
+@@ -1068,6 +1068,7 @@ struct tcp_skb_cb {
  #define TCPCB_IN_FLIGHT_MAX ((1U << TCPCB_IN_FLIGHT_BITS) - 1)
  			u32 in_flight:20,   /* packets in flight at transmit */
  			    unused2:12;
@@ -27,7 +27,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  		} tx;   /* only used for outgoing skbs */
  		union {
  			struct inet_skb_parm	h4;
-@@ -1227,11 +1228,13 @@ struct ack_sample {
+@@ -1230,11 +1231,13 @@ struct ack_sample {
   */
  struct rate_sample {
  	u64  prior_mstamp; /* starting timestamp for interval */
