@@ -26,6 +26,9 @@ curl -s $mirror/openwrt/patch/generic-25.12/0009-tools-squashfs4-enable-lz4-zstd
 curl -s $mirror/openwrt/patch/generic-25.12/0010-kernel-add-PREEMPT_RT-support-for-aarch64-x86_64.patch | patch -p1
 curl -s $mirror/openwrt/patch/generic-25.12/0011-config-include-image-add-support-for-squashfs-zstd-c.patch | patch -p1
 curl -s $mirror/openwrt/patch/generic-25.12/0012-include-kernel-Always-collect-module-symvers.patch | patch -p1
+curl -s $mirror/openwrt/patch/generic-25.12/0013-toolchain-gcc-add-support-for-GCC-16.patch | patch -p1
+curl -s $mirror/openwrt/patch/generic-25.12/0014-tools-mold-update-to-2.41.0.patch | patch -p1
+curl -s $mirror/openwrt/patch/generic-25.12/0015-tools-build-lz4-by-default.patch | patch -p1
 
 # add source mirror
 #sed -i '/"@OPENWRT": \[/a\\t\t"https://sources-cdn-openwrt.cooluc.com",' scripts/projectsmirrors.json

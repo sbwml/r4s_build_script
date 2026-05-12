@@ -1,0 +1,33 @@
+From 39c5582d99c6c52d55dadf060c2045b378320530 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Mon, 11 May 2026 15:41:56 +0800
+Subject: [PATCH 2/2] tools: mold: update to 2.41.0
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ tools/mold/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/mold/Makefile b/tools/mold/Makefile
+index 8c3e33f..ff1f5c7 100644
+--- a/tools/mold/Makefile
++++ b/tools/mold/Makefile
+@@ -3,13 +3,13 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=mold
+-PKG_VERSION:=2.40.4
++PKG_VERSION:=2.41.0
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL_FILE:=v$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=https://github.com/rui314/mold/archive/refs/tags
+-PKG_HASH:=69414c702ec1084e1fa8ca16da24f167f549e5e11e9ecd5d70a8dcda6f08c249
++PKG_HASH:=0a61abac85d818437b425df856822e9d6e9982baeae5a93bcb02fe6c0060c61a
+ 
+ include $(INCLUDE_DIR)/host-build.mk
+ include $(INCLUDE_DIR)/cmake.mk
+-- 
+2.47.3
+

@@ -40,59 +40,18 @@ curl -s $mirror/openwrt/patch/packages-patches/kselftests-bpf/Makefile > package
 #######################################
 
 # fix gcc-15.0.1 gnu17
-if [ "$USE_GCC15" = y ]; then
-    # libtirpc
-    sed -i '/TARGET_CFLAGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/libs/libtirpc/Makefile
-    # libsepol
-    sed -i '/HOST_MAKE_FLAGS/i TARGET_CFLAGS += -std=gnu17\n' package/libs/libsepol/Makefile
-    # tree
-    sed -i '/MAKE_FLAGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/utils/tree/Makefile
-    # gdbm
-    sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/libs/gdbm/Makefile
-    # libical
-    sed -i '/CMAKE_OPTIONS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/libs/libical/Makefile
-    # libconfig
-    sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' package/feeds/packages/libconfig/Makefile
-    # lsof
-    sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/utils/lsof/Makefile
-    # screen
-    sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/utils/screen/Makefile
-    # ppp
-    sed -i '/CONFIGURE_VARS/i \\nTARGET_CFLAGS += -std=gnu17\n' package/network/services/ppp/Makefile
-    # vim
-    sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/utils/vim/Makefile
-    # mtd
-    sed -i '/target=/i TARGET_CFLAGS += -std=gnu17\n' package/system/mtd/Makefile
-    # libselinux
-    sed -i '/MAKE_FLAGS/i TARGET_CFLAGS += -std=gnu17\n' package/libs/libselinux/Makefile
-    # avahi
-    sed -i '/TARGET_CFLAGS +=/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/libs/avahi/Makefile
+if [ "$USE_GCC15" = y ] || [ "$USE_GCC16" = y ]; then
     # xl2tpd
     sed -i '/ifneq (0,0)/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/net/xl2tpd/Makefile
-    # bluez
-    sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/utils/bluez/Makefile
-    # e2fsprogs
-    sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' package/utils/e2fsprogs/Makefile
-    # f2fs-tools
-    sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' package/utils/f2fs-tools/Makefile
-    # krb5
-    sed -i '/CONFIGURE_VARS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/net/krb5/Makefile
-    # parted
-    sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/utils/parted/Makefile
-    # iperf3
-    sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/net/iperf3/Makefile
-    # db
-    sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/libs/db/Makefile
-    # python3
-    sed -i '/TARGET_CONFIGURE_OPTS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/lang/python/python3/Makefile
-    # uwsgi
-    sed -i '/MAKE_VARS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/net/uwsgi/Makefile
-    # perl
-    sed -i '/Target perl/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/lang/perl/Makefile
-    # rsync
-    sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/net/rsync/Makefile
-    # shine
-    sed -i '/Build\/InstallDev/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/sound/shine/Makefile
-    # jq
-    sed -i '/CONFIGURE_ARGS/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/utils/jq/Makefile
+fi
+
+# fix gcc-16.1.0
+if [ "$USE_GCC16" = y ]; then
+    # elfutils lto
+    curl -s $mirror/openwrt/patch/packages-patches_gcc16/elfutils/900-fix-gcc16-null-dereference-with-lto.patch > package/libs/elfutils/patches/900-fix-gcc16-null-dereference-with-lto.patch
+    # libwebsockets
+    mkdir -p feeds/packages/libs/libwebsockets/patches
+    curl -s $mirror/openwrt/patch/packages-patches_gcc16/libwebsockets/900-fix-build-for-gcc-16.patch > feeds/packages/libs/libwebsockets/patches/900-fix-build-for-gcc-16.patch
+    # bash
+    sed -i "/PKG_INSTALL:=/i\PKG_BUILD_FLAGS:=no-lto" feeds/packages/utils/bash/Makefile
 fi

@@ -1,0 +1,52 @@
+From be2b8b3b012a549f8a0fc3d1c4fe84644ee65cf0 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Mon, 11 May 2026 18:10:42 +0800
+Subject: [PATCH] tools: build lz4 by default
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ tools/Makefile | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/tools/Makefile b/tools/Makefile
+index 42b1265..7719ca6 100644
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -23,9 +23,6 @@ endif
+ ifneq ($(CONFIG_SDK)$(CONFIG_TARGET_INITRAMFS_COMPRESSION_BZIP2),)
+   BUILD_BZIP2_TOOLS = y
+ endif
+-ifneq ($(CONFIG_SDK)$(CONFIG_TARGET_INITRAMFS_COMPRESSION_LZ4),)
+-  BUILD_LZ4_TOOLS = y
+-endif
+ ifneq ($(CONFIG_SDK)$(CONFIG_TARGET_INITRAMFS_COMPRESSION_LZO),)
+   BUILD_LZO_TOOLS = y
+ endif
+@@ -50,6 +47,7 @@ tools-y += gengetopt
+ tools-y += gnulib
+ tools-y += libressl
+ tools-y += libtool
++tools-y += lz4
+ tools-y += lzma
+ tools-y += m4
+ tools-y += make-ext4fs
+@@ -76,7 +74,6 @@ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS),y) += liblzo
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_B43_TOOLS),y) += b43-tools
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_BZIP2_TOOLS),y) += bzip2
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_ISL),y) += isl
+-tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_LZ4_TOOLS),y) += lz4
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_LZO_TOOLS),y) += lzop
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_TOOLCHAIN),y) += gmp mpc mpfr
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(CONFIG_TARGET_apm821xx)$(CONFIG_TARGET_gemini),y) += genext2fs
+@@ -133,7 +130,7 @@ $(curdir)/pkgconf/compile := $(curdir)/meson/compile
+ $(curdir)/quilt/compile := $(curdir)/autoconf/compile $(curdir)/findutils/compile
+ $(curdir)/sdcc/compile := $(curdir)/bison/compile
+ $(curdir)/squashfs3-lzma/compile := $(curdir)/lzma-old/compile
+-$(curdir)/squashfs4/compile := $(curdir)/xz/compile $(curdir)/zlib/compile
++$(curdir)/squashfs4/compile := $(curdir)/lz4/compile $(curdir)/xz/compile $(curdir)/zlib/compile
+ $(curdir)/util-linux/compile := $(curdir)/bison/compile $(curdir)/meson/compile
+ $(curdir)/yafut/compile := $(curdir)/cmake/compile
+ 
+-- 
+2.43.5
+

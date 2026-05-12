@@ -131,6 +131,8 @@ elif [ "$USE_GCC14" = y ]; then
     export USE_GCC14=y gcc_version=14
 elif [ "$USE_GCC15" = y ]; then
     export USE_GCC15=y gcc_version=15
+elif [ "$USE_GCC16" = y ]; then
+    export USE_GCC16=y gcc_version=16
 else
     export USE_GCC15=y gcc_version=15
 fi
@@ -361,7 +363,7 @@ export ENABLE_LTO=$ENABLE_LTO
 # kernel - CLANG + LTO; Allow CONFIG_KERNEL_CC=clang / clang-18 / clang-xx
 if [ "$KERNEL_CLANG_LTO" = "y" ]; then
     echo '# Kernel - CLANG LTO' >> .config
-    if [ "$USE_GCC15" = "y" ] && [ "$ENABLE_CCACHE" = "y" ]; then
+    if [ "$USE_GCC15" = "y" ] || [ "$USE_GCC16" = "y" ] && [ "$ENABLE_CCACHE" = "y" ]; then
         echo 'CONFIG_KERNEL_CC="ccache clang"' >> .config
     else
         echo 'CONFIG_KERNEL_CC="clang"' >> .config
@@ -403,7 +405,7 @@ echo -e "CONFIG_GCC_USE_VERSION_${gcc_version}=y\n" >> .config
 [ "$OPENWRT_CORE" = "y" ] && echo 'CONFIG_PACKAGE_kmod-mt7927-firmware=m' >> .config
 
 # ccache
-if [ "$USE_GCC15" = "y" ] && [ "$ENABLE_CCACHE" = "y" ]; then
+if [ "$ENABLE_CCACHE" = "y" ]; then
     echo "CONFIG_CCACHE=y" >> .config
     [ "$(whoami)" = "runner" ] && echo "CONFIG_CCACHE_DIR=\"/builder/.ccache\"" >> .config
     [ "$(whoami)" = "sbwml" ] && echo "CONFIG_CCACHE_DIR=\"/home/sbwml/.ccache\"" >> .config

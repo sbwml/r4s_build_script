@@ -46,8 +46,8 @@ export git_name=账户名 git_password=密码
 export KERNEL_CLANG_LTO=y
 ```
 
-### 启用 [GCC13](https://gcc.gnu.org/gcc-13/)/[GCC14](https://gcc.gnu.org/gcc-14/)/[GCC15](https://gcc.gnu.org/gcc-15/) 工具链编译
-##### 只需在构建固件前执行以下命令即可启用 GCC13/GCC14/GCC15 交叉工具链
+### 启用 [GCC13](https://gcc.gnu.org/gcc-13/)/[GCC14](https://gcc.gnu.org/gcc-14/)/[GCC15](https://gcc.gnu.org/gcc-15/)/[GCC16](https://gcc.gnu.org/gcc-16/) 工具链编译
+##### 只需在构建固件前执行以下命令即可启用对应交叉工具链版本
 
 ```
 # GCC13
@@ -64,6 +64,11 @@ export USE_GCC14=y
 export USE_GCC15=y
 ```
 
+```
+# GCC16
+export USE_GCC16=y
+```
+
 ### 启用 [LTO](https://gcc.gnu.org/onlinedocs/gccint/LTO-Overview.html) 优化
 ##### 只需在构建固件前执行以下命令即可启用编译器 LTO 优化
 
@@ -71,7 +76,7 @@ export USE_GCC15=y
 export ENABLE_LTO=y
 ```
 
-### 启用 [MOLD](https://github.com/rui314/mold) 现代链接器（需要启用 `USE_GCC13=y` 或 `USE_GCC14=y` 或 `USE_GCC15=y`）
+### 启用 [MOLD](https://github.com/rui314/mold) 现代链接器
 ##### 只需在构建固件前执行以下命令即可启用 MOLD 链接，如果使用它建议同时启用 LTO 优化
 
 ```

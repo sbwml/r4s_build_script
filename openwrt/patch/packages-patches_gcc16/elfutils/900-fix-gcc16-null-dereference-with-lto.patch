@@ -1,0 +1,11 @@
+--- a/libelf/elf32_updatenull.c
++++ b/libelf/elf32_updatenull.c
+@@ -133,6 +133,8 @@ __elfw2(LIBELFBITS,updatenull_wrlock) (E
+   int ehdr_flags = 0;
+ 
+   ehdr = __elfw2(LIBELFBITS,getehdr_wrlock) (elf);
++  if (ehdr == NULL)
++    return -1;
+ 
+   /* Set the default values.  */
+   if (ELFW(default_ehdr,LIBELFBITS) (elf, ehdr, shnum, change_bop) != 0)
