@@ -13,9 +13,6 @@ CONFIG_LIBCURL_OPENSSL=y
 ### Firewall
 CONFIG_PACKAGE_nat6=y
 
-# Natflow
-CONFIG_PACKAGE_natflow=m
-
 ### Zram
 CONFIG_PACKAGE_zram-swap=y
 CONFIG_ZRAM_DEF_COMP_LZ4=y

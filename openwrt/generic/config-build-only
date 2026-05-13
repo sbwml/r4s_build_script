@@ -1,0 +1,7 @@
+
+# Natflow
+CONFIG_PACKAGE_natflow=m
+
+# OAF
+CONFIG_PACKAGE_luci-app-oaf=m
+CONFIG_PACKAGE_appfilter=m
