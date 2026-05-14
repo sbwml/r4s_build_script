@@ -491,6 +491,7 @@ if [ "$platform" = "x86_64" ]; then
             cp -a bin/packages/aarch64_generic/base/natflow*.apk $kmodpkg_name/ || true
             cp -a bin/packages/aarch64_generic/base/appfilter*.apk $kmodpkg_name/ || true
             cp -a bin/packages/aarch64_generic/base/luci-app-oaf*.apk $kmodpkg_name/ || true
+            cp -a bin/packages/aarch64_generic/base/luci-i18n-oaf*.apk $kmodpkg_name/ || true
         }
         [ "$ENABLE_DPDK" = "y" ] && {
             cp -a bin/packages/x86_64/base/*dpdk*.apk $kmodpkg_name/ || true
@@ -543,6 +544,7 @@ elif [ "$platform" = "armv8" ]; then
             cp -a bin/packages/aarch64_generic/base/natflow*.apk $kmodpkg_name/ || true
             cp -a bin/packages/aarch64_generic/base/appfilter*.apk $kmodpkg_name/ || true
             cp -a bin/packages/aarch64_generic/base/luci-app-oaf*.apk $kmodpkg_name/ || true
+            cp -a bin/packages/aarch64_generic/base/luci-i18n-oaf*.apk $kmodpkg_name/ || true
         }
         [ "$ENABLE_DPDK" = "y" ] && {
             cp -a bin/packages/aarch64_generic/base/*dpdk*.apk $kmodpkg_name/ || true
@@ -590,6 +592,7 @@ else
             cp -a bin/packages/aarch64_generic/base/natflow*.apk $kmodpkg_name/ || true
             cp -a bin/packages/aarch64_generic/base/appfilter*.apk $kmodpkg_name/ || true
             cp -a bin/packages/aarch64_generic/base/luci-app-oaf*.apk $kmodpkg_name/ || true
+            cp -a bin/packages/aarch64_generic/base/luci-i18n-oaf*.apk $kmodpkg_name/ || true
         }
         [ "$ENABLE_DPDK" = "y" ] && {
             cp -a bin/packages/aarch64_generic/base/*dpdk*.apk $kmodpkg_name/ || true
