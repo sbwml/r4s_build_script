@@ -21,7 +21,7 @@ on:
         type: choice
         options:
           - 'release'
-          - 'snapshot-24.10'
+          - 'snapshot-25.12'
       ccache:
         description: 'Enable ccache (Use Cache to speed up next build)'
         type: boolean
@@ -137,7 +137,7 @@ jobs:
         if [ "${{ github.event.inputs.version }}" = release ]; then
           tags=OpenWrt-$(git describe --abbrev=0 --tags)
         else
-          tags=snapshot-24.10-$(git log -n 1 --date=format:"%Y%m%d" --format="%cd")-$(git log --pretty=format:"%h" -1)
+          tags=snapshot-25.12-$(git log -n 1 --date=format:"%Y%m%d" --format="%cd")-$(git log --pretty=format:"%h" -1)
         fi
         echo "latest_release=$tags" >>$GITHUB_ENV
 
