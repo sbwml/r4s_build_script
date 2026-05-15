@@ -102,10 +102,10 @@ jobs:
 
     - name: Restore Cached
       if: ${{ github.event.inputs.ccache == 'true' && github.event.inputs.device != 'armv8' && github.event.inputs.device != 'nanopi-r4s' }}
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@main
       with:
         path: /builder/.ccache
-        key: openwrt-24.10-${{ github.event.inputs.device }}-ccache
+        key: openwrt-25.12-${{ github.event.inputs.device }}-ccache
 
     - name: Restore Cached (releases)
       if: ${{ github.event.inputs.ccache == 'true' && github.event.inputs.device == 'armv8' || github.event.inputs.device == 'nanopi-r4s' }}
@@ -156,15 +156,15 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GH_REPO: ${{ github.repository }}
       run: |
-        gh cache delete openwrt-24.10-${{ github.event.inputs.device }}-ccache || true
+        gh cache delete openwrt-25.12-${{ github.event.inputs.device }}-ccache || true
 
     - name: Save Cached
       if: ${{ github.event.inputs.ccache == 'true' && github.event.inputs.device != 'armv8' && github.event.inputs.device != 'nanopi-r4s' }}
       continue-on-error: true
-      uses: actions/cache/save@v4
+      uses: actions/cache/save@main
       with:
         path: /builder/.ccache
-        key: openwrt-24.10-${{ github.event.inputs.device }}-ccache
+        key: openwrt-25.12-${{ github.event.inputs.device }}-ccache
 
     - name: Create ccache tar files
       if: ${{ github.event.inputs.ccache == 'true' && github.event.inputs.device == 'armv8' || github.event.inputs.device == 'nanopi-r4s' }}
@@ -218,7 +218,7 @@ jobs:
         fi
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@main
       with:
         name: ${{ github.event.inputs.device }}-openwrt-${{ env.latest_release }}
         path: ${{ env.build_dir }}/rom/*
