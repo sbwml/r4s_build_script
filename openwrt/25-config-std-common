@@ -28,7 +28,6 @@ CONFIG_BUSYBOX_CONFIG_FEATURE_SYSLOG_INFO=y
 
 ### Dnsmasq
 CONFIG_PACKAGE_dnsmasq-full=y
-# CONFIG_PACKAGE_dnsmasq_full_broken_rtc is not set
 # CONFIG_PACKAGE_dnsmasq is not set
 
 ### Luci
@@ -67,12 +66,13 @@ CONFIG_PACKAGE_luci-app-commands=y
 CONFIG_PACKAGE_luci-app-cpufreq=y
 CONFIG_PACKAGE_luci-app-ddns=y
 CONFIG_PACKAGE_luci-app-diskman=y
-CONFIG_PACKAGE_luci-app-quickfile=y
 CONFIG_PACKAGE_luci-app-frpc=y
 CONFIG_PACKAGE_luci-app-mosdns=y
 CONFIG_PACKAGE_luci-app-natmap=y
 CONFIG_PACKAGE_luci-app-netspeedtest=y
 CONFIG_PACKAGE_luci-app-nlbwmon=y
+CONFIG_PACKAGE_luci-app-oaf=y
+CONFIG_PACKAGE_luci-app-quickfile=y
 CONFIG_PACKAGE_luci-app-ramfree=y
 CONFIG_PACKAGE_luci-app-socat=y
 CONFIG_PACKAGE_luci-app-sqm=y
@@ -121,7 +121,6 @@ CONFIG_PACKAGE_kmod-usb-net-ipheth=y
 ### Kernel Modules
 CONFIG_PACKAGE_kmod-bonding=y
 CONFIG_PACKAGE_kmod-br-netfilter=y
-CONFIG_PACKAGE_kmod-button-hotplug=y
 CONFIG_PACKAGE_kmod-crypto-chacha20poly1305=y
 CONFIG_PACKAGE_kmod-crypto-sha256=y
 CONFIG_PACKAGE_kmod-fs-exfat=y
@@ -132,9 +131,6 @@ CONFIG_PACKAGE_kmod-fs-xfs=y
 CONFIG_PACKAGE_kmod-hwmon-pwmfan=y
 CONFIG_PACKAGE_kmod-ikconfig=y
 CONFIG_PACKAGE_kmod-inet-diag=y
-CONFIG_PACKAGE_kmod-ipsec4=y
-CONFIG_PACKAGE_kmod-ipsec6=y
-CONFIG_PACKAGE_kmod-iptunnel6=y
 CONFIG_PACKAGE_kmod-mac80211=y
 CONFIG_PACKAGE_kmod-nf-socket=y
 CONFIG_PACKAGE_kmod-nft-fullcone=y
@@ -158,7 +154,6 @@ CONFIG_PACKAGE_kmod-usb2-pci=y
 CONFIG_PACKAGE_kmod-usb2=y
 CONFIG_PACKAGE_kmod-usb3=y
 CONFIG_PACKAGE_kmod-veth=y
-CONFIG_PACKAGE_kmod-xdp-sockets-diag=y
 
 ### Kernel Modules - out-of-tree driver
 CONFIG_PACKAGE_kmod-usb-net-rtl8152-vendor=y
@@ -228,8 +223,6 @@ CONFIG_PACKAGE_coreutils-mkdir=y
 CONFIG_PACKAGE_coreutils-mv=y
 CONFIG_PACKAGE_coreutils-nproc=y
 CONFIG_PACKAGE_coreutils-rm=y
-CONFIG_PACKAGE_coreutils-sha1sum=y
-CONFIG_PACKAGE_coreutils-sha512sum=y
 CONFIG_PACKAGE_coreutils-sleep=y
 CONFIG_PACKAGE_coreutils-timeout=y
 CONFIG_PACKAGE_coreutils-truncate=y
