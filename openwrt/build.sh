@@ -329,7 +329,8 @@ fi
 [ "$ENABLE_OTA" = "y" ] && [ "$version" = "rc2" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
 
 # bpf
-[ "$ENABLE_BPF" = "y" ] && curl -s $mirror/openwrt/generic/config-bpf >> .config
+curl -s $mirror/openwrt/generic/config-bpf >> .config
+[ "$ENABLE_BPF" != "y" ] && sed -i '/KERNEL_DEBUG_INFO\|KERNEL_MODULE_ALLOW_BTF/d' .config
 
 # LTO
 export ENABLE_LTO=$ENABLE_LTO
@@ -420,11 +421,10 @@ fi
 # Toolchain Cache
 if [ "$BUILD_FAST" = "y" ]; then
     [ "$ENABLE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
-    [ "$isCN" = "CN" ] && github_proxy="ghp.ci/" || github_proxy=""
     echo -e "\n${GREEN_COLOR}Download Toolchain ...${RES}"
     PLATFORM_ID=""
     [ -f /etc/os-release ] && source /etc/os-release
-    if [ "$PLATFORM_ID" = "platform:el9" ]; then
+    if [ "$PLATFORM_ID" = "platform:el10" ]; then
         TOOLCHAIN_URL="http://127.0.0.1:8080"
     else
         TOOLCHAIN_URL=https://"$github_proxy"github.com/sbwml/openwrt_caches/releases/download/openwrt-25.12
