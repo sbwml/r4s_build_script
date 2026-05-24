@@ -66,7 +66,7 @@ starttime=`date +'%Y-%m-%d %H:%M:%S'`
 CURRENT_DATE=$(date +%s)
 
 # Cpus
-cores=`expr $(nproc --all) + 1`
+cores=`expr $(nproc) + 1`
 
 # $CURL_BAR
 if curl --help | grep progress-bar >/dev/null 2>&1; then
