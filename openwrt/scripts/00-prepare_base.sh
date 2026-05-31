@@ -227,6 +227,9 @@ sed -i '/ubus_parallel_req/a\        ubus_script_timeout 300;' feeds/packages/ne
 curl -s $mirror/openwrt/nginx/luci.locations > feeds/packages/net/nginx/files-luci-support/luci.locations
 curl -s $mirror/openwrt/nginx/uci.conf.template > feeds/packages/net/nginx-util/files/uci.conf.template
 
+# nginx-util
+sed -i '/\/etc\/nginx\/uci.conf.template/d' feeds/packages/net/nginx-util/Makefile
+
 # netifd
 curl -s $mirror/openwrt/patch/netifd/001-hack-packet_steering-for-nanopi-r76s.patch | patch -p1
 
