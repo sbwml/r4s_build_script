@@ -266,6 +266,7 @@ pushd feeds/luci
     curl -s $mirror/openwrt/patch/luci/0005-luci-mod-system-add-refresh-interval-setting.patch | patch -p1
     curl -s $mirror/openwrt/patch/luci/0006-luci-mod-system-mounts-add-docker-directory-mount-po.patch | patch -p1
     curl -s $mirror/openwrt/patch/luci/0007-luci-mod-system-add-ucitrack-luci-mod-system-zram.js.patch | patch -p1
+    curl -s $mirror/openwrt/patch/luci/0008-luci-mod-status-dmesg-add-ANSI-terminal-color-and-re.patch | patch -p1
 popd
 
 # Luci diagnostics.js

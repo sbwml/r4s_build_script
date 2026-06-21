@@ -1,0 +1,148 @@
+From 7edbb80d6bc0dc164dea59d63ffe7f3be1811cab Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Sun, 21 Jun 2026 13:39:26 +0800
+Subject: [PATCH] luci-mod-status: dmesg: add ANSI terminal color and refactor
+ style
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ .../resources/view/status/dmesg.js            | 86 ++++++++++++++++---
+ 1 file changed, 75 insertions(+), 11 deletions(-)
+
+diff --git a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/dmesg.js b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/dmesg.js
+index d1b72d4..78478c2 100644
+--- a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/dmesg.js
++++ b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/dmesg.js
+@@ -103,8 +103,55 @@ return view.extend({
+ 			// Sort by time
+ 			if (this.sortLogsDescending) loglines.reverse();
+ 
++			const coloredValue = loglines.map(l => {
++				let remainText = l.text;
++
++				let timeHtml = '';
++				const tMatch = remainText.match(/^(\[\s*\d+\.\d+\])\s*/);
++				if (tMatch) {
++					timeHtml = `<span style="color: #55ff55 !important; margin-right: 8px;">${tMatch[1]}</span>`;
++					remainText = remainText.substring(tMatch[0].length);
++				}
++
++				let tagHtml = '';
++				let bodyHtml = '';
++
++				const delimiterIdx = remainText.indexOf(': ');
++				if (delimiterIdx > 0 && !remainText.substring(0, delimiterIdx).includes('://')) {
++					const rawTag = remainText.substring(0, delimiterIdx + 1); 
++					const rawBody = remainText.substring(delimiterIdx + 1);
++
++					const safeTag = rawTag.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
++					let safeBody = rawBody.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
++
++					tagHtml = `<span style="color: #ffff55 !important;">${safeTag}</span>`;
++
++					if (l.text.includes('Invalid ether addr') || l.severity <= 3) {
++						safeBody = `<span style="color: #ff5555 !important; font-weight: bold;">${safeBody}</span>`;
++					} else if (l.severity === 4) {
++						safeBody = `<span style="color: #ffffff !important; font-weight: bold;">${safeBody}</span>`;
++					} else {
++						safeBody = `<span style="color: #ffffff !important;">${safeBody}</span>`;
++					}
++					bodyHtml = safeBody;
++				} else {
++					let safeBody = remainText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
++
++					if (l.text.includes('Invalid ether addr') || l.severity <= 3) {
++						safeBody = `<span style="color: #ff5555 !important; font-weight: bold;">${safeBody}</span>`;
++					} else if (l.severity === 4) {
++						safeBody = `<span style="color: #ffffff !important; font-weight: bold;">${safeBody}</span>`;
++					} else {
++						safeBody = `<span style="color: #ffffff !important;">${safeBody}</span>`;
++					}
++					bodyHtml = safeBody;
++				}
++
++				return `<div style="line-height: 1.6; min-height: 22px; white-space: pre; word-wrap: normal;">${timeHtml}${tagHtml}${bodyHtml}</div>`;
++			}).join('');
++
+ 			return {
+-				value: loglines.map(l => l.text).join('\n'),
++				value: coloredValue,
+ 				rows: loglines.length + 1
+ 			};
+ 		}).catch(function(err) {
+@@ -117,8 +164,7 @@ return view.extend({
+ 		const element = document.getElementById('syslog');
+ 		if (element) {
+ 			const log = await this.retrieveLog();
+-			element.value = log.value;
+-			element.rows = log.rows;
++			element.innerHTML = log.value;
+ 		}
+ 	},
+ 
+@@ -134,7 +180,10 @@ return view.extend({
+ 			}, _('Scroll to tail', 'scroll to bottom (the tail) of the log file')
+ 		);
+ 		scrollDownButton.addEventListener('click', () => {
+-			scrollUpButton.scrollIntoView();
++			const container = document.getElementById('syslog');
++			if (container) {
++				container.scrollTop = container.scrollHeight;
++			}
+ 			scrollDownButton.blur();
+ 		});
+ 
+@@ -144,7 +193,10 @@ return view.extend({
+ 			}, _('Scroll to head', 'scroll to top (the head) of the log file')
+ 		);
+ 		scrollUpButton.addEventListener('click', () => {
+-			scrollDownButton.scrollIntoView();
++			const container = document.getElementById('syslog');
++			if (container) {
++				container.scrollTop = 0;
++			}
+ 			scrollUpButton.blur();
+ 		});
+ 
+@@ -249,6 +301,13 @@ return view.extend({
+ 		filterTextInput.addEventListener('input', handleLogFilterChange);
+ 		filterTextInvert.addEventListener('change', handleLogFilterChange);
+ 
++		setTimeout(() => {
++			const element = document.getElementById('syslog');
++			if (element && loglines && loglines.value) {
++				element.innerHTML = loglines.value;
++			}
++		}, 50);
++
+ 		return E([], [
+ 			E('h2', {}, [ _('Kernel Log') ]),
+ 			E('div', { 'id': 'content_syslog' }, [
+@@ -278,13 +337,18 @@ return view.extend({
+ 					filterTextInput,
+ 				]),
+ 				E('div', {'style': 'padding-bottom: 20px'}, [scrollDownButton]),
+-				E('textarea', {
++				E('pre', {
+ 					'id': 'syslog',
+-					'style': 'font-size:12px',
+-					'readonly': 'readonly',
+-					'wrap': 'off',
+-					'rows': loglines.rows
+-				}, [ loglines.value ]),
++					'style': 'font-family: Consolas, "JetBrains Mono", Monaco, Menlo, monospace; ' +
++					         'font-size: 14px; ' +
++					         'font-weight: 500; ' +
++					         'letter-spacing: 0.3px; ' +
++					         'background-color: #141414 !important; ' +
++					         'color: #ffffff !important; ' +
++					         'padding: 14px; border-radius: 6px; ' +
++					         'max-height: 700px; overflow: auto; ' +
++					         'white-space: pre; word-wrap: normal;'
++				}, []),
+ 				E('div', {'style': 'padding-bottom: 20px'}, [scrollUpButton])
+ 			])
+ 		]);
+-- 
+2.43.5
+
