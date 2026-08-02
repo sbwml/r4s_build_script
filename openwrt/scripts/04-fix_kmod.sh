@@ -22,8 +22,10 @@ curl -s $mirror/openwrt/patch/packages-patches/jool/patches/100-fix-compilation-
 curl -s $mirror/openwrt/patch/packages-patches/jool/patches/900-fix-build-with-linux-6.18.patch > feeds/packages/net/jool/patches/900-fix-build-with-linux-6.18.patch
 
 # ovpn-dco
-rm -rf feeds/packages/kernel/ovpn-dco/patches
+rm -rf feeds/packages/kernel/ovpn-dco
+mkdir -p feeds/packages/kernel/ovpn-dco/patches
 curl -s $mirror/openwrt/patch/packages-patches/ovpn-dco/Makefile > feeds/packages/kernel/ovpn-dco/Makefile
+curl -s $mirror/openwrt/patch/packages-patches/ovpn-dco/patches/001-fix-linux-6.18.patch > feeds/packages/kernel/ovpn-dco/patches/001-fix-linux-6.18.patch
 
 # libpfring
 rm -rf feeds/packages/libs/libpfring

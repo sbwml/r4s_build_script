@@ -1,0 +1,11 @@
+--- a/drivers/net/ovpn-dco/tcp.c
++++ b/drivers/net/ovpn-dco/tcp.c
+@@ -202,7 +202,7 @@ static int ovpn_tcp_recvmsg(struct sock
+ 			    int noblock,
+ #endif
+ 			    int flags
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(7, 1, 0)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 18, 0)
+ 			    , int *addr_len
+ #endif
+ 			    )
