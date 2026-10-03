@@ -1,6 +1,6 @@
 --- a/include/net/netfilter/nf_tables.h
 +++ b/include/net/netfilter/nf_tables.h
-@@ -256,6 +256,8 @@ static inline enum nft_registers nft_typ
+@@ -252,6 +252,8 @@ static inline enum nft_registers nft_typ
  int nft_parse_u32_check(const struct nlattr *attr, int max, u32 *dest);
  int nft_dump_register(struct sk_buff *skb, unsigned int attr, unsigned int reg);
  
@@ -30,7 +30,7 @@
  #define NFTA_MASQ_MAX		(__NFTA_MASQ_MAX - 1)
 --- a/net/netfilter/nf_tables_api.c
 +++ b/net/netfilter/nf_tables_api.c
-@@ -11708,6 +11708,24 @@ static int nft_validate_register_load(en
+@@ -11497,6 +11497,24 @@ static int nft_validate_register_load(en
  	return 0;
  }
  

@@ -41,7 +41,7 @@ Signed-off-by: Alexandre Frade <kernel@xanmod.org>
  
  #define	TCP_ECN_DISABLED	0
  #define	TCP_ECN_MODE_PENDING	(TCP_ECN_MODE_RFC3168 | TCP_ECN_MODE_ACCECN)
-@@ -839,6 +840,15 @@ static inline u32 __tcp_set_rto(const st
+@@ -838,6 +839,15 @@ static inline u32 __tcp_set_rto(const st
  	return usecs_to_jiffies((tp->srtt_us >> 3) + tp->rttvar_us);
  }
  

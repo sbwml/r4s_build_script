@@ -100,7 +100,7 @@ Signed-off-by: Stephan Mueller <smueller@chronox.de>
  {
 --- a/include/crypto/drbg.h
 +++ b/include/crypto/drbg.h
-@@ -283,4 +283,11 @@ enum drbg_prefixes {
+@@ -279,4 +279,11 @@ enum drbg_prefixes {
  	DRBG_PREFIX3
  };
  
