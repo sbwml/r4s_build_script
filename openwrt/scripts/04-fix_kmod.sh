@@ -36,6 +36,7 @@ pushd feeds/packages/libs/libpfring/patches
   curl -Os $mirror/openwrt/patch/packages-patches/libpfring/patches/100-fix-compilation-warning.patch
   curl -Os $mirror/openwrt/patch/packages-patches/libpfring/patches/900-fix-linux-6.6.patch
   curl -Os $mirror/openwrt/patch/packages-patches/libpfring/patches/901-fix-build-for-linux-6.17.patch
+  curl -Os $mirror/openwrt/patch/packages-patches/libpfring/patches/902-fix-build-for-linux-6.18.patch
 popd
 
 # nat46
